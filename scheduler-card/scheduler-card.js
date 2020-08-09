@@ -16,7 +16,7 @@ import {
 class SchedulerCard extends LitElement {
   set hass(hass) {
 
-    if (this.initialized) return;
+    if (this.initialized && !this.listenForEntities) return;
     this._hass = hass;
     this.initialized = true;
 
@@ -27,17 +27,6 @@ class SchedulerCard extends LitElement {
         return obj;
       }, {});
     this.selection = {};
-
-    // this.selection = {
-    //   newItem: true,
-    //   entity: 'input_boolean.my_switch',
-    //   service: 'toggle',
-    //   timeHours: '12',
-    //   timeMinutes: '00',
-    //   daysType: 'daily',
-    //   days: []
-    // };
-
 
     this.config = new Entitylist(hass);
     this.config.Parselist(this.cardInfo);
@@ -265,20 +254,21 @@ class SchedulerCard extends LitElement {
   }
 
   waitForUpdate(entity_id) {
-    this.initialized = false;
+    this.listenForEntities = true;
     clearInterval(this.timer);
     clearTimeout(this.timeout);
-    if (!entity_id) var old_state = Object.keys(this._hass.states).filter(e => { return e.startsWith('scheduler.') }).length;
+    if (!entity_id) var old_state = Object.keys(this._hass.states).filter(e => { return (e.startsWith('scheduler.') && this._hass.states[e].state != 'initializing') }).length;
     else var old_state = this._hass.states[entity_id];
 
     this.timer = setInterval(() => {
-      if (!entity_id) var new_state = Object.keys(this._hass.states).filter(e => { return e.startsWith('scheduler.') }).length;
+      if (!entity_id) var new_state = Object.keys(this._hass.states).filter(e => {return (e.startsWith('scheduler.') && this._hass.states[e].state != 'initializing') }).length;
       else var new_state = this._hass.states[entity_id];
 
       if (old_state != new_state) {
         clearInterval(this.timer);
         clearTimeout(this.timeout);
         this.requestUpdate();
+        this.listenForEntities = false;
       }
     }, 100);
 
