@@ -84,7 +84,7 @@ The `groups:` option provides the capability of organizing the entities.
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
 | group_id | key | **Required** | Identifier for group
-| name | string | (take from group) | Displayed name for group
+| name | string | (same as group_id) | Displayed name for group
 | icon | string | "folder" | Displayed icon for group
 
 Example:
