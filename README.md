@@ -1,5 +1,17 @@
 # scheduler-card
 
+This project is still a work-in-progress. Feel free to use it, but some functions may contain bugs at this point.
+
+## Introduction
+This is a Lovelace card for Homeassistant that can be used to create a time schedule for your smart devices.
+You can create new rules, modify existing rules and temporarily disable rules.
+
+The card works on top of the [scheduler custom component](https://github.com/nielsfaber/scheduler-component). You *will* need it this as well.
+
+See it in action:
+
+![alt text](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/Demonstration.gif?raw=true "demonstration video")
+
 ## Installation
 
 1. Clone this repository into the `www`-directory: `git clone https://github.com/nielsfaber/scheduler-card.git` Alternatively, download this repository as a zip and extract the `*.js` files into `www/scheduler-card`.
