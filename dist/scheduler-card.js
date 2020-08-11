@@ -689,3 +689,5 @@ class SchedulerCard extends LitElement {
 }
 
 customElements.define('scheduler-card', SchedulerCard);
+
+window.customCards.push({type: 'scheduler-card', name: 'Scheduler', description: 'Card to help with scheduling.'});
