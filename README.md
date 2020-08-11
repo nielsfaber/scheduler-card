@@ -1,9 +1,9 @@
 # scheduler-card
-
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)  
 This project is still a work-in-progress. Feel free to use it, but some functions may contain bugs at this point.
 
 ## Introduction
-This is a Lovelace card for Homeassistant that can be used to create a time schedule for your smart devices.
+This is a Lovelace card for Home Assistant that can be used to create a time schedule for your smart devices.
 You can create new rules, modify existing rules and temporarily disable rules.
 
 The card works on top of the [scheduler custom component](https://github.com/nielsfaber/scheduler-component). You *will* need it this as well.
