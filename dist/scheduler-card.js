@@ -107,7 +107,7 @@ class SchedulerCard extends LitElement {
       return html`
       <mwc-button class="${this.selection.group == el.id ? ' active' : ''}" @click="${(e) => { this.selectGroup(el.id) }}">
         <ha-icon icon="mdi:${el.icon}"></ha-icon>
-        ${el.name}
+        &nbsp;&nbsp;${el.name}
       </mwc-button>
       `;
     });
@@ -120,7 +120,7 @@ class SchedulerCard extends LitElement {
       return html`
       <mwc-button class="${this.selection.entity == el ? ' active' : ''}" @click="${(e) => { this.selectEntity(el.id) }}">
         <ha-icon icon="mdi:${el.icon}"></ha-icon>
-        ${el.name}
+        &nbsp;&nbsp;${el.name}
       </mwc-button>
       `;
     });
