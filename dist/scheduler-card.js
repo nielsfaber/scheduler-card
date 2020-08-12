@@ -133,7 +133,7 @@ class SchedulerCard extends LitElement {
       return html`
       <mwc-button class="${this.selection.action == el ? ' active' : ''}" @click="${(e) => { this.selectAction(el.id) }}">
         <ha-icon icon="mdi:${el.icon}"></ha-icon>
-        ${el.name}
+        &nbsp;&nbsp;${el.name}
       </mwc-button>
       `;
     });
