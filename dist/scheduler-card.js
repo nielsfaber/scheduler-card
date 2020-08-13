@@ -106,7 +106,7 @@ class SchedulerCard extends LitElement {
     return Object.values(this.config.Groups()).map(el => {
       return html`
       <mwc-button class="${this.selection.group == el.id ? ' active' : ''}" @click="${(e) => { this.selectGroup(el.id) }}">
-        <ha-icon icon="mdi:${el.icon}"></ha-icon>
+        <ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>
         ${el.name}
       </mwc-button>
       `;
@@ -119,7 +119,7 @@ class SchedulerCard extends LitElement {
     return this.config.Groups(this.selection.group).entities.map(el => {
       return html`
       <mwc-button class="${this.selection.entity == el ? ' active' : ''}" @click="${(e) => { this.selectEntity(el.id) }}">
-        <ha-icon icon="mdi:${el.icon}"></ha-icon>
+        <ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>
         ${el.name}
       </mwc-button>
       `;
@@ -132,7 +132,7 @@ class SchedulerCard extends LitElement {
     return this.selection.entity.GetActions().map(el => {
       return html`
       <mwc-button class="${this.selection.action == el ? ' active' : ''}" @click="${(e) => { this.selectAction(el.id) }}">
-        <ha-icon icon="mdi:${el.icon}"></ha-icon>
+        <ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>
         ${el.name}
       </mwc-button>
       `;
@@ -682,6 +682,10 @@ class SchedulerCard extends LitElement {
       div.option-item {
         padding: 2px 5px;
       }
+      
+      .padded-right {
+        margin-right: 11px;
+      }
 
       </style>
       `;
@@ -689,3 +693,5 @@ class SchedulerCard extends LitElement {
 }
 
 customElements.define('scheduler-card', SchedulerCard);
+
+window.customCards.push({type: 'scheduler-card', name: 'Scheduler', description: 'Card to help with scheduling.'});
