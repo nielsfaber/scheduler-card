@@ -141,7 +141,6 @@ class Entity {
 
     var existing_action = this.actions.find(el => el.id == new_action.id);
     if (existing_action) return existing_action;
-
     this._actions.push(new_action);
     return new_action;
   }
@@ -171,4 +170,3 @@ class Action {
     }
   }
 }
-

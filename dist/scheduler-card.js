@@ -12,6 +12,8 @@ import {
   parseTime,
 } from "./helpers.js"
 
+const EntityIdPattern = /^switch.schedule_[0-9a-f]{6}$/;
+
 
 class SchedulerCard extends LitElement {
   set hass(hass) {
@@ -21,7 +23,7 @@ class SchedulerCard extends LitElement {
     this.initialized = true;
 
     this._entities = Object.keys(hass.states)
-      .filter(key => key.includes('scheduler.'))
+      .filter(id => id.match(EntityIdPattern))
       .reduce((obj, key) => {
         obj[key] = hass.states[key];
         return obj;
@@ -46,15 +48,13 @@ class SchedulerCard extends LitElement {
     if (this.selection.newItem || this.selection.editItem !== undefined) {
       if (this.selection.newItemConfirmed || this.selection.editItem !== undefined) {
         return html`
-          ${this.getStyle()}
           <ha-card>
             <div class="card-header">Scheduler</div>
-          ${this.getEditor()}
+            ${this.getEditor()}
           </ha-card>
         `;
       }
       return html`
-        ${this.getStyle()}
           <ha-card>
             <div class="card-header">Scheduler</div>
             <div class="card-section first">
@@ -84,15 +84,14 @@ class SchedulerCard extends LitElement {
     }
 
     return html`
-      ${this.getStyle()}
       <ha-card>
-      <div class="card-header">Scheduler</div>
-      <div class="card-section first">
-        ${this.getList()}
-      </div>
-      <div class="card-section last">
-        <mwc-button outlined @click="${(e) => { this.newItem() }}">Add item</mwc-button>
-      </div>
+        <div class="card-header">Scheduler</div>
+        <div class="card-section first">
+          ${this.getList()}
+        </div>
+        <div class="card-section last">
+          <mwc-button outlined @click="${(e) => { this.newItem() }}">Add item</mwc-button>
+        </div>
       </ha-card>
     `;
   }
@@ -188,7 +187,6 @@ class SchedulerCard extends LitElement {
   getList() {
     var list = Object.entries(this._entities).filter(([id, el]) => {
 
-
       if (el.state == 'unavailable') return false;
       if (el.state == 'initializing') return false;
       return true;
@@ -201,6 +199,7 @@ class SchedulerCard extends LitElement {
       </div>
       `;
     }
+
     return list.map(([id, cfg]) => {
       var data = ImportEntity(this._entities[id], this.config, this.sunData);
       if (!data) return ``;
@@ -238,9 +237,9 @@ class SchedulerCard extends LitElement {
     evt.stopPropagation();
     let enabled = !evt.target.checked;
     if (enabled) {
-      this._hass.callService('scheduler', 'turn_on', { entity_id: entity_id });
+      this._hass.callService('switch', 'turn_on', { entity_id: entity_id });
     } else {
-      this._hass.callService('scheduler', 'turn_off', { entity_id: entity_id });
+      this._hass.callService('switch', 'turn_off', { entity_id: entity_id });
     }
     this.waitForUpdate(entity_id);
   }
@@ -261,7 +260,7 @@ class SchedulerCard extends LitElement {
     else var old_state = this._hass.states[entity_id];
 
     this.timer = setInterval(() => {
-      if (!entity_id) var new_state = Object.keys(this._hass.states).filter(e => {return (e.startsWith('scheduler.') && this._hass.states[e].state != 'initializing') }).length;
+      if (!entity_id) var new_state = Object.keys(this._hass.states).filter(e => { return (e.startsWith('scheduler.') && this._hass.states[e].state != 'initializing') }).length;
       else var new_state = this._hass.states[entity_id];
 
       if (old_state != new_state) {
@@ -318,13 +317,13 @@ class SchedulerCard extends LitElement {
           <mwc-button class="day-item${this.selection.daysType == 'custom' ? ' active' : ''}" index="custom" @click="${(e) => this.updateDays(e.target)}">other</mwc-button>
         </div>
         <div class="day-list${this.selection.daysType == 'custom' ? '' : ' closed'}" id="day-list-custom">
-          <mwc-button class="day-item${this.selection.days.includes(0) ? ' active' : ''}" index="0" @click="${(e) => this.updateDays(e.target)}">sun</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target)}">mon</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target)}">tue</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target)}">wed</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target)}">thu</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target)}">fri</mwc-button>
           <mwc-button class="day-item${this.selection.days.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target)}">sat</mwc-button>
+          <mwc-button class="day-item${this.selection.days.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target)}">sun</mwc-button>
         </div>
       </div>
         
@@ -391,17 +390,12 @@ class SchedulerCard extends LitElement {
 
   editItemSave() {
     var data = ExportEntity(this.selection, this.sunData);
-    console.log(data);
 
     if (this.selection.newItem) {
       this._hass.callService('scheduler', 'add', data);
       this.waitForUpdate(null);
     } else {
-      this._hass.callService('scheduler', 'edit', {
-        entity_id: this.selection.editItem,
-        time: data.time,
-        days: data.days
-      });
+      this._hass.callService('scheduler', 'edit', Object.assign(data, { entity_id: this.selection.editItem }));
       this.waitForUpdate(this.selection.editItem);
     }
     this.selection = {};
@@ -468,9 +462,8 @@ class SchedulerCard extends LitElement {
 
 
 
-  getStyle() {
-    return html`
-      <style type="text/css">
+  static get styles() {
+    return css`
       /* list view */
 
       div.list-item {
@@ -686,12 +679,10 @@ class SchedulerCard extends LitElement {
       .padded-right {
         margin-right: 11px;
       }
-
-      </style>
       `;
   }
 }
 
 customElements.define('scheduler-card', SchedulerCard);
 
-window.customCards.push({type: 'scheduler-card', name: 'Scheduler', description: 'Card to help with scheduling.'});
+window.customCards.push({ type: 'scheduler-card', name: 'Scheduler', description: 'Card to help with scheduling.' });
