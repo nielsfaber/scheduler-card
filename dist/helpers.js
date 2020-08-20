@@ -1,54 +1,91 @@
 
 
+const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
 
+const SunTimePattern = /^([0-9]{4})?(S[SR])([0-9]{4})?$/
+const FixedTimePattern = /^([0-9]{2})([0-9]{2})$/
 
 export function ImportEntity(hassData, configData, sunData) {
-    var entity = configData.Entities(hassData.attributes['entity']);
+    var output = {};
+
+    // for now only consider 1 action
+    var action = hassData.attributes["actions"][0];
+    var entity = action['entity'];
+    var service = action['service'];
+    if (!entity) return; //for now, only allow schedules with entity
+
+    if (entity.indexOf('.') == -1) {
+        entity = `${service.split('.').shift()}.${entity}`;
+        service = service.split('.').pop();
+    }
+
+    entity = configData.Entities(entity);
     if (!entity) return false;
 
-    var action = entity.GetActions({
-        service: hassData.attributes['service'],
-        service_data: hassData.attributes['service_data']
-    });
+    var service_args = Object.entries(action).filter(([key, val]) => { return !Array('service', 'entity').includes(key) });
+    var my_action = {
+        service: service
+    };
+    if (service_args.length) Object.assign(my_action, { service_data: Object.fromEntries(service_args) });
+
+    action = entity.GetActions(my_action);
+
     if (!action) return false;
 
-    var output = {
+    Object.assign(output, {
         entity: entity,
         action: action,
-        timeHours: String(hassData.attributes['time'].split(':').shift()),
-        timeMinutes: String(hassData.attributes['time'].split(':').pop()),
-        days: JSON.parse(hassData.attributes['days']),
-        daysType: null,
-    };
+    })
 
-    if (!output.days.length) output.daysType = 'daily';
-    else if (isWeekdays(output.days)) output.daysType = 'weekdays';
-    else output.daysType = 'custom';
+    var entry = hassData.attributes["entries"][0];
+    var res = EntryPattern.exec(entry);
 
-    if (hassData.attributes['time'].indexOf('sunrise') > -1 || hassData.attributes['time'].indexOf('sunset') > -1) {
-        var time = hassData.attributes['time'];
-        if (time.indexOf('sunrise') > -1) {
-            var sign = time.substring(7, 8);
-            var offset_string = time.substring(8);
-            var timestamp_reference = Number(sunData.sunrise.split(':').shift()) + Number(sunData.sunrise.split(':').pop()) / 60;
-        } else {
-            var sign = time.substring(6, 7);
-            var offset_string = time.substring(7);
-            var timestamp_reference = Number(sunData.sunset.split(':').shift()) + Number(sunData.sunset.split(':').pop()) / 60;
+    var time_str = res[2];
+    var is_fixed_time = FixedTimePattern.exec(time_str);
+    var is_sun_time = SunTimePattern.exec(time_str);
+
+    if (is_sun_time !== null) {
+        if (is_sun_time[2] == "SR") var timestamp_reference = Number(sunData.sunrise.split(':').shift()) + Number(sunData.sunrise.split(':').pop()) / 60;
+        else var timestamp_reference = Number(sunData.sunset.split(':').shift()) + Number(sunData.sunset.split(':').pop()) / 60;
+
+        if (is_sun_time[1]) { //negative offset
+            var offset_str = FixedTimePattern.exec(is_sun_time[1]);
+            var timestamp_offset = Number(offset_str[1]) + Number(offset_str[2]) / 60;
+            var timestamp = timestamp_reference - timestamp_offset;
+            var sign = '-';
         }
-
-        var timestamp_offset = Number(offset_string.split(':').shift()) + Number(offset_string.split(':').pop()) / 60;
-        var timestamp = (sign == '+') ? (timestamp_reference + timestamp_offset) : (timestamp_reference - timestamp_offset);
+        else {
+            var offset_str = FixedTimePattern.exec(is_sun_time[3]);
+            var timestamp_offset = Number(offset_str[1]) + Number(offset_str[2]) / 60;
+            var timestamp = timestamp_reference + timestamp_offset;
+            var sign = '+';
+        }
         var time_hours = Math.floor(timestamp);
         var time_mins = Math.round((timestamp - time_hours) * 6) * 10;
 
-        output.timeRaw = time;
-        output.timeHours = String(time_hours);
-        output.timeMinutes = String(time_mins);
-
+        Object.assign(output, {
+            timeHours: String(time_hours).padStart(2, '0'),
+            timeMinutes: String(time_mins).padStart(2, '0'),
+            timeRaw: `${is_sun_time[2] == "SR" ? 'sunrise' : 'sunset'}${sign}${offset_str[1]}:${offset_str[2]}`,
+            sun: true
+        })
     }
-    if (output.timeHours.length < 2) output.timeHours = `0${output.timeHours}`;
-    if (output.timeMinutes.length < 2) output.timeMinutes = `0${output.timeMinutes}`;
+    else if (is_fixed_time !== null) {
+        Object.assign(output, {
+            timeHours: is_fixed_time[1],
+            timeMinutes: is_fixed_time[2],
+        })
+    }
+    else return;
+
+    var days = res[1].split("");
+    days = days.map(Number);
+    if (!days[0]) days.splice(0, 1);
+
+    Object.assign(output, {
+        days: days,
+        daysType: (!days.length ? 'daily' : (isWeekdays(days) ? 'weekdays' : 'custom'))
+    });
 
     return output;
 }
@@ -56,36 +93,53 @@ export function ImportEntity(hassData, configData, sunData) {
 
 export function ExportEntity(userData, sunData) {
     var data = {
-        time: `${userData.timeHours}:${userData.timeMinutes}`,
+        actions: [],
+        entries: []
+    }
+
+    var action = {
         entity: userData.entity.id,
         service: userData.action.service,
     };
 
+    if (Object.keys(userData.action.service_data).length) Object.assign(action, { service_data: userData.action.service_data });
+    data.actions.push(action);
+
+    var entry = {
+        actions: [0]    //fow now, always one action per entry
+    }
+
+    if (userData.daysType == 'weekdays') Object.assign(entry, { days: [1, 2, 3, 4, 5] });
+    else if (userData.daysType == 'custom') Object.assign(entry, { days: userData.days.sort() });
+
     if (userData.sun && sunData) {
-        var timestamp = Number(data.time.split(':').shift()) + Number(data.time.split(':').pop()) / 60;
+        var timestamp = Number(userData.timeHours) + Number(userData.timeMinutes) / 60;
         var timestamp_sunrise = Number(sunData.sunrise.split(':').shift()) + Number(sunData.sunrise.split(':').pop()) / 60;
         var timestamp_sunset = Number(sunData.sunset.split(':').shift()) + Number(sunData.sunset.split(':').pop()) / 60;
 
         if (Math.abs(timestamp - timestamp_sunrise) < Math.abs(timestamp - timestamp_sunset)) {
-            var sun_reference = 'sunrise';
+            var sun_string = 'sunrise';
             var timestamp_offset = timestamp - timestamp_sunrise;
         } else {
-            var sun_reference = 'sunset';
+            var sun_string = 'sunset';
             var timestamp_offset = timestamp - timestamp_sunset;
         }
         var offset_hours = (timestamp_offset > 0) ? Math.abs(Math.floor(timestamp_offset)) : Math.abs(Math.ceil(timestamp_offset));
         var offset_mins = (timestamp_offset > 0) ? Math.round((timestamp_offset - offset_hours) * 60) : -Math.round((timestamp_offset + offset_hours) * 60);
-        if (offset_hours < 10) offset_hours = `0${offset_hours}`;
-        if (offset_mins < 10) offset_mins = `0${offset_mins}`;
-        var offset = `${offset_hours}:${offset_mins}`;
-        data.time = `${sun_reference}${timestamp_offset > 0 ? '+' : '-'}${offset}`;
+        var offset_string = `${timestamp_offset > 0 ? '' : '-'}${String(offset_hours).padStart(2, '0')}:${String(offset_mins).padStart(2, '0')}`;
+
+        Object.assign(entry, {
+            event: sun_string,
+            offset: offset_string
+        })
+    }
+    else {
+        Object.assign(entry, {
+            time: `${userData.timeHours}:${userData.timeMinutes}`
+        })
     }
 
-    if (userData.daysType == 'daily') data.days = [];
-    else if (userData.daysType == 'weekdays') data.days = [1, 2, 3, 4, 5];
-    else data.days = userData.days.sort();
-
-    if (Object.keys(userData.action.service_data).length) data.service_data = userData.action.service_data;
+    data.entries.push(entry);
 
     return data;
 }
@@ -105,6 +159,7 @@ export function isWeekdays(input) {
 
 export function parseWeekdays(dayArray) {
     if (!dayArray || !dayArray.length) return 'every day';
+    else if (dayArray.length == 5 && !dayArray.includes(6) && !dayArray.includes(7)) return 'on weekdays';
     else {
         var output = [];
         if (dayArray.includes(1)) output.push('monday');
@@ -113,7 +168,7 @@ export function parseWeekdays(dayArray) {
         if (dayArray.includes(4)) output.push('thursday');
         if (dayArray.includes(5)) output.push('friday');
         if (dayArray.includes(6)) output.push('saturday');
-        if (dayArray.includes(0)) output.push('sunday');
+        if (dayArray.includes(7)) output.push('sunday');
         output = output.join(', ');
         var n = output.lastIndexOf(', ');
         if (n) output = output.slice(0, n) + output.slice(n).replace(', ', ' and ');

@@ -1,4 +1,5 @@
 
+
 class Entitylist {
   constructor(hass) {
     this._hass = hass;
@@ -9,8 +10,11 @@ class Entitylist {
   Parselist(cfg) {
     var domain_config = cfg['domains'];
     var entity_config = cfg['entities'];
-    var included_domains = Object.keys(domain_config);
-    var included_entities = Object.keys(entity_config);
+    var groups = cfg['groups'];
+    if (!groups) groups = {};
+
+    var included_domains = (domain_config) ? Object.keys(domain_config) : [];
+    var included_entities = (entity_config) ? Object.keys(entity_config) : [];
 
     Object.keys(this._hass.states).forEach(entity_id => {
       var domain = entity_id.split('.').shift();
@@ -24,8 +28,14 @@ class Entitylist {
       }
     });
 
-    Object.keys(cfg.groups).forEach(group_id => {
-      var groupCfg = cfg.groups[group_id];
+    if (!Object.keys(groups).length) {
+      var standard_groups = Object.keys(this.entities).map(el => { return el.split('.').shift() }).filter((value, index, self) => { return self.indexOf(value) === index }).sort();
+      standard_groups = standard_groups.reduce((a, b) => (a[b] = { 'domains': [b] }, a), {});
+      groups = standard_groups;
+    }
+
+    Object.keys(groups).forEach(group_id => {
+      var groupCfg = groups[group_id];
       var group = new Group(groupCfg, group_id);
       if (groupCfg.domains !== undefined) {
         groupCfg['domains'].forEach(domain => {
@@ -131,7 +141,6 @@ class Entity {
 
     var existing_action = this.actions.find(el => el.id == new_action.id);
     if (existing_action) return existing_action;
-
     this._actions.push(new_action);
     return new_action;
   }
@@ -161,4 +170,3 @@ class Action {
     }
   }
 }
-
