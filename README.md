@@ -20,13 +20,13 @@ HACS installation:
 
 <details><summary>Manual installation</summary>
 
-1. Clone this repository into the `www`-directory: `git clone https://github.com/nielsfaber/scheduler-card.git` Alternatively, download this repository as a zip and extract the `*.js` files into `www/scheduler-card`.
+1. Download the latest release of the `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
 
 2. Add a reference to the card in the resources section of `ui-lovelace.yaml`:
 
 ```yaml
 resources:
-  - url: /local/scheduler-card/dist/scheduler-card.js?v=0
+  - url: /local/scheduler-card/scheduler-card.js?v=0
     type: module
 ```
 
