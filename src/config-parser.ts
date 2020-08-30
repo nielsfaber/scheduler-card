@@ -48,7 +48,11 @@ export class Config {
 
   AddEntityToGroup(entity_id: string) {
     let domain = getDomainFromEntityId(entity_id);
-    if (this.groups[domain]) this.groups[domain]['entities']!.push(entity_id);
+    if (this.groups[domain]) {
+      let list = [... this.groups[domain]['entities']!];
+      list.push(entity_id);
+      this.groups[domain]['entities'] = list;
+    }
     else this.CreateGroup({ entities: [entity_id], icon: getIconForDomain(domain) }, domain);
   }
 
@@ -61,7 +65,7 @@ export class Config {
           if (match) return;
           let actions = [... this.entities[entity_id]['actions']];
           actions.push(action);
-          if (!match) this.entities[entity_id]['actions'] = actions;
+          this.entities[entity_id]['actions'] = actions;
         });
       }
     }
