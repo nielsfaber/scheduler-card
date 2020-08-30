@@ -68,7 +68,12 @@ export function getDomainFromEntityId(entity_id: string): string {
 
 
 export function CreateSlug(input: IDictionary<any>) {
-  return slugify(JSON.stringify(_.values(input)).replace(/\W/g, ' '), '_');
+  let keys = _(input).keys();
+  keys = keys.sort();
+  let obj = {};
+  _(keys).each(key => obj[key] = input[key]);
+
+  return slugify(JSON.stringify(_.values(obj)).replace(/\W/g, ' '), '_');
 }
 
 
@@ -121,6 +126,7 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
   let actions: IScheduleAction[] = hassData.attributes['actions'].map(action => {
     let entity_id = getDomainFromEntityId(action['entity']) ? action['entity'] : getDomainFromEntityId(action['service']) + "." + action['entity'];
     let service = action['service'];
+    let service_data = _.omit(action, ['service', 'entity']);
     if (getDomainFromEntityId(entity_id) == getDomainFromEntityId(service)) service = service.split(".").pop();
 
     if (!configData.GetEntity(entity_id)) {
@@ -128,7 +134,7 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
       return;
     }
 
-    let action_id = CreateSlug(Object.assign({ service: service }, _.pick(action, 'service_data')));
+    let action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
 
     if (!configData.GetAction(entity_id, action_id)) {
       //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);

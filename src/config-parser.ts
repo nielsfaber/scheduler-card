@@ -53,8 +53,23 @@ export class Config {
   }
 
   AddEntityInfo(entity_id: string, cfg: IEntityConfigEntry) {
-    if (this.entities[entity_id]) Object.assign(this.entities[entity_id], { ...cfg });
-    else this.entities[entity_id] = Object.assign({ ...cfg }, { id: entity_id });
+    if (this.entities[entity_id]) {
+      Object.assign(this.entities[entity_id], _.omit({ ...cfg }, 'actions'));
+      if (_(cfg).has('actions')) {
+        _(cfg.actions).each(action => {
+          let match = _(this.entities[entity_id]['actions']).find(e => { return CreateSlug(_.pick(e, ['service', 'service_data'])) == CreateSlug(_.pick(action, ['service', 'service_data'])) });
+          if (match) return;
+          let actions = [... this.entities[entity_id]['actions']];
+          actions.push(action);
+          if (!match) this.entities[entity_id]['actions'] = actions;
+        });
+      }
+    }
+    else {
+      let entry = Object.assign({ ...cfg }, { id: entity_id });
+      _.defaults(entry, { actions: [] });
+      this.entities[entity_id] = entry;
+    }
     if (!this.FindGroupForEntity(entity_id)) this.AddEntityToGroup(entity_id);
   }
 
@@ -85,9 +100,17 @@ export class Config {
             config['entity'] = getDomainFromEntityId(config['service']) + "." + config['entity'];
             config['service'] = config['service'].split('.').pop();
           }
-          this.AddEntityInfo(config['entity'], {
-            actions: [_.pick(config, ['service', 'service_data'])]
-          });
+          let service_data = _.omit(config, ['entity', 'service']);
+          if (service_data) {
+            this.AddEntityInfo(config['entity'], {
+              actions: [{ service: config['service'], service_data: service_data }]
+            });
+          }
+          else {
+            this.AddEntityInfo(config['entity'], {
+              actions: [_.pick(config, 'service')]
+            });
+          }
         })
     }
 
