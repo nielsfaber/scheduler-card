@@ -141,7 +141,7 @@ export class SchedulerCard extends LitElement {
       return html`
       <div class="list-item${entry['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(entry.id)}">
         <div class="list-item-icon">
-          ${entity.icon ? html`<ha-icon icon="mdi:${entity.icon}"></ha-icon>` : ''}
+          ${entity.icon ? html`<ha-icon icon="hass:${entity.icon}"></ha-icon>` : ''}
         </div>
         <div class="list-item-name">
           ${PrettyPrintName(entity.name)}
@@ -195,7 +195,7 @@ export class SchedulerCard extends LitElement {
     return _.map(groups, (el: IButtonEntry, key: string) => {
       return html`
         <mwc-button class="${this.selection.group == key ? ' active' : ''}" @click="${() => { this.selectGroup(key) }}">
-          ${el.icon ? html`<ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>` : ''}
+          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -218,7 +218,7 @@ export class SchedulerCard extends LitElement {
     return _.map(entities, (el: IButtonEntry, key: string) => {
       return html`
         <mwc-button class="${this.selection.entity == key ? ' active' : ''}" @click="${() => { this.selectEntity(key) }}">
-          ${el.icon ? html`<ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>` : ''}
+          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -240,7 +240,7 @@ export class SchedulerCard extends LitElement {
     return _.map(actions, (el: IButtonEntry, key: string) => {
       return html`
         <mwc-button class="${this.selection.action == key ? ' active' : ''}" @click="${() => { this.selectAction(key) }}">
-          ${el.icon ? html`<ha-icon icon="mdi:${el.icon}" class="padded-right"></ha-icon>` : ''}
+          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -269,18 +269,18 @@ export class SchedulerCard extends LitElement {
       <div class="summary">
         <div class="summary-entity">
           <div class="summary-icon">
-            ${entity.icon ? html`<ha-icon icon="mdi:${entity.icon}"></ha-icon>` : ''}
+            ${entity.icon ? html`<ha-icon icon="hass:${entity.icon}"></ha-icon>` : ''}
           </div>
           <div class="summary-text">
             ${PrettyPrintName(entity.name)}
           </div>
         </div>
         <div class="summary-arrow">
-          <ha-icon icon="mdi:arrow-right"></ha-icon>
+          <ha-icon icon="hass:arrow-right"></ha-icon>
         </div>
         <div class="summary-action">
           <div class="summary-icon">
-            ${action.icon ? html`<ha-icon icon="mdi:${action.icon}"></ha-icon>` : ''}
+            ${action.icon ? html`<ha-icon icon="hass:${action.icon}"></ha-icon>` : ''}
           </div>
           <div class="summary-text">
             ${PrettyPrintName(action.name)}
@@ -311,7 +311,7 @@ export class SchedulerCard extends LitElement {
       <div class="time-picker">
         <div class="time-picker-hours-up">
           <mwc-button @click="${() => this.updateTime('time-hours-up')}">
-            <ha-icon icon="mdi:chevron-up"></ha-icon>
+            <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="time-picker-hours" id="time-hours">
@@ -319,7 +319,7 @@ export class SchedulerCard extends LitElement {
         </div>
         <div class="time-picker-hours-down">
           <mwc-button @click="${() => this.updateTime('time-hours-down')}">
-            <ha-icon icon="mdi:chevron-down"></ha-icon>
+            <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
         <div class="time-picker-separator">
@@ -327,7 +327,7 @@ export class SchedulerCard extends LitElement {
         </div>
         <div class="time-picker-minutes-up">
           <mwc-button @click="${() => this.updateTime('time-minutes-up')}">
-            <ha-icon icon="mdi:chevron-up"></ha-icon>
+            <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="time-picker-minutes" id="time-minutes">
@@ -335,7 +335,7 @@ export class SchedulerCard extends LitElement {
         </div>
         <div class="time-picker-minutes-down">
           <mwc-button @click="${() => this.updateTime('time-minutes-down')}">
-            <ha-icon icon="mdi:chevron-down"></ha-icon>
+            <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
       </div>
