@@ -18,7 +18,7 @@ export const styles = css`
       }
 
       div.list-item:hover {
-        background: var(--paper-grey-200);
+        filter: contrast(0.85);
       }
 
       div.list-item-icon {
