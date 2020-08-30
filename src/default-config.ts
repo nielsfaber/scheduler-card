@@ -71,12 +71,21 @@ export const DefaultUserSelection: IUserSelection = {
 }
 
 export function getIconForDomain(domain: string): string {
-  if (domain == 'light') return 'lightbulb-outline';
-  else if (domain == 'cover') return 'window-shutter';
-  else if (domain == 'switch') return 'flash';
-  else if (domain == 'climate') return 'home-thermometer-outline';
-  else if (domain == 'fan') return 'fan';
-  else if (domain == 'vacuum') return 'robot-vacuum';
+  var map = {'automation': 'robot',
+             'camera': 'camera',
+             'climate': 'home-thermometer-outline',
+             'cover': 'window-shutter',
+             'fan': 'fan',
+             'input_number': 'sort-numeric-variant',
+             'input_select': 'form-select',
+             'input_text': 'form-textbox',
+             'input_time': 'clock',
+             'light': 'lightbulb-outline',
+             'media_player': 'speaker',
+             'script': 'script-text',
+             'switch': 'flash',
+             'vacuum': 'robot-vacuum'};
+  if (domain in map) return map[domain];
   return 'folder-outline';
 }
 
