@@ -14,16 +14,24 @@ See it in action:
 
 ## Installation
 
+HACS installation:
+1. Add `https://github.com/nielsfaber/scheduler-card` as a custom frontend repository.
+2. Click on "Install" under the new card that just popped up.
+
+<details><summary>Manual installation</summary>
+
 1. Clone this repository into the `www`-directory: `git clone https://github.com/nielsfaber/scheduler-card.git` Alternatively, download this repository as a zip and extract the `*.js` files into `www/scheduler-card`.
 
 2. Add a reference to the card in the resources section of `ui-lovelace.yaml`:
 
-  ```yaml
-  resources:
-    - url: /local/scheduler-card/scheduler-card.js?v=0
-      type: module
-  ```
-  
+```yaml
+resources:
+  - url: /local/scheduler-card/scheduler-card.js?v=0
+    type: module
+```
+
+</details>
+
  3. Add the card in the view where you want it to be shown:
  
   ```yaml
@@ -38,8 +46,7 @@ See it in action:
 
 ## Updating
 
-Update using `git pull` in the `www/scheduler-card` or overwrite the `*.js` files to update.
-Refresh your browser cache or update url in the ui-lovelace to `?v=(n+1)`
+HACS should auto-remind you in the HACS tab when an update is available. Use `git pull` for manual installation updates.
 
 
 ## Options
