@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "add": "Nieuw item",
+    "cancel": "annuleren",
+    "next": "verder",
+    "save": "opslaan",
+    "delete": "verwijder"
+  },
+  "instructions": {
+    "no_group_selected": "Selecteer eerst een groep",
+    "no_entity_selected": "Selecteer eerst een entiteit",
+    "no_groups_defined": "Er zijn geen groepen gedefinieerd",
+    "no_entities_for_group": "Deze groep heeft geen entiteiten",
+    "no_actions_for_entity": "Deze entiteit heeft geen acties",
+    "no_entries_defined": "Er zijn geen items aangemaakt"
+  },
+  "fields": {
+    "group": "Groep",
+    "entity": "Entiteit",
+    "action": "Actie",
+    "days": "Dagen",
+    "time": "Tijdstip",
+    "options": "Opties",
+    "day_type_daily": "Dagelijks",
+    "day_type_weekdays": "Werkdagen",
+    "day_type_custom": "Anders"
+  },
+  "days_short": {
+    "mon": "ma",
+    "tue": "di",
+    "wed": "wo",
+    "thu": "do",
+    "fri": "vr",
+    "sat": "za",
+    "sun": "zo"
+  },
+  "days_long": {
+    "mon": "maandag",
+    "tue": "dinsdag",
+    "wed": "woensdag",
+    "thu": "donderdag",
+    "fri": "vrijdag",
+    "sat": "zaterdag",
+    "sun": "zondag"
+  },
+  "words": {
+    "on": "op",
+    "every": "elke",
+    "and": "en",
+    "at": "om",
+    "before": "voor",
+    "after": "na",
+    "sunrise": "zonsopgang",
+    "sunset": "zonsondergang"
+  },
+  "services": {
+    "turn_on": "aanzetten",
+    "turn_off": "uitzetten",
+    "close_cover": "sluiten",
+    "open_cover": "openen",
+    "set_temperature": "Zet op"
+  },
+  "domains": {
+    "climate": "verwarming",
+    "cover": "zonwering",
+    "fan": "ventilatie",
+    "light": "verlichting",
+    "switch": "schakelaars",
+    "vacuum": "stofzuiger"
+  }
+}

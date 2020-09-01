@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "add": "add item",
+    "cancel": "cancel",
+    "next": "next",
+    "save": "save",
+    "delete": "delete"
+  },
+  "instructions": {
+    "no_group_selected": "Select a group first",
+    "no_entity_selected": "Select an entity first",
+    "no_groups_defined": "There are no groups defined",
+    "no_entities_for_group": "There are no entities in this group",
+    "no_actions_for_entity": "There are no actions for this entity",
+    "no_entries_defined": "There are no items to show"
+  },
+  "fields": {
+    "group": "Group",
+    "entity": "Entity",
+    "action": "Action",
+    "days": "Days",
+    "time": "Time",
+    "options": "Options",
+    "day_type_daily": "every day",
+    "day_type_weekdays": "weekdays",
+    "day_type_custom": "custom"
+  },
+  "days_short": {
+    "mon": "mon",
+    "tue": "tue",
+    "wed": "wed",
+    "thu": "thu",
+    "fri": "fri",
+    "sat": "sat",
+    "sun": "sun"
+  },
+  "days_long": {
+    "mon": "monday",
+    "tue": "tuesday",
+    "wed": "wednesday",
+    "thu": "thursday",
+    "fri": "friday",
+    "sat": "saturday",
+    "sun": "sunday"
+  },
+  "words": {
+    "on": "on",
+    "every": "every",
+    "and": "and",
+    "at": "at",
+    "before": "before",
+    "after": "after",
+    "sunrise": "sunrise",
+    "sunset": "sunset"
+  },
+  "services": {
+    "turn_on": "turn on",
+    "turn_off": "turn off",
+    "close_cover": "close",
+    "open_cover": "open",
+    "set_temperature": "set to"
+  },
+  "domains": {
+    "climate": "climate",
+    "cover": "covers",
+    "fan": "fans",
+    "light": "lights",
+    "switch": "switches",
+    "vacuum": "vacuum"
+  }
+}

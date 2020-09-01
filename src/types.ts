@@ -4,7 +4,7 @@ export interface IDictionary<TValue> {
 }
 
 export interface IButtonEntry {
-  icon: string,
+  icon?: string,
   name: string,
 }
 

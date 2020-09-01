@@ -35,17 +35,20 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
     "lit-element": "^2.4.0",
-    "lodash": "^4.17.20",
+    "lodash-es": "^4.17.15",
     "prettier": "^1.18.2",
     "rollup": "^1.32.1",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-uglify": "^6.0.3",
     "slugify": "^1.4.5",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "zod": "^1.11.1"
+  },
+  "devDependencies": {
+    "rollup-plugin-commonjs": "^10.1.0"
   }
 }

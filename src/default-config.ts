@@ -1,5 +1,6 @@
 
 import { IDictionary, IEntityConfigEntry, IGroupConfigEntry, IUserSelection } from './types'
+import { localize } from './localize/localize';
 
 
 export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
@@ -8,10 +9,12 @@ export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
       {
         "service": "turn_on",
         "icon": "lightbulb-outline",
+        "name": localize('services.turn_on')
       },
       {
         "service": "turn_off",
         "icon": "lightbulb-off-outline",
+        "name": localize('services.turn_off')
       }
     ]
   },
@@ -19,9 +22,11 @@ export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
     "actions": [
       {
         "service": "turn_on",
+        "name": localize('services.turn_on')
       },
       {
         "service": "turn_off",
+        "name": localize('services.turn_off')
       }
     ]
   },
@@ -29,11 +34,11 @@ export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
     "actions": [
       {
         "service": "open_cover",
-        "name": "open"
+        "name": localize('services.open_cover')
       },
       {
         "service": "close_cover",
-        "name": "close"
+        "name": localize('services.close_cover')
       },
     ]
   },
@@ -42,13 +47,13 @@ export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
       {
         "service": "set_temperature",
         "service_data": { temperature: 10 },
-        "name": "Set to 10C",
+        "name": `${localize('services.set_temperature')} 10C`,
         "icon": "thermometer-chevron-down"
       },
       {
         "service": "set_temperature",
         "service_data": { temperature: 22 },
-        "name": "Set to 22C",
+        "name": `${localize('services.set_temperature')} 22C`,
         "icon": "thermometer-chevron-up"
       },
     ]
@@ -71,23 +76,38 @@ export const DefaultUserSelection: IUserSelection = {
 }
 
 export function getIconForDomain(domain: string): string {
-  var map = {'automation': 'robot',
-             'camera': 'camera',
-             'climate': 'home-thermometer-outline',
-             'cover': 'window-shutter',
-             'fan': 'fan',
-             'input_number': 'sort-numeric-variant',
-             'input_select': 'form-select',
-             'input_text': 'form-textbox',
-             'input_time': 'clock',
-             'light': 'lightbulb-outline',
-             'media_player': 'speaker',
-             'script': 'script-text',
-             'switch': 'flash',
-             'vacuum': 'robot-vacuum'};
+  var map = {
+    'automation': 'robot',
+    'camera': 'camera',
+    'climate': 'home-thermometer-outline',
+    'cover': 'window-shutter',
+    'fan': 'fan',
+    'input_number': 'sort-numeric-variant',
+    'input_select': 'form-select',
+    'input_text': 'form-textbox',
+    'input_time': 'clock',
+    'light': 'lightbulb-outline',
+    'media_player': 'speaker',
+    'script': 'script-text',
+    'switch': 'flash',
+    'vacuum': 'robot-vacuum'
+  };
   if (domain in map) return map[domain];
   return 'folder-outline';
 }
+
+
+
+export function getNameForDomain(domain: string): string {
+  if (domain == 'climate') return localize('domains.climate')
+  else if (domain == 'cover') return localize('domains.cover')
+  else if (domain == 'fan') return localize('domains.fan')
+  else if (domain == 'light') return localize('domains.light')
+  else if (domain == 'switch') return localize('domains.switches')
+  else if (domain == 'vacuum') return localize('domains.vacuum')
+  return domain;
+}
+
 
 export function getIconForAction(action: string): string {
   if (action == 'turn_on') return 'toggle-switch-outline';
@@ -98,12 +118,10 @@ export function getIconForAction(action: string): string {
   return 'flash';
 }
 
-export function getGroupNameForDomain(domain: string): string {
-  if (domain == 'light') return 'lights';
-  else if (domain == 'cover') return 'covers';
-  else if (domain == 'switch') return 'switches';
-  else if (domain == 'climate') return 'climate';
-  else if (domain == 'fan') return 'fans';
-  else if (domain == 'vacuum') return 'vacuum';
-  return domain;
+export function getNameForService(service: string): string {
+  if (service == 'turn_on') return localize('services.turn_on')
+  else if (service == 'turn_off') return localize('services.turn_off')
+  else if (service == 'open_cover') return localize('services.open_cover')
+  else if (service == 'close_cover') return localize('services.close_cover')
+  return service;
 }

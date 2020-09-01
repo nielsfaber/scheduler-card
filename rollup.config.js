@@ -3,8 +3,8 @@ import typescript from 'rollup-plugin-typescript2';
 import babel from 'rollup-plugin-babel';
 import serve from 'rollup-plugin-serve';
 import json from '@rollup/plugin-json';
-import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
+import commonjs from '@rollup/plugin-commonjs';
 
 const dev = process.env.ROLLUP_WATCH;
 
@@ -22,9 +22,13 @@ const plugins = [
   nodeResolve(),
   typescript(),
   json(),
-  babel(),
-  commonjs(),
-  terser(),
+  babel({
+    exclude: 'node_modules/**',
+  }),
+  commonjs({
+    include: 'node_modules/zod/**'
+  }),
+  terser()
 ];
 
 export default [

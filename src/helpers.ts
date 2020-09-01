@@ -1,8 +1,10 @@
 
-import _ from "lodash";
-import slugify from "slugify";
+import { pick, values, omit, keys } from "lodash-es";
 import { IUserSelection, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, IScheduleAction } from './types'
 import { Config } from './config-parser'
+import { localize } from './localize/localize';
+
+function slugify(e, _v) { return e }
 
 const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
 const ActionPattern = /^(A([0-9]+))+$/
@@ -14,8 +16,8 @@ export function ExportToHass(userData: IUserSelection, configData: Config): IHas
   let entityCfg = configData.GetEntity(userData.entity);
   let actionCfg = configData.GetAction(userData.entity, userData.action);
 
-  let action: IHassAction = _.pick(actionCfg, ['service', 'service_data']);
-  _.assign(action, { entity: entityCfg.id });
+  let action = pick(actionCfg, ['service', 'service_data']) as IHassAction;
+  Object.assign(action, { entity: entityCfg.id });
 
   if (!getDomainFromEntityId(action['service'])) action['service'] = getDomainFromEntityId(action['entity']) + "." + action['service'];
 
@@ -68,12 +70,12 @@ export function getDomainFromEntityId(entity_id: string): string {
 
 
 export function CreateSlug(input: IDictionary<any>) {
-  let keys = _(input).keys();
-  keys = keys.sort();
+  let props = keys(input);
+  props = props.sort();
   let obj = {};
-  _(keys).each(key => obj[key] = input[key]);
+  props.forEach(prop => obj[prop] = input[prop]);
 
-  return slugify(JSON.stringify(_.values(obj)).replace(/\W/g, ' '), '_');
+  return slugify(JSON.stringify(values(obj)).replace(/\W/g, ' '), '_');
 }
 
 
@@ -126,7 +128,7 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
   let actions: IScheduleAction[] = hassData.attributes['actions'].map(action => {
     let entity_id = getDomainFromEntityId(action['entity']) ? action['entity'] : getDomainFromEntityId(action['service']) + "." + action['entity'];
     let service = action['service'];
-    let service_data = _.omit(action, ['service', 'entity']);
+    let service_data = omit(action, ['service', 'entity']);
     if (getDomainFromEntityId(entity_id) == getDomainFromEntityId(service)) service = service.split(".").pop();
 
     if (!configData.GetEntity(entity_id)) {
@@ -161,21 +163,21 @@ export function ComputeDaysType(dayArray: number[]): string {
 }
 
 export function PrettyPrintDays(dayArray: number[]): string {
-  if (ComputeDaysType(dayArray) == 'daily') return 'every day';
-  else if (ComputeDaysType(dayArray) == 'weekdays') return 'on weekdays';
+  if (ComputeDaysType(dayArray) == 'daily') return localize('fields.day_type_daily');
+  else if (ComputeDaysType(dayArray) == 'weekdays') return `${localize('words.on')} ${localize('fields.day_type_weekdays')}`;
   else {
     let output = Array();
-    if (dayArray.includes(1)) output.push('monday');
-    if (dayArray.includes(2)) output.push('tuesday');
-    if (dayArray.includes(3)) output.push('wednesday');
-    if (dayArray.includes(4)) output.push('thursday');
-    if (dayArray.includes(5)) output.push('friday');
-    if (dayArray.includes(6)) output.push('saturday');
-    if (dayArray.includes(7)) output.push('sunday');
+    if (dayArray.includes(1)) output.push(localize('days_long.mon'));
+    if (dayArray.includes(2)) output.push(localize('days_long.tue'));
+    if (dayArray.includes(3)) output.push(localize('days_long.wed'));
+    if (dayArray.includes(4)) output.push(localize('days_long.thu'));
+    if (dayArray.includes(5)) output.push(localize('days_long.fri'));
+    if (dayArray.includes(6)) output.push(localize('days_long.sat'));
+    if (dayArray.includes(7)) output.push(localize('days_long.sun'));
     let output_str = output.join(', ');
     var n = output_str.lastIndexOf(', ');
-    if (n) output_str = output_str.slice(0, n) + output_str.slice(n).replace(', ', ' and ');
-    return `every ${output_str}`;
+    if (n) output_str = output_str.slice(0, n) + output_str.slice(n).replace(', ', ` ${localize('words.and')} `);
+    return `${localize('words.every')} ${output_str}`;
   }
 }
 
@@ -183,10 +185,10 @@ export function PrettyPrintTime(timeData: IDictionary<string>): string {
   if (timeData.event) {
     let res = TimeOffsetPattern.exec(timeData.offset);
     let offset = Number(res![2]) + Number(res![3]) / 60;
-    if (Math.abs(offset) < 1 / 6) return `at ${timeData.event} (${timeData.time})`;
-    else return `${res![2]}:${res![3]} ${res![1] == '+' ? 'after' : 'before'} ${timeData.event} (${timeData.time})`;
+    if (Math.abs(offset) < 1 / 6) return `${localize('words.at')} ${timeData.event} (${timeData.time})`;
+    else return `${res![2]}:${res![3]} ${res![1] == '+' ? localize('words.after') : localize('words.before')} ${localize(`words.${timeData.event}`)} (${timeData.time})`;
   } else {
-    return `at ${timeData.time}`;
+    return `${localize('words.at')} ${timeData.time}`;
   }
 
 }

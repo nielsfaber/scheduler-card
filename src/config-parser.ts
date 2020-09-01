@@ -1,7 +1,8 @@
 
-import _ from "lodash";
+import { defaults, forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, keyBy, pickBy } from "lodash-es";
+
 import { IDictionary, IEntityConfigEntry, IGroupConfigEntry, IButtonEntry, IActionConfigEntry, IConfig } from './types'
-import { defaultDomainConfig, getIconForDomain, getIconForAction, getGroupNameForDomain } from './default-config'
+import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService } from './default-config'
 import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity } from './helpers'
 
 
@@ -22,7 +23,7 @@ export class Config {
     else this.userConfig = userConfig;
 
     if (userConfig.groups) {
-      _.each(userConfig.groups, this.CreateGroup.bind(this));
+      each(userConfig.groups, this.CreateGroup.bind(this));
     }
 
     this.discoverExisting = (userConfig.discoverExisting !== undefined) ? userConfig.discoverExisting : true;
@@ -31,8 +32,8 @@ export class Config {
   CreateGroup(cfg: object, id: string) {
     let data = { ...cfg };
     if (this.groups[id]) return;
-    _.defaults(data, {
-      name: getGroupNameForDomain(id),
+    defaults(data, {
+      name: getNameForDomain(id),
       domains: [],
       entities: [],
     });
@@ -41,7 +42,15 @@ export class Config {
 
   FindGroupForEntity(entity_id: string): boolean {
     let domain = getDomainFromEntityId(entity_id);
-    let res = _.find(this.groups, e => { return e.domains.includes(domain) || e.entities.includes(entity_id) });
+    let res = find(this.groups, e => {
+      if (e.domains && Array.isArray(e.domains)) {
+        if (e.domains.includes(domain)) return true;
+      }
+      if (e.entities && Array.isArray(e.entities)) {
+        if (e.entities.includes(entity_id)) return true;
+      }
+      return false;
+    });
     if (res) return true;
     else return false;
   }
@@ -58,10 +67,10 @@ export class Config {
 
   AddEntityInfo(entity_id: string, cfg: IEntityConfigEntry) {
     if (this.entities[entity_id]) {
-      Object.assign(this.entities[entity_id], _.omit({ ...cfg }, 'actions'));
-      if (_(cfg).has('actions')) {
-        _(cfg.actions).each(action => {
-          let match = _(this.entities[entity_id]['actions']).find(e => { return CreateSlug(_.pick(e, ['service', 'service_data'])) == CreateSlug(_.pick(action, ['service', 'service_data'])) });
+      Object.assign(this.entities[entity_id], omit({ ...cfg }, 'actions'));
+      if (has(cfg, 'actions')) {
+        each(cfg.actions, action => {
+          let match = find(this.entities[entity_id]['actions'], e => { return CreateSlug(pick(e, ['service', 'service_data'])) == CreateSlug(pick(action, ['service', 'service_data'])) });
           if (match) return;
           let actions = [... this.entities[entity_id]['actions']];
           actions.push(action);
@@ -71,14 +80,14 @@ export class Config {
     }
     else {
       let entry = Object.assign({ ...cfg }, { id: entity_id });
-      _.defaults(entry, { actions: [] });
+      defaults(entry, { actions: [] });
       this.entities[entity_id] = entry;
     }
     if (!this.FindGroupForEntity(entity_id)) this.AddEntityToGroup(entity_id);
   }
 
-  LoadEntities(entityList: object) {
-    _.each(entityList, entity => {
+  LoadEntities(entityList) {
+    forEach(entityList, entity => {
       let entity_id: string = entity.entity_id;
       let domain: string = getDomainFromEntityId(entity_id)!;
 
@@ -94,44 +103,43 @@ export class Config {
     });
 
     if (this.discoverExisting) {
-      _(entityList)
-        .filter(e => IsSchedulerEntity(e.entity_id))
-        .map(e => { return e.attributes['actions'] })
-        .flatten()
-        .each(item => {
-          let config = { ...item }
-          if (!getDomainFromEntityId(config['entity'])) {
-            config['entity'] = getDomainFromEntityId(config['service']) + "." + config['entity'];
-            config['service'] = config['service'].split('.').pop();
-          }
-          let service_data = _.omit(config, ['entity', 'service']);
-          if (service_data) {
-            this.AddEntityInfo(config['entity'], {
-              actions: [{ service: config['service'], service_data: service_data }]
-            });
-          }
-          else {
-            this.AddEntityInfo(config['entity'], {
-              actions: [_.pick(config, 'service')]
-            });
-          }
-        })
+      let res = filter(entityList, e => IsSchedulerEntity(e.entity_id));
+      res = map(res, e => { return e.attributes['actions'] });
+      res = flatten(res);
+      each(res, item => {
+        let config = { ...item }
+        if (!getDomainFromEntityId(config['entity'])) {
+          config['entity'] = getDomainFromEntityId(config['service']) + "." + config['entity'];
+          config['service'] = config['service'].split('.').pop();
+        }
+        let service_data = omit(config, ['entity', 'service']);
+        if (service_data) {
+          this.AddEntityInfo(config['entity'], {
+            actions: [{ service: config['service'], service_data: service_data }]
+          });
+        }
+        else {
+          this.AddEntityInfo(config['entity'], {
+            actions: [pick(config, 'service')]
+          });
+        }
+      })
     }
 
-    _.each(this.entities, (cfg, entity_id) => {
-      _.defaults(cfg, {
+    each(this.entities, (cfg, entity_id) => {
+      defaults(cfg, {
         name: entityList[entity_id].attributes['friendly_name'],
         icon: getIconForDomain(getDomainFromEntityId(entity_id))
       });
 
       Object.assign(cfg, {
-        actions: _.mapValues(cfg['actions'], action => {
+        actions: map(cfg['actions'], action => {
           let config = { ...action };
-          _.defaults(config, {
-            name: action['service'],
+          defaults(config, {
+            name: getNameForService(action['service']),
             icon: getIconForAction(action['service'])
           });
-          Object.assign(config, { id: CreateSlug(_.pick(action, ['service', 'service_data'])) });
+          Object.assign(config, { id: CreateSlug(pick(action, ['service', 'service_data'])) });
           return config;
         })
       });
@@ -144,8 +152,8 @@ export class Config {
   }
 
   GetGroups(): IDictionary<IButtonEntry> {
-    return _.mapValues(this.groups, el => {
-      return _.pick(el, ['name', 'icon']);
+    return mapValues(this.groups, el => {
+      return pick(el, ['name', 'icon']) as IButtonEntry
     });
   }
 
@@ -154,7 +162,7 @@ export class Config {
     if (!group_id) entities = this.entities;
     else {
       let groupCfg = this.groups[group_id];
-      entities = _.pickBy(this.entities, (_entityCfg, entity_id) => {
+      entities = pickBy(this.entities, (_entityCfg, entity_id) => {
         let domain = getDomainFromEntityId(entity_id);
         if (groupCfg['domains'] && groupCfg['domains'].includes(domain)) return true;
         else if (groupCfg['entities'] && groupCfg['entities'].includes(entity_id)) return true;
@@ -162,8 +170,8 @@ export class Config {
       });
     }
 
-    return _.mapValues(entities, el => {
-      return _.pick(el, ['name', 'icon']);
+    return mapValues(entities, el => {
+      return pick(el, ['name', 'icon']);
     });
   }
 
@@ -173,16 +181,20 @@ export class Config {
 
   GetActions(entity_id: string): IDictionary<IButtonEntry> {
     let entityCfg = this.entities[entity_id];
-    let actions = _.keyBy(entityCfg['actions'], 'id');
+    let actions = keyBy(entityCfg['actions'], 'id');
 
-    return _.mapValues(actions, el => {
-      return _.pick(el, ['name', 'icon']);
+    return mapValues(actions, el => {
+      return pick(el, ['name', 'icon']) as IButtonEntry
     });
   }
 
-  GetAction(entity_id: string, action_id: string): IActionConfigEntry {
+  GetAction(entity_id: string, action_id: string): IActionConfigEntry | null {
     let entityCfg = this.entities[entity_id];
-    return _.find(entityCfg.actions, { id: action_id });
+    if (!entityCfg) return null;
+    let res = find(entityCfg.actions, { id: action_id });
+    if (res) return res as IActionConfigEntry;
+    else return null;
+
   }
 
 }
