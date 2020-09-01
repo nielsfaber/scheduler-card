@@ -70,11 +70,12 @@ If you want to use other entities and/or actions, then keep reading.
 ## Domains
 With the `domain:` option, you can specify configuration options for all entities in HA of the same type (domain).
 
+Note: when `domain` is used, ALL entities that you have in HA belonging to this domain will show up in the card.
+
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
 | domain | key | **Required** | Entity domain from home assistant
 | actions | list | none | See [actions](#actions)
-| group | string | none | Group under which the entities need to be displayed
 | icon | string | none | Displayed icon for entities in the domain (overwrites HA config)
 
 Example:
