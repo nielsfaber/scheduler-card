@@ -6,6 +6,7 @@ export interface IDictionary<TValue> {
 export interface IButtonEntry {
   icon?: string,
   name: string,
+  key: string,
 }
 
 export interface IActionConfigEntry {

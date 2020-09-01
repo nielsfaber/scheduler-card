@@ -78,7 +78,6 @@ export function CreateSlug(input: IDictionary<any>) {
   return slugify(JSON.stringify(values(obj)).replace(/\W/g, ' '), '_');
 }
 
-
 export function IsSchedulerEntity(entity_id: string) {
   return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
 }

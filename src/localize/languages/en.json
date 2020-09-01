@@ -1,4 +1,5 @@
 {
+  "scheduler": "Scheduler",
   "actions": {
     "add": "add item",
     "cancel": "cancel",
@@ -23,7 +24,8 @@
     "options": "Options",
     "day_type_daily": "every day",
     "day_type_weekdays": "weekdays",
-    "day_type_custom": "custom"
+    "day_type_custom": "custom",
+    "shift_with_sun": "automatically adjust time to sunrise/sunset"
   },
   "days_short": {
     "mon": "mon",

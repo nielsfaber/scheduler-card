@@ -1,4 +1,5 @@
 {
+  "scheduler": "Scheduler",
   "actions": {
     "add": "Nieuw item",
     "cancel": "annuleren",
@@ -23,7 +24,8 @@
     "options": "Opties",
     "day_type_daily": "Dagelijks",
     "day_type_weekdays": "Werkdagen",
-    "day_type_custom": "Anders"
+    "day_type_custom": "Anders",
+    "shift_with_sun": "Automatisch aanpassen aan zonsopgang/zonsondergang"
   },
   "days_short": {
     "mon": "ma",

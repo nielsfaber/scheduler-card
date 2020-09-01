@@ -1,7 +1,7 @@
 
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { find, filter, pick, extend, map, pull, size } from "lodash-es";
+import { find, filter, pick, extend, pull } from "lodash-es";
 
 
 import { Config } from './config-parser';
@@ -78,7 +78,7 @@ export class SchedulerCard extends LitElement {
     if (!this.selection.newItem && !this.selection.editItem) {
       return html`
       <ha-card>
-        <div class="card-header">Scheduler</div>
+        <div class="card-header">${localize('scheduler')}</div>
         <div class="card-section first">
         ${this.getEntries()}
         </div>
@@ -91,7 +91,7 @@ export class SchedulerCard extends LitElement {
     } else if (this.selection.newItem && !this.selection.actionConfirmed) {
       return html`
         <ha-card>
-          <div class="card-header">Scheduler</div>
+          <div class="card-header">${localize('scheduler')}</div>
           <div class="card-section first">
             <div class="header">${localize('fields.group')}</div>
             <div class="option-list">
@@ -116,7 +116,7 @@ export class SchedulerCard extends LitElement {
     else {
       return html`
       <ha-card>
-        <div class="card-header">Scheduler</div>
+        <div class="card-header">${localize('scheduler')}</div>
         ${this.showEditor()}
       </ha-card>
       `;
@@ -209,10 +209,10 @@ export class SchedulerCard extends LitElement {
 
   getGroups(): TemplateResult[] {
     let groups = this.Config.GetGroups();
-    if (!size(groups)) return [html`<div class="text-field">${localize('instructions.no_groups_defined')}</div>`];
-    return map(groups, (el: IButtonEntry, key: string) => {
+    if (!groups.length) return [html`<div class="text-field">${localize('instructions.no_groups_defined')}</div>`];
+    return groups.map((el: IButtonEntry) => {
       return html`
-        <mwc-button class="${this.selection.group == key ? ' active' : ''}" @click="${() => { this.selectGroup(key) }}">
+        <mwc-button class="${this.selection.group == el.key ? ' active' : ''}" @click="${() => { this.selectGroup(el.key) }}">
           ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
@@ -232,10 +232,10 @@ export class SchedulerCard extends LitElement {
   getEntities(): TemplateResult[] {
     if (!this.selection.group) return [html`<div class="text-field">${localize('instructions.no_group_selected')}</div>`];
     let entities = this.Config.GetEntities(this.selection.group);
-    if (!size(entities)) return [html`<div class="text-field">${localize('instructions.no_entities_for_group')}</div>`];
-    return map(entities, (el: IButtonEntry, key: string) => {
+    if (!entities.length) return [html`<div class="text-field">${localize('instructions.no_entities_for_group')}</div>`];
+    return entities.map((el: IButtonEntry) => {
       return html`
-        <mwc-button class="${this.selection.entity == key ? ' active' : ''}" @click="${() => { this.selectEntity(key) }}">
+        <mwc-button class="${this.selection.entity == el.key ? ' active' : ''}" @click="${() => { this.selectEntity(el.key) }}">
           ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
@@ -254,10 +254,10 @@ export class SchedulerCard extends LitElement {
   getActions(): TemplateResult[] {
     if (!this.selection.entity) return [html`<div class="text-field">${localize('instructions.no_entity_selected')}</div>`];
     let actions = this.Config.GetActions(this.selection.entity);
-    if (!size(actions)) return [html`<div class="text-field">${localize('instructions.no_actions_for_entity')}</div>`];
-    return map(actions, (el: IButtonEntry, key: string) => {
+    if (!actions.length) return [html`<div class="text-field">${localize('instructions.no_actions_for_entity')}</div>`];
+    return actions.map((el: IButtonEntry) => {
       return html`
-        <mwc-button class="${this.selection.action == key ? ' active' : ''}" @click="${() => { this.selectAction(key) }}">
+        <mwc-button class="${this.selection.action == el.key ? ' active' : ''}" @click="${() => { this.selectAction(el.key) }}">
           ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
@@ -361,7 +361,7 @@ export class SchedulerCard extends LitElement {
     <div class="card-section">
       <div class="header">${localize('fields.options')}</div>
         <div class="option-item">
-          ${this.selection.sun ? html`<paper-checkbox checked name="option-item-sun" @change="${(e) => this.toggleSun(e.target.checked)}">automatically adjust time to sunrise/sunset</paper-checkbox>` : html`<paper-checkbox name="option-item-sun" @change="${(e) => this.toggleSun(e.target)}">automatically adjust time to sunrise/sunset</paper-checkbox>`}
+          ${this.selection.sun ? html`<paper-checkbox checked name="option-item-sun" @change="${(e) => this.toggleSun(e.target.checked)}">${localize('fields.shift_with_sun')}</paper-checkbox>` : html`<paper-checkbox name="option-item-sun" @change="${(e) => this.toggleSun(e.target)}">${localize('fields.shift_with_sun')}</paper-checkbox>`}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 
-import { defaults, forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, keyBy, pickBy } from "lodash-es";
+import { defaults, forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, keyBy, pickBy, sortBy } from "lodash-es";
 
 import { IDictionary, IEntityConfigEntry, IGroupConfigEntry, IButtonEntry, IActionConfigEntry, IConfig } from './types'
 import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService } from './default-config'
@@ -152,9 +152,12 @@ export class Config {
   }
 
   GetGroups(): IDictionary<IButtonEntry> {
-    return mapValues(this.groups, el => {
+    let output = mapValues(this.groups, el => {
       return pick(el, ['name', 'icon']) as IButtonEntry
     });
+    each(output, (item, key) => { Object.assign(item, { key: key }) });
+    output = sortBy(output, 'name');
+    return output;
   }
 
   GetEntities(group_id: string): IDictionary<IButtonEntry> {
@@ -170,9 +173,12 @@ export class Config {
       });
     }
 
-    return mapValues(entities, el => {
+    let output = mapValues(entities, el => {
       return pick(el, ['name', 'icon']);
     });
+    each(output, (item, key) => { Object.assign(item, { key: key }) });
+    output = sortBy(output, 'name');
+    return output;
   }
 
   GetEntity(entity_id: string): IEntityConfigEntry {
@@ -183,9 +189,12 @@ export class Config {
     let entityCfg = this.entities[entity_id];
     let actions = keyBy(entityCfg['actions'], 'id');
 
-    return mapValues(actions, el => {
+    let output = mapValues(actions, el => {
       return pick(el, ['name', 'icon']) as IButtonEntry
     });
+    each(output, (item, key) => { Object.assign(item, { key: key }) });
+    output = sortBy(output, 'name');
+    return output;
   }
 
   GetAction(entity_id: string, action_id: string): IActionConfigEntry | null {
