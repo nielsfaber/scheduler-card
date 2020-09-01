@@ -79,11 +79,10 @@ Note: when `domain` is used, ALL entities that you have in HA belonging to this 
 | icon | string | none | Displayed icon for entities in the domain (overwrites HA config)
 
 Example:
-if you want to be able to turn on/turn off different lamps in your house, you could add the following:
+if you want to be able to turn on/turn off all the lamps in your house, you could add the following:
 ```yaml
 domains:
   light:
-    name: My lamps
     actions:
       - service: turn_on
       - service: turn_off
