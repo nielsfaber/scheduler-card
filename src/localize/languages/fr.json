@@ -1,0 +1,73 @@
+{
+  "scheduler": "Planificateur",
+  "actions": {
+    "add": "ajouter un item",
+    "cancel": "canceller",
+    "next": "suivant",
+    "save": "sauvegarder",
+    "delete": "effacer"
+  },
+  "instructions": {
+    "no_group_selected": "Sélectionner un groupe en premier",
+    "no_entity_selected": "Sélectionner une entité en premier",
+    "no_groups_defined": "Il n'y a pas de groupe défini",
+    "no_entities_for_group": "Il n'y a pas d'entité dans ce groupe",
+    "no_actions_for_entity": "Il n'y a pas d'action pour cette entité",
+    "no_entries_defined": "Il n'y a pas d'item à afficher"
+  },
+  "fields": {
+    "group": "Group"e,
+    "entity": "Entité",
+    "action": "Action",
+    "days": "DJours",
+    "time": "Temps",
+    "options": "Options",
+    "day_type_daily": "chaque jour",
+    "day_type_weekdays": "en semaine",
+    "day_type_custom": "sur mesure",
+    "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mer",
+    "thu": "jeu",
+    "fri": "ven",
+    "sat": "sam",
+    "sun": "dim"
+  },
+  "days_long": {
+    "mon": "lundi",
+    "tue": "mardi",
+    "wed": "mercredi",
+    "thu": "jeudi",
+    "fri": "vendredi",
+    "sat": "samedi",
+    "sun": "dimanche"
+  },
+  "words": {
+    "on": "marche",
+    "every": "tout",
+    "and": "et",
+    "at": "à",
+    "before": "avant",
+    "after": "après",
+    "sunrise": "lever du soleil",
+    "sunset": "coucher du soleil"
+  },
+  "services": {
+    "turn_on": "allumer",
+    "turn_off": "éteindre",
+    "close_cover": "fermer",
+    "open_cover": "ouvrir",
+    "set_temperature": "défini à"
+  },
+  "domains": {
+    "climate": "climat",
+    "cover": "contrôleur",
+    "fan": "ventilateur",
+    "light": "lumière",
+    "switch": "interrupteurs",
+    "vacuum": "aspirateur"
+  }
+}
