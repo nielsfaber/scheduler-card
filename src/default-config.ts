@@ -103,7 +103,7 @@ export function getNameForDomain(domain: string): string {
   else if (domain == 'cover') return localize('domains.cover')
   else if (domain == 'fan') return localize('domains.fan')
   else if (domain == 'light') return localize('domains.light')
-  else if (domain == 'switch') return localize('domains.switches')
+  else if (domain == 'switch') return localize('domains.switch')
   else if (domain == 'vacuum') return localize('domains.vacuum')
   return domain;
 }

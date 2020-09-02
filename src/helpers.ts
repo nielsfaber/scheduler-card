@@ -1,10 +1,9 @@
 
 import { pick, values, omit, keys } from "lodash-es";
+import slugify from "slugify";
 import { IUserSelection, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, IScheduleAction } from './types'
 import { Config } from './config-parser'
 import { localize } from './localize/localize';
-
-function slugify(e, _v) { return e }
 
 const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
 const ActionPattern = /^(A([0-9]+))+$/
