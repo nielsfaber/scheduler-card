@@ -1,5 +1,5 @@
 {
-  "scheduler": "Scheduler",
+  "scheduler": "Tijdplanner",
   "actions": {
     "add": "Nieuw item",
     "cancel": "annuleren",
