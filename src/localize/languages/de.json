@@ -1,0 +1,73 @@
+{
+  "scheduler": "Zeitplaner",
+  "actions": {
+    "add": "hinzufügen",
+    "cancel": "abbrechen",
+    "next": "weiter",
+    "save": "speichern",
+    "delete": "löschen"
+  },
+  "instructions": {
+    "no_group_selected": "Wähle zuerst eine Gruppe aus",
+    "no_entity_selected": "Wähle zuerst eine Entity aus",
+    "no_groups_defined": "Es gibt keine Gruppe",
+    "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
+    "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
+    "no_entries_defined": "Es gibt keine Einträge"
+  },
+  "fields": {
+    "group": "Gruppe",
+    "entity": "Entity",
+    "action": "Aktion",
+    "days": "Tage",
+    "time": "Zeit",
+    "options": "Optionen",
+    "day_type_daily": "jeden Tag",
+    "day_type_weekdays": "Werktags",
+    "day_type_custom": "benutzerdefiniert",
+    "shift_with_sun": "Zeit automatisch an Sonnenauf- bzw. Sonnenuntergang anpassen"
+  },
+  "days_short": {
+    "mon": "Mo",
+    "tue": "Di",
+    "wed": "Mi",
+    "thu": "Do",
+    "fri": "Fr",
+    "sat": "Sa",
+    "sun": "So"
+  },
+  "days_long": {
+    "mon": "Montag",
+    "tue": "Dienstag",
+    "wed": "Mittwoch",
+    "thu": "Donnerstag",
+    "fri": "Freitag",
+    "sat": "Samstag",
+    "sun": "Sonntag"
+  },
+  "words": {
+    "on": "An",
+    "every": "jeden",
+    "and": "und",
+    "at": "um",
+    "before": "vor",
+    "after": "nach",
+    "sunrise": "Sonnnnenaufgang",
+    "sunset": "Sonnenuntergang"
+  },
+  "services": {
+    "turn_on": "anschalten",
+    "turn_off": "ausschalten",
+    "close_cover": "schließen",
+    "open_cover": "öffnen",
+    "set_temperature": "setzen auf"
+  },
+  "domains": {
+    "climate": "Heizung",
+    "cover": "Beschattung",
+    "fan": "Lüfter",
+    "light": "Licht",
+    "switch": "Schalter",
+    "vacuum": "Staubsauger"
+  }
+}
