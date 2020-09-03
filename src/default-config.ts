@@ -1,14 +1,14 @@
 
-import { IDictionary, IEntityConfigEntry, IGroupConfigEntry, IUserSelection } from './types'
+import { IDictionary, IDomainConfig, IUserSelection } from './types'
 import { localize } from './localize/localize';
 
 
-export const defaultDomainConfig: IDictionary<IEntityConfigEntry> = {
+export const defaultDomainConfig: IDictionary<IDomainConfig> = {
   "light": {
     "actions": [
       {
         "service": "turn_on",
-        "icon": "lightbulb-outline",
+        "icon": "lightbulb-on-outline",
         "name": localize('services.turn_on')
       },
       {
@@ -99,13 +99,15 @@ export function getIconForDomain(domain: string): string {
 
 
 export function getNameForDomain(domain: string): string {
-  if (domain == 'climate') return localize('domains.climate')
-  else if (domain == 'cover') return localize('domains.cover')
-  else if (domain == 'fan') return localize('domains.fan')
-  else if (domain == 'light') return localize('domains.light')
-  else if (domain == 'switch') return localize('domains.switch')
-  else if (domain == 'vacuum') return localize('domains.vacuum')
-  return domain;
+  let result: string | null = null;
+  if (domain == 'climate') result = localize('domains.climate')
+  else if (domain == 'cover') result = localize('domains.cover')
+  else if (domain == 'fan') result = localize('domains.fan')
+  else if (domain == 'light') result = localize('domains.light')
+  else if (domain == 'switch') result = localize('domains.switch')
+  else if (domain == 'vacuum') result = localize('domains.vacuum')
+  if (result) return result;
+  else return domain;
 }
 
 
@@ -123,5 +125,6 @@ export function getNameForService(service: string): string {
   else if (service == 'turn_off') return localize('services.turn_off')
   else if (service == 'open_cover') return localize('services.open_cover')
   else if (service == 'close_cover') return localize('services.close_cover')
+  if (service.indexOf('.') !== -1) return service.split('.').pop()!;
   return service;
 }

@@ -5,9 +5,9 @@ import { find, filter, pick, extend, pull } from "lodash-es";
 
 
 import { Config } from './config-parser';
-import { IButtonEntry, IUserSelection } from './types'
+import { IEntityElement, IGroupElement, IActionElement, IUserSelection } from './types'
 import { DefaultUserSelection } from './default-config'
-import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, ComputeDaysType, PrettyPrintName, IsSchedulerEntity } from './helpers'
+import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, ComputeDaysType, IsSchedulerEntity } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
 import { CARD_VERSION } from './const'
@@ -35,7 +35,7 @@ export class SchedulerCard extends LitElement {
   }
 
   @property()
-  Config;
+  Config: Config = new Config;
 
   entries: any[] = [];
 
@@ -153,13 +153,14 @@ export class SchedulerCard extends LitElement {
     `];
     return this.entries.map(entry => {
       if (!entry.actions[0]) return html``;
-      let entity = this.Config.GetEntity(entry.actions[0].entity);
-      let action = this.Config.GetAction(entry.actions[0].entity, entry.actions[0].action);
+      let entity = this.Config.FindEntity(entry.actions[0].entity);
+      let action = this.Config.FindAction(entry.actions[0].entity, entry.actions[0].action);
+      if (!entity || !action) return html``;
 
       return html`
       <div class="list-item${entry['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(entry.id)}">
         <div class="list-item-icon">
-          ${entity.icon ? html`<ha-icon icon="hass:${entity.icon}"></ha-icon>` : ''}
+          ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
         </div>
         <div class="list-item-name">
           ${PrettyPrintName(entity.name)}
@@ -210,10 +211,10 @@ export class SchedulerCard extends LitElement {
   getGroups(): TemplateResult[] {
     let groups = this.Config.GetGroups();
     if (!groups.length) return [html`<div class="text-field">${localize('instructions.no_groups_defined')}</div>`];
-    return groups.map((el: IButtonEntry) => {
+    return groups.map((el: IGroupElement) => {
       return html`
-        <mwc-button class="${this.selection.group == el.key ? ' active' : ''}" @click="${() => { this.selectGroup(el.key) }}">
-          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
+        <mwc-button class="${this.selection.group == el.id ? ' active' : ''}" @click="${() => { this.selectGroup(el.id) }}">
+          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -231,12 +232,12 @@ export class SchedulerCard extends LitElement {
 
   getEntities(): TemplateResult[] {
     if (!this.selection.group) return [html`<div class="text-field">${localize('instructions.no_group_selected')}</div>`];
-    let entities = this.Config.GetEntities(this.selection.group);
+    let entities = this.Config.GetEntitiesForGroup(this.selection.group);
     if (!entities.length) return [html`<div class="text-field">${localize('instructions.no_entities_for_group')}</div>`];
-    return entities.map((el: IButtonEntry) => {
+    return entities.map((el: IEntityElement) => {
       return html`
-        <mwc-button class="${this.selection.entity == el.key ? ' active' : ''}" @click="${() => { this.selectEntity(el.key) }}">
-          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
+        <mwc-button class="${this.selection.entity == el.id ? ' active' : ''}" @click="${() => { this.selectEntity(el.id) }}">
+          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -253,12 +254,12 @@ export class SchedulerCard extends LitElement {
 
   getActions(): TemplateResult[] {
     if (!this.selection.entity) return [html`<div class="text-field">${localize('instructions.no_entity_selected')}</div>`];
-    let actions = this.Config.GetActions(this.selection.entity);
+    let actions = this.Config.GetActionsForEntity(this.selection.entity);
     if (!actions.length) return [html`<div class="text-field">${localize('instructions.no_actions_for_entity')}</div>`];
-    return actions.map((el: IButtonEntry) => {
+    return actions.map((el: IActionElement) => {
       return html`
-        <mwc-button class="${this.selection.action == el.key ? ' active' : ''}" @click="${() => { this.selectAction(el.key) }}">
-          ${el.icon ? html`<ha-icon icon="hass:${el.icon}" class="padded-right"></ha-icon>` : ''}
+        <mwc-button class="${this.selection.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
+          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
@@ -274,12 +275,13 @@ export class SchedulerCard extends LitElement {
 
   setConfig(config) {
     ValidateConfig(config);
-    this.Config = new Config(config);
+    this.Config.setUserConfig(config);
   }
 
   showEditor(): TemplateResult {
-    let entity = this.Config.GetEntity(this.selection.entity);
-    let action = this.Config.GetAction(this.selection.entity, this.selection.action);
+    let entity = this.Config.FindEntity(this.selection.entity);
+    let action = this.Config.FindAction(this.selection.entity, this.selection.action);
+    if (!entity || !action) return html``;
 
     return html`
     <div class="card-section first">
@@ -287,7 +289,7 @@ export class SchedulerCard extends LitElement {
       <div class="summary">
         <div class="summary-entity">
           <div class="summary-icon">
-            ${entity.icon ? html`<ha-icon icon="hass:${entity.icon}"></ha-icon>` : ''}
+            ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
           </div>
           <div class="summary-text">
             ${PrettyPrintName(entity.name)}
@@ -298,7 +300,7 @@ export class SchedulerCard extends LitElement {
         </div>
         <div class="summary-action">
           <div class="summary-icon">
-            ${action.icon ? html`<ha-icon icon="hass:${action.icon}"></ha-icon>` : ''}
+            ${action.icon ? html`<ha-icon icon="${PrettyPrintIcon(action.icon)}"></ha-icon>` : ''}
           </div>
           <div class="summary-text">
             ${PrettyPrintName(action.name)}

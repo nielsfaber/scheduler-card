@@ -27,5 +27,6 @@ export default [
       sourcemap: false
     },
     plugins: [...plugins],
+    context: 'window'
   },
 ];

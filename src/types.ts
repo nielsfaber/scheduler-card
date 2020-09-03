@@ -3,39 +3,67 @@ export interface IDictionary<TValue> {
   [id: string]: TValue;
 }
 
-export interface IButtonEntry {
-  icon?: string,
-  name: string,
-  key: string,
-}
-
-export interface IActionConfigEntry {
-  icon?: string,
+export interface IActionConfig {
   name?: string,
   service: string,
-  service_data?: IDictionary<any>
+  service_data?: IDictionary<any>,
+  icon?: string
 }
 
-export interface IEntityConfigEntry {
-  id?: string,
+export interface IActionElement extends IActionConfig {
+  id: string,
+  name: string,
+  service: string,
+  service_data?: IDictionary<any>,
+  icon: string
+}
+
+export interface IEntityConfig {
   icon?: string,
   name?: string,
-  actions: IActionConfigEntry[]
+  actions: IActionConfig[]
 }
 
+export interface IDomainConfig {
+  icon?: string,
+  name?: string,
+  actions: IActionConfig[]
+}
+export interface IEntityElement extends IEntityConfig {
+  id: string,
+  name: string,
+  icon: string
+  actions: IActionElement[]
+}
+
+export interface IGroupConfig {
+  domains?: string[],
+  entities?: string[],
+  name?: string,
+  icon?: string,
+}
+
+export interface IGroupElement extends IGroupConfig {
+  id: string,
+  domains: string[],
+  entities: string[],
+  name: string,
+  icon?: string,
+}
 export interface IConfig {
-  groups?: IDictionary<IGroupConfigEntry>,
-  domains?: IDictionary<IEntityConfigEntry>,
-  entities?: IDictionary<IEntityConfigEntry>,
+  groups?: IDictionary<IGroupConfig>,
+  domains?: IDictionary<IDomainConfig>,
+  entities?: IDictionary<IEntityConfig>,
   discoverExisting?: Boolean,
   standardConfiguration?: Boolean,
 }
 
-export interface IGroupConfigEntry {
-  icon?: string,
-  name?: string,
-  domains?: string[],
-  entities?: string[],
+export interface IConfigFull extends IConfig {
+  groups: IDictionary<IGroupConfig>,
+  domains: IDictionary<IDomainConfig>,
+  entities: IDictionary<IEntityConfig>,
+  discoverExisting: Boolean,
+  standardConfiguration: Boolean,
 }
 
 export interface IUserSelection {
