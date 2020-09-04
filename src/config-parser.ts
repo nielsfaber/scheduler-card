@@ -187,11 +187,12 @@ export class Config {
           name: entityList[entity_id].attributes['friendly_name'],
           icon: entityList[entity_id].attributes['icon']
         };
+        let skip_entity = false;
         if (domain in this.userConfig.domains) {
-          if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) return;
-          if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) return;
+          if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) skip_entity = true;
+          if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) skip_entity = true;
           Object.assign(cfg, omit(this.userConfig.domains[domain], 'actions'));
-          if (has(this.userConfig.domains[domain], 'actions')) {
+          if (has(this.userConfig.domains[domain], 'actions') && !skip_entity) {
             let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], this.CreateAction);
             each(actions, e => entityActions.push(e));
           }
@@ -202,7 +203,9 @@ export class Config {
             let actions: IActionElement[] = mapValues(this.userConfig.entities[entity_id]['actions'], this.CreateAction);
             each(actions, e => entityActions.push(e));
           }
+          skip_entity = false;
         }
+        if (skip_entity) return;
         this.AddEntity(cfg, entity_id);
         each(entityActions, e => this.AddActionToEntity(entity_id, e));
       }
