@@ -28,7 +28,6 @@ export class Config {
   }
 
   setUserConfig(userConfig: IConfig) {
-
     Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discoverExisting', 'standardConfiguration']));
 
     if (this.userConfig.standardConfiguration) Object.assign(this.userConfig, { domains: defaultDomainConfig });
@@ -189,6 +188,8 @@ export class Config {
           icon: entityList[entity_id].attributes['icon']
         };
         if (domain in this.userConfig.domains) {
+          if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) return;
+          if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) return;
           Object.assign(cfg, omit(this.userConfig.domains[domain], 'actions'));
           if (has(this.userConfig.domains[domain], 'actions')) {
             let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], this.CreateAction);

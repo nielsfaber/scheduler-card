@@ -5,7 +5,6 @@ const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 const ConfigSchema = {
   type: "object",
   properties: {
-    type: { type: "string" },
     discoverExisting: { type: "boolean" },
     standardConfiguration: { type: "boolean" },
     domains: {
@@ -27,6 +26,14 @@ const ConfigSchema = {
               required: ['service'],
               additionalProperties: false
             },
+          },
+          include: {
+            type: "array",
+            "items": { type: "string" }
+          },
+          exclude: {
+            type: "array",
+            "items": { type: "string" }
           }
         },
         additionalProperties: false
@@ -78,8 +85,7 @@ const ConfigSchema = {
         ]
       }
     }
-  },
-  additionalProperties: false
+  }
 }
 
 export function ValidateConfig(config: any) {
