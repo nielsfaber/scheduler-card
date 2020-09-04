@@ -113,7 +113,7 @@ entities:
       actions: 
         - service: turn_on
           service_data:
-            brightness: 100
+            brightness: 40
           name: "Turn on at 40%"
           icon: lightbulb-on-outline
   ```
