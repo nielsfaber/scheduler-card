@@ -68,15 +68,19 @@ If you want to use other entities and/or actions, then keep reading.
 | standardConfiguration | boolean | True | Automatically list `light`, `cover`, `switch` and `climate` entities if no configuration is provided.
 
 ## Domains
-With the `domain:` option, you can specify configuration options for all entities in HA of the same type (domain).
+With the `domain:` option, you can specify configuration options for multiple HA entities of the same type (domain).
 
-Note: when `domain` is used, ALL entities that you have in HA belonging to this domain will show up in the card.
+By default, ALL entities that you have in HA belonging to this domain will show up in the card.
+
+If this is undesired, you can provide the specific entities you want to `include` or provide specific entities you want to `exclude`.
 
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
 | domain | key | **Required** | Entity domain from home assistant
 | actions | list | none | See [actions](#actions)
 | icon | string | none | Displayed icon for entities in the domain (overwrites HA config)
+| include | list | none | Filter the entities for this domain, only add the entity_ids in this list 
+| exclude | list | none | Filter the entities for this domain, leave out the entity_ids in this list 
 
 Example:
 if you want to be able to turn on/turn off all the lamps in your house, you could add the following:
