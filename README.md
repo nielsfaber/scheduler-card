@@ -186,21 +186,25 @@ If the action is configured with a variable, the card allows you to choose the s
 | min | number | 0 | Minimum value that can be set
 | max | number | 255 | Maximum value that can be set
 | step | number | 1 | Step size
-| optional | boolean | false | Setting the variable is optional. The action can also be executed without this variable.
+| optional | boolean | false | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable
 | showPercentage | boolean | false | Show slider in percentage instead of from min to max.
 
-Example:
+<u>Example:</u>
+
 The Xiaomi Air Purifier can be controlled using the [xiaomi miio](https://www.home-assistant.io/integrations/xiaomi_miio/) integration.
 To be able to set the speed of this device in your action, you can use:
 ```
 - service: xiaomi_miio.fan_set_favorite_level
+  name: "set speed"
   variable:
     field: level
     name: "Speed"
     min: 1
     max: 16
-    showPercentage: true
 ```
+Which adds a slider bar to the schedule editor:
+
+![alt text](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_example.png?raw=true)
 
 ### Groups
 The `groups:` option provides the capability of organizing the entities. 
