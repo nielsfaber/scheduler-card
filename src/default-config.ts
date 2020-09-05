@@ -10,10 +10,7 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
         service: "turn_on",
         icon: "lightbulb-on-outline",
         name: localize('services.turn_on'),
-        variable: {
-          field: "brightness",
-          name: localize('fields.brightness')
-        }
+        variable: { field: "brightness" }
       },
       {
         service: "turn_off",
@@ -50,10 +47,7 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
     actions: [
       {
         service: "set_temperature",
-        variable: {
-          field: "temperature",
-          name: localize('fields.temperature')
-        },
+        variable: { field: "temperature" },
         icon: "thermometer"
       },
       {
@@ -131,6 +125,7 @@ export function getNameForService(service: string): string {
   else if (service == 'turn_off') return localize('services.turn_off')
   else if (service == 'open_cover') return localize('services.open_cover')
   else if (service == 'close_cover') return localize('services.close_cover')
+  else if (service == 'set_temperature') return localize('services.set_temperature')
   if (service.indexOf('.') !== -1) return service.split('.').pop()!;
   return service;
 }
@@ -138,7 +133,7 @@ export function getNameForService(service: string): string {
 export function getDefaultActionVariableConfig(field_name: string): object {
   const defaultConfig = {
     brightness: {
-      name: "brightness",
+      name: localize('fields.brightness'),
       unit: "",
       min: 0,
       max: 255,
@@ -147,7 +142,7 @@ export function getDefaultActionVariableConfig(field_name: string): object {
       showPercentage: true
     },
     temperature: {
-      name: "temperature",
+      name: localize('fields.temperature'),
       unit: "°C",
       min: 10,
       max: 30,

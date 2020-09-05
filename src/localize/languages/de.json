@@ -62,6 +62,7 @@
     "turn_off": "ausschalten",
     "close_cover": "schließen",
     "open_cover": "öffnen",
+    "set_temperature": "Temperatur einstellen",
     "set_to": "setzen auf"
   },
   "domains": {
