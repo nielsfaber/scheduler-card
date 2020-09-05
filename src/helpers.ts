@@ -1,10 +1,9 @@
 
 import { pick, values, omit, keys } from "lodash-es";
+import slugify from "slugify";
 import { IUserSelection, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, IScheduleAction } from './types'
 import { Config } from './config-parser'
 import { localize } from './localize/localize';
-
-function slugify(e, _v) { return e }
 
 const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
 const ActionPattern = /^(A([0-9]+))+$/
@@ -13,13 +12,19 @@ const FixedTimePattern = /^([0-9]{2})([0-9]{2})$/
 const TimeOffsetPattern = /^([\+\-]{1})([0-9]{2}):([0-9]{2})$/
 
 export function ExportToHass(userData: IUserSelection, configData: Config): IHassData {
-  let entityCfg = configData.GetEntity(userData.entity);
-  let actionCfg = configData.GetAction(userData.entity, userData.action);
+  let actionCfg = configData.FindAction(userData.entity, userData.action);
 
   let action = pick(actionCfg, ['service', 'service_data']) as IHassAction;
-  Object.assign(action, { entity: entityCfg.id });
+  Object.assign(action, { entity: userData.entity });
 
   if (!getDomainFromEntityId(action['service'])) action['service'] = getDomainFromEntityId(action['entity']) + "." + action['service'];
+
+  if (userData.hasOwnProperty('levelEnabled') && userData['levelEnabled']) {
+    let key = actionCfg!['variable']['field'];
+    let val = userData['level'];
+    let service_data = action.hasOwnProperty('service_data') ? action['service_data'] : {};
+    Object.assign(action, { service_data: Object.assign(service_data, { [key]: val }) });
+  }
 
   let entry: IHassEntry = {
     actions: [0]
@@ -125,26 +130,40 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
   })
 
   let actions: IScheduleAction[] = hassData.attributes['actions'].map(action => {
+    let output = {};
     let entity_id = getDomainFromEntityId(action['entity']) ? action['entity'] : getDomainFromEntityId(action['service']) + "." + action['entity'];
     let service = action['service'];
     let service_data = omit(action, ['service', 'entity']);
     if (getDomainFromEntityId(entity_id) == getDomainFromEntityId(service)) service = service.split(".").pop();
 
-    if (!configData.GetEntity(entity_id)) {
+
+    if (!configData.FindEntity(entity_id)) {
       //console.log(`failed to find entity ${entity_id}!`);
       return;
     }
+    Object.assign(output, { entity: entity_id });
 
     let action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
 
-    if (!configData.GetAction(entity_id, action_id)) {
-      //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);
-      return;
+    if (!configData.FindAction(entity_id, action_id)) {
+      let action = configData.GetActionsForEntity(entity_id).find(e => {
+        if (!e.hasOwnProperty('variable')) return false;
+        if (service_data.hasOwnProperty(e['variable']!['field'])) return true;
+        else return false;
+      });
+      if (action) {
+        let field_name = action['variable']!['field'];
+        Object.assign(output, { level: Number(service_data[field_name]) });
+        service_data = omit(service_data, field_name);
+        action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
+      }
+      else {
+        //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);
+        return;
+      }
     }
-    return {
-      entity: entity_id,
-      action: action_id,
-    }
+    Object.assign(output, { action: action_id });
+    return output;
   });
 
   return {
@@ -193,5 +212,12 @@ export function PrettyPrintTime(timeData: IDictionary<string>): string {
 }
 
 export function PrettyPrintName(input: string): string {
-  return input.replace('_', ' ');
+  if (typeof input != typeof "x") input = String(input);
+  return input.replace(/_/g, ' ');
+}
+
+export function PrettyPrintIcon(input: string): string {
+  if (typeof input != typeof "x") input = String(input);
+  if (input.match(/^[a-z]+:[a-z0-9-]+$/i)) return input;
+  return `hass:${input}`;
 }

@@ -28,6 +28,7 @@
     "@rollup/plugin-json": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
+    "ajv": "^6.12.4",
     "custom-card-helpers": "^1.6.5",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -45,8 +46,7 @@
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-uglify": "^6.0.3",
     "slugify": "^1.4.5",
-    "typescript": "^3.6.4",
-    "zod": "^1.11.1"
+    "typescript": "^3.6.4"
   },
   "devDependencies": {
     "rollup-plugin-commonjs": "^10.1.0"

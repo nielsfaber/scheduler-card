@@ -1,0 +1,76 @@
+{
+  "scheduler": "Harmonogram",
+  "actions": {
+    "add": "dodaj",
+    "cancel": "anuluj",
+    "next": "dalej",
+    "save": "zapisz",
+    "delete": "usuń"
+  },
+  "instructions": {
+    "no_group_selected": "Najpierw wybierz grupę",
+    "no_entity_selected": "Najpierw wybierz encję",
+    "no_groups_defined": "Nie ma zdefiniowanych grup",
+    "no_entities_for_group": "Nie ma encji w tej grupie",
+    "no_actions_for_entity": "Nie ma akcji dla tej encji",
+    "no_entries_defined": "Nie ma elementów do pokazania"
+  },
+  "fields": {
+    "group": "Grupa",
+    "entity": "Encja",
+    "action": "Akcja",
+    "days": "Dni",
+    "time": "Czas",
+    "options": "Opcje",
+    "day_type_daily": "codziennie",
+    "day_type_weekdays": "dni tygodnia",
+    "day_type_custom": "niestandardowy",
+    "shift_with_sun": "automatycznie dopasuj czas do wschodów/zachodów",
+    "brightness": "Jasność",
+    "temperature": "Temperatura"
+  },
+  "days_short": {
+    "mon": "pon",
+    "tue": "wt",
+    "wed": "śr",
+    "thu": "czw",
+    "fri": "pt",
+    "sat": "sob",
+    "sun": "niedz"
+  },
+  "days_long": {
+    "mon": "poniedziałek",
+    "tue": "wtorek",
+    "wed": "środa",
+    "thu": "czwartek",
+    "fri": "piątek",
+    "sat": "sobota",
+    "sun": "niedziela"
+  },
+  "words": {
+    "on": "w",
+    "every": "każdy",
+    "and": "oraz",
+    "at": "o",
+    "before": "przed",
+    "after": "po",
+    "sunrise": "wschód",
+    "sunset": "zachodów"
+  },
+  "services": {
+    "turn_on": "włącz",
+    "turn_off": "wyłącz",
+    "close_cover": "zamknij",
+    "open_cover": "otwórz",
+    "set_temperature": "Ustaw temperaturę",
+    "set_to": "ustaw na"
+  },
+  "domains": {
+    "climate": "termostat",
+    "cover": "roleta",
+    "fan": "wiatrak",
+    "light": "światło",
+    "switch": "włącznik",
+    "vacuum": "odkurzacz"
+  }
+}

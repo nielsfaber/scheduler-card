@@ -207,6 +207,13 @@ export const styles = css`
       
       div.option-item {
         padding: 2px 5px;
+        display: flex;
+        align-items: center;
+      }
+
+      div.option-item ha-paper-slider {
+        flex-grow: 1;
+        --paper-slider-pin-start-color: var(--primary-color);
       }
       
       .padded-right {

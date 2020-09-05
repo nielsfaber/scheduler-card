@@ -1,149 +1,247 @@
 
-import { defaults, forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, keyBy, pickBy, sortBy } from "lodash-es";
+import { forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, sortBy, omitBy, isUndefined, isEmpty } from "lodash-es";
 
-import { IDictionary, IEntityConfigEntry, IGroupConfigEntry, IButtonEntry, IActionConfigEntry, IConfig } from './types'
-import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService } from './default-config'
-import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity } from './helpers'
+import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionElement, IConfig, IEntityElement, IConfigFull } from './types'
+import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig } from './default-config'
+import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, PrettyPrintName } from './helpers'
 
 
 
 export class Config {
-  public entities: IDictionary<IEntityConfigEntry>;
-  private groups: IDictionary<IGroupConfigEntry>;
+  public entities: IEntityElement[];
+  private groups: IGroupElement[];
   public next_sunrise?: Date;
   public next_sunset?: Date;
-  private userConfig: IConfig;
-  private discoverExisting: Boolean;
+  private userConfig: IConfigFull;
 
-  constructor(userConfig: IConfig) {
-    this.entities = {};
-    this.groups = {};
+  constructor() {
+    this.entities = [];
+    this.groups = [];
 
-    if (!userConfig['entities'] && !userConfig['domains'] && (userConfig.standardConfiguration === undefined || userConfig.standardConfiguration)) this.userConfig = { domains: defaultDomainConfig };
-    else this.userConfig = userConfig;
+    this.userConfig = {
+      groups: {},
+      domains: {},
+      entities: {},
+      discoverExisting: true,
+      standardConfiguration: true
+    };
+  }
 
-    if (userConfig.groups) {
-      each(userConfig.groups, this.CreateGroup.bind(this));
+  setUserConfig(userConfig: IConfig) {
+    Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discoverExisting', 'standardConfiguration']));
+
+    if (this.userConfig.standardConfiguration) Object.assign(this.userConfig, { domains: defaultDomainConfig });
+    if (userConfig.domains) {
+      each(userConfig.domains, (cfg, domain) => {
+        let domainCfg = { ... this.userConfig.domains };
+        Object.assign(domainCfg, { [domain]: cfg });
+        this.userConfig.domains = domainCfg;
+      });
     }
 
-    this.discoverExisting = (userConfig.discoverExisting !== undefined) ? userConfig.discoverExisting : true;
+    if (this.userConfig.groups) {
+      each(userConfig.groups, this.AddGroup.bind(this));
+    }
   }
 
-  CreateGroup(cfg: object, id: string) {
-    let data = { ...cfg };
-    if (this.groups[id]) return;
-    defaults(data, {
-      name: getNameForDomain(id),
+  /* Groups functions */
+  AddGroup(cfg: IGroupConfig, id: string) {
+    if (this.FindGroup(id)) return;
+
+    let data = Object.assign({
+      id: id,
+      icon: 'folder-outline',
       domains: [],
       entities: [],
-    });
-    this.groups[id] = data;
+      name: getNameForDomain(id)
+    }, omitBy({ ...cfg }, isUndefined));
+
+    this.groups.push(data);
   }
 
-  FindGroupForEntity(entity_id: string): boolean {
-    let domain = getDomainFromEntityId(entity_id);
-    let res = find(this.groups, e => {
-      if (e.domains && Array.isArray(e.domains)) {
-        if (e.domains.includes(domain)) return true;
-      }
-      if (e.entities && Array.isArray(e.entities)) {
-        if (e.entities.includes(entity_id)) return true;
-      }
-      return false;
-    });
-    if (res) return true;
-    else return false;
+  FindGroup(id: string): IGroupElement | null {
+    let res = find(this.groups, { id: id });
+    if (res) return res;
+    else return null;
   }
 
   AddEntityToGroup(entity_id: string) {
     let domain = getDomainFromEntityId(entity_id);
-    if (this.groups[domain]) {
-      let list = [... this.groups[domain]['entities']!];
-      list.push(entity_id);
-      this.groups[domain]['entities'] = list;
-    }
-    else this.CreateGroup({ entities: [entity_id], icon: getIconForDomain(domain) }, domain);
-  }
+    let group = find(this.groups, group => {
+      return (group.domains.includes(domain) || group.entities.includes(entity_id));
+    });
+    if (group) return; //nothing to be done
 
-  AddEntityInfo(entity_id: string, cfg: IEntityConfigEntry) {
-    if (this.entities[entity_id]) {
-      Object.assign(this.entities[entity_id], omit({ ...cfg }, 'actions'));
-      if (has(cfg, 'actions')) {
-        each(cfg.actions, action => {
-          let match = find(this.entities[entity_id]['actions'], e => { return CreateSlug(pick(e, ['service', 'service_data'])) == CreateSlug(pick(action, ['service', 'service_data'])) });
-          if (match) return;
-          let actions = [... this.entities[entity_id]['actions']];
-          actions.push(action);
-          this.entities[entity_id]['actions'] = actions;
-        });
-      }
+    group = this.FindGroup(domain);
+    if (!group) {
+      this.AddGroup({
+        icon: getIconForDomain(domain),
+        entities: [entity_id]
+      }, domain);
     }
     else {
-      let entry = Object.assign({ ...cfg }, { id: entity_id });
-      defaults(entry, { actions: [] });
-      this.entities[entity_id] = entry;
+      let list = [...group['entities']];
+      list.push(entity_id);
+      this.groups.forEach((group, i) => {
+        if (group['id'] == domain) this.groups[i].entities = list;
+      });
     }
-    if (!this.FindGroupForEntity(entity_id)) this.AddEntityToGroup(entity_id);
+  }
+
+  GetGroups(): IGroupElement[] {
+    let output = [... this.groups];
+    output = sortBy(output, 'name');
+    return output;
+  }
+
+  /* Entities functions */
+  AddEntity(cfg: IEntityConfig, id: string) {
+    if (this.FindEntity(id)) return;
+
+    let data = Object.assign({
+      id: id,
+      name: id.split('.').pop(),
+      icon: getIconForDomain(getDomainFromEntityId(id))
+    }, omitBy({ ...cfg }, isUndefined));
+
+    this.entities.push(data);
+    this.AddEntityToGroup(id);
+  }
+
+  FindEntity(id: string): IEntityElement | null {
+    let res = find(this.entities, { id: id });
+    if (res) return res;
+    else return null;
+  }
+
+  GetEntitiesForGroup(group_id?: string): IEntityElement[] {
+    let output = [... this.entities];
+    if (group_id) {
+      let group = this.FindGroup(group_id);
+      if (!group) return [];
+      output = output.filter(e => {
+        let domain = getDomainFromEntityId(e.id);
+        return (group?.entities.includes(e.id) || group?.domains.includes(domain))
+      });
+    }
+    output = sortBy(output, 'name');
+    return output;
+  }
+
+  AddActionToEntity(entity_id: string, new_action: IActionElement) {
+    if (!this.FindEntity(entity_id)) throw Error(`Entity '${entity_id}' must be created before actions can be assigned`);
+
+    if (this.FindAction(entity_id, new_action.id)) return;
+    let actions = [... this.GetActionsForEntity(entity_id)];
+    actions.push(new_action);
+    this.entities.forEach((entity, i) => {
+      if (entity['id'] == entity_id) this.entities[i].actions = actions;
+    });
+  }
+
+  /* Actions functions */
+  CreateAction(cfg: IActionConfig): IActionElement {
+    let id = CreateSlug(pick(cfg, ['service', 'service_data']));
+    let data = {
+      id: id,
+      name: getNameForService(cfg['service']),
+      icon: getIconForAction(cfg['service']),
+      service: cfg['service']
+    };
+
+    if (has(cfg, 'service_data') && !isEmpty(cfg)) Object.assign(data, pick(cfg, 'service_data'));
+    if (has(cfg, 'icon')) Object.assign(data, pick(cfg, 'icon'));
+    if (has(cfg, 'name')) Object.assign(data, pick(cfg, 'name'));
+    if (has(cfg, 'variable')) Object.assign(data, { variable: Object.assign(getDefaultActionVariableConfig(cfg['variable']!['field']), cfg['variable']) });
+    return data;
+  }
+
+  FindAction(entity_id: string, action_id): IEntityElement | null {
+    let actions = this.GetActionsForEntity(entity_id);
+    let action = find(actions, { id: action_id });
+    if (action) return action;
+    else return null;
+  }
+
+  GetActionsForEntity(entity_id: string): IActionElement[] {
+    let entity = this.FindEntity(entity_id);
+    if (!entity) return [];
+
+    let output = [...entity.actions];
+    output = sortBy(output, 'name');
+    return output;
   }
 
   LoadEntities(entityList) {
+    //load the entities from configuration
     forEach(entityList, entity => {
       let entity_id: string = entity.entity_id;
       let domain: string = getDomainFromEntityId(entity_id)!;
 
       if (IsSchedulerEntity(entity_id)) return; //filter schedule items
 
-      if (this.userConfig.domains && domain in this.userConfig.domains) {
-        this.AddEntityInfo(entity_id, this.userConfig.domains[domain]);
+      if (domain in this.userConfig.domains || entity_id in this.userConfig.entities) {
+        let entityActions: IActionElement[] = [];
+        let cfg: IEntityConfig = {
+          actions: [],
+          name: entityList[entity_id].attributes['friendly_name'],
+          icon: entityList[entity_id].attributes['icon']
+        };
+        let skip_entity = false;
+        if (domain in this.userConfig.domains) {
+          if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) skip_entity = true;
+          if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) skip_entity = true;
+          Object.assign(cfg, omit(this.userConfig.domains[domain], 'actions'));
+          if (has(this.userConfig.domains[domain], 'actions') && !skip_entity) {
+            let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], this.CreateAction);
+            each(actions, e => entityActions.push(e));
+          }
+        }
+        if (entity_id in this.userConfig.entities) {
+          Object.assign(cfg, omit(this.userConfig.entities[entity_id], 'actions'));
+          if (has(this.userConfig.entities[entity_id], 'actions')) {
+            let actions: IActionElement[] = mapValues(this.userConfig.entities[entity_id]['actions'], this.CreateAction);
+            each(actions, e => entityActions.push(e));
+          }
+          skip_entity = false;
+        }
+        if (skip_entity) return;
+        this.AddEntity(cfg, entity_id);
+        each(entityActions, e => this.AddActionToEntity(entity_id, e));
       }
+    })
 
-      if (this.userConfig.entities && entity_id in this.userConfig.entities) {
-        this.AddEntityInfo(entity_id, this.userConfig.entities[entity_id]);
-      }
-    });
-
-    if (this.discoverExisting) {
+    if (this.userConfig.discoverExisting) {
       let res = filter(entityList, e => IsSchedulerEntity(e.entity_id));
       res = map(res, e => { return e.attributes['actions'] });
       res = flatten(res);
       each(res, item => {
-        let config = { ...item }
-        if (!getDomainFromEntityId(config['entity'])) {
-          config['entity'] = getDomainFromEntityId(config['service']) + "." + config['entity'];
-          config['service'] = config['service'].split('.').pop();
+        let config = { ...item };
+        let entity_id = config['entity'];
+        let service = config['service'];
+        if (!getDomainFromEntityId(entity_id)) {
+          entity_id = getDomainFromEntityId(service) + "." + entity_id;
+          service = service.split('.').pop();
         }
-        let service_data = omit(config, ['entity', 'service']);
-        if (service_data) {
-          this.AddEntityInfo(config['entity'], {
-            actions: [{ service: config['service'], service_data: service_data }]
-          });
+
+        let action = this.CreateAction({
+          service: service,
+          service_data: omit(config, ['entity', 'service']),
+        });
+
+        //add the entity if it does not exist
+        if (!this.FindEntity(entity_id)) {
+          if (!entityList[entity_id]) return; //entity is not in HA (corrupt schedule!)
+          let entityCfg: IEntityConfig = {
+            actions: [],
+            name: entityList[entity_id].attributes['friendly_name'],
+            icon: entityList[entity_id].attributes['icon']
+          };
+          this.AddEntity(entityCfg, entity_id);
         }
-        else {
-          this.AddEntityInfo(config['entity'], {
-            actions: [pick(config, 'service')]
-          });
-        }
-      })
+        this.AddActionToEntity(entity_id, action);
+      });
     }
-
-    each(this.entities, (cfg, entity_id) => {
-      defaults(cfg, {
-        name: entityList[entity_id].attributes['friendly_name'],
-        icon: getIconForDomain(getDomainFromEntityId(entity_id))
-      });
-
-      Object.assign(cfg, {
-        actions: map(cfg['actions'], action => {
-          let config = { ...action };
-          defaults(config, {
-            name: getNameForService(action['service']),
-            icon: getIconForAction(action['service'])
-          });
-          Object.assign(config, { id: CreateSlug(pick(action, ['service', 'service_data'])) });
-          return config;
-        })
-      });
-    });
 
     if (entityList['sun.sun']) {
       this.next_sunrise = new Date(entityList['sun.sun'].attributes.next_rising);
@@ -151,59 +249,5 @@ export class Config {
     }
   }
 
-  GetGroups(): IDictionary<IButtonEntry> {
-    let output = mapValues(this.groups, el => {
-      return pick(el, ['name', 'icon']) as IButtonEntry
-    });
-    each(output, (item, key) => { Object.assign(item, { key: key }) });
-    output = sortBy(output, 'name');
-    return output;
-  }
-
-  GetEntities(group_id: string): IDictionary<IButtonEntry> {
-    let entities = {};
-    if (!group_id) entities = this.entities;
-    else {
-      let groupCfg = this.groups[group_id];
-      entities = pickBy(this.entities, (_entityCfg, entity_id) => {
-        let domain = getDomainFromEntityId(entity_id);
-        if (groupCfg['domains'] && groupCfg['domains'].includes(domain)) return true;
-        else if (groupCfg['entities'] && groupCfg['entities'].includes(entity_id)) return true;
-        else return false;
-      });
-    }
-
-    let output = mapValues(entities, el => {
-      return pick(el, ['name', 'icon']);
-    });
-    each(output, (item, key) => { Object.assign(item, { key: key }) });
-    output = sortBy(output, 'name');
-    return output;
-  }
-
-  GetEntity(entity_id: string): IEntityConfigEntry {
-    return this.entities[entity_id];
-  }
-
-  GetActions(entity_id: string): IDictionary<IButtonEntry> {
-    let entityCfg = this.entities[entity_id];
-    let actions = keyBy(entityCfg['actions'], 'id');
-
-    let output = mapValues(actions, el => {
-      return pick(el, ['name', 'icon']) as IButtonEntry
-    });
-    each(output, (item, key) => { Object.assign(item, { key: key }) });
-    output = sortBy(output, 'name');
-    return output;
-  }
-
-  GetAction(entity_id: string, action_id: string): IActionConfigEntry | null {
-    let entityCfg = this.entities[entity_id];
-    if (!entityCfg) return null;
-    let res = find(entityCfg.actions, { id: action_id });
-    if (res) return res as IActionConfigEntry;
-    else return null;
-
-  }
 
 }

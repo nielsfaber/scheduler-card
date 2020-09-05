@@ -3,39 +3,69 @@ export interface IDictionary<TValue> {
   [id: string]: TValue;
 }
 
-export interface IButtonEntry {
-  icon?: string,
-  name: string,
-  key: string,
-}
-
-export interface IActionConfigEntry {
-  icon?: string,
+export interface IActionConfig {
   name?: string,
   service: string,
-  service_data?: IDictionary<any>
+  service_data?: IDictionary<any>,
+  icon?: string,
+  variable?: IActionVariableConfig
 }
 
-export interface IEntityConfigEntry {
-  id?: string,
+export interface IActionElement extends IActionConfig {
+  id: string,
+  name: string,
+  service: string,
+  service_data?: IDictionary<any>,
+  icon: string,
+  variable?: IActionVariable
+}
+
+export interface IEntityConfig {
   icon?: string,
   name?: string,
-  actions: IActionConfigEntry[]
+  actions: IActionConfig[]
 }
 
+export interface IDomainConfig {
+  icon?: string,
+  name?: string,
+  actions: IActionConfig[]
+}
+export interface IEntityElement extends IEntityConfig {
+  id: string,
+  name: string,
+  icon: string
+  actions: IActionElement[]
+}
+
+export interface IGroupConfig {
+  domains?: string[],
+  entities?: string[],
+  name?: string,
+  icon?: string,
+}
+
+export interface IGroupElement extends IGroupConfig {
+  id: string,
+  domains: string[],
+  entities: string[],
+  name: string,
+  icon?: string,
+}
 export interface IConfig {
-  groups?: IDictionary<IGroupConfigEntry>,
-  domains?: IDictionary<IEntityConfigEntry>,
-  entities?: IDictionary<IEntityConfigEntry>,
+  groups?: IDictionary<IGroupConfig>,
+  domains?: IDictionary<IDomainConfig>,
+  entities?: IDictionary<IEntityConfig>,
   discoverExisting?: Boolean,
   standardConfiguration?: Boolean,
 }
 
-export interface IGroupConfigEntry {
-  icon?: string,
-  name?: string,
-  domains?: string[],
-  entities?: string[],
+export interface IConfigFull extends IConfig {
+  groups: IDictionary<IGroupConfig>,
+  domains: IDictionary<IDomainConfig>,
+  entities: IDictionary<IEntityConfig>,
+  discoverExisting: Boolean,
+  standardConfiguration: Boolean,
 }
 
 export interface IUserSelection {
@@ -49,7 +79,9 @@ export interface IUserSelection {
   timeMinutes: string,
   days: number[],
   daysType: string,
-  sun: boolean
+  sun: boolean,
+  levelEnabled: boolean,
+  level: number
 }
 
 export interface IHassEntry {
@@ -81,4 +113,25 @@ export interface IScheduleEntry {
 export interface IScheduleAction {
   entity: string,
   action: string,
+  level?: number
+}
+
+export interface IActionVariableConfig {
+  field: string,
+  name?: string,
+  min?: number,
+  max?: number,
+  step?: number
+  optional?: boolean,
+  showPercentage?: boolean
+}
+export interface IActionVariable {
+  field: string,
+  unit: string,
+  name: string,
+  min: number,
+  max: number,
+  step: number,
+  optional: boolean,
+  showPercentage: boolean
 }
