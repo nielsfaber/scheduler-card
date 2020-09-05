@@ -25,7 +25,9 @@
     "day_type_daily": "codziennie",
     "day_type_weekdays": "dni tygodnia",
     "day_type_custom": "niestandardowy",
-    "shift_with_sun": "automatycznie dopasuj czas do wschodów/zachodów"
+    "shift_with_sun": "automatycznie dopasuj czas do wschodów/zachodów",
+    "brightness": "Jasność",
+    "temperature": "Temperatura"
   },
   "days_short": {
     "mon": "pon",
@@ -60,7 +62,7 @@
     "turn_off": "wyłącz",
     "close_cover": "zamknij",
     "open_cover": "otwórz",
-    "set_temperature": "ustaw na"
+    "set_to": "ustaw na"
   },
   "domains": {
     "climate": "termostat",

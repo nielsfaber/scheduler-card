@@ -25,7 +25,9 @@
     "day_type_daily": "chaque jour",
     "day_type_weekdays": "en semaine",
     "day_type_custom": "sur mesure",
-    "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil"
+    "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil",
+    "brightness": "Luminosité",
+    "temperature": "Température"
   },
   "days_short": {
     "mon": "lun",
@@ -60,7 +62,7 @@
     "turn_off": "éteindre",
     "close_cover": "fermer",
     "open_cover": "ouvrir",
-    "set_temperature": "défini à"
+    "set_to": "défini à"
   },
   "domains": {
     "climate": "climat",

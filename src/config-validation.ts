@@ -22,6 +22,21 @@ const ConfigSchema = {
                 name: { type: "string" },
                 service: { type: "string" },
                 service_data: { type: "object" },
+                variable: {
+                  type: "object",
+                  properties: {
+                    field: { type: "string" },
+                    name: { type: "string" },
+                    unit: { type: "string" },
+                    min: { type: "number" },
+                    max: { type: "number" },
+                    step: { type: "number" },
+                    optional: { type: "boolean" },
+                    showPercentage: { type: "boolean" }
+                  },
+                  required: ['field'],
+                  additionalProperties: false
+                }
               },
               required: ['service'],
               additionalProperties: false
@@ -55,6 +70,21 @@ const ConfigSchema = {
                 name: { type: "string" },
                 service: { type: "string" },
                 service_data: { type: "object" },
+                variable: {
+                  type: "object",
+                  properties: {
+                    field: { type: "string" },
+                    name: { type: "string" },
+                    unit: { type: "string" },
+                    min: { type: "number" },
+                    max: { type: "number" },
+                    step: { type: "number" },
+                    optional: { type: "boolean" },
+                    showPercentage: { type: "boolean" }
+                  },
+                  required: ['field'],
+                  additionalProperties: false
+                }
               },
               required: ["service"],
               additionalProperties: false

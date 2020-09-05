@@ -19,6 +19,13 @@ export function ExportToHass(userData: IUserSelection, configData: Config): IHas
 
   if (!getDomainFromEntityId(action['service'])) action['service'] = getDomainFromEntityId(action['entity']) + "." + action['service'];
 
+  if (userData.hasOwnProperty('levelEnabled') && userData['levelEnabled']) {
+    let key = actionCfg!['variable']['field'];
+    let val = userData['level'];
+    let service_data = action.hasOwnProperty('service_data') ? action['service_data'] : {};
+    Object.assign(action, { service_data: Object.assign(service_data, { [key]: val }) });
+  }
+
   let entry: IHassEntry = {
     actions: [0]
   };
@@ -123,26 +130,40 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
   })
 
   let actions: IScheduleAction[] = hassData.attributes['actions'].map(action => {
+    let output = {};
     let entity_id = getDomainFromEntityId(action['entity']) ? action['entity'] : getDomainFromEntityId(action['service']) + "." + action['entity'];
     let service = action['service'];
     let service_data = omit(action, ['service', 'entity']);
     if (getDomainFromEntityId(entity_id) == getDomainFromEntityId(service)) service = service.split(".").pop();
 
+
     if (!configData.FindEntity(entity_id)) {
       //console.log(`failed to find entity ${entity_id}!`);
       return;
     }
+    Object.assign(output, { entity: entity_id });
 
     let action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
 
     if (!configData.FindAction(entity_id, action_id)) {
-      //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);
-      return;
+      let action = configData.GetActionsForEntity(entity_id).find(e => {
+        if (!e.hasOwnProperty('variable')) return false;
+        if (service_data.hasOwnProperty(e['variable']!['field'])) return true;
+        else return false;
+      });
+      if (action) {
+        let field_name = action['variable']!['field'];
+        Object.assign(output, { level: Number(service_data[field_name]) });
+        service_data = omit(service_data, field_name);
+        action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
+      }
+      else {
+        //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);
+        return;
+      }
     }
-    return {
-      entity: entity_id,
-      action: action_id,
-    }
+    Object.assign(output, { action: action_id });
+    return output;
   });
 
   return {

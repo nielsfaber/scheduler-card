@@ -4,58 +4,62 @@ import { localize } from './localize/localize';
 
 
 export const defaultDomainConfig: IDictionary<IDomainConfig> = {
-  "light": {
-    "actions": [
+  light: {
+    actions: [
       {
-        "service": "turn_on",
-        "icon": "lightbulb-on-outline",
-        "name": localize('services.turn_on')
+        service: "turn_on",
+        icon: "lightbulb-on-outline",
+        name: localize('services.turn_on'),
+        variable: {
+          field: "brightness",
+          name: localize('fields.brightness')
+        }
       },
       {
-        "service": "turn_off",
-        "icon": "lightbulb-off-outline",
-        "name": localize('services.turn_off')
+        service: "turn_off",
+        icon: "lightbulb-off-outline",
+        name: localize('services.turn_off')
       }
     ]
   },
-  "switch": {
-    "actions": [
+  switch: {
+    actions: [
       {
-        "service": "turn_on",
-        "name": localize('services.turn_on')
+        service: "turn_on",
+        name: localize('services.turn_on')
       },
       {
-        "service": "turn_off",
-        "name": localize('services.turn_off')
+        service: "turn_off",
+        name: localize('services.turn_off')
       }
     ]
   },
-  "cover": {
-    "actions": [
+  cover: {
+    actions: [
       {
-        "service": "open_cover",
-        "name": localize('services.open_cover')
+        service: "open_cover",
+        name: localize('services.open_cover')
       },
       {
-        "service": "close_cover",
-        "name": localize('services.close_cover')
+        service: "close_cover",
+        name: localize('services.close_cover')
       },
     ]
   },
-  "climate": {
-    "actions": [
+  climate: {
+    actions: [
       {
-        "service": "set_temperature",
-        "service_data": { temperature: 10 },
-        "name": `${localize('services.set_temperature')} 10C`,
-        "icon": "thermometer-chevron-down"
+        service: "set_temperature",
+        variable: {
+          field: "temperature",
+          name: localize('fields.temperature')
+        },
+        icon: "thermometer"
       },
       {
-        "service": "set_temperature",
-        "service_data": { temperature: 22 },
-        "name": `${localize('services.set_temperature')} 22C`,
-        "icon": "thermometer-chevron-up"
-      },
+        service: "turn_off",
+        icon: "thermometer-off"
+      }
     ]
   }
 }
@@ -72,7 +76,9 @@ export const DefaultUserSelection: IUserSelection = {
   timeMinutes: '00',
   days: [],
   daysType: 'daily',
-  sun: false
+  sun: false,
+  levelEnabled: false,
+  level: 0
 }
 
 export function getIconForDomain(domain: string): string {
@@ -127,4 +133,38 @@ export function getNameForService(service: string): string {
   else if (service == 'close_cover') return localize('services.close_cover')
   if (service.indexOf('.') !== -1) return service.split('.').pop()!;
   return service;
+}
+
+export function getDefaultActionVariableConfig(field_name: string): object {
+  const defaultConfig = {
+    brightness: {
+      name: "brightness",
+      unit: "",
+      min: 0,
+      max: 255,
+      step: 2.55,
+      optional: true,
+      showPercentage: true
+    },
+    temperature: {
+      name: "temperature",
+      unit: "°C",
+      min: 10,
+      max: 30,
+      step: 1,
+      optional: false,
+      showPercentage: false
+    },
+    default: {
+      name: field_name,
+      unit: "",
+      min: 0,
+      max: 255,
+      step: 1,
+      optional: false,
+      showPercentage: false
+    }
+  }
+  if (defaultConfig[field_name] !== undefined) return { ...defaultConfig[field_name] };
+  else return { ...defaultConfig['default'] };
 }

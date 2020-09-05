@@ -25,7 +25,9 @@
     "day_type_daily": "jeden Tag",
     "day_type_weekdays": "Werktags",
     "day_type_custom": "benutzerdefiniert",
-    "shift_with_sun": "Zeit automatisch an Sonnenauf- bzw. Sonnenuntergang anpassen"
+    "shift_with_sun": "Zeit automatisch an Sonnenauf- bzw. Sonnenuntergang anpassen",
+    "brightness": "Helligkeit",
+    "temperature": "Temperatur"
   },
   "days_short": {
     "mon": "Mo",
@@ -60,7 +62,7 @@
     "turn_off": "ausschalten",
     "close_cover": "schließen",
     "open_cover": "öffnen",
-    "set_temperature": "setzen auf"
+    "set_to": "setzen auf"
   },
   "domains": {
     "climate": "Heizung",

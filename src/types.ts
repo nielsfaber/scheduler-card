@@ -7,7 +7,8 @@ export interface IActionConfig {
   name?: string,
   service: string,
   service_data?: IDictionary<any>,
-  icon?: string
+  icon?: string,
+  variable?: IActionVariableConfig
 }
 
 export interface IActionElement extends IActionConfig {
@@ -15,7 +16,8 @@ export interface IActionElement extends IActionConfig {
   name: string,
   service: string,
   service_data?: IDictionary<any>,
-  icon: string
+  icon: string,
+  variable?: IActionVariable
 }
 
 export interface IEntityConfig {
@@ -77,7 +79,9 @@ export interface IUserSelection {
   timeMinutes: string,
   days: number[],
   daysType: string,
-  sun: boolean
+  sun: boolean,
+  levelEnabled: boolean,
+  level: number
 }
 
 export interface IHassEntry {
@@ -109,4 +113,25 @@ export interface IScheduleEntry {
 export interface IScheduleAction {
   entity: string,
   action: string,
+  level?: number
+}
+
+export interface IActionVariableConfig {
+  field: string,
+  name?: string,
+  min?: number,
+  max?: number,
+  step?: number
+  optional?: boolean,
+  showPercentage?: boolean
+}
+export interface IActionVariable {
+  field: string,
+  unit: string,
+  name: string,
+  min: number,
+  max: number,
+  step: number,
+  optional: boolean,
+  showPercentage: boolean
 }

@@ -2,7 +2,7 @@
 import { forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, sortBy, omitBy, isUndefined, isEmpty } from "lodash-es";
 
 import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionElement, IConfig, IEntityElement, IConfigFull } from './types'
-import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService } from './default-config'
+import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig } from './default-config'
 import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, PrettyPrintName } from './helpers'
 
 
@@ -152,7 +152,7 @@ export class Config {
     if (has(cfg, 'service_data') && !isEmpty(cfg)) Object.assign(data, pick(cfg, 'service_data'));
     if (has(cfg, 'icon')) Object.assign(data, pick(cfg, 'icon'));
     if (has(cfg, 'name')) Object.assign(data, pick(cfg, 'name'));
-
+    if (has(cfg, 'variable')) Object.assign(data, { variable: Object.assign(getDefaultActionVariableConfig(cfg['variable']!['field']), cfg['variable']) });
     return data;
   }
 

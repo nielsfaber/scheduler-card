@@ -23,9 +23,11 @@
     "time": "Tijdstip",
     "options": "Opties",
     "day_type_daily": "Dagelijks",
-    "day_type_weekdays": "Werkdagen",
+    "day_type_weekdays": "werkdagen",
     "day_type_custom": "Anders",
-    "shift_with_sun": "Automatisch aanpassen aan zonsopgang/zonsondergang"
+    "shift_with_sun": "Automatisch aanpassen aan zonsopgang/zonsondergang",
+    "brightness": "Helderheid",
+    "temperature": "Temperatuur"
   },
   "days_short": {
     "mon": "ma",
@@ -60,7 +62,7 @@
     "turn_off": "uitzetten",
     "close_cover": "sluiten",
     "open_cover": "openen",
-    "set_temperature": "Zet op"
+    "set_to": "Zet op"
   },
   "domains": {
     "climate": "verwarming",

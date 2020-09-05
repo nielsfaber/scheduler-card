@@ -25,7 +25,9 @@
     "day_type_daily": "every day",
     "day_type_weekdays": "weekdays",
     "day_type_custom": "custom",
-    "shift_with_sun": "automatically adjust time to sunrise/sunset"
+    "shift_with_sun": "automatically adjust time to sunrise/sunset",
+    "brightness": "Brightness",
+    "temperature": "Temperature"
   },
   "days_short": {
     "mon": "mon",
@@ -60,7 +62,7 @@
     "turn_off": "turn off",
     "close_cover": "close",
     "open_cover": "open",
-    "set_temperature": "set to"
+    "set_to": "set to"
   },
   "domains": {
     "climate": "climate",
