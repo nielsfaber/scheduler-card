@@ -15,7 +15,7 @@
   - [Entities](#entities)
     - [Options](#options-1)
     - [Examples](#examples-1)
-  - [Action](#action)
+  - [Actions](#actions)
     - [Options](#options-2)
     - [Action variables](#action-variables)
     - [Examples](#examples-2)
@@ -198,7 +198,7 @@ Result:
 
 ![entities example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/entities_example.png?raw=true)
 
-### Action
+### Actions
 An action defines **what** needs to be done when a schedule timer expires.
 
 #### Options

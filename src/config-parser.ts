@@ -132,6 +132,13 @@ export class Config {
     if (!this.FindEntity(entity_id)) throw Error(`Entity '${entity_id}' must be created before actions can be assigned`);
 
     if (this.FindAction(entity_id, new_action.id)) return;
+    if (this.GetActionsForEntity(entity_id).find(action => {
+      if (!action.hasOwnProperty('variable')) return false;
+      if (new_action.hasOwnProperty('service_data') && new_action['service_data']!.hasOwnProperty(action['variable']!['field'])) return true;
+      else return false;
+    })) return;
+
+
     let actions = [... this.GetActionsForEntity(entity_id)];
     actions.push(new_action);
     this.entities.forEach((entity, i) => {
@@ -160,7 +167,7 @@ export class Config {
     let actions = this.GetActionsForEntity(entity_id);
     let action = find(actions, { id: action_id });
     if (action) return action;
-    else return null;
+    return null;
   }
 
   GetActionsForEntity(entity_id: string): IActionElement[] {
@@ -192,15 +199,32 @@ export class Config {
           if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) skip_entity = true;
           if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) skip_entity = true;
           Object.assign(cfg, omit(this.userConfig.domains[domain], 'actions'));
+
           if (has(this.userConfig.domains[domain], 'actions') && !skip_entity) {
-            let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], this.CreateAction);
+            let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], action => {
+              action = { ...action };
+              if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
+              if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
+                let isDimmable = entity.attributes['supported_features'] & 0b1;
+                if (!isDimmable && action['variable']) delete action['variable'];
+              }
+              return this.CreateAction(action)
+            });
             each(actions, e => entityActions.push(e));
           }
         }
         if (entity_id in this.userConfig.entities) {
           Object.assign(cfg, omit(this.userConfig.entities[entity_id], 'actions'));
           if (has(this.userConfig.entities[entity_id], 'actions')) {
-            let actions: IActionElement[] = mapValues(this.userConfig.entities[entity_id]['actions'], this.CreateAction);
+            let actions: IActionElement[] = mapValues(this.userConfig.entities[entity_id]['actions'], action => {
+              action = { ...action };
+              if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
+              if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
+                let isDimmable = entity.attributes['supported_features'] & 0b1;
+                if (!isDimmable && action['variable']) delete action['variable'];
+              }
+              return this.CreateAction(action)
+            });
             each(actions, e => entityActions.push(e));
           }
           skip_entity = false;
@@ -219,6 +243,7 @@ export class Config {
         let config = { ...item };
         let entity_id = config['entity'];
         let service = config['service'];
+        let service_data = omit(config, ['entity', 'service']);
         if (!getDomainFromEntityId(entity_id)) {
           entity_id = getDomainFromEntityId(service) + "." + entity_id;
           service = service.split('.').pop();
@@ -226,7 +251,7 @@ export class Config {
 
         let action = this.CreateAction({
           service: service,
-          service_data: omit(config, ['entity', 'service']),
+          service_data: service_data,
         });
 
         //add the entity if it does not exist

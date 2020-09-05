@@ -73,7 +73,6 @@ export function getDomainFromEntityId(entity_id: string): string {
   return res;
 }
 
-
 export function CreateSlug(input: IDictionary<any>) {
   let props = keys(input);
   props = props.sort();
