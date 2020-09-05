@@ -55,17 +55,33 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 
 ## Configuration options
 Configuration is not mandatory.
-Out of the box, the card should be able to find all your `light`, `cover`, `switch` and `climate` entities with some basic actions.
-If you want to use other entities and/or actions, then keep reading.
+Out of the box, the card should already find most of your HA entities and provide some basic actions for each.
+If you want to modify which entities and/or actions can be used, then keep reading.
 
 | Name | Type | Default | Description
 | ---- | ---- | ------- | ----------- 
 | type | string | **Required** | `custom:scheduler-card`
-| domains | map | none | See [domains](#domains)
-| entities | map | none | See [entities](#entities)
-| groups | map | none | See [groups](#groups)
+| domains | map | none | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options.
+| entities | map | none | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.
+| groups | map | none | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.
 | discoverExisting | boolean | True | Always show the existing schedules, also if the related entities are not included in the configuration.
-| standardConfiguration | boolean | True | Automatically list `light`, `cover`, `switch` and `climate` entities if no configuration is provided.
+| standardConfiguration | boolean | True | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.
+
+:warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discoverExisting:false` and `standardConfiguration:false` in both cards to avoid duplicates.
+
+### About the standard configuration
+The standard configuration is intended to help you started without needing coding (yaml) skills.
+
+Included in the standard configuration:
+| Device type/domain | Supported actions | Remarks
+| ------------------ | ----------------  | ----
+| light | *Turn on*<br> *Turn off* | Brightness is configurable <br><br>
+| switch | *Turn on*<br> *Turn off* |
+| cover | *Open*<br> *Close* |
+| climate | *Set temperature*<br> *Turn off* | Temperature is configurable <br><br>
+| fan | *Turn on* <br> *Turn off* |
+
+Are you missing something that should be long in the standard configuration? [Let me know](https://github.com/nielsfaber/scheduler-card/issues)
 
 ## Domains
 With the `domain:` option, you can specify configuration options for multiple HA entities of the same type (domain).
@@ -92,10 +108,38 @@ domains:
       - service: turn_off
 ```
 
+### Examples with include/exclude
+Scenario 1:
+*“I have a lot of lights in my house, but i only want to control some of them with the scheduler.”*
+
+– Use the include option to specify which lights you want to add:
+
+```yaml
+domain:
+  light:
+    include:
+      - light.my_light_1
+      - light.my_light_2
+      - light.my_light_3
+    # rest of domain config (actions, icon, ...)
+```
+Scenario 2:
+*“I have a lot of lights in my house, but i only want to control all but some of them with the scheduler.”*
+
+– Use the exclude option to specify which lights you want to be ignored:
+
+```yaml
+domain:
+  light:
+    exclude:
+      - light.my_light_that_i_never_use
+    # rest of domain config (actions, icon, ...)
+```
+
 ### Entities
 With the `entities:` option you can specify configuration for a single entity in HA.
 
-Note: you can use this in combination with `domain` configuration, the configurations will be merged.
+:warning: **Tip**: You can use entities `configuration` in combination with `domain` configuration, the configurations will be merged.
 
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
@@ -118,10 +162,51 @@ entities:
           icon: lightbulb-on-outline
   ```
 
+### Action
+The actions define what needs to be done when a scheduler timer is expired.
+Actions are linked to their entities, so the entity ID is send together with the service call (it is not needed to add it to the `service_data`).
+
+| Name | Type | Default | Description
+| ---- | ---- | ------- | -----------
+| service | string | **Required** | Service to be executed
+| service_data | map | none | Additional parameters to use for the service call
+| variable | map | none | Add a variable. See [action variable](#action-variable)
+| name | string | (same as service) | Displayed name for action
+| icon | string | "flash" | Displayed icon for action
+
+#### Action variable
+Some devices work with variable setting. For example a light can have a `brightness`, fan can have a `speed` etc.
+If the action is configured with a variable, the card allows you to choose the setting you want to apply with the action.
+
+| Name | Type | Default | Description
+| ---- | ---- | ------- | -----------
+| field | string | **Required** | field name in the `service_data` that is represented by this variable
+| name | string | same as field | Name under which the variable is visible in the card
+| unit | string | " " | Displayed unit
+| min | number | 0 | Minimum value that can be set
+| max | number | 255 | Maximum value that can be set
+| step | number | 1 | Step size
+| optional | boolean | false | Setting the variable is optional. The action can also be executed without this variable.
+| showPercentage | boolean | false | Show slider in percentage instead of from min to max.
+
+Example:
+The Xiaomi Air Purifier can be controlled using the [xiaomi miio](https://www.home-assistant.io/integrations/xiaomi_miio/) integration.
+To be able to set the speed of this device in your action, you can use:
+```
+- service: xiaomi_miio.fan_set_favorite_level
+  variable:
+    field: level
+    name: "Speed"
+    min: 1
+    max: 16
+    showPercentage: true
+```
+
 ### Groups
 The `groups:` option provides the capability of organizing the entities. 
 
-By default, entities will be grouped based on their `domain`, but you can change this as you wish.
+:warning: **Tip**: The card will automatically create groups based on the domains of the entities in your configuration.
+If you're OK with this, you don't need to configure `groups`.
 
 Make sure that the `entities` and `domains` in your groups are also included in their specific configurations.
 | Name | Type | Default | Description
@@ -140,13 +225,3 @@ groups:
     icon: lightbulb
     domains: [light]
   ```
-### Action
-The actions define what needs to be done when a scheduler timer is expired.
-Actions are linked to their entities, so the entity ID is send together with the service call (it is not needed to add this to the `service_data`.
-
-| Name | Type | Default | Description
-| ---- | ---- | ------- | -----------
-| service | string | **Required** | Service to be executed
-| service_data | map | none | Additional parameters for the service call
-| name | string | (same as service) | Displayed name for action
-| icon | string | "flash" | Displayed icon for action
