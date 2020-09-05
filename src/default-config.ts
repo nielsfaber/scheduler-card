@@ -57,6 +57,20 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
         "icon": "thermometer-chevron-up"
       },
     ]
+  },
+  "fan": {
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "fan",
+        "name": localize('services.turn_on')
+      },
+      {
+        "service": "turn_off",
+        "icon": "fan-off",
+        "name": localize('services.turn_off')
+      }
+    ]
   }
 }
 
