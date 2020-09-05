@@ -9,13 +9,11 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
       {
         service: "turn_on",
         icon: "lightbulb-on-outline",
-        name: localize('services.turn_on'),
         variable: { field: "brightness" }
       },
       {
         service: "turn_off",
         icon: "lightbulb-off-outline",
-        name: localize('services.turn_off')
       }
     ]
   },
@@ -23,11 +21,9 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
     actions: [
       {
         service: "turn_on",
-        name: localize('services.turn_on')
       },
       {
         service: "turn_off",
-        name: localize('services.turn_off')
       }
     ]
   },
@@ -56,17 +52,15 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
       }
     ]
   },
-  "fan": {
-    "actions": [
+  fan: {
+    actions: [
       {
-        "service": "turn_on",
-        "icon": "fan",
-        "name": localize('services.turn_on')
+        service: "turn_on",
+        icon: "fan",
       },
       {
-        "service": "turn_off",
-        "icon": "fan-off",
-        "name": localize('services.turn_off')
+        service: "turn_off",
+        icon: "fan-off",
       }
     ]
   }
