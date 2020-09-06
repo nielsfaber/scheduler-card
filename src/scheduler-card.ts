@@ -410,17 +410,18 @@ export class SchedulerCard extends LitElement {
       max = 100;
       if (value < min) value = min;
       else if (value > max) value = max;
-      unit = '%'
+      unit = '%';
     }
 
     if (!cfg['optional'] && !this.selection.levelEnabled) Object.assign(this.selection, { levelEnabled: true });
 
     return html`
     <div class="card-section">
-      <div class="header">${cfg['name']} ${unit ? `in ${unit}` : ''}</div>
+      <div class="header">${cfg['name']}</div>
       <div class="option-item">
         ${cfg['optional'] ? (this.selection.levelEnabled ? html`<paper-checkbox checked @change="${this._toggleEnableLevel}"></paper-checkbox>` : html`<paper-checkbox @change="${this._toggleEnableLevel}"></paper-checkbox>`) : ``}
         ${this.selection.levelEnabled ? html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel}></ha-paper-slider>` : html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel} disabled></ha-paper-slider>`}
+        <div id="level-value" class="${this.selection.levelEnabled ? '' : 'disabled'}">${value}${unit}</div>
       </div>
      </div>`;
   }
@@ -430,18 +431,24 @@ export class SchedulerCard extends LitElement {
     let target = this.shadowRoot.querySelector("#level") as HTMLInputElement;
     target.disabled = !checked;
     this.selection.levelEnabled = checked;
+    if (checked) this.shadowRoot.querySelector("#level-value").classList.remove("disabled");
+    else this.shadowRoot.querySelector("#level-value").classList.add("disabled");
   }
 
   private _updateLevel(e: Event) {
     let action = this.Config.FindAction(this.selection.entity, this.selection.action);
     let cfg = action!['variable'];
     if (!cfg) return;
-    let min = cfg.min, max = cfg.max, step = cfg.step;
+    let min = cfg.min, max = cfg.max, unit = cfg.unit;
 
+    if (cfg.showPercentage) unit = '%';
     let value = Number((e.target as HTMLInputElement).value);
+
+    this.shadowRoot.querySelector("#level-value").innerHTML = `${value}${unit}`;
 
     if (cfg.showPercentage) {
       value = Math.round((value / 100) * (max - min) + min);
+      unit = '%'
     }
     if (value < min) value = min;
     else if (value > max) value = max;

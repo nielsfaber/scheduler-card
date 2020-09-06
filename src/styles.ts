@@ -215,6 +215,14 @@ export const styles = css`
         flex-grow: 1;
         --paper-slider-pin-start-color: var(--primary-color);
       }
+
+      div#level-value {
+        min-width: 40px;
+      }
+
+      div.option-item .disabled {
+        color: var(--disabled-text-color);
+      }
       
       .padded-right {
         margin-right: 11px;
