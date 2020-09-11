@@ -1,0 +1,76 @@
+{
+  "scheduler": "Tidsplan",
+  "actions": {
+    "add": "legg til",
+    "cancel": "avbryt",
+    "next": "neste",
+    "save": "lagre",
+    "delete": "slett"
+  },
+  "instructions": {
+    "no_group_selected": "Velg en gruppe først",
+    "no_entity_selected": "Velg en entitet først",
+    "no_groups_defined": "Ingen grupper definert",
+    "no_entities_for_group": "Det finnes ingen entiteter i denne gruppen",
+    "no_actions_for_entity": "Det finnes ingen handlinger for denne entiteten",
+    "no_entries_defined": "Det er ingen definerte tidsplaner å vise"
+  },
+  "fields": {
+    "group": "Gruppe",
+    "entity": "Entitet",
+    "action": "Handling",
+    "days": "Dager",
+    "time": "Tid",
+    "options": "Valg",
+    "day_type_daily": "hver dag",
+    "day_type_weekdays": "ukedager",
+    "day_type_custom": "egendefinert",
+    "shift_with_sun": "automatisk juster tid for soloppgang/solnedgang"
+    "brightness": "Lysstyrke",
+    "temperature": "Temperatur"
+  },
+  "days_short": {
+    "mon": "man",
+    "tue": "tir",
+    "wed": "ons",
+    "thu": "tor",
+    "fri": "fre",
+    "sat": "lør",
+    "sun": "søn"
+  },
+  "days_long": {
+    "mon": "mandag",
+    "tue": "tirsdag",
+    "wed": "onsdag",
+    "thu": "torsdag",
+    "fri": "fredag",
+    "sat": "lørdag",
+    "sun": "søndag"
+  },
+  "words": {
+    "on": "den",
+    "every": "hver",
+    "and": "og",
+    "at": "på",
+    "before": "før",
+    "after": "etter",
+    "sunrise": "soloppgang",
+    "sunset": "solnedgang"
+  },
+  "services": {
+    "turn_on": "slå på",
+    "turn_off": "slå av",
+    "close_cover": "lukk",
+    "open_cover": "åpne",
+    "set_temperature": "sett temperatur",
+    "set_to": "sett til"
+  },
+  "domains": {
+    "climate": "klima",
+    "cover": "cover",
+    "fan": "vifter",
+    "light": "lys",
+    "switch": "brytere",
+    "vacuum": "støvsugere"
+  }
+}
