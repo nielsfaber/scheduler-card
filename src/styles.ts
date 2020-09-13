@@ -18,7 +18,9 @@ export const styles = css`
       }
 
       div.list-item:hover {
-        
+        font-weight: 600;
+        filter: drop-shadow(1px 1.5px 3px var(--disabled-text-color));
+        transition: filter 0.5s;
       }
 
       div.list-item-icon {
