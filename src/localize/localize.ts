@@ -3,6 +3,7 @@ import * as nl from './languages/nl.json';
 import * as de from './languages/de.json';
 import * as fr from './languages/fr.json';
 import * as pl from './languages/pl.json';
+import * as ru from './languages/ru.json';
 
 var languages: any = {
   en: en,
@@ -10,6 +11,7 @@ var languages: any = {
   de: de,
   fr: fr,
   pl: pl,
+  ru: ru,
 };
 
 export function localize(string: string, search: string = '', replace: string = '') {

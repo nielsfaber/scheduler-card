@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nielsfaber/scheduler-card.git"
+    "url": "git+https://github.com/Aledan862/scheduler-card.git"
   },
   "author": "nielsfaber",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nielsfaber/scheduler-card/issues"
+    "url": "https://github.com/Aledan862/scheduler-card/issues"
   },
-  "homepage": "https://github.com/nielsfaber/scheduler-card#readme",
+  "homepage": "https://github.com/Aledan862/scheduler-card#readme",
   "dependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
