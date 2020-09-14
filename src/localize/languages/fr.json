@@ -2,7 +2,7 @@
   "scheduler": "Planificateur",
   "actions": {
     "add": "ajouter un item",
-    "cancel": "canceller",
+    "cancel": "annuler",
     "next": "suivant",
     "save": "sauvegarder",
     "delete": "effacer"
