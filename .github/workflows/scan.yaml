@@ -1,0 +1,44 @@
+name: "Scan code"
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - run: git checkout HEAD^2
+        if: ${{ github.event_name == 'pull_request' }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+  ossar:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - run: git checkout HEAD^2
+        if: ${{ github.event_name == 'pull_request' }}
+      - name: Install .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.201'
+      - name: Run OSSAR
+        uses: github/ossar-action@v1
+        id: ossar
+      - name: Upload OSSAR results
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.ossar.outputs.sarifFile }}
