@@ -1,0 +1,76 @@
+{
+  "scheduler": "Programación",
+  "actions": {
+    "add": "añadir dispositivo",
+    "cancel": "cancelar",
+    "next": "siguiente",
+    "save": "guardar",
+    "delete": "borrar"
+  },
+  "instructions": {
+    "no_group_selected": "Selecciona un grupo",
+    "no_entity_selected": "Selecciona una entidad",
+    "no_groups_defined": "No hay grupos definidos",
+    "no_entities_for_group": "No hay entidades en este grupo",
+    "no_actions_for_entity": "No hay acciones para esta entidad",
+    "no_entries_defined": "No hay dispositivos definidos"
+  },
+  "fields": {
+    "group": "Grupo",
+    "entity": "Entidad",
+    "action": "Acción",
+    "days": "Dias",
+    "time": "Hora",
+    "options": "Opciones",
+    "day_type_daily": "cada día",
+    "day_type_weekdays": "dias semanales",
+    "day_type_custom": "custom",
+    "shift_with_sun": "ajusta automaticamente la hora al amanecer/atardecer",
+    "brightness": "Brillo",
+    "temperature": "Temperatura"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mie",
+    "thu": "jue",
+    "fri": "vie",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "lunes",
+    "tue": "martes",
+    "wed": "miércoles",
+    "thu": "jueves",
+    "fri": "viernes",
+    "sat": "sábado",
+    "sun": "domingo"
+  },
+  "words": {
+    "on": "on",
+    "every": "every",
+    "and": "y",
+    "at": "en",
+    "before": "antes",
+    "after": "después",
+    "sunrise": "amanecer",
+    "sunset": "atardecer"
+  },
+  "services": {
+    "turn_on": "activar",
+    "turn_off": "desactivar",
+    "close_cover": "cerrar",
+    "open_cover": "abrir",
+    "set_temperature": "set temperatura",
+    "set_to": "set a"
+  },
+  "domains": {
+    "climate": "clima",
+    "cover": "persiana",
+    "fan": "ventilador",
+    "light": "luces",
+    "switch": "botones",
+    "vacuum": "aspirador"
+  }
+}
