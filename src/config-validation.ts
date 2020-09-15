@@ -7,6 +7,7 @@ const ConfigSchema = {
   properties: {
     discoverExisting: { type: "boolean" },
     standardConfiguration: { type: "boolean" },
+    title: { type: ["boolean", "string"] },
     domains: {
       type: "object",
       additionalProperties: {

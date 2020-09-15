@@ -8,11 +8,11 @@ import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, PrettyPrintName }
 
 
 export class Config {
-  public entities: IEntityElement[];
+  private entities: IEntityElement[];
   private groups: IGroupElement[];
   public next_sunrise?: Date;
   public next_sunset?: Date;
-  private userConfig: IConfigFull;
+  public userConfig: IConfigFull;
 
   constructor() {
     this.entities = [];
@@ -23,12 +23,13 @@ export class Config {
       domains: {},
       entities: {},
       discoverExisting: true,
-      standardConfiguration: true
+      standardConfiguration: true,
+      title: true,
     };
   }
 
   setUserConfig(userConfig: IConfig) {
-    Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discoverExisting', 'standardConfiguration']));
+    Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discoverExisting', 'standardConfiguration', 'title']));
 
     if (this.userConfig.standardConfiguration) Object.assign(this.userConfig, { domains: defaultDomainConfig });
     if (userConfig.domains) {

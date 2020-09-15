@@ -35,15 +35,12 @@ export class SchedulerCard extends LitElement {
     return styles;
   }
 
-  @property()
   Config: Config = new Config;
 
   entries: any[] = [];
 
   selection: IUserSelection = { ...DefaultUserSelection };
 
-  @property({ type: Number })
-  count = 0;
   shadowRoot: any;
   await_update: boolean = true;
 
@@ -79,7 +76,7 @@ export class SchedulerCard extends LitElement {
     if (!this.selection.newItem && !this.selection.editItem) {
       return html`
       <ha-card>
-        <div class="card-header">${localize('scheduler')}</div>
+        ${this.getHeader()}
         <div class="card-section first">
         ${this.getEntries()}
         </div>
@@ -92,7 +89,7 @@ export class SchedulerCard extends LitElement {
     } else if (this.selection.newItem && !this.selection.actionConfirmed) {
       return html`
         <ha-card>
-          <div class="card-header">${localize('scheduler')}</div>
+          ${this.getHeader()}
           <div class="card-section first">
             <div class="header">${localize('fields.group')}</div>
             <div class="option-list">
@@ -117,11 +114,17 @@ export class SchedulerCard extends LitElement {
     else {
       return html`
       <ha-card>
-        <div class="card-header">${localize('scheduler')}</div>
+        ${this.getHeader()}
         ${this.showEditor()}
       </ha-card>
       `;
     }
+  }
+
+  private getHeader() {
+    if (typeof this.Config.userConfig.title == "string") return html`<div class="card-header">${this.Config.userConfig.title}</div>`;
+    else if (this.Config.userConfig.title) return html`<div class="card-header">${localize('scheduler')}</div>`;
+    else return html``;
   }
 
   private newItem() {
@@ -299,6 +302,7 @@ export class SchedulerCard extends LitElement {
 
   setConfig(config) {
     ValidateConfig(config);
+
     this.Config.setUserConfig(config);
   }
 

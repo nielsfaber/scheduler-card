@@ -58,6 +58,7 @@ export interface IConfig {
   entities?: IDictionary<IEntityConfig>,
   discoverExisting?: Boolean,
   standardConfiguration?: Boolean,
+  title?: Boolean | string
 }
 
 export interface IConfigFull extends IConfig {
@@ -66,6 +67,7 @@ export interface IConfigFull extends IConfig {
   entities: IDictionary<IEntityConfig>,
   discoverExisting: Boolean,
   standardConfiguration: Boolean,
+  title: Boolean | string
 }
 
 export interface IUserSelection {
