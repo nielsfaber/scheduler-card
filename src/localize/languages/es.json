@@ -1,15 +1,15 @@
 {
-  "scheduler": "Programación",
+  "scheduler": "Programador",
   "actions": {
-    "add": "añadir dispositivo",
+    "add": "Agregar",
     "cancel": "cancelar",
     "next": "siguiente",
     "save": "guardar",
     "delete": "borrar"
   },
   "instructions": {
-    "no_group_selected": "Selecciona un grupo",
-    "no_entity_selected": "Selecciona una entidad",
+    "no_group_selected": "Selecciona un grupo primero",
+    "no_entity_selected": "Selecciona una entidad primero",
     "no_groups_defined": "No hay grupos definidos",
     "no_entities_for_group": "No hay entidades en este grupo",
     "no_actions_for_entity": "No hay acciones para esta entidad",
@@ -19,12 +19,12 @@
     "group": "Grupo",
     "entity": "Entidad",
     "action": "Acción",
-    "days": "Dias",
+    "days": "Días",
     "time": "Hora",
     "options": "Opciones",
     "day_type_daily": "cada día",
     "day_type_weekdays": "dias semanales",
-    "day_type_custom": "custom",
+    "day_type_custom": "personalizado",
     "shift_with_sun": "ajusta automaticamente la hora al amanecer/atardecer",
     "brightness": "Brillo",
     "temperature": "Temperatura"
@@ -48,29 +48,29 @@
     "sun": "domingo"
   },
   "words": {
-    "on": "on",
-    "every": "every",
+    "on": "el",
+    "every": "cada",
     "and": "y",
-    "at": "en",
+    "at": "a las",
     "before": "antes",
     "after": "después",
     "sunrise": "amanecer",
     "sunset": "atardecer"
   },
   "services": {
-    "turn_on": "activar",
-    "turn_off": "desactivar",
+    "turn_on": "encender",
+    "turn_off": "apagar",
     "close_cover": "cerrar",
     "open_cover": "abrir",
-    "set_temperature": "set temperatura",
-    "set_to": "set a"
+    "set_temperature": "establecer temperatura",
+    "set_to": "establecer a"
   },
   "domains": {
-    "climate": "clima",
+    "climate": "climatización",
     "cover": "persiana",
     "fan": "ventilador",
     "light": "luces",
-    "switch": "botones",
+    "switch": "interruptores",
     "vacuum": "aspirador"
   }
 }
