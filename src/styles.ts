@@ -18,7 +18,7 @@ export const styles = css`
       }
 
       div.list-item:hover {
-        
+        color: var(--primary-color);
       }
 
       div.list-item-icon {
