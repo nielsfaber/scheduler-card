@@ -413,10 +413,10 @@ export class SchedulerCard extends LitElement {
       step = 1;
       min = 0;
       max = 100;
-      if (value < min) value = min;
-      else if (value > max) value = max;
       unit = '%';
     }
+    if (value < min) value = min;
+    else if (value > max) value = max;
 
     if (!cfg['optional'] && !this.selection.levelEnabled) Object.assign(this.selection, { levelEnabled: true });
 
