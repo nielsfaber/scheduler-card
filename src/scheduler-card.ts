@@ -11,11 +11,12 @@ import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyP
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
 import { CARD_VERSION } from './const'
-import { localize } from './localize/localize';
+import { localize, getLanguage } from './localize/localize';
 
 console.info(
-  `%c  SCHEDULER-CARD  \n%c  Version ${CARD_VERSION}   `,
+  `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
   'color: orange; font-weight: bold; background: black',
+  'color: white; font-weight: bold; background: dimgray',
   'color: white; font-weight: bold; background: dimgray',
 );
 

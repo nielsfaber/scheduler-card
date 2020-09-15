@@ -25,7 +25,7 @@
     "day_type_daily": "hver dag",
     "day_type_weekdays": "ukedager",
     "day_type_custom": "egendefinert",
-    "shift_with_sun": "automatisk juster tid for soloppgang/solnedgang"
+    "shift_with_sun": "automatisk juster tid for soloppgang/solnedgang",
     "brightness": "Lysstyrke",
     "temperature": "Temperatur"
   },

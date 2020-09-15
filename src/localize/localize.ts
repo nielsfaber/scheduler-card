@@ -3,6 +3,8 @@ import * as nl from './languages/nl.json';
 import * as de from './languages/de.json';
 import * as fr from './languages/fr.json';
 import * as pl from './languages/pl.json';
+import * as no from './languages/no.json';
+import * as es from './languages/es.json';
 import * as ru from './languages/ru.json';
 
 var languages: any = {
@@ -11,12 +13,15 @@ var languages: any = {
   de: de,
   fr: fr,
   pl: pl,
+  no: no,
+  es: es,
+  es_419: es,
   ru: ru,
 };
 
 export function localize(string: string, search: string = '', replace: string = '') {
 
-  const lang = (localStorage.getItem('selectedLanguage') || 'en').replace(/['"]+/g, '').replace('-', '_');
+  const lang = getLanguage();
 
   var translated: string;
 
@@ -32,4 +37,8 @@ export function localize(string: string, search: string = '', replace: string = 
     translated = translated.replace(search, replace);
   }
   return translated;
+}
+
+export function getLanguage(): string {
+  return (localStorage.getItem('selectedLanguage') || 'en').replace(/['"]+/g, '').replace('-', '_');
 }
