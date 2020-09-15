@@ -87,14 +87,15 @@ Configuration is not mandatory.
 Out of the box, the card should already find most of your HA entities and provide some basic actions for each.
 If you want to modify which entities and/or actions can be used, then keep reading.
 
-| Name                  | Type    | Default      | Description                                                                                                                          |
-| --------------------- | ------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| type                  | string  | **Required** | `custom:scheduler-card`                                                                                                              |
-| domains               | map     | none         | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options. |
-| entities              | map     | none         | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.         |
-| groups                | map     | none         | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.                               |
-| discoverExisting      | boolean | True         | Always show the existing schedules, also if the related entities are not included in the configuration.                              |
-| standardConfiguration | boolean | True         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                         |
+| Name                  | Type              | Default      | Description                                                                                                                          |
+| --------------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| type                  | string            | **Required** | `custom:scheduler-card`                                                                                                              |
+| domains               | map               | none         | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options. |
+| entities              | map               | none         | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.         |
+| groups                | map               | none         | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.                               |
+| discoverExisting      | boolean           | True         | Always show the existing schedules, also if the related entities are not included in the configuration.                              |
+| standardConfiguration | boolean           | True         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                         |
+| title                 | boolean or string | True         | Provide your own name to overwrite the title of the card, or set to _false_ to hide the title.                                       |
 
 :warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discoverExisting:false` and `standardConfiguration:false` in both cards to avoid duplicates.
 
