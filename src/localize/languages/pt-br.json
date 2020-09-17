@@ -1,0 +1,76 @@
+{
+  "scheduler": "Agenda",
+  "actions": {
+    "add": "adicionar item",
+    "cancel": "cancelar",
+    "next": "próximo",
+    "save": "gravar",
+    "delete": "apagar"
+  },
+  "instructions": {
+    "no_group_selected": "Selecione um grupo primeiro",
+    "no_entity_selected": "Selecione uma entidade primeiro",
+    "no_groups_defined": "Não tem grupo definido",
+    "no_entities_for_group": "Não tem entidade no grupo",
+    "no_actions_for_entity": "Não há ações para esta entidade",
+    "no_entries_defined": "Não tem item pra mostar"
+  },
+  "fields": {
+    "group": "Grupo",
+    "entity": "Entidade",
+    "action": "Ação",
+    "days": "Dias",
+    "time": "Hora",
+    "options": "Opções",
+    "day_type_daily": "todos os dias",
+    "day_type_weekdays": "dias da semana",
+    "day_type_custom": "personalizado",
+    "shift_with_sun": "automaticamente ajusta hora pelo nascer do sol/pôr do sol",
+    "brightness": "Brilho",
+    "temperature": "Temperatura"
+  },
+  "days_short": {
+    "mon": "seg",
+    "tue": "ter",
+    "wed": "qua",
+    "thu": "qui",
+    "fri": "sex",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "segunda",
+    "tue": "terça",
+    "wed": "quarta",
+    "thu": "quinta",
+    "fri": "sexta",
+    "sat": "sabádo",
+    "sun": "domingo"
+  },
+  "words": {
+    "on": "on",
+    "every": "cada",
+    "and": "e",
+    "at": "às",
+    "before": "antes",
+    "after": "depois",
+    "sunrise": "nascer do sol",
+    "sunset": "pôr do sol"
+  },
+  "services": {
+    "turn_on": "ligar",
+    "turn_off": "desligar",
+    "close_cover": "fechar",
+    "open_cover": "abrir",
+    "set_temperature": "ajustar temperatura",
+    "set_to": "ajustar para"
+  },
+  "domains": {
+    "climate": "ar condicionado",
+    "cover": "persiana",
+    "fan": "ventilador",
+    "light": "luz",
+    "switch": "interruptor",
+    "vacuum": "aspirador"
+  }
+}
