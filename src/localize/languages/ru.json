@@ -2,9 +2,9 @@
   "scheduler": "Планирование",
   "actions": {
     "add": "добавить",
-    "cancel": "отмена",
+    "cancel": "отменить",
     "next": "далее",
-    "save": "записать",
+    "save": "сохранить",
     "delete": "удалить"
   },
   "instructions": {
