@@ -1,4 +1,7 @@
 
+
+import { ITime } from './date-time';
+
 export interface IDictionary<TValue> {
   [id: string]: TValue;
 }
@@ -56,18 +59,22 @@ export interface IConfig {
   groups?: IDictionary<IGroupConfig>,
   domains?: IDictionary<IDomainConfig>,
   entities?: IDictionary<IEntityConfig>,
-  discoverExisting?: Boolean,
-  standardConfiguration?: Boolean,
-  title?: Boolean | string
+  discoverExisting?: boolean,
+  standardConfiguration?: boolean,
+  title?: boolean | string,
+  am_pm?: boolean,
+  time_step?: number
 }
 
 export interface IConfigFull extends IConfig {
   groups: IDictionary<IGroupConfig>,
   domains: IDictionary<IDomainConfig>,
   entities: IDictionary<IEntityConfig>,
-  discoverExisting: Boolean,
-  standardConfiguration: Boolean,
-  title: Boolean | string
+  discoverExisting: boolean,
+  standardConfiguration: boolean,
+  title: boolean | string,
+  am_pm: boolean,
+  time_step: number
 }
 
 export interface IUserSelection {
@@ -77,19 +84,15 @@ export interface IUserSelection {
   newItem: boolean,
   actionConfirmed: boolean,
   editItem?: string,
-  timeHours: string,
-  timeMinutes: string,
+  time: ITime,
   days: number[],
   daysType: string,
-  sun: boolean,
   levelEnabled: boolean,
   level: number
 }
 
 export interface IHassEntry {
-  time?: string,
-  event?: string,
-  offset?: string,
+  time?: ITime,
   days?: number[],
   actions: number[]
 }

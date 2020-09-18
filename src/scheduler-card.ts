@@ -13,13 +13,14 @@ import { ValidateConfig } from './config-validation'
 import { CARD_VERSION } from './const'
 import { localize, getLanguage } from './localize/localize';
 
+import './time-picker';
+
 console.info(
   `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
   'color: white; font-weight: bold; background: dimgray',
 );
-
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -193,7 +194,7 @@ export class SchedulerCard extends LitElement {
           ${PrettyPrintDays(entry.entries[0].days)}
         </div>
         <div class="list-item-time">
-          ${PrettyPrintTime(pick(entry.entries[0], ['time', 'event', 'offset']))}
+          ${PrettyPrintTime(entry.entries[0].time, { amPm: this.Config.userConfig.am_pm, sunrise: this.Config.sunrise, sunset: this.Config.sunset })}
         </div>
         <div class="list-item-switch">
           ${entry['enabled'] ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>`}
@@ -220,11 +221,9 @@ export class SchedulerCard extends LitElement {
       editItem: entity_id,
       entity: data['actions'][0].entity,
       action: data['actions'][0].action,
-      timeHours: data['entries'][0].time.split(':').shift(),
-      timeMinutes: data['entries'][0].time.split(':').pop(),
+      time: data['entries'][0].time,
       days: data['entries'][0].days,
-      daysType: ComputeDaysType(data['entries'][0].days),
-      sun: (data['entries'][0].event !== undefined)
+      daysType: ComputeDaysType(data['entries'][0].days)
     });
     if (data['actions'][0].level !== undefined) {
       Object.assign(this.selection, {
@@ -357,45 +356,9 @@ export class SchedulerCard extends LitElement {
       
     <div class="card-section">
       <div class="header">${localize('fields.time')}</div>
-      <div class="time-picker">
-        <div class="time-picker-hours-up">
-          <mwc-button @click="${() => this.updateTime('time-hours-up')}">
-            <ha-icon icon="hass:chevron-up"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-hours" id="time-hours">
-        ${this.selection.timeHours}
-        </div>
-        <div class="time-picker-hours-down">
-          <mwc-button @click="${() => this.updateTime('time-hours-down')}">
-            <ha-icon icon="hass:chevron-down"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-separator">
-        :
-        </div>
-        <div class="time-picker-minutes-up">
-          <mwc-button @click="${() => this.updateTime('time-minutes-up')}">
-            <ha-icon icon="hass:chevron-up"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-minutes" id="time-minutes">
-        ${this.selection.timeMinutes}
-        </div>
-        <div class="time-picker-minutes-down">
-          <mwc-button @click="${() => this.updateTime('time-minutes-down')}">
-            <ha-icon icon="hass:chevron-down"></ha-icon>
-          </mwc-button>
-        </div>
-      </div>
+      <time-picker value=${this.selection.time.value} event=${this.selection.time.event} stepSize="${this.Config.userConfig.time_step}" formatAmPm="${this.Config.userConfig.am_pm}" sunrise="${this.Config.sunrise}" sunset="${this.Config.sunset}" @change="${this.updateTime}"></timepicker>
     </div>
-    <div class="card-section">
-      <div class="header">${localize('fields.options')}</div>
-        <div class="option-item">
-          ${this.selection.sun ? html`<paper-checkbox checked name="option-item-sun" @change="${(e) => this.toggleSun(e.target.checked)}">${localize('fields.shift_with_sun')}</paper-checkbox>` : html`<paper-checkbox name="option-item-sun" @change="${(e) => this.toggleSun(e.target)}">${localize('fields.shift_with_sun')}</paper-checkbox>`}
-        </div>
-      </div>
-    </div>
+
     <div class="card-section last">
       <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
       ${this.selection.editItem === undefined ? '' : html`<mwc-button outlined @click="${() => this.editItemDelete()}">${localize('actions.delete')}</mwc-button>`}
@@ -481,28 +444,12 @@ export class SchedulerCard extends LitElement {
     else this.shadowRoot.querySelector('#day-list-custom').classList.add('closed');
   }
 
-  updateTime(action: string): void {
-    let hours = Number(this.selection.timeHours);
-    let minutes = Number(this.selection.timeMinutes);
+  updateTime(e: CustomEvent) {
+    let el = e.target as HTMLInputElement;
+    let value = Number(el.value);
+    let event = e.detail.event;
 
-    if (action == 'time-hours-up') hours++;
-    else if (action == 'time-hours-down') hours--;
-    else if (action == 'time-minutes-up') minutes += 10;
-    else if (action == 'time-minutes-down') minutes -= 10;
-
-    if (hours < 0) hours = 23;
-    else if (hours > 23) hours = 0;
-    else if (minutes < 0) minutes = 50;
-    else if (minutes > 50) minutes = 0;
-
-    let hours_string = String(hours).padStart(2, '0');
-    let minutes_string = String(minutes).padStart(2, '0');
-
-    this.shadowRoot.querySelector('#time-hours').innerHTML = hours_string;
-    this.shadowRoot.querySelector('#time-minutes').innerHTML = minutes_string;
-
-    this.selection.timeHours = hours_string;
-    this.selection.timeMinutes = minutes_string;
+    this.selection.time = (event) ? { event: event, value: value } : { value: value };
   }
 
   editItemSave(): void {
@@ -523,9 +470,5 @@ export class SchedulerCard extends LitElement {
     this._hass!.callService('scheduler', 'remove', { entity_id: entity_id });
     this.selection = { ...DefaultUserSelection };
     this.awaitUpdate();
-  }
-
-  toggleSun(selected: boolean): void {
-    this.selection.sun = selected;
   }
 }

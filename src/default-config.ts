@@ -1,6 +1,7 @@
 
 import { IDictionary, IDomainConfig, IUserSelection } from './types'
 import { localize } from './localize/localize';
+import { parseTimestamp } from './date-time';
 
 
 export const defaultDomainConfig: IDictionary<IDomainConfig> = {
@@ -74,11 +75,9 @@ export const DefaultUserSelection: IUserSelection = {
   newItem: false,
   actionConfirmed: false,
   editItem: '',
-  timeHours: '12',
-  timeMinutes: '00',
+  time: { value: parseTimestamp('12:00') },
   days: [],
   daysType: 'daily',
-  sun: false,
   levelEnabled: false,
   level: 0
 }

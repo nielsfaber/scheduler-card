@@ -8,6 +8,8 @@ const ConfigSchema = {
     discoverExisting: { type: "boolean" },
     standardConfiguration: { type: "boolean" },
     title: { type: ["boolean", "string"] },
+    am_pm: { type: "boolean" },
+    time_step: { type: "integer", minimum: 1, maximum: 60 },
     domains: {
       type: "object",
       additionalProperties: {
@@ -29,8 +31,8 @@ const ConfigSchema = {
                     field: { type: "string" },
                     name: { type: "string" },
                     unit: { type: "string" },
-                    min: { type: "number" },
-                    max: { type: "number" },
+                    min: { type: "integer" },
+                    max: { type: "integer" },
                     step: { type: "number" },
                     optional: { type: "boolean" },
                     showPercentage: { type: "boolean" }
@@ -77,9 +79,9 @@ const ConfigSchema = {
                     field: { type: "string" },
                     name: { type: "string" },
                     unit: { type: "string" },
-                    min: { type: "number" },
-                    max: { type: "number" },
-                    step: { type: "number" },
+                    min: { type: "integer" },
+                    max: { type: "integer" },
+                    step: { type: "integer" },
                     optional: { type: "boolean" },
                     showPercentage: { type: "boolean" }
                   },

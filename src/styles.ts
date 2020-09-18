@@ -152,37 +152,6 @@ export const styles = css`
         text-transform: uppercase;
        }
 
-      div.time-picker {
-        display: grid;
-        grid-template-columns: min-content min-content min-content;
-        grid-template-rows: min-content min-content min-content;
-        grid-template-areas: "hours-up   .         minutes-up"
-                             "hours      separator minutes"
-                             "hours-down .         minutes-down";
-        grid-gap: 10px 0px;
-        align-items: center;
-      }
-
-      div.time-picker-hours-up { grid-area: hours-up; }
-      div.time-picker-hours { grid-area: hours; }
-      div.time-picker-hours-down { grid-area: hours-down; }
-      div.time-picker-separator { grid-area: separator; }
-      div.time-picker-minutes-up { grid-area: minutes-up; }
-      div.time-picker-minutes { grid-area: minutes; }
-      div.time-picker-minutes-down { grid-area: minutes-down; }
-      div.time-picker-hours-up, div.time-picker-hours-down, div.time-picker-minutes-up, div.time-picker-minutes-down {
-        --mdc-icon-size: 42px;
-      }
-
-      div.time-picker-hours, div.time-picker-minutes {
-        font-size: 42px;
-        text-align: center;
-      }
-
-      div.time-picker-separator {
-        font-size: 36px;
-      }
-
       div#day-list-custom.closed {
         display: none;
       }

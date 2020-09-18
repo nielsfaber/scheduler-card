@@ -4,12 +4,12 @@ import slugify from "slugify";
 import { IUserSelection, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, IScheduleAction } from './types'
 import { Config } from './config-parser'
 import { localize } from './localize/localize';
+import { formatTime, parseTimestamp, ITime, wrapTime } from './date-time';
+
 
 const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
 const ActionPattern = /^(A([0-9]+))+$/
 const SunTimePattern = /^([0-9]{4})?(S[SR])([0-9]{4})?$/
-const FixedTimePattern = /^([0-9]{2})([0-9]{2})$/
-const TimeOffsetPattern = /^([\+\-]{1})([0-9]{2}):([0-9]{2})$/
 
 export function ExportToHass(userData: IUserSelection, configData: Config): IHassData {
   let actionCfg = configData.FindAction(userData.entity, userData.action);
@@ -30,25 +30,12 @@ export function ExportToHass(userData: IUserSelection, configData: Config): IHas
     actions: [0]
   };
 
-  if (!userData.sun) {
-    Object.assign(entry, { time: userData['timeHours'] + ':' + userData['timeMinutes'] });
+  let ts = userData.time.value;
+  if (!userData.time.event) {
+    Object.assign(entry, { time: formatTime(ts).time });
   }
-  else if (configData.next_sunrise && configData.next_sunset) {
-    let timestamp = Number(userData.timeHours) + Number(userData.timeMinutes) / 60;
-    let timestamp_sunrise = configData.next_sunrise.getHours() + configData.next_sunrise.getMinutes() / 60;
-    let timestamp_sunset = configData.next_sunset.getHours() + configData.next_sunset.getMinutes() / 60;
-    let timestamp_offset;
-
-    if (Math.abs(timestamp - timestamp_sunrise) < Math.abs(timestamp - timestamp_sunset)) {
-      Object.assign(entry, { event: 'sunrise' })
-      timestamp_offset = timestamp - timestamp_sunrise;
-    } else {
-      Object.assign(entry, { event: 'sunset' })
-      timestamp_offset = timestamp - timestamp_sunset;
-    }
-    let offset_hours = (timestamp_offset > 0) ? Math.abs(Math.floor(timestamp_offset)) : Math.abs(Math.ceil(timestamp_offset));
-    let offset_mins = (timestamp_offset > 0) ? Math.round((timestamp_offset - offset_hours) * 60) : -Math.round((timestamp_offset + offset_hours) * 60);
-    Object.assign(entry, { offset: `${timestamp_offset > 0 ? '+' : '-'}${String(offset_hours).padStart(2, '0')}:${String(offset_mins).padStart(2, '0')}` });
+  else {
+    Object.assign(entry, { event: userData.time.event, offset: formatTime(ts).time });
   }
 
   if (userData.daysType == 'weekdays') Object.assign(entry, { days: [1, 2, 3, 4, 5] })
@@ -59,13 +46,6 @@ export function ExportToHass(userData: IUserSelection, configData: Config): IHas
     entries: [entry]
   }
 }
-
-function NumberToTime(e) {
-  let res = FixedTimePattern.exec(e);
-  if (!res) return null;
-  return res![1] + ":" + res![2];
-}
-
 
 export function getDomainFromEntityId(entity_id: string): string {
   if (entity_id.indexOf('.') === -1) return '';
@@ -96,34 +76,16 @@ export function ImportFromHass(hassData: any, configData: Config): IScheduleEntr
       actions: actions!.map(Number).filter(e => { return !isNaN(e) })
     }
 
+
     let is_sun_time = SunTimePattern.exec(res![2]);
-
-    if (NumberToTime(res![2]) !== null) {
-      Object.assign(data, { time: NumberToTime(res![2]) });
+    if (!is_sun_time) {
+      let val = parseTimestamp(res![2]);
+      Object.assign(data, { time: { value: val } });
     }
-    else if (is_sun_time) {
-      let timestamp_reference;
-      if (is_sun_time[2] == "SR") timestamp_reference = configData.next_sunrise!.getHours() + configData.next_sunrise!.getMinutes() / 60;
-      else timestamp_reference = configData.next_sunset!.getHours() + configData.next_sunset!.getMinutes() / 60;
-
-      if (is_sun_time[1]) {
-        let timestamp_offset = Number(is_sun_time[1].substr(0, 2)) + Number(is_sun_time[1].substr(2)) / 60;
-        let timestamp = timestamp_reference - timestamp_offset;
-        Object.assign(data, {
-          event: (is_sun_time[2] == "SR") ? "sunrise" : "sunset",
-          offset: "-" + NumberToTime(is_sun_time[1]),
-          time: `${String(Math.floor(timestamp)).padStart(2, '0')}:${String(Math.round((timestamp - Math.floor(timestamp)) * 6) * 10).padStart(2, '0')}`
-        })
-      }
-      else if (is_sun_time[3]) {
-        let timestamp_offset = Number(is_sun_time[3].substr(0, 2)) + Number(is_sun_time[3].substr(2)) / 60;
-        let timestamp = timestamp_reference + timestamp_offset;
-        Object.assign(data, {
-          event: (is_sun_time[2] == "SR") ? "sunrise" : "sunset",
-          offset: "+" + NumberToTime(is_sun_time[3]),
-          time: `${String(Math.floor(timestamp)).padStart(2, '0')}:${String(Math.round((timestamp - Math.floor(timestamp)) * 6) * 10).padStart(2, '0')}`
-        })
-      }
+    else {
+      let event = (is_sun_time[2] == "SR") ? "sunrise" : "sunset";
+      let val = (is_sun_time[1]) ? -parseTimestamp(is_sun_time![1]) : parseTimestamp(is_sun_time![3]);
+      Object.assign(data, { time: { value: val, event: event } });
     }
     return data;
   })
@@ -198,16 +160,23 @@ export function PrettyPrintDays(dayArray: number[]): string {
   }
 }
 
-export function PrettyPrintTime(timeData: IDictionary<string>): string {
-  if (timeData.event) {
-    let res = TimeOffsetPattern.exec(timeData.offset);
-    let offset = Number(res![2]) + Number(res![3]) / 60;
-    if (Math.abs(offset) < 1 / 6) return `${localize('words.at')} ${timeData.event} (${timeData.time})`;
-    else return `${res![2]}:${res![3]} ${res![1] == '+' ? localize('words.after') : localize('words.before')} ${localize(`words.${timeData.event}`)} (${timeData.time})`;
-  } else {
-    return `${localize('words.at')} ${timeData.time}`;
+export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: number | null, sunset: number | null }): string {
+  let amPmFormat = (options.amPm) ? options.amPm : false;
+
+  if (!time.event) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
+
+  let time_string = "unknown";
+  if (time.event == "sunrise" && options.sunrise !== null) {
+    let time_with_offset = wrapTime(Number(options.sunrise) + time.value);
+    time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
+  }
+  else if (time.event == "sunset" && options.sunset !== null) {
+    let time_with_offset = wrapTime(Number(options.sunset) + time.value);
+    time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
   }
 
+  if (Math.abs(time.value) == 0) return `${localize('words.at')} ${localize(`words.${time.event}`)} (${time_string})`;
+  else return `${formatTime(time.value, { absolute: true }).time} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${localize(`words.${time.event}`)} (${time_string})`;
 }
 
 export function PrettyPrintName(input: string): string {
