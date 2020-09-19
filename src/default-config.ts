@@ -166,12 +166,12 @@ export function getDefaultActionVariableConfig(field_name: string): object {
     },
     position: {
       name: localize('fields.position'),
-      unit: "",
+      unit: "%",
       min: 0,
-      max: 255,
+      max: 100,
       step: 1,
       optional: false,
-      show_percentage: true
+      show_percentage: false
     },
     default: {
       name: field_name,
