@@ -193,7 +193,7 @@ export class SchedulerCard extends LitElement {
 
         let unit = cfg.hasOwnProperty('unit') ? cfg.unit : "";
 
-        if (cfg.showPercentage) {
+        if (cfg.show_percentage) {
           value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
           if (value < cfg.min) value = cfg.min;
           else if (value > cfg.max) value = cfg.max;

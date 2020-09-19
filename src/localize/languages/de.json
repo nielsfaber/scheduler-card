@@ -27,7 +27,8 @@
     "day_type_custom": "benutzerdefiniert",
     "shift_with_sun": "Zeit automatisch an Sonnenauf- bzw. Sonnenuntergang anpassen",
     "brightness": "Helligkeit",
-    "temperature": "Temperatur"
+    "temperature": "Temperatur",
+    "position": "Position"
   },
   "days_short": {
     "mon": "Mo",
@@ -63,7 +64,8 @@
     "close_cover": "schließen",
     "open_cover": "öffnen",
     "set_temperature": "Temperatur einstellen",
-    "set_to": "setzen auf"
+    "set_to": "setzen auf",
+    "set_position": "Position setzen"
   },
   "domains": {
     "climate": "Heizung",

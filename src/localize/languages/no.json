@@ -27,7 +27,8 @@
     "day_type_custom": "egendefinert",
     "shift_with_sun": "automatisk juster tid for soloppgang/solnedgang",
     "brightness": "Lysstyrke",
-    "temperature": "Temperatur"
+    "temperature": "Temperatur",
+    "position": "Posisjon"
   },
   "days_short": {
     "mon": "man",
@@ -63,7 +64,8 @@
     "close_cover": "lukk",
     "open_cover": "åpne",
     "set_temperature": "sett temperatur",
-    "set_to": "sett til"
+    "set_to": "sett til",
+    "set_position": "sett posisjon"
   },
   "domains": {
     "climate": "klima",

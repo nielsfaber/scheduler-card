@@ -203,11 +203,16 @@ export class Config {
               action = { ...action };
               if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
               if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
-                let isDimmable = entity.attributes['supported_features'] & 0b1;
-                if (!isDimmable && action['variable']) delete action['variable'];
+                let SUPPORT_BRIGHTNESS = entity.attributes['supported_features'] & 1;
+                if (!SUPPORT_BRIGHTNESS && action['variable']) delete action['variable'];
+              }
+              else if (domain == "cover" && entity.attributes.hasOwnProperty('supported_features')) {
+                let SUPPORT_POSITION = entity.attributes['supported_features'] & 4;
+                if (!SUPPORT_POSITION && action['variable']) return null;
               }
               return this.CreateAction(action)
             });
+            actions = filter(actions, el => el); //remove null elements
             each(actions, e => entityActions.push(e));
           }
         }
@@ -218,11 +223,16 @@ export class Config {
               action = { ...action };
               if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
               if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
-                let isDimmable = entity.attributes['supported_features'] & 0b1;
-                if (!isDimmable && action['variable']) delete action['variable'];
+                let SUPPORT_BRIGHTNESS = entity.attributes['supported_features'] & 1;
+                if (!SUPPORT_BRIGHTNESS && action['variable']) delete action['variable'];
+              }
+              else if (domain == "cover" && entity.attributes.hasOwnProperty('supported_features')) {
+                let SUPPORT_POSITION = entity.attributes['supported_features'] & 4;
+                if (!SUPPORT_POSITION && action['variable']) return null;
               }
               return this.CreateAction(action)
             });
+            actions = filter(actions, el => el); //remove null elements
             each(actions, e => entityActions.push(e));
           }
           skip_entity = false;

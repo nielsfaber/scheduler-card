@@ -27,7 +27,8 @@
     "day_type_custom": "egyedi",
     "shift_with_sun": "Az idő automatikus igazítása napkeltéhez/naplementéhez",
     "brightness": "Fényerő",
-    "temperature": "Hőmérséklet"
+    "temperature": "Hőmérséklet",
+    "position": "Pozíciót"
   },
   "days_short": {
     "mon": "hét",
@@ -63,7 +64,8 @@
     "close_cover": "zárás",
     "open_cover": "nyitás",
     "set_temperature": "hőmérséklet",
-    "set_to": "beállítva"
+    "set_to": "beállítva",
+    "set_position": "változtass pozíciót"
   },
   "domains": {
     "climate": "termosztát",

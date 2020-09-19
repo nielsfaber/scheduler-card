@@ -2,7 +2,7 @@
 import { IUserSelection, IUserConfig } from './types'
 import { parseTimestamp } from './date-time'
 
-export const CARD_VERSION = "1.3.0"
+export const CARD_VERSION = "1.3.1"
 
 
 export const DefaultUserSelection: IUserSelection = {

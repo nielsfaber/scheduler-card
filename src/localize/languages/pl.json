@@ -27,7 +27,8 @@
     "day_type_custom": "niestandardowy",
     "shift_with_sun": "automatycznie dopasuj czas do wschodów/zachodów",
     "brightness": "Jasność",
-    "temperature": "Temperatura"
+    "temperature": "Temperatura",
+    "position": "Pozycję"
   },
   "days_short": {
     "mon": "pon",
@@ -63,7 +64,8 @@
     "close_cover": "zamknij",
     "open_cover": "otwórz",
     "set_temperature": "Ustaw temperaturę",
-    "set_to": "ustaw na"
+    "set_to": "ustaw na",
+    "set_position": "Ustaw pozycję"
   },
   "domains": {
     "climate": "termostat",

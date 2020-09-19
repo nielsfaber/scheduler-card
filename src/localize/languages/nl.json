@@ -27,7 +27,8 @@
     "day_type_custom": "Anders",
     "shift_with_sun": "Automatisch aanpassen aan zonsopgang/zonsondergang",
     "brightness": "Helderheid",
-    "temperature": "Temperatuur"
+    "temperature": "Temperatuur",
+    "position": "Positie"
   },
   "days_short": {
     "mon": "ma",
@@ -63,7 +64,8 @@
     "close_cover": "sluiten",
     "open_cover": "openen",
     "set_temperature": "temperatuur instellen",
-    "set_to": "Zet op"
+    "set_to": "Zet op",
+    "set_position": "positie instellen"
   },
   "domains": {
     "climate": "verwarming",

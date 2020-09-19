@@ -27,7 +27,8 @@
     "day_type_custom": "personalizado",
     "shift_with_sun": "automaticamente ajusta hora pelo nascer do sol/pôr do sol",
     "brightness": "Brilho",
-    "temperature": "Temperatura"
+    "temperature": "Temperatura",
+    "position": "Posição"
   },
   "days_short": {
     "mon": "seg",
@@ -63,7 +64,8 @@
     "close_cover": "fechar",
     "open_cover": "abrir",
     "set_temperature": "ajustar temperatura",
-    "set_to": "ajustar para"
+    "set_to": "ajustar para",
+    "set_position": "ajustar posição"
   },
   "domains": {
     "climate": "ar condicionado",

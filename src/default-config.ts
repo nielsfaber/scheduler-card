@@ -38,6 +38,11 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
         service: "close_cover",
         name: localize('services.close_cover')
       },
+      {
+        service: "set_cover_position",
+        name: localize('services.set_position'),
+        variable: { field: "position" }
+      },
     ]
   },
   climate: {
@@ -124,6 +129,7 @@ export function getIconForAction(action: string): string {
   else if (action == 'open_cover') return 'window-shutter-open';
   else if (action == 'close_cover') return 'window-shutter';
   else if (action == 'set_temperature') return 'thermometer';
+  else if (action == 'set_cover_position') return 'window-shutter';
   return 'flash';
 }
 
@@ -133,6 +139,7 @@ export function getNameForService(service: string): string {
   else if (service == 'open_cover') return localize('services.open_cover')
   else if (service == 'close_cover') return localize('services.close_cover')
   else if (service == 'set_temperature') return localize('services.set_temperature')
+  else if (service == 'set_cover_position') return localize('services.set_position')
   if (service.indexOf('.') !== -1) return service.split('.').pop()!;
   return service;
 }
@@ -156,6 +163,15 @@ export function getDefaultActionVariableConfig(field_name: string): object {
       step: 1,
       optional: false,
       show_percentage: false
+    },
+    position: {
+      name: localize('fields.position'),
+      unit: "",
+      min: 0,
+      max: 255,
+      step: 1,
+      optional: false,
+      show_percentage: true
     },
     default: {
       name: field_name,

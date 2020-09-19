@@ -27,7 +27,8 @@
     "day_type_custom": "выбрать дни",
     "shift_with_sun": "автоматически настраивать время на восход / закат",
     "brightness": "Яркость",
-    "temperature": "Температура"
+    "temperature": "Температура",
+    "position": "Позицию"
   },
   "days_short": {
     "mon": "пн",
@@ -63,7 +64,8 @@
     "close_cover": "закрыть",
     "open_cover": "открыть",
     "set_temperature": "задать температуру",
-    "set_to": "установить"
+    "set_to": "установить",
+    "set_position": "установить позицию"
   },
   "domains": {
     "climate": "Климат",

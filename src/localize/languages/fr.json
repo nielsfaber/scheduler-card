@@ -27,7 +27,8 @@
     "day_type_custom": "sur mesure",
     "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil",
     "brightness": "Luminosité",
-    "temperature": "Température"
+    "temperature": "Température",
+    "position": "Position"
   },
   "days_short": {
     "mon": "lun",
@@ -63,7 +64,8 @@
     "close_cover": "fermer",
     "open_cover": "ouvrir",
     "set_temperature": "régler la température",
-    "set_to": "défini à"
+    "set_to": "défini à",
+    "set_position": "position définie"
   },
   "domains": {
     "climate": "climat",
