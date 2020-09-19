@@ -323,7 +323,7 @@ export class SchedulerCard extends LitElement {
     let userCfg: any = {}, options: any = {};
 
     ValidateConfig(config);
-    const userCfgKeys = ['groups', 'domains', 'entities', 'discoverExisting', 'standardConfiguration'];
+    const userCfgKeys = ['groups', 'domains', 'entities', 'discover_existing', 'standard_configuration'];
 
     userCfg = Object.entries(config)
       .filter(([key]) => userCfgKeys.includes(key))
@@ -404,7 +404,7 @@ export class SchedulerCard extends LitElement {
     let min = cfg.min, max = cfg.max, step = cfg.step, unit = cfg.unit;
     let value = this.selection.level;
 
-    if (cfg.showPercentage) {
+    if (cfg.show_percentage) {
       value = Math.round(((value - min) / (max - min)) * 100);
       step = 1;
       min = 0;

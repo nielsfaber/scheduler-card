@@ -5,8 +5,10 @@ const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 const ConfigSchema = {
   type: "object",
   properties: {
-    discoverExisting: { type: "boolean" },
-    standardConfiguration: { type: "boolean" },
+    type: { type: "string" },
+    style: {},
+    discover_existing: { type: "boolean" },
+    standard_configuration: { type: "boolean" },
     title: { type: ["boolean", "string"] },
     am_pm: { type: "boolean" },
     time_step: { type: "integer", minimum: 1, maximum: 60 },
@@ -35,7 +37,7 @@ const ConfigSchema = {
                     max: { type: "integer" },
                     step: { type: "number" },
                     optional: { type: "boolean" },
-                    showPercentage: { type: "boolean" }
+                    show_percentage: { type: "boolean" }
                   },
                   required: ['field'],
                   additionalProperties: false
@@ -83,7 +85,7 @@ const ConfigSchema = {
                     max: { type: "integer" },
                     step: { type: "integer" },
                     optional: { type: "boolean" },
-                    showPercentage: { type: "boolean" }
+                    show_percentage: { type: "boolean" }
                   },
                   required: ['field'],
                   additionalProperties: false
@@ -118,7 +120,8 @@ const ConfigSchema = {
         ]
       }
     }
-  }
+  },
+  additionalProperties: false
 }
 
 export function ValidateConfig(config: any) {

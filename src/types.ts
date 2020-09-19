@@ -60,16 +60,16 @@ export interface IConfig {
   groups?: IDictionary<IGroupConfig>,
   domains?: IDictionary<IDomainConfig>,
   entities?: IDictionary<IEntityConfig>,
-  discoverExisting?: boolean,
-  standardConfiguration?: boolean,
+  discover_existing?: boolean,
+  standard_configuration?: boolean,
 }
 
 export interface IConfigFull extends IConfig {
   groups: IDictionary<IGroupConfig>,
   domains: IDictionary<IDomainConfig>,
   entities: IDictionary<IEntityConfig>,
-  discoverExisting: boolean,
-  standardConfiguration: boolean,
+  discover_existing: boolean,
+  standard_configuration: boolean,
 }
 
 export interface IUserSelection {
@@ -123,7 +123,7 @@ export interface IActionVariableConfig {
   max?: number,
   step?: number
   optional?: boolean,
-  showPercentage?: boolean
+  show_percentage?: boolean
 }
 
 export interface IActionVariable {
@@ -134,7 +134,7 @@ export interface IActionVariable {
   max: number,
   step: number,
   optional: boolean,
-  showPercentage: boolean
+  show_percentage: boolean
 }
 
 export interface IUserConfig {

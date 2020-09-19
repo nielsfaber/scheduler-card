@@ -20,15 +20,15 @@ export class Config {
       groups: {},
       domains: {},
       entities: {},
-      discoverExisting: true,
-      standardConfiguration: true,
+      discover_existing: true,
+      standard_configuration: true,
     };
   }
 
   setUserConfig(userConfig: IConfig) {
-    Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discoverExisting', 'standardConfiguration', 'title', 'am_pm', 'time_step']));
+    Object.assign(this.userConfig, pick(userConfig, ['entities', 'groups', 'discover_existing', 'standard_configuration']));
 
-    if (this.userConfig.standardConfiguration) Object.assign(this.userConfig, { domains: defaultDomainConfig });
+    if (this.userConfig.standard_configuration) Object.assign(this.userConfig, { domains: defaultDomainConfig });
     if (userConfig.domains) {
       each(userConfig.domains, (cfg, domain) => {
         let domainCfg = { ... this.userConfig.domains };
@@ -233,7 +233,7 @@ export class Config {
       }
     })
 
-    if (this.userConfig.discoverExisting) {
+    if (this.userConfig.discover_existing) {
       let res = filter(entityList, e => IsSchedulerEntity(e.entity_id));
       res = map(res, e => { return e.attributes['actions'] });
       res = flatten(res);
