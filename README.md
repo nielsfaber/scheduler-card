@@ -156,7 +156,7 @@ choose your own days. A list with all days of the week appears. You can select o
 
 
 #### Choosing the time 
-:star: Updated in v1.3.0. May contain bugs.
+:round_pushpin: Updated in v1.3.0. May contain bugs.
 
 The time at which you want schedule to be activated can be set using the timepicker.
 
@@ -205,13 +205,13 @@ If you want to modify which entities and/or actions can be used, then keep readi
 The standard configuration is intended to help you started without needing coding (yaml) skills.
 
 Included in the standard configuration:
-| Device type/domain | Supported actions                | Remarks                                          |
-| ------------------ | -------------------------------- | ------------------------------------------------ |
-| light              | *Turn on*<br> *Turn off*         | Brightness is configurable from 0-100% <br><br>  |
-| switch             | *Turn on*<br> *Turn off*         |
-| cover              | *Open*<br> *Close*               |
-| climate            | *Set temperature*<br> *Turn off* | Temperature is configurable from 10-30C <br><br> |
-| fan                | *Turn on* <br> *Turn off*        |
+| Device type/domain | Supported actions                    | Remarks                                          |
+| ------------------ | ------------------------------------ | ------------------------------------------------ |
+| light              | *Turn on*<br> *Turn off*             | Brightness is configurable from 0-100% <br><br>  |
+| switch             | *Turn on*<br> *Turn off*             |
+| cover              | *Open*<br> *Close*<br>*Set position* | <br><br>Position is configurable from 0-100%     |
+| climate            | *Set temperature*<br> *Turn off*     | Temperature is configurable from 10-30C <br><br> |
+| fan                | *Turn on* <br> *Turn off*            |
 
 Are you missing something that should be long in the standard configuration? [Let me know](https://github.com/nielsfaber/scheduler-card/issues)
 
