@@ -53,7 +53,11 @@ export class SchedulerCard extends LitElement {
   }
 
   private init(hass) {
-    if (!getLanguage() || getLanguage() == "null" && hass.language) {
+    if (!getLanguage() || getLanguage() == "null" && hass.selectedLanguage) {
+      try { localStorage.setItem("selectedLanguage", hass.selectedLanguage); }
+      catch (e) { console.log(`failed to set language: ${e}`) }
+    }
+    else if (!getLanguage() || getLanguage() == "null" && hass.language) {
       try { localStorage.setItem("selectedLanguage", hass.language); }
       catch (e) { console.log(`failed to set language: ${e}`) }
     }
