@@ -120,10 +120,14 @@ export class SchedulerCard extends LitElement {
             <div class="option-list">
             ${this.getGroups()}
             </div>
+          </div>
+          <div class="card-section">
             <div class="header">${localize('fields.entity')}</div>
             <div class="option-list">
             ${this.getEntities()}
             </div>
+          </div>
+          <div class="card-section">
             <div class="header">${localize('fields.action')}</div>
             <div class="option-list">
             ${this.getActions()}
