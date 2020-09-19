@@ -33,9 +33,9 @@ const ConfigSchema = {
                     field: { type: "string" },
                     name: { type: "string" },
                     unit: { type: "string" },
-                    min: { type: "integer" },
-                    max: { type: "integer" },
-                    step: { type: "number" },
+                    min: { type: "number", minimum: 0 },
+                    max: { type: "number", minimum: 1 },
+                    step: { type: "number", minimum: 0.1 },
                     optional: { type: "boolean" },
                     show_percentage: { type: "boolean" }
                   },
