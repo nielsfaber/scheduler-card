@@ -28,6 +28,7 @@
 - [Translations](#translations)
 - [FAQ](#faq)
   - [*Can I set the card to Fahrenheit instead of Celsius?*](#can-i-set-the-card-to-fahrenheit-instead-of-celsius)
+  - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
   - [*How do i check which version i am using?*](#how-do-i-check-which-version-i-am-using)
   - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
   - [*Why is there no such scheduler in HA yet?*](#why-is-there-no-such-scheduler-in-ha-yet)
@@ -435,6 +436,62 @@ domains:
           max: 80
 ```
 <br>
+
+### *Can I make a schedule that checks a condition before executing the action?*
+
+From within the _scheduler-card_, there is unfortunately no such functionality in place.
+There are two alternative ways:
+
+__1. Use an `automation` to control when the schedule is running__
+
+ Create an `automation` that checks for the condition, and based on this, enables or disables the schedule.
+ Run service `switch.turn_off` or `switch.turn_on` with the entity_id matching your schedule.
+
+<u>Main disadvantage</u>: the entity_id of a schedule is not easy to read: they are randomly generated, and the entity_id does not tell anything about the related entity.
+
+
+__2. Use an `script` to check the condition before execution of the action__
+
+ Create a `script` that checks for the condition, and if it passes, executes the action.
+ Use the scheduler to execute this `script` (instead of the actual entity you want to control).
+Currently this is considered the best option.
+
+<u>Main disadvantage</u>: you will have to add configuration to the card to make the `script` selectable in the scheduler-card. The result will look less pretty than with other entities.
+
+<br>
+
+Example: _Turn on my thermostat at X degrees. but only if my window is closed_
+
+First create the `script` (for setting up scripts see [here](https://www.home-assistant.io/integrations/script/)):
+```yaml
+my_script:
+  fields:
+    temperature: {} # allow temperature as variable field
+  sequence: # sequence for multiple steps, aborts if a step fails 
+    - condition: state # check the condition
+      entity_id: binary_sensor.my_window
+      state: 'off' 
+    - service: climate.set_temperature # update the temperature
+      data_template:
+        entity_id: climate.my_thermostat
+        temperature: "{{ temperature }}"
+
+```
+To add the newly created script to HA you need to restart HA (or run 'reload scripts').
+
+Now, add the `script` entity to the card:
+```yaml
+type: custom:scheduler-card
+(...)
+entities:
+  script.my_script:
+    name: My thermostat script
+    actions:
+      - service: script.my_script # service is the same as entity_id for scripts 
+        name: set temperature
+        variable: # add action variable to show a slider for choosing the temperature
+          field: temperature
+```
 
 ### *How do i check which version i am using?*
 
