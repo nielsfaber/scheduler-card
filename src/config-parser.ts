@@ -5,17 +5,12 @@ import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionEleme
 import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig } from './default-config'
 import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, PrettyPrintName } from './helpers'
 
-import { parseTimestamp } from './date-time';
 
 
 export class Config {
   private entities: IEntityElement[];
   private groups: IGroupElement[];
-  public next_sunrise?: Date;
-  public next_sunset?: Date;
   public userConfig: IConfigFull;
-  public sunrise: number | null = null;
-  public sunset: number | null = null;
 
   constructor() {
     this.entities = [];
@@ -27,9 +22,6 @@ export class Config {
       entities: {},
       discoverExisting: true,
       standardConfiguration: true,
-      title: true,
-      am_pm: false,
-      time_step: 10
     };
   }
 
@@ -274,12 +266,6 @@ export class Config {
       });
     }
 
-    if (entityList['sun.sun']) {
-      this.next_sunrise = new Date(entityList['sun.sun'].attributes.next_rising);
-      this.next_sunset = new Date(entityList['sun.sun'].attributes.next_setting);
-      this.sunrise = parseTimestamp(`${String(this.next_sunrise.getHours()).padStart(2, '0')}:${String(this.next_sunrise.getMinutes()).padStart(2, '0')}`);
-      this.sunset = parseTimestamp(`${String(this.next_sunset.getHours()).padStart(2, '0')}:${String(this.next_sunset.getMinutes()).padStart(2, '0')}`);
-    }
   }
 
 

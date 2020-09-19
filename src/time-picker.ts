@@ -1,5 +1,6 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { formatTime, wrapTime, parseTimestamp, MinutesPerHour, HoursPerDay, roundTime } from './date-time';
+import { formatTime, wrapTime, MinutesPerHour, roundTime } from './date-time';
+import { localize } from './localize/localize';
 
 
 @customElement('time-picker')
@@ -16,7 +17,7 @@ export class TimePicker extends LitElement {
   get value() { return roundTime(this._val, this.stepSize); }
 
   @property({ type: String })
-  event: null | undefined | "sunrise" | "sunset" = null;
+  event: null | "undefined" | "sunrise" | "sunset" = null;
 
   @property({ type: String })
   formatAmPm = "false";
@@ -30,7 +31,7 @@ export class TimePicker extends LitElement {
   @property({ type: Number })
   sunset: number = 0;
 
-  maxOffset: number = 3;
+  maxOffset: number = 2;
 
 
   updated() {
@@ -39,6 +40,7 @@ export class TimePicker extends LitElement {
   }
 
   firstUpdated() {
+    if (this.event == "undefined") this.event = null; //fix for html string input parsing
     let options = (this.event) ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour } : { stepSize: this.stepSize };
     this.value = wrapTime(this.value, options);
   }
@@ -106,6 +108,8 @@ export class TimePicker extends LitElement {
   }
 
   private getSunModeToggle() {
+    if (isNaN(this.sunrise) || isNaN(this.sunset)) return html``;
+
     let diff_sunrise = Math.abs(wrapTime(this._val - this.sunrise, { stepSize: this.stepSize, signed: true }));
     let diff_sunset = Math.abs(wrapTime(this._val - this.sunset, { stepSize: this.stepSize, signed: true }));
     let enabled = (this.event || diff_sunrise <= this.maxOffset * MinutesPerHour || diff_sunset <= this.maxOffset * MinutesPerHour);
@@ -128,7 +132,7 @@ export class TimePicker extends LitElement {
   }
 
   private getBeforeAfter() {
-    return (this.value < 0) ? 'before' : 'after';
+    return (this.value < 0) ? localize('words.before') : localize('words.after');
   }
 
   private getSuffix() {

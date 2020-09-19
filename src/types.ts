@@ -55,15 +55,13 @@ export interface IGroupElement extends IGroupConfig {
   name: string,
   icon?: string,
 }
+
 export interface IConfig {
   groups?: IDictionary<IGroupConfig>,
   domains?: IDictionary<IDomainConfig>,
   entities?: IDictionary<IEntityConfig>,
   discoverExisting?: boolean,
   standardConfiguration?: boolean,
-  title?: boolean | string,
-  am_pm?: boolean,
-  time_step?: number
 }
 
 export interface IConfigFull extends IConfig {
@@ -72,9 +70,6 @@ export interface IConfigFull extends IConfig {
   entities: IDictionary<IEntityConfig>,
   discoverExisting: boolean,
   standardConfiguration: boolean,
-  title: boolean | string,
-  am_pm: boolean,
-  time_step: number
 }
 
 export interface IUserSelection {
@@ -130,6 +125,7 @@ export interface IActionVariableConfig {
   optional?: boolean,
   showPercentage?: boolean
 }
+
 export interface IActionVariable {
   field: string,
   unit: string,
@@ -139,4 +135,12 @@ export interface IActionVariable {
   step: number,
   optional: boolean,
   showPercentage: boolean
+}
+
+export interface IUserConfig {
+  sunrise: number | null,
+  sunset: number | null,
+  title: boolean | string,
+  am_pm: boolean,
+  time_step: number,
 }

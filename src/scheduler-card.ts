@@ -1,26 +1,20 @@
 
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { find, filter, pick, extend, pull } from "lodash-es";
+import { find, filter, extend, pull } from "lodash-es";
 
 
 import { Config } from './config-parser';
-import { IEntityElement, IGroupElement, IActionElement, IUserSelection, IActionVariable } from './types'
-import { DefaultUserSelection } from './default-config'
+import { IEntityElement, IGroupElement, IActionElement, IUserSelection, IActionVariable, IUserConfig, IConfig } from './types'
 import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, ComputeDaysType, IsSchedulerEntity } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
-import { CARD_VERSION } from './const'
+import { CARD_VERSION, DefaultUserSelection, DefaultUserConfig } from './const'
 import { localize, getLanguage } from './localize/localize';
+import { parseTimestamp } from './date-time';
 
 import './time-picker';
 
-console.info(
-  `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
-  'color: orange; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray',
-  'color: white; font-weight: bold; background: dimgray',
-);
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -36,6 +30,8 @@ export class SchedulerCard extends LitElement {
     return styles;
   }
 
+  _config: IUserConfig = DefaultUserConfig;
+
   Config: Config = new Config;
 
   entries: any[] = [];
@@ -50,12 +46,36 @@ export class SchedulerCard extends LitElement {
 
   set hass(hass: HomeAssistant) {
     if (!this.await_update) return;
-    if (!this.Config) return;
+    if (!this._hass) this.init(hass);
 
-    if (!this._hass) this.Config.LoadEntities(hass.states);
     this.update_entries(hass);
     this._hass = hass;
   }
+
+  private init(hass) {
+    if (!getLanguage() || getLanguage() == "null" && hass.language) {
+      try { localStorage.setItem("selectedLanguage", hass.language); }
+      catch (e) { console.log(`failed to set language: ${e}`) }
+    }
+
+    if (hass.states['sun.sun'] !== undefined) {
+      Object.assign(this._config, {
+        sunrise: parseTimestamp(hass.states['sun.sun'].attributes.next_rising),
+        sunset: parseTimestamp(hass.states['sun.sun'].attributes.next_setting),
+      })
+    }
+
+    console.info(
+      `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
+      'color: orange; font-weight: bold; background: black',
+      'color: white; font-weight: bold; background: dimgray',
+      'color: white; font-weight: bold; background: dimgray',
+    );
+
+    this.Config.LoadEntities(hass.states);
+
+  }
+
 
   protected update_entries(hass) {
     let entries = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
@@ -77,7 +97,7 @@ export class SchedulerCard extends LitElement {
     if (!this.selection.newItem && !this.selection.editItem) {
       return html`
       <ha-card>
-        ${this.getHeader()}
+        ${this.getTitle()}
         <div class="card-section first">
         ${this.getEntries()}
         </div>
@@ -90,7 +110,7 @@ export class SchedulerCard extends LitElement {
     } else if (this.selection.newItem && !this.selection.actionConfirmed) {
       return html`
         <ha-card>
-          ${this.getHeader()}
+          ${this.getTitle()}
           <div class="card-section first">
             <div class="header">${localize('fields.group')}</div>
             <div class="option-list">
@@ -115,16 +135,16 @@ export class SchedulerCard extends LitElement {
     else {
       return html`
       <ha-card>
-        ${this.getHeader()}
+        ${this.getTitle()}
         ${this.showEditor()}
       </ha-card>
       `;
     }
   }
 
-  private getHeader() {
-    if (typeof this.Config.userConfig.title == "string") return html`<div class="card-header">${this.Config.userConfig.title}</div>`;
-    else if (this.Config.userConfig.title) return html`<div class="card-header">${localize('scheduler')}</div>`;
+  private getTitle() {
+    if (typeof this._config.title == "string") return html`<div class="card-header">${this._config.title}</div>`;
+    else if (this._config.title) return html`<div class="card-header">${localize('scheduler')}</div>`;
     else return html``;
   }
 
@@ -194,7 +214,7 @@ export class SchedulerCard extends LitElement {
           ${PrettyPrintDays(entry.entries[0].days)}
         </div>
         <div class="list-item-time">
-          ${PrettyPrintTime(entry.entries[0].time, { amPm: this.Config.userConfig.am_pm, sunrise: this.Config.sunrise, sunset: this.Config.sunset })}
+          ${PrettyPrintTime(entry.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset })}
         </div>
         <div class="list-item-switch">
           ${entry['enabled'] ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>`}
@@ -300,9 +320,22 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config) {
-    ValidateConfig(config);
+    let userCfg: any = {}, options: any = {};
 
-    this.Config.setUserConfig(config);
+    ValidateConfig(config);
+    const userCfgKeys = ['groups', 'domains', 'entities', 'discoverExisting', 'standardConfiguration'];
+
+    userCfg = Object.entries(config)
+      .filter(([key]) => userCfgKeys.includes(key))
+      .reduce((userCfg, [key, val]) => Object.assign(userCfg, { [key]: val }), {});
+
+    options = Object.entries(config)
+      .filter(([key]) => Object.keys(this._config).includes(key))
+      .reduce((options, [key, val]) => Object.assign(options, { [key]: val }), {});
+
+    Object.assign(this._config, options);
+
+    this.Config.setUserConfig(userCfg);
   }
 
   showEditor(): TemplateResult {
@@ -356,7 +389,7 @@ export class SchedulerCard extends LitElement {
       
     <div class="card-section">
       <div class="header">${localize('fields.time')}</div>
-      <time-picker value=${this.selection.time.value} event=${this.selection.time.event} stepSize="${this.Config.userConfig.time_step}" formatAmPm="${this.Config.userConfig.am_pm}" sunrise="${this.Config.sunrise}" sunset="${this.Config.sunset}" @change="${this.updateTime}"></timepicker>
+      <time-picker value=${this.selection.time.value} event=${this.selection.time.event} stepSize="${this._config.time_step}" formatAmPm="${this._config.am_pm}" sunrise="${this._config.sunrise}" sunset="${this._config.sunset}" @change="${this.updateTime}"></timepicker>
     </div>
 
     <div class="card-section last">

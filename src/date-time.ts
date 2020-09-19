@@ -73,12 +73,15 @@ export function wrapTime(value: number, options: { stepSize?: number, signed?: b
 
 export function parseTimestamp(input: string) {
   let hours, minutes, res;
-  if (input.indexOf(':') !== -1) {
-    let parts = input.split(':');
-    [hours, minutes] = [Number(parts[0]), Number(parts[1])];
+  if ((res = /^([0-9]{2}):([0-9]{2})$/.exec(input)) !== null) {
+    [hours, minutes] = [Number(res[1]), Number(res[2])];
   }
   else if ((res = /^([0-9]{2})([0-9]{2})$/.exec(input)) !== null) {
     [hours, minutes] = [Number(res[1]), Number(res[2])];
+  }
+  else if ((res = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[\+|\-][0-9]{2}:[0-9]{2}$/.exec(input)) !== null) {
+    let ts = new Date(res[0]);
+    return parseTimestamp(`${String(ts.getHours()).padStart(2, '0')}:${String(ts.getMinutes()).padStart(2, '0')}`);
   }
   else {
     console.log(`failed to parse timestamp '${input}'`);
