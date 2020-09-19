@@ -15,10 +15,24 @@ export const styles = css`
         background: var(--list-item-background-color);
         cursor: pointer;
         padding: 10px 20px;
+        position: relative;
       }
 
-      div.list-item:hover {
-        
+      div.list-item:before  {
+        content: " ";
+        background: var(--list-item-background-color);
+        opacity: 0.1;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+       }
+
+      div.list-item:hover:before {
+          background: var(--primary-color);
+          border-radius: 4px;
       }
 
       div.list-item-icon {
