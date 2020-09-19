@@ -144,9 +144,9 @@ export function getDefaultActionVariableConfig(field_name: string): object {
       unit: "",
       min: 0,
       max: 255,
-      step: 2.55,
+      step: 1,
       optional: true,
-      showPercentage: true
+      show_percentage: true
     },
     temperature: {
       name: localize('fields.temperature'),
@@ -155,7 +155,7 @@ export function getDefaultActionVariableConfig(field_name: string): object {
       max: 30,
       step: 1,
       optional: false,
-      showPercentage: false
+      show_percentage: false
     },
     default: {
       name: field_name,
@@ -164,7 +164,7 @@ export function getDefaultActionVariableConfig(field_name: string): object {
       max: 255,
       step: 1,
       optional: false,
-      showPercentage: false
+      show_percentage: false
     }
   }
   if (defaultConfig[field_name] !== undefined) return { ...defaultConfig[field_name] };

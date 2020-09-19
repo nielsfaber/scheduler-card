@@ -409,12 +409,14 @@ export class SchedulerCard extends LitElement {
     let value = this.selection.level;
 
     if (cfg.show_percentage) {
-      value = Math.round(((value - min) / (max - min)) * 100);
+      value = ((value - min) / (max - min)) * 100;
       step = 1;
       min = 0;
       max = 100;
       unit = '%';
     }
+    value = Math.round((value * step) / step);
+
     if (value < min) value = min;
     else if (value > max) value = max;
 
@@ -444,17 +446,20 @@ export class SchedulerCard extends LitElement {
     let action = this.Config.FindAction(this.selection.entity, this.selection.action);
     let cfg = action!['variable'];
     if (!cfg) return;
-    let min = cfg.min, max = cfg.max, unit = cfg.unit;
+    let min = cfg.min, max = cfg.max, unit = cfg.unit, step = cfg.step;
 
-    if (cfg.showPercentage) unit = '%';
+
+    if (cfg.show_percentage) unit = '%';
     let value = Number((e.target as HTMLInputElement).value);
+    value = Math.round((value * step) / step);
 
     this.shadowRoot.querySelector("#level-value").innerHTML = `${value}${unit}`;
 
-    if (cfg.showPercentage) {
+    if (cfg.show_percentage) {
       value = Math.round((value / 100) * (max - min) + min);
       unit = '%'
     }
+
     if (value < min) value = min;
     else if (value > max) value = max;
     this.selection.level = value;
