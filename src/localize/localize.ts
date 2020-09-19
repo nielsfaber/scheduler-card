@@ -1,21 +1,30 @@
-import * as en from './languages/en.json';
-import * as nl from './languages/nl.json';
+
+
 import * as de from './languages/de.json';
-import * as fr from './languages/fr.json';
-import * as pl from './languages/pl.json';
-import * as no from './languages/no.json';
+import * as en from './languages/en.json';
 import * as es from './languages/es.json';
+import * as fr from './languages/fr.json';
+import * as hu from './languages/hu.json';
+import * as nl from './languages/nl.json';
+import * as no from './languages/no.json';
+import * as pl from './languages/pl.json';
+import * as pt_br from './languages/pt-br.json';
 import * as ru from './languages/ru.json';
 
 var languages: any = {
-  en: en,
-  nl: nl,
   de: de,
-  fr: fr,
-  pl: pl,
-  no: no,
+  en: en,
   es: es,
   es_419: es,
+  fr: fr,
+  hu: hu,
+  nb: no,
+  nl: nl,
+  nn: no,
+  no: no,
+  pl: pl,
+  pt: pt_br,
+  pt_BR: pt_br,
   ru: ru,
 };
 
