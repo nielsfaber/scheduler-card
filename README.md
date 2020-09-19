@@ -4,8 +4,11 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Updating](#updating)
-  - [Updating via HACS](#updating-via-hacs)
-  - [Updating manually](#updating-manually)
+- [Usage](#usage)
+  - [Creating a schedule](#creating-a-schedule)
+    - [Choosing an entity and action](#choosing-an-entity-and-action)
+    - [Choosing the days](#choosing-the-days)
+    - [Choosing the time](#choosing-the-time)
 - [Configuration](#configuration)
   - [General](#general)
     - [About the standard configuration](#about-the-standard-configuration)
@@ -25,7 +28,8 @@
 - [Translations](#translations)
 - [FAQ](#faq)
   - [*Can I set the card to Fahrenheit instead of Celsius?*](#can-i-set-the-card-to-fahrenheit-instead-of-celsius)
-  - [*Can I use AM/PM instead of 24h notation*?](#can-i-use-ampm-instead-of-24h-notation)
+  - [*How do i check which version i am using?*](#how-do-i-check-which-version-i-am-using)
+  - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
   - [*Why is there no such scheduler in HA yet?*](#why-is-there-no-such-scheduler-in-ha-yet)
 - [Troubleshooting](#troubleshooting)
 
@@ -40,14 +44,16 @@ See it in action:
 ![alt text](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/Demonstration.gif?raw=true "demonstration video")
 
 ## Installation
+<details>
+<summary>click to show installation instructions </summary>
 
 HACS installation:
 1. Add `https://github.com/nielsfaber/scheduler-card` as a custom frontend repository.
 2. Click on "Install" under the new card that just popped up.
 
-<details><summary>Manual installation</summary>
+Manual installation
 
-1. Download the latest release of the `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
+1. Download the latest release of `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
 
 2. Add a reference to the card in the resources section of `ui-lovelace.yaml`:
 
@@ -56,8 +62,6 @@ resources:
   - url: /local/scheduler-card/scheduler-card.js?v=0
     type: module
 ```
-
-</details>
 
  3. Add the card in the view where you want it to be shown:
  
@@ -71,15 +75,111 @@ resources:
    ...
   ```
 
+</details>
+
 ## Updating
-### Updating via HACS
+
+<details>
+<summary>click to show updating instructions </summary>
+
+Updating via HACS:
 HACS should auto-remind you in the HACS tab when an update is available.
 
-### Updating manually
+Updating manually:
 
 Use `git pull` for manual installation updates.
 
 Since most browsers will cache the Lovelace card code, you can force a refresh of  the browser by editing the entry in the `resources:` section in  `ui-lovelace.yaml`, by updating the version to `?v=(n+1)` (where `n` the current value).
+
+
+</details>
+
+## Usage
+
+:construction: WIP More usage instructions should follow soon.
+
+
+
+### Creating a schedule
+Click the button 'add item' in the bottom of the card, to start creating a schedule.
+
+#### Choosing an entity and action
+The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view. 
+
+__Groups__
+Since HA may contain many entities, the card divides the entities into different groups.
+Clicking a group automatically will show the entities contained in the group.
+
+The groups that are displayed are depending on your HA configuration. 
+Typically the groups are based on the _domain_ of your entities.
+If you want to make changes to the groups, you can do this by defining [groups](#groups) configuration.
+
+__Entities__
+The entities that you can to control with the scheduler show up here.
+Clicking a entity automatically will show the actions that you can program for this entity.
+
+Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. If you are missing one or more entities, you can add these yourself using the [entities](#entities) or [domains](#domains) configuration. 
+
+__Actions__ 
+The actions that you can perform for the selected entity show up here.
+ Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself to either entity or the complete domain (group) using the [actions](#actions) configuration.
+
+
+ Actions can contain a variable setting (e.g. turn on a lamp at specific brightness, or change the setpoint for a thermostat).
+These can be defined in the next page.
+
+<img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_select_entity.png?raw=true" width="500">
+
+#### Choosing the days
+After clicking the 'next' button, a new view appears.
+This view is used for choosing _when_ the schedule should be active.
+
+Choose the days of the week for which the schedule should be active.
+
+
+__Every day__
+ the default option. The schedule will perform the action every day at the specified time.
+
+__Weekdays__
+perform action only on monday thru friday. Typically weekdays are the same as working days, but it may depend on your country. Holidays are not taken into account as of yet.
+
+__Custom__
+choose your own days. A list with all days of the week appears. You can select one or more days by clicking them.
+
+:construction: WIP rename _every day_ to _daily_
+
+:construction: WIP rename _weekdays_ to _workdays_, and take into account holidays and the actual workdays in your country using the [workday sensor](https://www.home-assistant.io/integrations/workday/)
+
+:construction: WIP add _weekends_ and make it the opposite of _workdays_
+
+:construction: WIP add option to choose the first day of the week
+
+
+#### Choosing the time 
+:star: Updated in v1.3.0. May contain bugs.
+
+The time at which you want schedule to be activated can be set using the timepicker.
+
+
+
+The timepicker shows the current time setting, and features arrow buttons to increase or decrease the hour and minutes. Note that you can infinitely loop through time. 
+The step size for minutes is 10 minutes by default, but can be configured to your preference.
+
+If you have the AM/PM option enabled, 12-hour format will be used. You can click on the button to switch between AM and PM.
+
+__Sunrise / sunset mode__
+
+If you have the [sun](https://www.home-assistant.io/integrations/sun/) integration in HA, a button with sun/moon icon shows up on the right. This is the _mode button_, which allows you to switch from a fixed time, to time relative to sunrise or sunset.  
+The card allows you to choose a time that is 2 hours around sunrise or sunset. The button will be disabled if the current time is not in this range.
+
+In sunrise/sunset mode, the timepicker will show the offset relative to sunrise/sunset. The time offset is automatically calculated from fixed time. 
+The _sunrise/sunrise button_ will show a sun icon when offset is relative to sunrise, or a moon icon when offset is relative sunset.
+The _before/after button_ indicates whether the offset is applied in positive direction (so triggers after sunrise/sunset), or in negative direction (before sunrise/sunset).
+Also here, buttons can be clicked to toggle.
+
+:warning: **Important**: _What you see is what you get_ here. If you want to store time as relative to sunrise or sunset, make sure that you have this _mode_ activated when you click the save button.
+
+<img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_timepicker.png?raw=true" width="400">
 
 ## Configuration
 ### General
@@ -87,15 +187,17 @@ Configuration is not mandatory.
 Out of the box, the card should already find most of your HA entities and provide some basic actions for each.
 If you want to modify which entities and/or actions can be used, then keep reading.
 
-| Name                  | Type              | Default      | Description                                                                                                                          |
-| --------------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| type                  | string            | **Required** | `custom:scheduler-card`                                                                                                              |
-| domains               | map               | none         | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options. |
-| entities              | map               | none         | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.         |
-| groups                | map               | none         | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.                               |
-| discoverExisting      | boolean           | True         | Always show the existing schedules, also if the related entities are not included in the configuration.                              |
-| standardConfiguration | boolean           | True         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                         |
-| title                 | boolean or string | True         | Provide your own name to overwrite the title of the card, or set to _false_ to hide the title.                                       |
+| Name                   | Type              | Default      | Available from | Description                                                                                                                          |
+| ---------------------- | ----------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| type                   | string            | **Required** | -              | `custom:scheduler-card`                                                                                                              |
+| domains                | map               | none         | v1.0.0         | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options. |
+| entities               | map               | none         | v1.0.0         | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.         |
+| groups                 | map               | none         | v1.0.0         | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.                               |
+| discover_existing      | boolean           | True         | v1.2.0         | Always show the existing schedules, also if the related entities are not included in the configuration.                              |
+| standard_configuration | boolean           | True         | v1.2.0         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                         |
+| title                  | boolean or string | True         | v1.2.8         | Provide your own name to overwrite the title of the card, or set to _false_ to hide the title.                                       |
+| am_pm                  | boolean           | False        | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                               |
+| time_step              | number            | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                   |
 
 :warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discoverExisting:false` and `standardConfiguration:false` in both cards to avoid duplicates.
 
@@ -220,20 +322,23 @@ Actions are linked to their entities, so the entity ID is sent together with the
 :warning: **Note**: Templates (jinja code) are not supported at this point.
 
 #### Action variables
+
+:round_pushpin: Introduced in v1.2.6
+
 Some devices allow to operate on a variable working point. For example lights can be dimmed with a `brightness`, fans can spin at a `speed` etc.
 
 By providing an action variable, the card allows you to choose the setting you want to apply with the action.
 
-| Name           | Type    | Default       | Description                                                                                                                                                                                           |
-| -------------- | ------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| field          | string  | **Required**  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
-| name           | string  | same as field | Name under which the variable is visible in the card                                                                                                                                                  |
-| unit           | string  | " "           | Displayed unit                                                                                                                                                                                        |
-| min            | number  | 0             | Minimum value that can be set                                                                                                                                                                         |
-| max            | number  | 255           | Maximum value that can be set                                                                                                                                                                         |
-| step           | number  | 1             | Step size                                                                                                                                                                                             |
-| optional       | boolean | false         | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable |
-| showPercentage | boolean | false         | Show slider in percentage instead of from min to max.                                                                                                                                                 |
+| Name            | Type    | Default       | Description                                                                                                                                                                                           |
+| --------------- | ------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| field           | string  | **Required**  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
+| name            | string  | same as field | Name under which the variable is visible in the card                                                                                                                                                  |
+| unit            | string  | " "           | Displayed unit                                                                                                                                                                                        |
+| min             | number  | 0             | Minimum value that can be set                                                                                                                                                                         |
+| max             | number  | 255           | Maximum value that can be set                                                                                                                                                                         |
+| step            | number  | 1             | Step size                                                                                                                                                                                             |
+| optional        | boolean | false         | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable |
+| show_percentage | boolean | false         | Show slider in percentage instead of from min to max.                                                                                                                                                 |
 
 
 :warning: **Note**: At this point it is only possible to use a single action variable per action. The variable *is required* to be numeric.
@@ -287,17 +392,30 @@ Result:
 
 ## Translations
 
-The card is available in multiple languages. Currently the following languages are supported:
+The card is available in multiple languages. The card will automatically detect the appropriate translation based on the language setting for your user account in HA.
 
-* English
-* Nederlands
-* Français
-* Deutsch
-* Polski
+:warning: **Important**: The language setting for your HA account is stored in the browser cache. If a translation does not work for you as expected, you should try to update your language setting on that specific device. The scheduler-card _attempts_ to update the cache based on the HA configuration as a workaround.
 
-The card will automatically detect the appropriate translation based on the language setting for your user account in HA.
+Currently the following languages are supported:
 
-If you are missing your translation, please contribute by making a translation. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a reference.
+| Language    | Code(s)    | Available from | Status / Remarks                                                                       |
+| ----------- | ---------- | -------------- | -------------------------------------------------------------------------------------- |
+| Deutsch     | de         | v1.2.3         |                                                                                        |
+| **English** | en         | v1.0.0         | Default language.                                                                      |
+| Español     | es, es_419 | v1.2.8         |                                                                                        |
+| Français    | fr         | v1.2.3         |                                                                                        |
+| Magyar      | hu         | v1.3.0         |                                                                                        |
+| Polski      | pl         | v1.2.6         |                                                                                        |
+| Português   | pt, pt-br  | v1.3.0         | Translation is brazilian Portuguese, improvements may be needed for native Portuguese. |
+| Русский     | ru         | v1.3.0         |                                                                                        |
+| Nederlands  | nl         | v1.2.2         |                                                                                        |
+| Norsk       | no, nb, nn | v1.2.8         |                                                                                        |
+
+
+
+
+The translations are maintained by users.
+If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a starting point. 
 
 ## FAQ
 
@@ -318,12 +436,17 @@ domains:
 ```
 <br>
 
-### *Can I use AM/PM instead of 24h notation*?
+### *How do i check which version i am using?*
 
-Currently this is not supported. But it should come soon.
+In your browser, open the console log. This is usually accessible from the developer tools (MS Edge: F12, Chrome: ctrl+shift+i). There should be a badge titled _"SCHEDULER-CARD"_ with the version number included.
 
 <br>
 
+### *How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*
+
+This error suggests that the [scheduler-component](https://github.com/nielsfaber/scheduler-component) is not running. Please do NOT file an issue in this repo.
+
+<br>
 
 ### *Why is there no such scheduler in HA yet?*
 
