@@ -2,8 +2,8 @@
 import { forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, sortBy, omitBy, isUndefined, isEmpty } from "lodash-es";
 
 import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionElement, IConfig, IEntityElement, IConfigFull } from './types'
-import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig } from './default-config'
-import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, PrettyPrintName } from './helpers'
+import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig, planSequenceAction } from './default-config'
+import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity } from './helpers'
 
 
 
@@ -151,18 +151,21 @@ export class Config {
       id: id,
       name: getNameForService(cfg['service']),
       icon: getIconForAction(cfg['service']),
-      service: cfg['service']
+      service: cfg['service'],
+      allow_sequence: false
     };
 
     if (has(cfg, 'service_data') && !isEmpty(cfg)) Object.assign(data, pick(cfg, 'service_data'));
     if (has(cfg, 'icon')) Object.assign(data, pick(cfg, 'icon'));
     if (has(cfg, 'name')) Object.assign(data, pick(cfg, 'name'));
     if (has(cfg, 'variable')) Object.assign(data, { variable: Object.assign(getDefaultActionVariableConfig(cfg['variable']!['field']), cfg['variable']) });
+    if (has(cfg, 'allow_sequence')) Object.assign(data, pick(cfg, 'allow_sequence'));
     return data;
   }
 
   FindAction(entity_id: string, action_id): IEntityElement | null {
     let actions = this.GetActionsForEntity(entity_id);
+
     let action = find(actions, { id: action_id });
     if (action) return action;
     return null;
@@ -173,7 +176,13 @@ export class Config {
     if (!entity) return [];
 
     let output = [...entity.actions];
+
+    if (output.filter(e => e.allow_sequence).length && !find(output, { id: 'plan_sequence' })) {
+      output.push({ ...planSequenceAction });
+    }
+
     output = sortBy(output, 'name');
+
     return output;
   }
 

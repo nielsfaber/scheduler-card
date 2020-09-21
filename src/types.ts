@@ -11,7 +11,8 @@ export interface IActionConfig {
   service: string,
   service_data?: IDictionary<any>,
   icon?: string,
-  variable?: IActionVariableConfig
+  variable?: IActionVariableConfig,
+  allow_sequence?: boolean
 }
 
 export interface IActionElement extends IActionConfig {
@@ -21,6 +22,7 @@ export interface IActionElement extends IActionConfig {
   service_data?: IDictionary<any>,
   icon: string,
   variable?: IActionVariable
+  allow_sequence: boolean
 }
 
 export interface IEntityConfig {

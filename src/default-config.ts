@@ -1,5 +1,5 @@
 
-import { IDictionary, IDomainConfig, IUserSelection } from './types'
+import { IDictionary, IDomainConfig, IUserSelection, IActionElement } from './types'
 import { localize } from './localize/localize';
 import { parseTimestamp } from './date-time';
 
@@ -50,7 +50,8 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
       {
         service: "set_temperature",
         variable: { field: "temperature" },
-        icon: "thermometer"
+        icon: "thermometer",
+        allow_sequence: true
       },
       {
         service: "turn_off",
@@ -186,3 +187,11 @@ export function getDefaultActionVariableConfig(field_name: string): object {
   if (defaultConfig[field_name] !== undefined) return { ...defaultConfig[field_name] };
   else return { ...defaultConfig['default'] };
 }
+
+export const planSequenceAction: IActionElement = {
+  id: 'plan_sequence',
+  service: 'plan_sequence',
+  name: 'plan sequence',
+  icon: 'hass:cog-refresh-outline',
+  allow_sequence: false,
+};

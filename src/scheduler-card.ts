@@ -14,6 +14,7 @@ import { localize, getLanguage } from './localize/localize';
 import { parseTimestamp } from './date-time';
 
 import './time-picker';
+import './sequence-planner';
 
 
 (window as any).customCards = (window as any).customCards || [];
@@ -127,17 +128,20 @@ export class SchedulerCard extends LitElement {
             ${this.getEntities()}
             </div>
           </div>
-          <div class="card-section">
-            <div class="header">${localize('fields.action')}</div>
-            <div class="option-list">
-            ${this.getActions()}
-            </div>
-          </div>
+          ${this.getActions()}
           <div class="card-section last">
             <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
             ${this.selection.action ? html`<mwc-button outlined @click="${() => this.newItemConfirm()}">${localize('actions.next')}</mwc-button>` : html`<mwc-button outlined disabled>${localize('actions.next')}</mwc-button>`}
           </div>
         </ha-card>
+      `;
+    }
+    else if (this.selection.action == 'plan_sequence') {
+      return html`
+      <ha-card>
+        ${this.getTitle()}
+        ${this.showSequenceEditor()}
+      </ha-card>
       `;
     }
     else {
@@ -306,18 +310,62 @@ export class SchedulerCard extends LitElement {
     this.requestUpdate();
   }
 
-  getActions(): TemplateResult[] {
-    if (!this.selection.entity) return [html`<div class="text-field">${localize('instructions.no_entity_selected')}</div>`];
+  getActions() {
+    if (!this.selection.entity) {
+      return html`
+          <div class="card-section">
+            <div class="header">${localize('fields.action')}</div>
+            <div class="option-list">
+              <div class="text-field">${localize('instructions.no_entity_selected')}</div>
+            </div>
+          </div>
+      `;
+    }
     let actions = this.Config.GetActionsForEntity(this.selection.entity);
-    if (!actions.length) return [html`<div class="text-field">${localize('instructions.no_actions_for_entity')}</div>`];
-    return actions.map((el: IActionElement) => {
+    if (!actions.length) {
+      return html`
+          <div class="card-section">
+            <div class="header">${localize('fields.action')}</div>
+            <div class="option-list">
+              <div class="text-field">${localize('instructions.no_actions_for_entity')}</div>
+            </div>
+          </div>
+      `;
+    }
+
+    let options_list = actions.filter(e => { return e.id != 'plan_sequence' }).map((el: IActionElement) => {
       return html`
         <mwc-button class="${this.selection.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
           ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
       `;
-    })
+    });
+
+    let planSequenceButton = [html``];
+    planSequenceButton = actions.filter(e => { return e.id == 'plan_sequence' }).map((el: IActionElement) => {
+      return html`
+        <div class="card-section first">
+          <div class="header">or</div>
+          <div class="option-list">
+            <mwc-button class="${this.selection.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
+              ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
+              ${PrettyPrintName(el.name)}
+            </mwc-button>
+          </div>
+        </div>
+      `;
+    });
+
+    return html`
+          <div class="card-section">
+            <div class="header">${localize('fields.action')}</div>
+            <div class="option-list">
+              ${options_list}
+            </div>
+          </div>
+          ${planSequenceButton}
+      `;
   }
 
   selectAction(action: string): void {
@@ -398,6 +446,71 @@ export class SchedulerCard extends LitElement {
     <div class="card-section">
       <div class="header">${localize('fields.time')}</div>
       <time-picker value=${this.selection.time.value} event=${this.selection.time.event} stepSize="${this._config.time_step}" formatAmPm="${this._config.am_pm}" sunrise="${this._config.sunrise}" sunset="${this._config.sunset}" @change="${this.updateTime}"></timepicker>
+    </div>
+
+    <div class="card-section last">
+      <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
+      ${this.selection.editItem === undefined ? '' : html`<mwc-button outlined @click="${() => this.editItemDelete()}">${localize('actions.delete')}</mwc-button>`}
+      <mwc-button outlined @click="${() => this.editItemSave()}">${localize('actions.save')}</mwc-button>
+    </div>
+    `;
+  }
+
+
+  showSequenceEditor(): TemplateResult {
+    let entity = this.Config.FindEntity(this.selection.entity);
+    let action = this.Config.FindAction(this.selection.entity, this.selection.action);
+    if (!entity || !action) return html``;
+
+    return html`
+    <div class="card-section first">
+      <div class="header">${localize('fields.action')}</div>
+      <div class="summary">
+        <div class="summary-entity">
+          <div class="summary-icon">
+            ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
+          </div>
+          <div class="summary-text">
+            ${PrettyPrintName(entity.name)}
+          </div>
+        </div>
+        <div class="summary-arrow">
+          <ha-icon icon="hass:arrow-right"></ha-icon>
+        </div>
+        <div class="summary-action">
+          <div class="summary-icon">
+            ${action.icon ? html`<ha-icon icon="${PrettyPrintIcon(action.icon)}"></ha-icon>` : ''}
+          </div>
+          <div class="summary-text">
+            ${PrettyPrintName(action.name)}
+          </div>
+        </div>
+      </div>
+     </div>
+    <div class="card-section">
+      <div class="header">${localize('fields.days')}</div>
+      <div class="day-list">
+        <mwc-button class="day-item${this.selection.daysType == 'daily' ? ' active' : ''}" index="daily" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_daily')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysType == 'weekdays' ? ' active' : ''}" index="weekdays" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_weekdays')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysType == 'custom' ? ' active' : ''}" index="custom" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_custom')}</mwc-button>
+      </div>
+      <div class="day-list${this.selection.daysType == 'custom' ? '' : ' closed'}" id="day-list-custom">
+        <mwc-button class="day-item${this.selection.days.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
+        <mwc-button class="day-item${this.selection.days.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
+      </div>
+    </div>
+      
+    <div class="card-section">
+      <div class="header">${localize('fields.time')}</div>
+      <sequence-planner
+      
+      >
+      </sequence-planner>
     </div>
 
     <div class="card-section last">
