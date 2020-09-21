@@ -12,10 +12,11 @@ export const styles = css`
                              "icon days switch"
                              "icon time switch";
         grid-gap: 2px 20px;
-        background: var(--list-item-background-color);
+        background: none;
         cursor: pointer;
         padding: 10px 20px;
         position: relative;
+        z-index: 1;
       }
 
       div.list-item:before  {
@@ -27,7 +28,7 @@ export const styles = css`
         top: 0px;
         width: 100%;
         height: 100%;
-        z-index: 1;
+        z-index: -1;
        }
 
       div.list-item:hover:before {
