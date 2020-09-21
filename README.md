@@ -200,7 +200,7 @@ If you want to modify which entities and/or actions can be used, then keep readi
 | am_pm                  | boolean           | False        | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                               |
 | time_step              | number            | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                   |
 
-:warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discoverExisting:false` and `standardConfiguration:false` in both cards to avoid duplicates.
+:warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discover_existing:false` and `standard_configuration:false` in both cards to avoid duplicates.
 
 #### About the standard configuration
 The standard configuration is intended to help you started without needing coding (yaml) skills.
