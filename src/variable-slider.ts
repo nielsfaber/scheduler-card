@@ -1,6 +1,6 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 import './ha-paper-slider';
-import './ha-checkbox';
+//import './ha-checkbox';
 
 
 function Bool(val: string) {
@@ -107,8 +107,8 @@ export class VariableSlider extends LitElement {
 
   getCheckbox() {
     if (!Bool(this.optional)) return html``;
-    if (Bool(this.disabled)) return html`<ha-checkbox @change="${this.toggleChecked}"></ha-checkbox>`;
-    else return html`<ha-checkbox @change="${this.toggleChecked}" checked></ha-checkbox>`;
+    if (Bool(this.disabled)) return html`<input type="checkbox" @change="${this.toggleChecked}" style="width: 16px; height: 16px" />`;
+    else return html`<input type="checkbox" @change="${this.toggleChecked}" checked="checked" style="width: 16px; height: 16px" />`;
   }
 
   toggleChecked(e: Event) {

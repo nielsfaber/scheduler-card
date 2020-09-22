@@ -77,4 +77,7 @@ class HaPaperSlider extends PaperSliderClass {
     return tpl;
   }
 }
-customElements.define("ha-paper-slider", HaPaperSlider);
+
+if (!customElements.get('ha-paper-slider')) {
+  customElements.define("ha-paper-slider", HaPaperSlider);
+}
