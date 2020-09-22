@@ -50,12 +50,10 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
         service: "set_temperature",
         variable: { field: "temperature" },
         icon: "thermometer",
-        routine: true
       },
       {
         service: "turn_off",
         icon: "thermometer-off",
-        routine: true
       }
     ]
   },
