@@ -1,0 +1,78 @@
+{
+  "scheduler": "Ajastaja",
+  "actions": {
+    "add": "lisa ajastus",
+    "cancel": "loobu",
+    "next": "järgmine",
+    "save": "salvesta",
+    "delete": "kustuta"
+  },
+  "instructions": {
+    "no_group_selected": "Vali grupp",
+    "no_entity_selected": "Vali olem",
+    "no_groups_defined": "Gruppe pole määratud",
+    "no_entities_for_group": "Antud grupis puuduvad olemid",
+    "no_actions_for_entity": "Selles olemis puuduvad tegevused",
+    "no_entries_defined": "Pole midagi kuvada"
+  },
+  "fields": {
+    "group": "Grupp",
+    "entity": "Olem",
+    "action": "Tegevus",
+    "days": "Päev",
+    "time": "Aeg",
+    "options": "Suvandid",
+    "day_type_daily": "iga päev",
+    "day_type_weekdays": "nädalapäev",
+    "day_type_custom": "seadistatud",
+    "shift_with_sun": "määrake automaatselt Päikese tõus/loojang",
+    "brightness": "Heledus",
+    "temperature": "Temperatuur",
+    "position": "Asukoht"
+  },
+  "days_short": {
+    "mon": "E",
+    "tue": "T",
+    "wed": "K",
+    "thu": "N",
+    "fri": "R",
+    "sat": "L",
+    "sun": "P"
+  },
+  "days_long": {
+    "mon": "Esmaspäev",
+    "tue": "Teisipäev",
+    "wed": "Kolmapäev",
+    "thu": "Neljapäev",
+    "fri": "Reede",
+    "sat": "Laupäev",
+    "sun": "Pühapäev"
+  },
+  "words": {
+    "on": "sisse",
+    "every": "iga",
+    "and": "ja",
+    "at": "ajal",
+    "before": "enne",
+    "after": "pärast",
+    "sunrise": "päikesetõus",
+    "sunset": "loojang"
+  },
+  "services": {
+    "turn_on": "lülita sisse",
+    "turn_off": "lülita välja",
+    "close_cover": "sulge",
+    "open_cover": "ava",
+    "set_temperature": "määra temperatuur",
+    "set_to": "seadista väärtusele",
+    "set_position": "seadista asendisse"
+  },
+  "domains": {
+    "climate": "kliimaseade",
+    "cover": "(akna)katted",
+    "fan": "ventilaatorid",
+    "light": "tuled",
+    "switch": "lülitid",
+    "vacuum": "tolmuimejad"
+  }
+}

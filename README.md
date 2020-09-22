@@ -403,6 +403,7 @@ Currently the following languages are supported:
 | ----------- | ---------- | -------------- | -------------------------------------------------------------------------------------- |
 | Deutsch     | de         | v1.2.3         |                                                                                        |
 | **English** | en         | v1.0.0         | Default language.                                                                      |
+| Eesti       | et         | v1.4.0         |                                                                                        |
 | Español     | es, es_419 | v1.2.8         |                                                                                        |
 | Français    | fr         | v1.2.3         |                                                                                        |
 | Magyar      | hu         | v1.3.0         |                                                                                        |
