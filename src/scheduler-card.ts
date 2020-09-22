@@ -5,16 +5,18 @@ import { find, filter, extend, pull } from "lodash-es";
 
 
 import { Config } from './config-parser';
-import { IEntityElement, IGroupElement, IActionElement, IUserSelection, IActionVariable, IUserConfig, IConfig } from './types'
-import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, ComputeDaysType, IsSchedulerEntity } from './helpers'
+import { IEntityElement, IGroupElement, IActionElement, IUserSelection, IActionVariable, IUserConfig, ITimeSlot, IEntry, IHassData, IScheduleEntry } from './types'
+import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, ComputeDaysType, IsSchedulerEntity, capitalize, calculateTimeSlots } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
 import { CARD_VERSION, DefaultUserSelection, DefaultUserConfig } from './const'
 import { localize, getLanguage } from './localize/localize';
-import { parseTimestamp } from './date-time';
+import { parseTimestamp, parseDayArray } from './date-time';
+import { RoutineAction, defaultRoutineSlots } from './default-config';
 
 import './time-picker';
-import './sequence-planner';
+import './variable-slider';
+import './timeslot-editor';
 
 
 (window as any).customCards = (window as any).customCards || [];
@@ -35,7 +37,7 @@ export class SchedulerCard extends LitElement {
 
   Config: Config = new Config;
 
-  entries: any[] = [];
+  scheduleItems: IScheduleEntry[] = [];
 
   selection: IUserSelection = { ...DefaultUserSelection };
 
@@ -49,20 +51,11 @@ export class SchedulerCard extends LitElement {
     if (!this.await_update) return;
     if (!this._hass) this.init(hass);
 
-    this.update_entries(hass);
+    this.updateScheduleList(hass);
     this._hass = hass;
   }
 
   private init(hass) {
-    if (!getLanguage() || getLanguage() == "null" && hass.selectedLanguage) {
-      try { localStorage.setItem("selectedLanguage", hass.selectedLanguage); }
-      catch (e) { console.log(`failed to set language: ${e}`) }
-    }
-    else if (!getLanguage() || getLanguage() == "null" && hass.language) {
-      try { localStorage.setItem("selectedLanguage", hass.language); }
-      catch (e) { console.log(`failed to set language: ${e}`) }
-    }
-
     if (hass.states['sun.sun'] !== undefined) {
       Object.assign(this._config, {
         sunrise: parseTimestamp(hass.states['sun.sun'].attributes.next_rising),
@@ -82,13 +75,12 @@ export class SchedulerCard extends LitElement {
   }
 
 
-  protected update_entries(hass) {
-    let entries = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
-      .map(e => ImportFromHass(e, this.Config))
-      .filter(e => { return e.actions[0] !== undefined });
+  protected updateScheduleList(hass) {
+    let scheduleItems = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
+      .map(e => ImportFromHass(e, this.Config));
 
-    if (entries != this.entries) {
-      this.entries = entries;
+    if (scheduleItems != this.scheduleItems) {
+      this.scheduleItems = scheduleItems;
       this.await_update = false;
       this.requestUpdate();
     }
@@ -136,11 +128,11 @@ export class SchedulerCard extends LitElement {
         </ha-card>
       `;
     }
-    else if (this.selection.action == 'plan_sequence') {
+    else if (this.selection.action == RoutineAction.id) {
       return html`
       <ha-card>
         ${this.getTitle()}
-        ${this.showSequenceEditor()}
+        ${this.showRoutineEditor()}
       </ha-card>
       `;
     }
@@ -183,56 +175,71 @@ export class SchedulerCard extends LitElement {
   }
 
   getEntries(): TemplateResult[] {
-    if (!this.entries || !this.entries.length) return [html`
+    if (!this.scheduleItems || !this.scheduleItems.length) return [html`
       <div class="text-field">
         ${localize('instructions.no_entries_defined')}
       </div>
     `];
-    return this.entries.map(entry => {
-      if (!entry.actions[0]) return html``;
-      let entity = this.Config.FindEntity(entry.actions[0].entity);
-      let action = this.Config.FindAction(entry.actions[0].entity, entry.actions[0].action);
+    return this.scheduleItems.map(scheduleItem => {
+      let entity = this.Config.FindEntity(scheduleItem.entries[0].entity);
+      let action = this.Config.FindAction(scheduleItem.entries[0].entity, scheduleItem.entries[0].action);
+
       if (!entity || !action) return html``;
+      if (scheduleItem.entries.length == 1) {
 
-      let action_string = PrettyPrintName(action.name);
-      if (entry.actions[0].hasOwnProperty('level')) {
-        let cfg = action['variable'];
-        let value = entry.actions[0].level;
-
-        let unit = cfg.hasOwnProperty('unit') ? cfg.unit : "";
-
-        if (cfg.show_percentage) {
-          value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
-          if (value < cfg.min) value = cfg.min;
-          else if (value > cfg.max) value = cfg.max;
-          unit = "%";
-        }
-
-        action_string = `${localize('services.set_to')} ${value}${unit}`;
-      }
-
-      return html`
-      <div class="list-item${entry['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(entry.id)}">
-        <div class="list-item-icon">
-          ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
-        </div>
-        <div class="list-item-name">
-          ${PrettyPrintName(entity.name)}
-        </div>
-        <div class="list-item-action">
-          ${action_string}
-        </div>
-        <div class="list-item-days">
-          ${PrettyPrintDays(entry.entries[0].days)}
-        </div>
-        <div class="list-item-time">
-          ${PrettyPrintTime(entry.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset })}
-        </div>
-        <div class="list-item-switch">
-          ${entry['enabled'] ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>`}
-        </div>
-      </div>
+        return html`
+          <div class="list-item${scheduleItem['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(scheduleItem.id)}">
+            <div class="list-item-icon">
+              ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
+            </div>
+            <div class="list-item-name">
+              ${PrettyPrintName(entity.name)}
+            </div>
+            <div class="list-item-action">
+              ${PrettyPrintAction(scheduleItem.entries[0], action)}
+            </div>
+            <div class="list-item-days">
+              ${capitalize(PrettyPrintDays(scheduleItem.entries[0].days))}
+            </div>
+            <div class="list-item-time">
+              ${capitalize(PrettyPrintTime(scheduleItem.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset }))}
+            </div>
+            <div class="list-item-switch">
+              ${scheduleItem.enabled ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>`}
+            </div>
+          </div>
       `;
+      }
+      else {
+        let description: TemplateResult[] = scheduleItem.entries.map(el => {
+          let currentAction = this.Config.FindAction(el.entity, el.action) as IActionElement;
+          let actionStr = PrettyPrintAction(el, currentAction);
+          let timeStr = PrettyPrintTime(el.time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset });
+          return html`${actionStr} ${timeStr}<br>`;
+        });
+
+        return html`
+          <div class="list-item${scheduleItem['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(scheduleItem.id)}">
+            <div class="list-item-icon">
+              ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
+            </div>
+            <div class="list-item-name">
+              ${PrettyPrintName(entity.name)}
+            </div>
+            <div class="list-item-action">
+              ${description}
+            </div>
+            <div class="list-item-days">
+              ${capitalize(PrettyPrintDays(scheduleItem.entries[0].days))}
+            </div>
+            <div class="list-item-time">
+            </div>
+            <div class="list-item-switch">
+              ${scheduleItem.enabled ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>`}
+            </div>
+          </div>
+        `;
+      }
     });
   }
 
@@ -248,19 +255,32 @@ export class SchedulerCard extends LitElement {
   }
 
   editItem(entity_id) {
-    let data = find(this.entries, { id: entity_id });
-    this.selection = extend({ ...DefaultUserSelection }, {
-      editItem: entity_id,
-      entity: data['actions'][0].entity,
-      action: data['actions'][0].action,
-      time: data['entries'][0].time,
-      days: data['entries'][0].days,
-      daysType: ComputeDaysType(data['entries'][0].days)
-    });
-    if (data['actions'][0].level !== undefined) {
-      Object.assign(this.selection, {
-        levelEnabled: true,
-        level: data['actions'][0].level
+    let scheduleItem: IScheduleEntry = find(this.scheduleItems, { id: entity_id });
+
+    if (scheduleItem.entries.length == 1) {
+      this.selection = extend({ ...DefaultUserSelection }, {
+        editItem: entity_id,
+        entity: scheduleItem.entries[0].entity,
+        action: scheduleItem.entries[0].action,
+        time: scheduleItem.entries[0].time,
+        days: scheduleItem.entries[0].days,
+        daysType: ComputeDaysType(scheduleItem.entries[0].days)
+      });
+      if (scheduleItem.entries[0].level !== undefined) {
+        Object.assign(this.selection, {
+          levelEnabled: true,
+          level: scheduleItem.entries[0].level
+        });
+      }
+    }
+    else {
+      this.selection = extend({ ...DefaultUserSelection }, {
+        editItem: entity_id,
+        entity: scheduleItem.entries[0].entity,
+        action: RoutineAction.id,
+        days: scheduleItem.entries[0].days,
+        daysType: ComputeDaysType(scheduleItem.entries[0].days),
+        plannerSlots: calculateTimeSlots(scheduleItem.entries)
       });
     }
     this.requestUpdate();
@@ -333,7 +353,7 @@ export class SchedulerCard extends LitElement {
       `;
     }
 
-    let options_list = actions.filter(e => { return e.id != 'plan_sequence' }).map((el: IActionElement) => {
+    let options_list = actions.filter(e => { return e.id != RoutineAction.id }).map((el: IActionElement) => {
       return html`
         <mwc-button class="${this.selection.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
           ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
@@ -342,8 +362,8 @@ export class SchedulerCard extends LitElement {
       `;
     });
 
-    let planSequenceButton = [html``];
-    planSequenceButton = actions.filter(e => { return e.id == 'plan_sequence' }).map((el: IActionElement) => {
+    let createRoutineButton = [html``];
+    createRoutineButton = actions.filter(e => { return e.id == RoutineAction.id }).map((el: IActionElement) => {
       return html`
         <div class="card-section first">
           <div class="header">or</div>
@@ -364,7 +384,7 @@ export class SchedulerCard extends LitElement {
               ${options_list}
             </div>
           </div>
-          ${planSequenceButton}
+          ${createRoutineButton}
       `;
   }
 
@@ -424,7 +444,7 @@ export class SchedulerCard extends LitElement {
         </div>
       </div>
      </div>
-     ${action.hasOwnProperty('variable') ? this.getLevelPanel(action['variable']) : ''}
+     ${action.hasOwnProperty('variable') ? this.getLevelPanel(action['variable']!) : ''}
     <div class="card-section">
       <div class="header">${localize('fields.days')}</div>
       <div class="day-list">
@@ -433,13 +453,13 @@ export class SchedulerCard extends LitElement {
         <mwc-button class="day-item${this.selection.daysType == 'custom' ? ' active' : ''}" index="custom" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_custom')}</mwc-button>
       </div>
       <div class="day-list${this.selection.daysType == 'custom' ? '' : ' closed'}" id="day-list-custom">
-        <mwc-button class="day-item${this.selection.days.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
       </div>
     </div>
       
@@ -457,9 +477,26 @@ export class SchedulerCard extends LitElement {
   }
 
 
-  showSequenceEditor(): TemplateResult {
+  showRoutineEditor(): TemplateResult {
     let entity = this.Config.FindEntity(this.selection.entity);
     let action = this.Config.FindAction(this.selection.entity, this.selection.action);
+    let actions = this.Config.GetActionsForEntity(this.selection.entity).filter(e => e.routine);
+    let activeSlot = !isNaN(this.selection.activePlannerSlot!) ? this.selection.plannerSlots![this.selection.activePlannerSlot!] : null;
+    let activeAction = activeSlot ? actions.find(e => { return e.id == activeSlot!.action }) : null;
+
+    if (!this.selection.plannerSlots) Object.assign(this.selection, { plannerSlots: defaultRoutineSlots });
+
+    if (activeAction && activeAction.variable) {
+      let i = this.selection.activePlannerSlot!;
+      let entries: ITimeSlot[] = [... this.selection.plannerSlots!];
+      let activeSlot = { ...entries[i] };
+
+      Object.assign(activeSlot, { level: this.selection.level, levelEnabled: this.selection.levelEnabled });
+
+      entries[i] = activeSlot;
+      this.selection.plannerSlots = entries;
+    }
+
     if (!entity || !action) return html``;
 
     return html`
@@ -495,23 +532,32 @@ export class SchedulerCard extends LitElement {
         <mwc-button class="day-item${this.selection.daysType == 'custom' ? ' active' : ''}" index="custom" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_custom')}</mwc-button>
       </div>
       <div class="day-list${this.selection.daysType == 'custom' ? '' : ' closed'}" id="day-list-custom">
-        <mwc-button class="day-item${this.selection.days.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
+        <mwc-button class="day-item${this.selection.daysCustom.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
       </div>
     </div>
       
     <div class="card-section">
       <div class="header">${localize('fields.time')}</div>
-      <sequence-planner
-      
+      <timeslot-editor
+        actions=${JSON.stringify(actions)}
+        slots=${JSON.stringify(this.selection.plannerSlots)}
+        @update=${this.handlePlannerUpdate}
       >
-      </sequence-planner>
+      </timeslot-editor>
     </div>
+    <div class="card-section">
+      <div class="header">${localize('fields.action')}</div>
+      <div class="option-list">
+        <div class="text-field">${this.getPlannerActions()}</div>
+      </div>
+    </div>
+     ${activeAction && activeAction.hasOwnProperty('variable') ? this.getLevelPanel(activeAction.variable!, true) : ''}
 
     <div class="card-section last">
       <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
@@ -521,73 +567,93 @@ export class SchedulerCard extends LitElement {
     `;
   }
 
-  getLevelPanel(cfg: IActionVariable): TemplateResult {
-    let min = cfg.min, max = cfg.max, step = cfg.step, unit = cfg.unit;
-    let value = this.selection.level;
+  handlePlannerUpdate(e: CustomEvent) {
+    let el = e.target as HTMLInputElement;
 
-    if (cfg.show_percentage) {
-      value = ((value - min) / (max - min)) * 100;
-      step = 1;
-      min = 0;
-      max = 100;
-      unit = '%';
+    if (e.detail.hasOwnProperty('slot')) {
+      let num = Number(e.detail.slot);
+      this.selection.activePlannerSlot = num;
+
+      let activeSlot = this.selection.plannerSlots![num];
+      if (activeSlot.level !== undefined) Object.assign(this.selection, { level: activeSlot.level, levelEnabled: activeSlot.levelEnabled });
+      else Object.assign(this.selection, { level: null, levelEnabled: null });
+
+    } else if (e.detail.hasOwnProperty('slots')) {
+      let slots: ITimeSlot[] = e.detail.slots;
+      this.selection.plannerSlots = [...slots];
     }
-    value = Math.round((value * step) / step);
+    this.requestUpdate();
+  }
 
-    if (value < min) value = min;
-    else if (value > max) value = max;
 
-    if (!cfg['optional'] && !this.selection.levelEnabled) Object.assign(this.selection, { levelEnabled: true });
+  getPlannerActions() {
+    if (this.selection.activePlannerSlot === null || this.selection.activePlannerSlot === undefined) return html`<div class="text-field">select a timeslot first</div>`;
+    let actions = this.Config.GetActionsForEntity(this.selection.entity);
+    let activeSlot = this.selection.plannerSlots![this.selection.activePlannerSlot!];
 
+    return actions.filter(e => { return e.id != RoutineAction.id }).map((el: IActionElement) => {
+      return html`
+        <mwc-button class="${activeSlot.action == el.id ? ' active' : ''}" @click="${() => { this.selectPlannerAction(el) }}">
+          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
+          ${PrettyPrintName(el.name)}
+        </mwc-button>
+      `;
+    });
+  }
+
+  selectPlannerAction(action: IActionElement) {
+    let i = this.selection.activePlannerSlot!;
+    let slots: ITimeSlot[] = [... this.selection.plannerSlots!];
+    let activeSlot = { ...slots[i] };
+    Object.assign(activeSlot, { action: (activeSlot.action == action.id) ? null : action.id });
+
+    if (activeSlot.action && action.variable) {
+      Object.assign(this.selection, {
+        level: activeSlot.level !== undefined ? activeSlot.level : action.variable.min,
+        levelEnabled: activeSlot.levelEnabled !== undefined ? activeSlot.levelEnabled : !action.variable.optional
+      });
+    }
+
+    slots[i] = activeSlot;
+    this.selection.plannerSlots = slots;
+    this.requestUpdate();
+  }
+
+
+  getLevelPanel(cfg: IActionVariable, updateCard: boolean = false): TemplateResult {
     return html`
     <div class="card-section">
       <div class="header">${cfg['name']}</div>
       <div class="option-item">
-        ${cfg['optional'] ? (this.selection.levelEnabled ? html`<paper-checkbox checked @change="${this._toggleEnableLevel}"></paper-checkbox>` : html`<paper-checkbox @change="${this._toggleEnableLevel}"></paper-checkbox>`) : ``}
-        ${this.selection.levelEnabled ? html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel}></ha-paper-slider>` : html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel} disabled></ha-paper-slider>`}
-        <div id="level-value" class="${this.selection.levelEnabled ? '' : 'disabled'}">${value}${unit}</div>
+        <variable-slider
+          min=${cfg.min}
+          max=${cfg.max}
+          step=${cfg.step}
+          value=${this.selection.level}      
+          unit=${cfg.unit}
+          optional=${cfg.optional}
+          disabled=${!this.selection.levelEnabled}
+          show_percentage=${cfg.show_percentage}
+          @change="${e => { this.updateLevel(e, updateCard) }}"
+        >
+        </variable-slider>
       </div>
      </div>`;
   }
 
-  private _toggleEnableLevel(e: Event) {
-    let checked = (e.target as HTMLInputElement).checked;
-    let target = this.shadowRoot.querySelector("#level") as HTMLInputElement;
-    target.disabled = !checked;
-    this.selection.levelEnabled = checked;
-    if (checked) this.shadowRoot.querySelector("#level-value").classList.remove("disabled");
-    else this.shadowRoot.querySelector("#level-value").classList.add("disabled");
-  }
-
-  private _updateLevel(e: Event) {
-    let action = this.Config.FindAction(this.selection.entity, this.selection.action);
-    let cfg = action!['variable'];
-    if (!cfg) return;
-    let min = cfg.min, max = cfg.max, unit = cfg.unit, step = cfg.step;
-
-
-    if (cfg.show_percentage) unit = '%';
-    let value = Number((e.target as HTMLInputElement).value);
-    value = Math.round((value * step) / step);
-
-    this.shadowRoot.querySelector("#level-value").innerHTML = `${value}${unit}`;
-
-    if (cfg.show_percentage) {
-      value = Math.round((value / 100) * (max - min) + min);
-      unit = '%'
-    }
-
-    if (value < min) value = min;
-    else if (value > max) value = max;
-    this.selection.level = value;
+  updateLevel(e: Event, updateCard: boolean) {
+    let el = e.target as HTMLInputElement;
+    this.selection.level = Number(el.value);
+    this.selection.levelEnabled = (String(el.disabled) == "false");
+    if (updateCard) this.requestUpdate();
   }
 
   updateDays(action: string): void {
     var daysTypes = Array('daily', 'weekdays', 'custom');
     if (daysTypes.includes(action)) this.selection.daysType = action;
     else {
-      if (!this.selection.days.includes(Number(action))) this.selection.days.push(Number(action));
-      else pull(this.selection.days, Number(action));
+      if (!this.selection.daysCustom.includes(Number(action))) this.selection.daysCustom.push(Number(action));
+      else pull(this.selection.daysCustom, Number(action));
       this.selection.daysType = 'custom';
     }
     this.shadowRoot.querySelectorAll(".day-item").forEach(el => {
@@ -595,7 +661,7 @@ export class SchedulerCard extends LitElement {
       if (daysTypes.includes(index)) {
         if (this.selection.daysType == index) el.classList.add("active");
         else el.classList.remove("active");
-      } else if (this.selection.days.includes(Number(index))) el.classList.add("active");
+      } else if (this.selection.daysCustom.includes(Number(index))) el.classList.add("active");
       else el.classList.remove("active");
     });
 
@@ -612,7 +678,24 @@ export class SchedulerCard extends LitElement {
   }
 
   editItemSave(): void {
-    var data = ExportToHass(this.selection, this.Config);
+    let data: IHassData, entries: IEntry[];
+    if (this.selection.plannerSlots !== undefined) {
+      let slots = this.selection.plannerSlots;
+      slots = slots.filter(e => e.action);
+      entries = slots.map(e => {
+        return Object.assign({ ...e }, {
+          time: { value: e.startTime },
+          days: parseDayArray(this.selection),
+          action: e.action!,
+          entity: this.selection.entity,
+        });
+      });
+    }
+    else {
+      entries = [Object.assign({ ... this.selection }, { days: parseDayArray(this.selection) })];
+    }
+
+    data = ExportToHass(entries, this.Config);
 
     if (this.selection.newItem) {
       this._hass!.callService('scheduler', 'add', data);

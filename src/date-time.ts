@@ -1,3 +1,4 @@
+import { IUserSelection } from "./types";
 
 
 
@@ -89,3 +90,10 @@ export function parseTimestamp(input: string) {
   let value = hours * MinutesPerHour + minutes;
   return value;
 }
+
+export function parseDayArray(userData: IUserSelection): number[] {
+  if (userData.daysType == 'weekdays') return [1, 2, 3, 4, 5];
+  else if (userData.daysType == 'custom') return userData.daysCustom.sort().filter(e => e != 0);
+  else return [];
+}
+

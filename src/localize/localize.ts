@@ -11,6 +11,10 @@ import * as pl from './languages/pl.json';
 import * as pt_br from './languages/pt-br.json';
 import * as ru from './languages/ru.json';
 
+type HassElement = {
+  hass?: any
+}
+
 var languages: any = {
   de: de,
   en: en,
@@ -49,5 +53,10 @@ export function localize(string: string, search: string = '', replace: string = 
 }
 
 export function getLanguage(): string {
-  return (localStorage.getItem('selectedLanguage') || 'en').replace(/['"]+/g, '').replace('-', '_');
+  let lang = localStorage.getItem('selectedLanguage')?.replace(/['"]+/g, '').replace('-', '_');
+  if (!lang || lang == 'null') {
+    const hass = (document.querySelector("home-assistant") as HassElement).hass;
+    lang = hass.selectedLanguage || hass.language || "en"
+  }
+  return String(lang);
 }

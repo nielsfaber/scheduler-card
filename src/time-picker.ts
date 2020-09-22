@@ -2,7 +2,6 @@ import { LitElement, html, customElement, css, property } from 'lit-element';
 import { formatTime, wrapTime, MinutesPerHour, roundTime } from './date-time';
 import { localize } from './localize/localize';
 
-
 @customElement('time-picker')
 export class TimePicker extends LitElement {
 
