@@ -11,7 +11,8 @@ export interface IActionConfig {
   service: string,
   service_data?: IDictionary<any>,
   icon?: string,
-  variable?: IActionVariableConfig
+  variable?: IActionVariableConfig,
+  routine?: boolean
 }
 
 export interface IActionElement extends IActionConfig {
@@ -21,6 +22,7 @@ export interface IActionElement extends IActionConfig {
   service_data?: IDictionary<any>,
   icon: string,
   variable?: IActionVariable
+  routine: boolean
 }
 
 export interface IEntityConfig {
@@ -80,10 +82,12 @@ export interface IUserSelection {
   actionConfirmed: boolean,
   editItem?: string,
   time: ITime,
-  days: number[],
+  daysCustom: number[],
   daysType: string,
-  levelEnabled: boolean,
-  level: number
+  levelEnabled: boolean | null,
+  level: number | null,
+  plannerSlots?: ITimeSlot[],
+  activePlannerSlot?: number | null
 }
 
 export interface IHassEntry {
@@ -103,18 +107,11 @@ export interface IHassData {
   actions: IHassAction[]
 }
 
-export interface IScheduleEntry {
-  id: string,
-  enabled: boolean,
-  entries: IHassEntry[],
-  actions: IScheduleAction[],
-}
-
-export interface IScheduleAction {
-  entity: string,
-  action: string,
-  level?: number
-}
+// export interface IScheduleAction {
+//   entity: string,
+//   action: string,
+//   level?: number
+// }
 
 export interface IActionVariableConfig {
   field: string,
@@ -143,4 +140,27 @@ export interface IUserConfig {
   title: boolean | string,
   am_pm: boolean,
   time_step: number,
+}
+
+export interface IEntry {
+  time: ITime,
+  days: number[]
+  action: string,
+  entity: string,
+  level?: number | null,
+  levelEnabled?: boolean | null,
+}
+
+export interface IScheduleEntry {
+  id: string,
+  enabled: boolean,
+  entries: IEntry[],
+}
+
+export interface ITimeSlot {
+  startTime: number,
+  endTime: number,
+  action?: string,
+  level?: number,
+  levelEnabled?: boolean
 }

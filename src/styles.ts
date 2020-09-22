@@ -79,10 +79,6 @@ export const styles = css`
         color: var(--secondary-text-color);
       }
 
-      div.list-item-name:first-letter, div.list-item-action:first-letter, div.list-item-days:first-letter, div.list-item-time:first-letter {
-        text-transform: capitalize;
-      }
-
       div.disabled div.list-item-icon, div.disabled div.list-item-name, div.disabled div.list-item-action, div.disabled div.list-item-days, div.disabled div.list-item-time {
         color: var(--disabled-text-color);
       }
@@ -193,19 +189,6 @@ export const styles = css`
         padding: 2px 5px;
         display: flex;
         align-items: center;
-      }
-
-      div.option-item ha-paper-slider {
-        flex-grow: 1;
-        --paper-slider-pin-start-color: var(--primary-color);
-      }
-
-      div#level-value {
-        min-width: 40px;
-      }
-
-      div.option-item .disabled {
-        color: var(--disabled-text-color);
       }
       
       .padded-right {

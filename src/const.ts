@@ -4,7 +4,6 @@ import { parseTimestamp } from './date-time'
 
 export const CARD_VERSION = "1.3.3"
 
-
 export const DefaultUserSelection: IUserSelection = {
   group: '',
   entity: '',
@@ -13,10 +12,10 @@ export const DefaultUserSelection: IUserSelection = {
   actionConfirmed: false,
   editItem: '',
   time: { value: parseTimestamp('12:00') },
-  days: [],
+  daysCustom: [],
   daysType: 'daily',
-  levelEnabled: false,
-  level: 0
+  levelEnabled: null,
+  level: null
 }
 
 export const DefaultUserConfig: IUserConfig = {
@@ -26,3 +25,4 @@ export const DefaultUserConfig: IUserConfig = {
   am_pm: false,
   time_step: 10,
 }
+

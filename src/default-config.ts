@@ -1,8 +1,7 @@
 
-import { IDictionary, IDomainConfig, IUserSelection } from './types'
+import { IDictionary, IDomainConfig, IUserSelection, IActionElement, ITimeSlot } from './types'
 import { localize } from './localize/localize';
-import { parseTimestamp } from './date-time';
-
+import { parseTimestamp, HoursPerDay, MinutesPerHour } from './date-time';
 
 export const defaultDomainConfig: IDictionary<IDomainConfig> = {
   light: {
@@ -50,11 +49,11 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
       {
         service: "set_temperature",
         variable: { field: "temperature" },
-        icon: "thermometer"
+        icon: "thermometer",
       },
       {
         service: "turn_off",
-        icon: "thermometer-off"
+        icon: "thermometer-off",
       }
     ]
   },
@@ -70,21 +69,6 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
       }
     ]
   }
-}
-
-
-export const DefaultUserSelection: IUserSelection = {
-  group: '',
-  entity: '',
-  action: '',
-  newItem: false,
-  actionConfirmed: false,
-  editItem: '',
-  time: { value: parseTimestamp('12:00') },
-  days: [],
-  daysType: 'daily',
-  levelEnabled: false,
-  level: 0
 }
 
 export function getIconForDomain(domain: string): string {
@@ -186,3 +170,17 @@ export function getDefaultActionVariableConfig(field_name: string): object {
   if (defaultConfig[field_name] !== undefined) return { ...defaultConfig[field_name] };
   else return { ...defaultConfig['default'] };
 }
+
+export const RoutineAction: IActionElement = {
+  id: 'create_routine',
+  service: 'create_routine',
+  name: 'create routine',
+  icon: 'hass:cog-refresh-outline',
+  routine: false,
+};
+
+export const defaultRoutineSlots: ITimeSlot[] = [
+  { startTime: parseTimestamp('00:00'), endTime: parseTimestamp('08:00') },
+  { startTime: parseTimestamp('08:00'), endTime: parseTimestamp('16:00') },
+  { startTime: parseTimestamp('16:00'), endTime: HoursPerDay * MinutesPerHour },
+];
