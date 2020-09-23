@@ -1,7 +1,7 @@
 
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { find, filter, extend, pull } from "lodash-es";
+import { find, filter, extend, pull, isEqual } from "lodash-es";
 
 
 import { Config } from './config-parser';
@@ -42,13 +42,10 @@ export class SchedulerCard extends LitElement {
   selection: IUserSelection = { ...DefaultUserSelection };
 
   shadowRoot: any;
-  await_update: boolean = true;
-
 
   @property() private _hass?: HomeAssistant;
 
   set hass(hass: HomeAssistant) {
-    if (!this.await_update) return;
     if (!this._hass) this.init(hass);
 
     this.updateScheduleList(hass);
@@ -79,15 +76,10 @@ export class SchedulerCard extends LitElement {
     let scheduleItems = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
       .map(e => ImportFromHass(e, this.Config));
 
-    if (scheduleItems != this.scheduleItems) {
-      this.scheduleItems = scheduleItems;
-      this.await_update = false;
-      this.requestUpdate();
-    }
-  }
+    if (isEqual(scheduleItems, this.scheduleItems)) return;
 
-  protected awaitUpdate() {
-    this.await_update = true;
+    this.scheduleItems = scheduleItems;
+    this.requestUpdate();
   }
 
   protected render(): TemplateResult {
@@ -251,7 +243,6 @@ export class SchedulerCard extends LitElement {
     } else {
       this._hass!.callService('switch', 'turn_off', { entity_id: entity_id });
     }
-    this.awaitUpdate();
   }
 
   editItem(entity_id) {
@@ -703,7 +694,7 @@ export class SchedulerCard extends LitElement {
       this._hass!.callService('scheduler', 'edit', Object.assign(data, { entity_id: this.selection.editItem }));
     }
     this.selection = { ...DefaultUserSelection };
-    this.awaitUpdate();
+    this.requestUpdate();
 
   }
 
@@ -711,6 +702,6 @@ export class SchedulerCard extends LitElement {
     let entity_id = this.selection.editItem;
     this._hass!.callService('scheduler', 'remove', { entity_id: entity_id });
     this.selection = { ...DefaultUserSelection };
-    this.awaitUpdate();
+    this.requestUpdate();
   }
 }
