@@ -1,9 +1,9 @@
 {
   "scheduler": "Ajastaja",
   "actions": {
-    "add": "lisa ajastus",
+    "add": "lisa",
     "cancel": "loobu",
-    "next": "järgmine",
+    "next": "edasi",
     "save": "salvesta",
     "delete": "kustuta"
   },
@@ -23,8 +23,8 @@
     "time": "Aeg",
     "options": "Suvandid",
     "day_type_daily": "iga päev",
-    "day_type_weekdays": "nädalapäev",
-    "day_type_custom": "seadistatud",
+    "day_type_weekdays": "tööpäevadel",
+    "day_type_custom": "valikuline",
     "shift_with_sun": "määrake automaatselt Päikese tõus/loojang",
     "brightness": "Heledus",
     "temperature": "Temperatuur",
@@ -49,10 +49,10 @@
     "sun": "Pühapäev"
   },
   "words": {
-    "on": "sisse",
+    "on": " ",
     "every": "iga",
     "and": "ja",
-    "at": "ajal",
+    "at": "kell",
     "before": "enne",
     "after": "pärast",
     "sunrise": "päikesetõus",
@@ -71,7 +71,7 @@
     "climate": "kliimaseade",
     "cover": "(akna)katted",
     "fan": "ventilaatorid",
-    "light": "tuled",
+    "light": "valgustid",
     "switch": "lülitid",
     "vacuum": "tolmuimejad"
   }
