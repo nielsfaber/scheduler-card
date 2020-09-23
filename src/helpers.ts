@@ -229,7 +229,7 @@ export function PrettyPrintIcon(input: string): string {
 }
 
 export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement) {
-  let action_string = PrettyPrintName(entry.action);
+  let action_string = PrettyPrintName(actionCfg.name);
 
   if (entry.hasOwnProperty('level')) {
     let cfg = actionCfg.variable as IActionVariable;
