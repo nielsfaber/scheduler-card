@@ -26,6 +26,14 @@ import './timeslot-editor';
   description: 'Card to manage schedule entities made with scheduler-component.',
 });
 
+
+console.info(
+  `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
+  'color: orange; font-weight: bold; background: black',
+  'color: white; font-weight: bold; background: dimgray',
+  'color: white; font-weight: bold; background: dimgray',
+);
+
 @customElement('scheduler-card')
 export class SchedulerCard extends LitElement {
 
@@ -60,15 +68,7 @@ export class SchedulerCard extends LitElement {
       })
     }
 
-    console.info(
-      `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(7, ' ')}`,
-      'color: orange; font-weight: bold; background: black',
-      'color: white; font-weight: bold; background: dimgray',
-      'color: white; font-weight: bold; background: dimgray',
-    );
-
     this.Config.LoadEntities(hass.states);
-
   }
 
 
@@ -80,6 +80,11 @@ export class SchedulerCard extends LitElement {
 
     this.scheduleItems = scheduleItems;
     this.requestUpdate();
+  }
+
+  public getCardSize() {
+    if (!this._hass || !this.scheduleItems.length) return 6;
+    return (6 + this.scheduleItems.length * 2);
   }
 
   protected render(): TemplateResult {
