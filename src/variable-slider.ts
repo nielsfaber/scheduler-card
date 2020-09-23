@@ -1,7 +1,6 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import './ha-paper-slider';
-//import './ha-checkbox';
 
+import { loadHaForm } from './load-ha-form';
 
 function Bool(val: string) {
   if (val == "true") return true;
@@ -44,6 +43,8 @@ export class VariableSlider extends LitElement {
   }
 
   firstUpdated() {
+    (async () => await loadHaForm())();
+
     if (Bool(this.show_percentage)) {
       this.unit = '%';
       this.scaleOffset = this.min;
@@ -107,8 +108,8 @@ export class VariableSlider extends LitElement {
 
   getCheckbox() {
     if (!Bool(this.optional)) return html``;
-    if (Bool(this.disabled)) return html`<input type="checkbox" @change="${this.toggleChecked}" style="width: 16px; height: 16px" />`;
-    else return html`<input type="checkbox" @change="${this.toggleChecked}" checked="checked" style="width: 16px; height: 16px" />`;
+    if (Bool(this.disabled)) return html`<ha-checkbox @change="${this.toggleChecked}"></ha-checkbox>`;
+    else return html`<ha-checkbox @change="${this.toggleChecked}" checked></ha-checkbox>`;
   }
 
   toggleChecked(e: Event) {
