@@ -1,11 +1,20 @@
 
 import { forEach, each, find, has, pick, omit, filter, flatten, map, mapValues, sortBy, omitBy, isUndefined, isEmpty } from "lodash-es";
 
-import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionElement, IConfig, IEntityElement, IConfigFull } from './types'
-import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig, RoutineAction } from './default-config'
-import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity } from './helpers'
+import { IEntityConfig, IGroupConfig, IGroupElement, IActionConfig, IActionElement, IConfig, IEntityElement, IConfigFull, IHassAction } from './types'
+import { defaultDomainConfig, getIconForDomain, getIconForAction, getNameForDomain, getNameForService, getDefaultActionVariableConfig, RoutineAction, supportedFeaturesFilter } from './default-config'
+import { getDomainFromEntityId, CreateSlug, IsSchedulerEntity, ImportFromHass, ImportHassAction } from './helpers'
 
 
+interface IEntity {
+  entity_id: string,
+  attributes: {
+    friendly_name?: string,
+    icon?: string,
+    supported_features?: number,
+    actions?: any
+  }
+}
 
 export class Config {
   private entities: IEntityElement[];
@@ -96,11 +105,14 @@ export class Config {
   AddEntity(cfg: IEntityConfig, id: string) {
     if (this.FindEntity(id)) return;
 
-    let data = Object.assign({
+    let data: IEntityElement = {
       id: id,
-      name: id.split('.').pop(),
-      icon: getIconForDomain(getDomainFromEntityId(id))
-    }, omitBy({ ...cfg }, isUndefined));
+      name: String(id.split('.').pop()),
+      icon: getIconForDomain(getDomainFromEntityId(id)),
+      actions: []
+    }
+    if (cfg.hasOwnProperty('name')) Object.assign(data, { name: cfg.name });
+    if (cfg.hasOwnProperty('icon')) Object.assign(data, { icon: cfg.icon });
 
     this.entities.push(data);
     this.AddEntityToGroup(id);
@@ -147,19 +159,19 @@ export class Config {
   /* Actions functions */
   CreateAction(cfg: IActionConfig): IActionElement {
     let id = CreateSlug(pick(cfg, ['service', 'service_data']));
-    let data = {
+    let data: IActionElement = {
       id: id,
-      name: getNameForService(cfg['service']),
-      icon: getIconForAction(cfg['service']),
-      service: cfg['service'],
+      name: getNameForService(cfg.service),
+      icon: getIconForAction(cfg.service),
+      service: cfg.service,
       routine: false
     };
 
-    if (has(cfg, 'service_data') && !isEmpty(cfg)) Object.assign(data, pick(cfg, 'service_data'));
-    if (has(cfg, 'icon')) Object.assign(data, pick(cfg, 'icon'));
-    if (has(cfg, 'name')) Object.assign(data, pick(cfg, 'name'));
-    if (has(cfg, 'variable')) Object.assign(data, { variable: Object.assign(getDefaultActionVariableConfig(cfg['variable']!['field']), cfg['variable']) });
-    if (has(cfg, 'routine')) Object.assign(data, pick(cfg, 'routine'));
+    if (cfg.hasOwnProperty('name')) Object.assign(data, { name: cfg.name });
+    if (cfg.hasOwnProperty('icon')) Object.assign(data, { icon: cfg.icon });
+    if (cfg.hasOwnProperty('service_data') && Object.keys(cfg.service_data!).length) Object.assign(data, { service_data: cfg.service_data });
+    if (cfg.hasOwnProperty('variable')) Object.assign(data, { variable: Object.assign(getDefaultActionVariableConfig(cfg.variable!['field']), cfg.variable) });
+    if (cfg.hasOwnProperty('routine')) Object.assign(data, { routine: cfg.routine });
     return data;
   }
 
@@ -186,106 +198,89 @@ export class Config {
     return output;
   }
 
-  LoadEntities(entityList) {
-    //load the entities from configuration
-    forEach(entityList, entity => {
-      let entity_id: string = entity.entity_id;
-      let domain: string = getDomainFromEntityId(entity_id)!;
 
-      if (IsSchedulerEntity(entity_id)) return; //filter schedule items
+  entityInDomainConfig(entity_id: string) {
+    let domain = getDomainFromEntityId(entity_id);
+    if (!(domain in this.userConfig.domains)) return false;
+    let domainCfg = this.userConfig.domains[domain];
+    if (domainCfg.include && !domainCfg.include.includes(entity_id)) return false;
+    else if (domainCfg.exclude && domainCfg.exclude.includes(entity_id)) return false;
+    else return true;
+  }
 
-      if (domain in this.userConfig.domains || entity_id in this.userConfig.entities) {
-        let entityActions: IActionElement[] = [];
-        let cfg: IEntityConfig = {
-          actions: [],
-          name: entityList[entity_id].attributes['friendly_name'],
-          icon: entityList[entity_id].attributes['icon']
-        };
-        let skip_entity = false;
-        if (domain in this.userConfig.domains) {
-          if (has(this.userConfig.domains[domain], 'include') && !this.userConfig.domains[domain]['include'].includes(entity_id)) skip_entity = true;
-          if (has(this.userConfig.domains[domain], 'exclude') && this.userConfig.domains[domain]['exclude'].includes(entity_id)) skip_entity = true;
-          Object.assign(cfg, omit(this.userConfig.domains[domain], 'actions'));
+  entityInEntityConfig(entity_id: string) {
+    if (!(entity_id in this.userConfig.entities)) return false;
+    else return true;
+  }
 
-          if (has(this.userConfig.domains[domain], 'actions') && !skip_entity) {
-            let actions: IActionElement[] = mapValues(this.userConfig.domains[domain]['actions'], action => {
-              action = { ...action };
-              if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
-              if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
-                let SUPPORT_BRIGHTNESS = entity.attributes['supported_features'] & 1;
-                if (!SUPPORT_BRIGHTNESS && action['variable']) delete action['variable'];
-              }
-              else if (domain == "cover" && entity.attributes.hasOwnProperty('supported_features')) {
-                let SUPPORT_POSITION = entity.attributes['supported_features'] & 4;
-                if (!SUPPORT_POSITION && action['variable']) return null;
-              }
-              return this.CreateAction(action)
-            });
-            actions = filter(actions, el => el); //remove null elements
-            each(actions, e => entityActions.push(e));
-          }
-        }
-        if (entity_id in this.userConfig.entities) {
-          Object.assign(cfg, omit(this.userConfig.entities[entity_id], 'actions'));
-          if (has(this.userConfig.entities[entity_id], 'actions')) {
-            let actions: IActionElement[] = mapValues(this.userConfig.entities[entity_id]['actions'], action => {
-              action = { ...action };
-              if (getDomainFromEntityId(action['service']) == domain) action = Object.assign(action, { service: action['service'].split('.').pop() });
-              if (domain == "light" && entity.attributes.hasOwnProperty('supported_features')) {
-                let SUPPORT_BRIGHTNESS = entity.attributes['supported_features'] & 1;
-                if (!SUPPORT_BRIGHTNESS && action['variable']) delete action['variable'];
-              }
-              else if (domain == "cover" && entity.attributes.hasOwnProperty('supported_features')) {
-                let SUPPORT_POSITION = entity.attributes['supported_features'] & 4;
-                if (!SUPPORT_POSITION && action['variable']) return null;
-              }
-              return this.CreateAction(action)
-            });
-            actions = filter(actions, el => el); //remove null elements
-            each(actions, e => entityActions.push(e));
-          }
-          skip_entity = false;
-        }
-        if (skip_entity) return;
-        this.AddEntity(cfg, entity_id);
-        each(entityActions, e => this.AddActionToEntity(entity_id, e));
-      }
-    })
-
-    if (this.userConfig.discover_existing) {
-      let res = filter(entityList, e => IsSchedulerEntity(e.entity_id));
-      res = map(res, e => { return e.attributes['actions'] });
-      res = flatten(res);
-      each(res, item => {
-        let config = { ...item };
-        let entity_id = config['entity'];
-        let service = config['service'];
-        let service_data = omit(config, ['entity', 'service']);
-        if (!getDomainFromEntityId(entity_id)) {
-          entity_id = getDomainFromEntityId(service) + "." + entity_id;
-          service = service.split('.').pop();
-        }
-
-        let action = this.CreateAction({
-          service: service,
-          service_data: service_data,
-        });
-
-        //add the entity if it does not exist
-        if (!this.FindEntity(entity_id)) {
-          if (!entityList[entity_id]) return; //entity is not in HA (corrupt schedule!)
-          let entityCfg: IEntityConfig = {
-            actions: [],
-            name: entityList[entity_id].attributes['friendly_name'],
-            icon: entityList[entity_id].attributes['icon']
-          };
-          this.AddEntity(entityCfg, entity_id);
-        }
-        this.AddActionToEntity(entity_id, action);
-      });
+  getActionConfigForEntity(actionCfg: IActionConfig, entity: IEntity): IActionConfig | null {
+    let cfg = { ...actionCfg };
+    let domain = getDomainFromEntityId(entity.entity_id);
+    if (getDomainFromEntityId(actionCfg.service) == domain) Object.assign(cfg, { service: cfg.service.split('.').pop() });
+    if (entity.attributes.hasOwnProperty('supported_features') && supportedFeaturesFilter[domain] && supportedFeaturesFilter[domain][cfg.service]) {
+      let filter = supportedFeaturesFilter[domain][cfg.service];
+      if (filter instanceof Object && cfg.hasOwnProperty('variable') && (entity.attributes.supported_features! & Number(filter[cfg.variable!.field])) == 0) {
+        let { variable, ...newCfg } = cfg;
+        return newCfg;
+      } else if (!isNaN(filter) && (entity.attributes.supported_features! & Number(filter)) == 0) return null;
     }
+    return cfg;
+  }
+
+  getConfigForEntity(entity: IEntity): IEntityConfig | null {
+    let entity_id = entity.entity_id;
+    let domain = getDomainFromEntityId(entity_id);
+    let cfg: IEntityConfig = { actions: [] };
+    if (entity.attributes.hasOwnProperty('friendly_name')) Object.assign(cfg, { name: entity.attributes.friendly_name });
+    if (entity.attributes.hasOwnProperty('icon')) Object.assign(cfg, { icon: entity.attributes.icon });
+
+    if (!this.entityInDomainConfig(entity_id) && !this.entityInEntityConfig(entity_id)) return null;
+    if (IsSchedulerEntity(entity_id)) return null;
+    if (this.entityInDomainConfig(entity_id)) {
+      let domainCfg = this.userConfig.domains[domain];
+      if (domainCfg.hasOwnProperty('name')) Object.assign(cfg, { name: domainCfg.name });
+      if (domainCfg.hasOwnProperty('icon')) Object.assign(cfg, { icon: domainCfg.icon });
+      if (domainCfg.hasOwnProperty('actions')) Object.assign(cfg, { actions: [...cfg.actions].concat([...domainCfg.actions].map(e => this.getActionConfigForEntity(e, entity)).filter(e => e) as IActionConfig[]) });
+    }
+    if (this.entityInEntityConfig(entity_id)) {
+      let entityCfg = this.userConfig.entities[entity_id];
+      if (entityCfg.hasOwnProperty('name')) Object.assign(cfg, { name: entityCfg.name });
+      if (entityCfg.hasOwnProperty('icon')) Object.assign(cfg, { icon: entityCfg.icon });
+      if (entityCfg.hasOwnProperty('actions')) Object.assign(cfg, { actions: [...cfg.actions].concat([...entityCfg.actions].map(e => this.getActionConfigForEntity(e, entity)).filter(e => e) as IActionConfig[]) });
+    }
+    if (!cfg.actions.length) return null;
+    return cfg;
 
   }
 
+  LoadEntities(entityList: IEntity[]) {
+    //load the entities from configuration
+    forEach(entityList, entity => {
+      let cfg = this.getConfigForEntity(entity);
+      let entity_id = entity.entity_id;
+      if (!cfg) return;
+      this.AddEntity(cfg, entity_id);
+      cfg.actions.map(this.CreateAction).forEach(e => this.AddActionToEntity(entity_id, e));
+    })
 
+    if (this.userConfig.discover_existing) {
+      Object.entries(entityList).filter(([id]) => IsSchedulerEntity(id)).forEach(([, entity]: [string, any]) => {
+        if (!entity.attributes.hasOwnProperty('actions') || !Array.isArray(entity.attributes.actions)) return;
+        entity.attributes.actions.map(el => ImportHassAction(el, this)).forEach((el: IHassAction) => {
+          if (!this.FindEntity(el.entity) && el.entity in entityList) {
+            let entityCfg = { actions: [] };
+            if (entityList[el.entity].attributes.hasOwnProperty('friendly_name')) Object.assign(entityCfg, { name: entityList[el.entity].attributes.friendly_name });
+            if (entityList[el.entity].attributes.hasOwnProperty('icon')) Object.assign(entityCfg, { icon: entityList[el.entity].attributes.icon });
+            this.AddEntity(entityCfg, el.entity);
+          };
+          let actionCfg = { ...el };
+          if (el.hasOwnProperty('service_data')) {
+            let suffix = CreateSlug(Object.values(el.service_data!));
+            Object.assign(actionCfg, { name: `${getNameForService(el.service)}_${suffix}` });
+          }
+          this.AddActionToEntity(el.entity, this.CreateAction(actionCfg));
+        });
+      });
+    }
+  }
 }

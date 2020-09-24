@@ -1,7 +1,7 @@
 
-import { pick, values, omit, keys, isEqual } from "lodash-es";
+import { isEqual } from "lodash-es";
 import slugify from "slugify";
-import { IUserSelection, IEntry, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, ITimeSlot, IActionElement, IActionVariable } from './types'
+import { IEntry, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, ITimeSlot, IActionElement, IActionVariable } from './types'
 import { Config } from './config-parser'
 import { localize } from './localize/localize';
 import { formatTime, parseTimestamp, ITime, wrapTime, HoursPerDay, MinutesPerHour } from './date-time';
@@ -58,52 +58,67 @@ export function getDomainFromEntityId(entity_id: string): string {
   return res;
 }
 
-export function CreateSlug(input: IDictionary<any>) {
-  let props = keys(input);
-  props = props.sort();
-  let obj = {};
-  props.forEach(prop => obj[prop] = input[prop]);
-
-  return slugify(JSON.stringify(values(obj)).replace(/\W/g, ' '), '_');
+export function CreateSlug(input: IDictionary<any> | any[]) {
+  if (input instanceof Object) {
+    let props = Object.keys(input).sort().filter(e => { return input[e] !== undefined && input[e] !== null });
+    let obj = {};
+    props.forEach(prop => obj[prop] = input[prop]);
+    return slugify(JSON.stringify(Object.values(obj)).replace(/\W/g, ' '), '_');
+  }
+  else {
+    return slugify(JSON.stringify(input).replace(/\W/g, ' '), '_');
+  }
 }
 
 export function IsSchedulerEntity(entity_id: string) {
   return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
 }
 
-export function ImportFromHass(hassData: any, configData: Config): IScheduleEntry {
+export function ImportHassAction(actionData: any, configData: Config) {
+  let output: IHassAction = {
+    service: actionData.service,
+    entity: actionData.entity
+  };
 
-  let actions = hassData.attributes['actions'].map(action => {
-    let entityId = String(action['entity']);
-    let service = String(action['service']);
-    let serviceData = Object.entries(action)
-      .filter(([key]) => !['entity', 'service'].includes(key))
-      .reduce((serviceData, [key, val]) => Object.assign(serviceData, { [key]: val }), {});
+  if (!getDomainFromEntityId(output.entity)) Object.assign(output, { entity: `${getDomainFromEntityId(output.service)}.${output.entity}` });
+  if (getDomainFromEntityId(output.service) == getDomainFromEntityId(output.entity)) Object.assign(output, { service: String(output.service.split(".").pop()) });
 
-    if (!getDomainFromEntityId(entityId)) entityId = `${getDomainFromEntityId(service)}.${entityId}`;
-    if (getDomainFromEntityId(service) == getDomainFromEntityId(entityId)) service = String(service.split(".").pop());
+  let serviceData = Object.entries(actionData)
+    .filter(([key]) => !['entity', 'service'].includes(key))
+    .reduce((serviceData, [key, val]) => Object.assign(serviceData, { [key]: val }), {});
 
-    if (!configData.FindEntity(entityId)) return {}; //entity does not exist in configuration
-    let actionId = Object.keys(serviceData).length ? CreateSlug({ service: service, service_data: serviceData }) : CreateSlug({ service: service });
-
-    let output: Partial<IEntry> = {
-      entity: entityId,
-      action: actionId
-    };
-    if (!configData.FindAction(entityId, actionId)) {
-      let matchedAction = configData.GetActionsForEntity(entityId).find(e => (e.hasOwnProperty('variable') && serviceData.hasOwnProperty(e['variable']!['field'])));
-      if (matchedAction) {
-        let fieldName = matchedAction['variable']!['field'];
-        Object.assign(output, { level: Number(serviceData[fieldName]), levelEnabled: true });
-        delete serviceData[fieldName];
-        actionId = Object.keys(serviceData).length ? CreateSlug({ service: service, service_data: serviceData }) : CreateSlug({ service: service });
-      }
-      else return output; //action does not exist in configuration
+  let actionId = CreateSlug({ service: output.service, service_data: serviceData });
+  if (configData.FindEntity(output.entity) && !configData.FindAction(output.entity, actionId)) {
+    let matchedAction = configData.GetActionsForEntity(output.entity).find(e => (e.hasOwnProperty('variable') && serviceData.hasOwnProperty(e['variable']!['field'])));
+    if (matchedAction) {
+      let fieldName = matchedAction['variable']!['field'];
+      delete serviceData[fieldName];
     }
-    Object.assign(output, { action: actionId });
-    return output;
-  });
+  }
+  if (Object.keys(serviceData).length) Object.assign(output, { service_data: serviceData });
+  return output;
+}
 
+export function ImportFromHass(hassData: any, configData: Config): IScheduleEntry | null {
+  let actions = hassData.attributes['actions'].map(el => {
+    let actionData = ImportHassAction(el, configData);
+    if (!configData.FindAction(actionData.entity, CreateSlug({ service: actionData.service, service_data: actionData.service_data }))) return null;
+    return Object.assign({ ...el }, { entity: actionData.entity, service: actionData.service });
+  }).filter(e => e).map(el => {
+    let output: Partial<IEntry> = {
+      entity: el.entity,
+      action: CreateSlug({ service: el.service, service_data: el.service_data }),
+    }
+    let actionCfg = configData.FindAction(output.entity!, output.action);
+    if (actionCfg!.hasOwnProperty('variable') && el[actionCfg!.variable!.field]) {
+      Object.assign(output, {
+        level: Number(el[actionCfg!.variable!.field]),
+        levelEnabled: true
+      });
+    }
+    return output;
+  })
+  if (!actions.length) return null;
   let entries: IEntry[] = [];
 
   hassData.attributes['entries'].forEach(entry => {

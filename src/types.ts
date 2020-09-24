@@ -35,6 +35,9 @@ export interface IDomainConfig {
   icon?: string,
   name?: string,
   actions: IActionConfig[]
+  include?: string[],
+  exclude?: string[]
+
 }
 export interface IEntityElement extends IEntityConfig {
   id: string,
@@ -107,12 +110,6 @@ export interface IHassData {
   actions: IHassAction[]
 }
 
-// export interface IScheduleAction {
-//   entity: string,
-//   action: string,
-//   level?: number
-// }
-
 export interface IActionVariableConfig {
   field: string,
   name?: string,
@@ -164,3 +161,6 @@ export interface ITimeSlot {
   level?: number,
   levelEnabled?: boolean
 }
+
+
+

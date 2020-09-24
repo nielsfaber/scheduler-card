@@ -3,6 +3,8 @@ import { IDictionary, IDomainConfig, IUserSelection, IActionElement, ITimeSlot }
 import { localize } from './localize/localize';
 import { parseTimestamp, HoursPerDay, MinutesPerHour } from './date-time';
 
+
+
 export const defaultDomainConfig: IDictionary<IDomainConfig> = {
   light: {
     actions: [
@@ -184,3 +186,16 @@ export const defaultRoutineSlots: ITimeSlot[] = [
   { startTime: parseTimestamp('08:00'), endTime: parseTimestamp('16:00') },
   { startTime: parseTimestamp('16:00'), endTime: HoursPerDay * MinutesPerHour },
 ];
+
+export const supportedFeaturesFilter = {
+  light: {
+    "turn_on": {
+      "brightness": 1
+    }
+  },
+  cover: {
+    "open_cover": 1,
+    "close_cover": 2,
+    "set_cover_position": 4,
+  }
+}

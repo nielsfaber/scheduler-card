@@ -74,7 +74,7 @@ export class SchedulerCard extends LitElement {
 
   protected updateScheduleList(hass) {
     let scheduleItems = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
-      .map(e => ImportFromHass(e, this.Config));
+      .map(e => ImportFromHass(e, this.Config)).filter(e => e);
 
     if (isEqual(scheduleItems, this.scheduleItems)) return;
 
