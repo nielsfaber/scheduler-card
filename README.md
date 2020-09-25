@@ -95,6 +95,8 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 
 </details>
 
+---
+
 ## Usage
 
 :construction: WIP More usage instructions should follow soon.
@@ -181,6 +183,8 @@ Also here, buttons can be clicked to toggle.
 :warning: **Important**: _What you see is what you get_ here. If you want to store time as relative to sunrise or sunset, make sure that you have this _mode_ activated when you click the save button.
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_timepicker.png?raw=true" width="400">
+
+---
 
 ## Configuration
 ### General
@@ -419,6 +423,7 @@ Currently the following languages are supported:
 The translations are maintained by users.
 If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a starting point. 
 
+---
 ## FAQ
 
 ### *Can I set the card to Fahrenheit instead of Celsius?*
@@ -517,3 +522,9 @@ But let's see if we can get convince them to adopt this scheduler, simply by mak
 ## Troubleshooting
 
 If you have an issue with this card, please report it [here](https://github.com/nielsfaber/scheduler-card/issues). 
+
+
+---
+
+
+<a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
