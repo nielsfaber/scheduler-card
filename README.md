@@ -33,6 +33,7 @@
   - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
   - [*Why is there no such scheduler in HA yet?*](#why-is-there-no-such-scheduler-in-ha-yet)
 - [Troubleshooting](#troubleshooting)
+- [Say thank you](#say-thank-you)
 
 ## Introduction
 This is a Lovelace card for Home Assistant that can be used to create a time schedule for your smart devices.
@@ -527,4 +528,8 @@ If you have an issue with this card, please report it [here](https://github.com/
 ---
 
 
+## Say thank you
+If you want to make donation as appreciation of my work, you can buy me a coffee. Thank you!
+
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
+
