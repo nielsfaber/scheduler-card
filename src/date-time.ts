@@ -1,15 +1,27 @@
-import { IUserSelection } from "./types";
-
-
 
 export const MinutesPerHour = 60;
 export const HoursPerDay = 24;
+export const MinutesPerDay = HoursPerDay * MinutesPerHour
 
-
+export enum ETimeEvent {
+  Sunrise = "SUNRISE",
+  Sunset = "SUNSET"
+}
 
 export interface ITime {
   value: number,
-  event?: "sunrise" | "sunset",
+  event?: ETimeEvent
+}
+
+export enum EDayType {
+  Daily = "DAILY",
+  Weekdays = "WEEKDAYS",
+  Custom = "CUSTOM",
+}
+
+export interface IDays {
+  type: EDayType,
+  custom_days?: number[]
 }
 
 export function roundTime(value: number, stepSize: number) {
@@ -91,9 +103,28 @@ export function parseTimestamp(input: string) {
   return value;
 }
 
-export function parseDayArray(userData: IUserSelection): number[] {
-  if (userData.daysType == 'weekdays') return [1, 2, 3, 4, 5];
-  else if (userData.daysType == 'custom') return userData.daysCustom.sort().filter(e => e != 0);
+export function daysToArray(dayCfg: IDays): number[] {
+  if (dayCfg.type == EDayType.Weekdays) return [1, 2, 3, 4, 5];
+  else if (dayCfg.type == EDayType.Custom && dayCfg.custom_days) return dayCfg.custom_days.sort().filter(e => e != 0);
   else return [];
 }
 
+export function ArraytoDays(input: number[]): IDays {
+  let alldays = [1, 2, 3, 4, 5, 6, 7], weekdays = [1, 2, 3, 4, 5];
+  let dayArray = [...input].sort().filter(e => e != 0);
+
+  if (dayArray.every((e, i) => e == alldays[i])) return { type: EDayType.Daily, custom_days: [] };
+  else if (dayArray.every((e, i) => e == weekdays[i])) return { type: EDayType.Weekdays, custom_days: [] };
+  else return { type: EDayType.Custom, custom_days: dayArray };
+}
+
+export function stringToTimeEvent(input: string): ETimeEvent {
+  if (input == "sunrise") return ETimeEvent.Sunrise;
+  return ETimeEvent.Sunset;
+}
+
+export function timeEventToString(input: ETimeEvent): string {
+  if (input == ETimeEvent.Sunrise) return "sunrise";
+  else return "sunset";
+
+}

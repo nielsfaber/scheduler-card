@@ -1,55 +1,69 @@
 
-import { isEqual } from "lodash-es";
-import slugify from "slugify";
-import { IEntry, IHassData, IHassAction, IHassEntry, IScheduleEntry, IDictionary, ITimeSlot, IActionElement, IActionVariable } from './types'
-import { Config } from './config-parser'
+import { IEntry, IDictionary, ITimeSlot, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
 import { localize } from './localize/localize';
-import { formatTime, parseTimestamp, ITime, wrapTime, HoursPerDay, MinutesPerHour } from './date-time';
+import { formatTime, ITime, wrapTime, HoursPerDay, MinutesPerHour, ETimeEvent, IDays, EDayType } from './date-time';
+import { UnitPercent, FieldTemperature } from "./const";
 
 
-const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
-const ActionPattern = /^(A([0-9]+))+$/
-const SunTimePattern = /^([0-9]{4})?(S[SR])([0-9]{4})?$/
-
-
-export function ExportToHass(entryList: IEntry[], configData: Config): IHassData {
-  let hassEntries: IHassEntry[] = [];
-  let hassActions: IHassAction[] = [];
-
-  entryList.forEach(entry => {
-    let actionCfg = configData.FindAction(entry.entity, entry.action) as IActionElement;
-    let hassAction: IHassAction = {
-      entity: entry.entity,
-      service: getDomainFromEntityId(actionCfg.service) ? actionCfg.service : `${getDomainFromEntityId(entry.entity)}.${actionCfg.service}`
+export function extend(oldObj: IDictionary<any> | any[], newObj: IDictionary<any> | any[], options: Partial<{ compact: boolean, overwrite: boolean }> = {}) {
+  let mergedObj = Array.isArray(oldObj) ? [...oldObj] : { ...oldObj };
+  if (oldObj === null) mergedObj = Array.isArray(newObj) ? [] : {};
+  if (newObj === null || newObj === undefined) return oldObj;
+  let keys = Object.keys(newObj);
+  keys.forEach(key => {
+    let val = newObj[key];
+    if (val === undefined) return;
+    if (val === null && options.compact) {
+      if (mergedObj[key] !== undefined) delete mergedObj[key];
+      return;
     }
-    if (actionCfg.hasOwnProperty('service_data')) Object.assign(hassAction, { service_data: actionCfg.service_data });
-
-    if (entry.levelEnabled) {
-      let propertyName = String(actionCfg.variable?.field);
-      let val = Number(entry.level);
-      let serviceData = hassAction.hasOwnProperty('service_data') ? hassAction.service_data : {};
-      Object.assign(serviceData, { [propertyName]: val });
-      Object.assign(hassAction, { service_data: serviceData });
+    if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite) val = extend(mergedObj[key], val, options);
+    else if (typeof val == "object" && typeof mergedObj[key] == "object" && !options.overwrite) val = extend(mergedObj[key], val, options);
+    if (Array.isArray(newObj)) {
+      if (val !== null) {
+        if (options.overwrite) mergedObj = val;
+        else mergedObj.push(val);
+      }
+    } else {
+      if ((Array.isArray(val) || typeof val == "object") && !Object.keys(val).length && options.compact) {
+        delete mergedObj[key];
+        return;
+      }
+      Object.assign(mergedObj, { [key]: val });
     }
+  })
+  return mergedObj;
+}
 
-    let actionNum = hassActions.findIndex(e => isEqual(e, hassAction));
-    if (actionNum < 0) actionNum = hassActions.push(hassAction) - 1;
+export function pick(obj: IDictionary<any> | null | undefined, keys: string[]): IDictionary<any> {
+  if (!obj) return {};
+  return Object.entries(obj)
+    .filter(([key,]) => keys.includes(key))
+    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
+}
 
-    let hassEntry: IHassEntry = {
-      actions: [actionNum]
-    }
+export function omit(obj: IDictionary<any> | null | undefined, keys: string[]): IDictionary<any> {
+  if (!obj) return {};
+  return Object.entries(obj)
+    .filter(([key,]) => !keys.includes(key))
+    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
+}
 
-    if (!entry.time.event) Object.assign(hassEntry, { time: formatTime(entry.time.value).time });
-    else Object.assign(hassEntry, { event: entry.time.event, offset: formatTime(entry.time.value).time, });
-    if (entry.days.length) Object.assign(hassEntry, { days: entry.days });
+export function mapObject(obj: Object, func: Function) {
+  return Object.entries(obj)
+    .map(([key, val]) => [key, func(val, key)])
+    .filter(([, v]) => v !== null && v !== undefined)
+    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
+}
 
-    hassEntries.push(hassEntry);
-  });
+export function filterObject(obj: Object, func: Function) {
+  return Object.entries(obj)
+    .filter(([key, val]) => func(val, key))
+    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
+}
 
-  return {
-    actions: hassActions,
-    entries: hassEntries
-  }
+export function keyMap(arr: any[], func: Function) {
+  return arr.reduce((obj, val) => Object.assign(obj, { [func(val)]: val }), {});
 }
 
 export function getDomainFromEntityId(entity_id: string): string {
@@ -58,154 +72,19 @@ export function getDomainFromEntityId(entity_id: string): string {
   return res;
 }
 
-export function CreateSlug(input: IDictionary<any> | any[]) {
-  if (input instanceof Object) {
-    let props = Object.keys(input).sort().filter(e => { return input[e] !== undefined && input[e] !== null });
-    let obj = {};
-    props.forEach(prop => obj[prop] = input[prop]);
-    return slugify(JSON.stringify(Object.values(obj)).replace(/\W/g, ' '), '_');
-  }
+export function PrettyPrintDays(days: IDays): string {
+  if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
+  else if (days.type == EDayType.Weekdays) return `${localize('words.on')} ${localize('fields.day_type_weekdays')}`;
   else {
-    return slugify(JSON.stringify(input).replace(/\W/g, ' '), '_');
-  }
-}
-
-export function IsSchedulerEntity(entity_id: string) {
-  return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
-}
-
-export function ImportHassAction(actionData: any, configData: Config) {
-  let output: IHassAction = {
-    service: actionData.service,
-    entity: actionData.entity
-  };
-
-  if (!getDomainFromEntityId(output.entity)) Object.assign(output, { entity: `${getDomainFromEntityId(output.service)}.${output.entity}` });
-  if (getDomainFromEntityId(output.service) == getDomainFromEntityId(output.entity)) Object.assign(output, { service: String(output.service.split(".").pop()) });
-
-  let serviceData = Object.entries(actionData)
-    .filter(([key]) => !['entity', 'service'].includes(key))
-    .reduce((serviceData, [key, val]) => Object.assign(serviceData, { [key]: val }), {});
-
-  let actionId = CreateSlug({ service: output.service, service_data: serviceData });
-  if (configData.FindEntity(output.entity) && !configData.FindAction(output.entity, actionId)) {
-    let matchedAction = configData.GetActionsForEntity(output.entity).find(e => (e.hasOwnProperty('variable') && serviceData.hasOwnProperty(e['variable']!['field'])));
-    if (matchedAction) {
-      let fieldName = matchedAction['variable']!['field'];
-      delete serviceData[fieldName];
-    }
-  }
-  if (Object.keys(serviceData).length) Object.assign(output, { service_data: serviceData });
-  return output;
-}
-
-export function ImportFromHass(hassData: any, configData: Config): IScheduleEntry | null {
-  let actions = hassData.attributes['actions'].map(el => {
-    let actionData = ImportHassAction(el, configData);
-    if (!configData.FindAction(actionData.entity, CreateSlug({ service: actionData.service, service_data: actionData.service_data }))) return null;
-    return Object.assign({ ...el }, { entity: actionData.entity, service: actionData.service });
-  }).filter(e => e).map(el => {
-    let output: Partial<IEntry> = {
-      entity: el.entity,
-      action: CreateSlug({ service: el.service, service_data: el.service_data }),
-    }
-    let actionCfg = configData.FindAction(output.entity!, output.action);
-    if (actionCfg!.hasOwnProperty('variable') && el[actionCfg!.variable!.field]) {
-      Object.assign(output, {
-        level: Number(el[actionCfg!.variable!.field]),
-        levelEnabled: true
-      });
-    }
-    return output;
-  })
-  if (!actions.length) return null;
-  let entries: IEntry[] = [];
-
-  hassData.attributes['entries'].forEach(entry => {
-    let res = EntryPattern.exec(entry);
-    let actionNums = ActionPattern.exec(res![3]);
-
-    let isSunTime = SunTimePattern.exec(res![2]);
-    let time: ITime;
-    if (!isSunTime) time = { value: parseTimestamp(res![2]) };
-    else time = {
-      event: isSunTime![2] == "SR" ? "sunrise" : "sunset",
-      value: isSunTime![1] ? -parseTimestamp(isSunTime![1]) : parseTimestamp(isSunTime![3])
-    };
-
-    actionNums!.map(Number).filter(e => { return !isNaN(e) }).forEach(actionNum => {
-      if (actionNum >= actions.length) return;
-      entries.push(Object.assign({ ...actions[actionNum] }, {
-        time: time,
-        days: res![1].split("").map(Number)
-      }));
-    });
-  });
-
-  return {
-    id: hassData.entity_id,
-    enabled: hassData.state != 'off',
-    entries: entries,
-  };
-}
-
-
-
-// let actions: IScheduleAction[] = hassData.attributes['actions'].map(action => {
-//   let output = {};
-//   let entity_id = getDomainFromEntityId(action['entity']) ? action['entity'] : getDomainFromEntityId(action['service']) + "." + action['entity'];
-//   let service = action['service'];
-//   let service_data = omit(action, ['service', 'entity']);
-//   if (getDomainFromEntityId(entity_id) == getDomainFromEntityId(service)) service = service.split(".").pop();
-
-
-//   if (!configData.FindEntity(entity_id)) {
-//     //console.log(`failed to find entity ${entity_id}!`);
-//     return;
-//   }
-//   Object.assign(output, { entity: entity_id });
-
-//   let action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
-
-//   if (!configData.FindAction(entity_id, action_id)) {
-//     let action = configData.GetActionsForEntity(entity_id).find(e => {
-//       if (!e.hasOwnProperty('variable')) return false;
-//       if (service_data.hasOwnProperty(e['variable']!['field'])) return true;
-//       else return false;
-//     });
-//     if (action) {
-//       let field_name = action['variable']!['field'];
-//       Object.assign(output, { level: Number(service_data[field_name]) });
-//       service_data = omit(service_data, field_name);
-//       action_id = (service_data) ? CreateSlug(Object.assign({ service: service, service_data: service_data })) : CreateSlug(Object.assign({ service: service }));
-//     }
-//     else {
-//       //console.log(`failed to find action ${action_id} for entity ${entity_id}!`);
-//       return;
-//     }
-//   }
-//   Object.assign(output, { action: action_id });
-//   return output;
-// });
-
-export function ComputeDaysType(dayArray: number[]): string {
-  if (!dayArray || !dayArray.length || dayArray.length == 1 && dayArray[0] == 0) return 'daily';
-  else if (dayArray.length == 5 && !dayArray.includes(6) && !dayArray.includes(7)) return 'weekdays';
-  else return 'custom';
-}
-
-export function PrettyPrintDays(dayArray: number[]): string {
-  if (ComputeDaysType(dayArray) == 'daily') return localize('fields.day_type_daily');
-  else if (ComputeDaysType(dayArray) == 'weekdays') return `${localize('words.on')} ${localize('fields.day_type_weekdays')}`;
-  else {
+    let dayList = days.custom_days || [];
     let output = Array();
-    if (dayArray.includes(1)) output.push(localize('days_long.mon'));
-    if (dayArray.includes(2)) output.push(localize('days_long.tue'));
-    if (dayArray.includes(3)) output.push(localize('days_long.wed'));
-    if (dayArray.includes(4)) output.push(localize('days_long.thu'));
-    if (dayArray.includes(5)) output.push(localize('days_long.fri'));
-    if (dayArray.includes(6)) output.push(localize('days_long.sat'));
-    if (dayArray.includes(7)) output.push(localize('days_long.sun'));
+    if (dayList.includes(1)) output.push(localize('days_long.mon'));
+    if (dayList.includes(2)) output.push(localize('days_long.tue'));
+    if (dayList.includes(3)) output.push(localize('days_long.wed'));
+    if (dayList.includes(4)) output.push(localize('days_long.thu'));
+    if (dayList.includes(5)) output.push(localize('days_long.fri'));
+    if (dayList.includes(6)) output.push(localize('days_long.sat'));
+    if (dayList.includes(7)) output.push(localize('days_long.sun'));
     let output_str = output.join(', ');
     var n = output_str.lastIndexOf(', ');
     if (n) output_str = output_str.slice(0, n) + output_str.slice(n).replace(', ', ` ${localize('words.and')} `);
@@ -219,17 +98,20 @@ export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: 
   if (!time.event) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
 
   let time_string = "unknown";
-  if (time.event == "sunrise" && options.sunrise !== null) {
+  let event_string = "";
+  if (time.event === ETimeEvent.Sunrise && options.sunrise !== null) {
     let time_with_offset = wrapTime(Number(options.sunrise) + time.value);
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
+    event_string = "sunrise";
   }
-  else if (time.event == "sunset" && options.sunset !== null) {
+  else if (time.event == ETimeEvent.Sunrise && options.sunset !== null) {
     let time_with_offset = wrapTime(Number(options.sunset) + time.value);
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
+    event_string = "sunset";
   }
 
   if (Math.abs(time.value) == 0) return `${localize('words.at')} ${localize(`words.${time.event}`)} (${time_string})`;
-  else return `${formatTime(time.value, { absolute: true }).time} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${localize(`words.${time.event}`)} (${time_string})`;
+  else return `${formatTime(time.value, { absolute: true }).time} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${localize(`words.${event_string}`)} (${time_string})`;
 }
 
 export function PrettyPrintName(input: string): string {
@@ -243,23 +125,36 @@ export function PrettyPrintIcon(input: string): string {
   return `hass:${input}`;
 }
 
-export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement) {
+export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement, options: { temperature_unit: string }) {
   let action_string = PrettyPrintName(actionCfg.name);
 
-  if (entry.hasOwnProperty('level')) {
-    let cfg = actionCfg.variable as IActionVariable;
-    let value = Number(entry.level);
-    let unit = cfg.hasOwnProperty('unit') ? cfg.unit : "";
-    if (cfg.show_percentage) {
-      value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
-      if (value < cfg.min) value = cfg.min;
-      else if (value > cfg.max) value = cfg.max;
-      unit = "%";
-    }
-    action_string = `${localize('services.set_to')} ${value}${unit}`;
+  if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
+    let value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
+    action_string = `${localize('services.set_to')} ${value}`;
   }
   return capitalize(action_string);
 }
+
+
+export function PrettyPrintActionVariable(input: ILevelVariable | IListVariable, cfg: ILevelVariableConfig | IListVariableConfig, options: { temperature_unit: string }): string {
+  if (input.type == EVariableType.Level) {
+    cfg = cfg as ILevelVariableConfig;
+    let unit = 'unit' in cfg ? cfg.unit : "";
+    if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
+    let value = Number(input.value);
+    if (cfg.unit == UnitPercent) {
+      value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
+      if (value < cfg.min) value = cfg.min;
+      else if (value > cfg.max) value = cfg.max;
+    }
+    return `${value}${unit}`;
+  }
+  else {
+    return String(input.value);
+  }
+}
+
+
 
 export function capitalize(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
@@ -272,8 +167,7 @@ export function calculateTimeSlots(entries: IEntry[]): ITimeSlot[] {
       endTime: entry.time.value,
       action: entry.action,
     }
-    if (entry.hasOwnProperty('level')) Object.assign(output, { level: entry.level });
-    if (entry.hasOwnProperty('levelEnabled')) Object.assign(output, { levelEnabled: entry.levelEnabled });
+    if (entry.hasOwnProperty('level')) Object.assign(output, <ITimeSlot>{ variable: entry.variable });
     return output;
   });
 
@@ -282,11 +176,7 @@ export function calculateTimeSlots(entries: IEntry[]): ITimeSlot[] {
     endTime: 0
   });
 
-  slots.sort((a, b) => {
-    if (a.startTime > b.startTime) return 1;
-    else if (a.startTime < b.startTime) return -1;
-    return 0;
-  });
+  slots.sort((a, b) => (a.startTime > b.startTime) ? 1 : -1);
 
   let endTime = MinutesPerHour * HoursPerDay;
   let i;
@@ -297,4 +187,38 @@ export function calculateTimeSlots(entries: IEntry[]): ITimeSlot[] {
 
   return slots;
 }
+
+export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<any>) {
+  if (Array.isArray(inA) && Array.isArray(inB)) {
+    let objA = [...inA].sort();
+    let objB = [...inB].sort();
+    if (objA.length !== objA.length) return false;
+
+    for (var i = 0; i < objA.length; i++) {
+      if (objA[i] !== objB[i]) return false;
+    }
+
+    return true;
+  }
+  else if (typeof inA == "object" && typeof inB == "object") {
+    let objA = { ...inA };
+    let objB = { ...inB };
+    const keysA = Object.keys(objA);
+    const keysB = Object.keys(objB);
+
+    if (keysA.length !== keysB.length) {
+      return false;
+    }
+
+    for (const key of keysA) {
+      const valA = objA[key];
+      const valB = objB[key];
+      const areObjects = typeof valA == "object" && typeof valB == "object" && valA !== null && valB !== null;
+      if (areObjects && !IsEqual(valA, valB) || !areObjects && valA !== valB) return false;
+    }
+
+    return true;
+  }
+  else return false;
+};
 

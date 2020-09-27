@@ -1,0 +1,169 @@
+{
+  "camera": {
+    "icon": "camera"
+  },
+  "climate": {
+    "icon": "home-thermometer-outline",
+    "actions": [
+      {
+        "service": "turn_off",
+        "icon": "thermometer-off"
+      },
+      {
+        "service": "set_temperature",
+        "icon": "thermometer",
+        "supported_feature": 1,
+        "variable": {
+          "field": "temperature",
+          "min": "attribute:min_temp",
+          "max": "attribute:max_temp"
+        }
+      },
+      {
+        "service": "set_hvac_mode",
+        "variable": {
+          "field": "mode",
+          "options": "attribute:hvac_modes"
+        }
+      },
+      {
+        "service": "set_preset_mode",
+        "supported_feature": 16,
+        "variable": {
+          "field": "preset",
+          "options": "attribute:preset_modes"
+        }
+      }
+    ]
+  },
+  "cover": {
+    "icon": "window-shutter",
+    "actions": [
+      {
+        "service": "open_cover",
+        "icon": "window-shutter-open"
+      },
+      {
+        "service": "close_cover",
+        "icon": "window-shutter"
+      },
+      {
+        "service": "set_cover_position",
+        "icon": "window-shutter",
+        "supported_feature": 4,
+        "variable": {
+          "field": "position",
+          "unit": "%",
+          "min": 0,
+          "max": 100
+        }
+      }
+    ]
+  },
+  "fan": {
+    "icon": "fan",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "fan"
+      },
+      {
+        "service": "turn_off",
+        "icon": "fan-off"
+      }
+    ]
+  },
+  "input_boolean": {
+    "icon": "flash",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "toggle-switch-outline"
+      },
+      {
+        "service": "turn_off",
+        "icon": "toggle-switch-off-outline"
+      }
+    ]
+  },
+  "input_number": {
+    "icon": "sort-numeric-variant",
+    "actions": [
+      {
+        "service": "set_value",
+        "icon": "counter",
+        "variable": {
+          "field": "value",
+          "min": "attribute:min",
+          "max": "attribute:max",
+          "step": "attribute:step"
+        }
+      }
+    ]
+  },
+  "input_select": {
+    "icon": "form-select",
+    "actions": [
+      {
+        "service": "select_option",
+        "icon": "counter",
+        "variable": {
+          "field": "option",
+          "options": "attribute:options"
+        }
+      }
+    ]
+  },
+  "light": {
+    "icon": "lightbulb-outline",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "lightbulb-on-outline",
+        "variable": {
+          "field": "brightness",
+          "unit": "%",
+          "supported_feature": 1
+        }
+      },
+      {
+        "service": "turn_off",
+        "icon": "lightbulb-off-outline"
+      }
+    ]
+  },
+  "media_player": {
+    "icon": "speaker"
+  },
+  "script": {
+    "icon": "script-text"
+  },
+  "switch": {
+    "icon": "flash",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "toggle-switch-outline"
+      },
+      {
+        "service": "turn_off",
+        "icon": "toggle-switch-off-outline"
+      }
+    ]
+  },
+  "vacuum": {
+    "icon": "robot-vacuum",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "power-on",
+        "supported_feature": 1
+      },
+      {
+        "service": "start",
+        "icon": "play-circle-outline",
+        "supported_feature": 8192
+      }
+    ]
+  }
+}

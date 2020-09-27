@@ -1,10 +1,9 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize } from './localize/localize';
 
-import { IActionElement, ITimeSlot } from './types'
-import { MinutesPerHour, HoursPerDay, formatTime, parseTimestamp, roundTime } from './date-time';
-
-const MinutesPerDay = HoursPerDay * MinutesPerHour
+import { ITimeSlot, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from './types'
+import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from './date-time';
+import { PrettyPrintActionVariable } from './helpers';
 
 function Duration(el: ITimeSlot) {
   return el.endTime - el.startTime;
@@ -29,6 +28,8 @@ export class TimeslotEditor extends LitElement {
   @property({ type: Number })
   _activeThumb: number | null = null;
 
+  @property({ type: String })
+  temperatureUnit: string = "";
 
   updated() {
   }
@@ -107,19 +108,15 @@ export class TimeslotEditor extends LitElement {
   getSlotAction(slot: ITimeSlot) {
     if (!slot.action) return '';
     let action = this.actions.find(e => { return e.id == slot.action })!;
-
-    if (slot.levelEnabled && slot.level !== undefined && action.variable) {
-      let cfg = action.variable;
-      let value = slot.level;
-      let unit = cfg.unit;
-
-      if (cfg.show_percentage) {
-        let scaleOffset = cfg.min;
-        let scaleGain = (cfg.max - cfg.min) / 100;
-        value = Math.round((value - scaleOffset) / scaleGain);
-        unit = '%';
-      }
-      return `${value}${unit}`;
+    if (slot.variable && slot.variable.type == EVariableType.Level) {
+      let variable = slot.variable as ILevelVariable;
+      let cfg = action.variable as ILevelVariableConfig;
+      if (variable.enabled) return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
+    }
+    else if (slot.variable && slot.variable.type == EVariableType.List) {
+      let variable = slot.variable as IListVariable;
+      let cfg = action.variable as IListVariableConfig;
+      return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
     if (slot.action == 'turn_on') return 'on';
     else if (slot.action == 'turn_off') return 'off';

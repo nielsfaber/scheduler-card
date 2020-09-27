@@ -1,6 +1,7 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 
 import { loadHaForm } from './load-ha-form';
+import { UnitPercent } from './const';
 
 function Bool(val: string) {
   if (val == "true") return true;
@@ -25,9 +26,6 @@ export class VariableSlider extends LitElement {
   value = 0;
 
   @property({ type: String })
-  show_percentage = "false";
-
-  @property({ type: String })
   unit = '';
 
   @property({ type: String })
@@ -45,8 +43,7 @@ export class VariableSlider extends LitElement {
   firstUpdated() {
     (async () => await loadHaForm())();
 
-    if (Bool(this.show_percentage)) {
-      this.unit = '%';
+    if (this.unit == UnitPercent) {
       this.scaleOffset = this.min;
       this.scaleGain = (this.max - this.min) / 100;
       this.min = 0;
