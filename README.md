@@ -157,8 +157,6 @@ perform action only on monday thru friday. Typically weekdays are the same as wo
 __Custom__
 choose your own days. A list with all days of the week appears. You can select one or more days by clicking them.
 
-:construction: WIP rename _every day_ to _daily_
-
 :construction: WIP rename _weekdays_ to _workdays_, and take into account holidays and the actual workdays in your country using the [workday sensor](https://www.home-assistant.io/integrations/workday/)
 
 :construction: WIP add _weekends_ and make it the opposite of _workdays_
