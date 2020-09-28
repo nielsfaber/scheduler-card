@@ -65,12 +65,25 @@
     "open_cover": "abrir",
     "set_temperature": "ajustar temperatura",
     "set_to": "ajustar para",
-    "set_position": "ajustar posição"
+    "set_position": "ajustar posição",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "ar condicionado",
     "cover": "persiana",
     "fan": "ventilador",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
     "light": "luz",
     "switch": "interruptor",
     "vacuum": "aspirador"

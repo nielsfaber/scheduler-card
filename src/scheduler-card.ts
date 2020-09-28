@@ -631,7 +631,7 @@ export class SchedulerCard extends LitElement {
   getListPanel(cfg: IListVariableConfig): TemplateResult {
     let options = cfg.options;
     let fields;
-    if (!options.length) fields = html`<div class="text-field">No options</div>`;
+    if (!options.length) fields = html`<div class="text-field">${localize('instructions.no_entries_defined')}</div>`;
     else fields = options.map((el: IListVariableOption) => {
       return html`
         <mwc-button class="${this._entry.variable?.value == el.value ? ' active' : ''}" @click="${() => { this.selectListItem(el.value) }}">

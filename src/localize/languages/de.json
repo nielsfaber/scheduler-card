@@ -65,13 +65,26 @@
     "open_cover": "öffnen",
     "set_temperature": "Temperatur einstellen",
     "set_to": "setzen auf",
-    "set_position": "Position setzen"
+    "set_position": "Position setzen",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "Licht",
+    "media_player": "media_players",
+    "scene": "scenes",
     "switch": "Schalter",
     "vacuum": "Staubsauger"
   }

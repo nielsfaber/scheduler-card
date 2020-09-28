@@ -65,12 +65,25 @@
     "open_cover": "otwórz",
     "set_temperature": "Ustaw temperaturę",
     "set_to": "ustaw na",
-    "set_position": "Ustaw pozycję"
+    "set_position": "Ustaw pozycję",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "termostat",
     "cover": "roleta",
     "fan": "wiatrak",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
     "light": "światło",
     "switch": "włącznik",
     "vacuum": "odkurzacz"

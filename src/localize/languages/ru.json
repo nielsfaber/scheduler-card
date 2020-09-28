@@ -65,12 +65,25 @@
     "open_cover": "открыть",
     "set_temperature": "задать температуру",
     "set_to": "установить",
-    "set_position": "установить позицию"
+    "set_position": "установить позицию",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "Климат",
     "cover": "Жалюзи",
     "fan": "Вентиляторы",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
     "light": "Свет",
     "switch": "Выключатели",
     "vacuum": "Пылесосы"

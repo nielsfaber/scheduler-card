@@ -65,12 +65,25 @@
     "open_cover": "åpne",
     "set_temperature": "sett temperatur",
     "set_to": "sett til",
-    "set_position": "sett posisjon"
+    "set_position": "sett posisjon",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "klima",
     "cover": "cover",
     "fan": "vifter",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
     "light": "lys",
     "switch": "brytere",
     "vacuum": "støvsugere"

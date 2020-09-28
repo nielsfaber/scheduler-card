@@ -1,24 +1,13 @@
-import { localize } from "./localize/localize"
+import { localize, ServiceNameTranslations } from "./localize/localize"
 import { DefaultActionIcon, DefaultLevelVariableConfig, DefaultListVariableConfig } from "./const"
 
-import { extend, pick, getDomainFromEntityId, mapObject, omit } from "./helpers";
+import { extend, pick, getDomainFromEntityId, mapObject, omit, removeDomainFromEntityId } from "./helpers";
 import { IActionConfig, IActionElement, IHassEntity, ILevelVariable, ILevelVariableConfig, IListVariableConfig, IDictionary, IListVariable, IHassAction, EVariableType, IListVariableOption } from "./types";
-
-export function getNameForService(service: string): string {
-  if (service == 'turn_on') return localize('services.turn_on')
-  else if (service == 'turn_off') return localize('services.turn_off')
-  else if (service == 'open_cover') return localize('services.open_cover')
-  else if (service == 'close_cover') return localize('services.close_cover')
-  else if (service == 'set_temperature') return localize('services.set_temperature')
-  else if (service == 'set_cover_position') return localize('services.set_position')
-  if (service.indexOf('.') !== -1) return service.split('.').pop()!;
-  return service;
-}
 
 export function CreateAction(cfg: IActionConfig) {
   let data: IActionElement = {
     id: '',
-    name: getNameForService(cfg.service),
+    name: cfg.service in ServiceNameTranslations ? localize(ServiceNameTranslations[cfg.service]) : removeDomainFromEntityId(cfg.service),
     icon: DefaultActionIcon,
     service: '',
     routine: false,
@@ -34,7 +23,7 @@ export function GetActionConfig(cfg: IActionConfig, entity: IHassEntity) {
   let obj: IActionConfig | null = { ...cfg };
   let domain = getDomainFromEntityId(entity.entity_id);
 
-  if (getDomainFromEntityId(obj.service) == domain) obj = <IActionConfig>extend(obj, { service: obj.service.split('.').pop() });
+  if (getDomainFromEntityId(obj.service) == domain) obj = <IActionConfig>extend(obj, { service: removeDomainFromEntityId(obj.service) });
 
   obj = <IActionConfig>mapObject(obj, val => replaceAttributeTemplate(val, entity));
 
@@ -87,12 +76,10 @@ function extendActionVariables(cfg: IActionConfig, entity: IHassEntity) {
       if (typeof e != "object") return <IListVariableOption>{ value: e };
       return <IListVariableOption>extend(e, { value: replaceAttributeTemplate(e.value, entity) });
     }).filter(e => e.value);
-    if (optionCfg.length) {
-      variableCfg = extend(variableCfg, { options: optionCfg }, { overwrite: true });
+    variableCfg = extend(variableCfg, { options: optionCfg }, { overwrite: true });
 
-      let listCfg = <IListVariableConfig>extend(DefaultListVariableConfig, variableCfg);
-      obj = <IActionConfig>extend(obj, <IActionConfig>{ variable: listCfg }, { overwrite: true });
-    }
+    let listCfg = <IListVariableConfig>extend(DefaultListVariableConfig, variableCfg);
+    obj = <IActionConfig>extend(obj, <IActionConfig>{ variable: listCfg }, { overwrite: true });
   }
   else {
     let levelCfg = <ILevelVariableConfig>extend(DefaultLevelVariableConfig, variableCfg);
@@ -118,11 +105,11 @@ export function importHassAction(action: IHassAction) {
   let service = action.service;
 
   if (getDomainFromEntityId(entity) && getDomainFromEntityId(service)) {
-    service = String(service.split('.').pop());
+    service = removeDomainFromEntityId(service);
   }
   else if (!getDomainFromEntityId(entity) && getDomainFromEntityId(service)) {
     entity = getDomainFromEntityId(service) + "." + entity;
-    service = String(service.split('.').pop());
+    service = removeDomainFromEntityId(service);
   }
 
   let service_data = omit(action, ['service', 'entity', 'service_data']);

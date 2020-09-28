@@ -1,5 +1,5 @@
 import { IDictionary, IDomainConfig, IEntityElement, IEntityConfig, IHassEntity, IActionElement, IActionConfig } from "./types";
-import { getDomainFromEntityId, extend, omit, keyMap, filterObject } from "./helpers";
+import { getDomainFromEntityId, extend, omit, keyMap, filterObject, removeDomainFromEntityId } from "./helpers";
 import { DefaultEntityIcon } from "./const";
 
 import { default as standardConfig } from './standard-configuration.json';
@@ -63,7 +63,7 @@ export class EntityList {
     if (this.Find(entity_id)) return;
     let data: IEntityElement = {
       id: entity_id,
-      name: String(entity_id.split('.').pop()),
+      name: removeDomainFromEntityId(entity_id),
       icon: DefaultEntityIcon,
       actions: []
     }

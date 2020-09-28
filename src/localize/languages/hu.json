@@ -65,13 +65,26 @@
     "open_cover": "nyitás",
     "set_temperature": "hőmérséklet",
     "set_to": "beállítva",
-    "set_position": "változtass pozíciót"
+    "set_position": "változtass pozíciót",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "termosztát",
     "cover": "redőny",
     "fan": "ventilátor",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "lámpa",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "kapcsoló",
     "vacuum": "pórszívó"
   }

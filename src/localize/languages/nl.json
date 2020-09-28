@@ -65,14 +65,27 @@
     "open_cover": "openen",
     "set_temperature": "temperatuur instellen",
     "set_to": "Zet op",
-    "set_position": "positie instellen"
+    "set_position": "positie instellen",
+    "set_hvac_mode": "stand aanpassen",
+    "set_preset_mode": "voorinstelling kiezen",
+    "set_value": "waarde instellen",
+    "select_option": "optie selecteren",
+    "select_source": "ingang selecteren",
+    "start": "starten"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "verwarming",
     "cover": "zonwering",
     "fan": "ventilatie",
+    "group": "groepen",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "verlichting",
+    "media_player": "mediaspelers",
+    "scene": "scènes",
     "switch": "schakelaars",
-    "vacuum": "stofzuiger"
+    "vacuum": "stofzuigers"
   }
 }

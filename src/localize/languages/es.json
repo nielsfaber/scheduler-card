@@ -65,13 +65,26 @@
     "open_cover": "abrir",
     "set_temperature": "establecer temperatura",
     "set_to": "establecer a",
-    "set_position": "posición de ajuste"
+    "set_position": "posición de ajuste",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "climatización",
     "cover": "persiana",
     "fan": "ventilador",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "luces",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "interruptores",
     "vacuum": "aspirador"
   }

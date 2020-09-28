@@ -65,13 +65,26 @@
     "open_cover": "ava",
     "set_temperature": "määra temperatuur",
     "set_to": "seadista väärtusele",
-    "set_position": "seadista asendisse"
+    "set_position": "seadista asendisse",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "kliimaseade",
     "cover": "(akna)katted",
     "fan": "ventilaatorid",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "valgustid",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "lülitid",
     "vacuum": "tolmuimejad"
   }

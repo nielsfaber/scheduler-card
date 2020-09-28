@@ -1,21 +1,8 @@
-import { localize } from "./localize/localize";
+import { DomainNameTranslations, localize } from "./localize/localize";
 import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
 import { extend, getDomainFromEntityId } from "./helpers";
 import { IDictionary, IGroupElement } from "./types";
 import { default as standardConfig } from './standard-configuration.json';
-
-
-export function getNameForDomain(domain: string): string {
-  let result: string | null = null;
-  if (domain == 'climate') result = localize('domains.climate')
-  else if (domain == 'cover') result = localize('domains.cover')
-  else if (domain == 'fan') result = localize('domains.fan')
-  else if (domain == 'light') result = localize('domains.light')
-  else if (domain == 'switch') result = localize('domains.switch')
-  else if (domain == 'vacuum') result = localize('domains.vacuum')
-  if (result) return result;
-  else return domain;
-}
 
 export class GroupList {
   groupConfig: IDictionary<Partial<IGroupElement>> = {};
@@ -47,7 +34,7 @@ export class GroupList {
 
     let data: IGroupElement = {
       id: group_id,
-      name: getNameForDomain(group_id),
+      name: group_id in DomainNameTranslations ? localize(DomainNameTranslations[group_id]) : group_id,
       icon: DefaultGroupIcon,
       domains: [],
       entities: [],

@@ -72,6 +72,12 @@ export function getDomainFromEntityId(entity_id: string): string {
   return res;
 }
 
+export function removeDomainFromEntityId(entity_id: string): string {
+  if (entity_id.indexOf('.') === -1) return entity_id;
+  let res = String(entity_id.split('.').pop());
+  return res;
+}
+
 export function PrettyPrintDays(days: IDays): string {
   if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
   else if (days.type == EDayType.Weekdays) return `${localize('words.on')} ${localize('fields.day_type_weekdays')}`;

@@ -65,13 +65,26 @@
     "open_cover": "open",
     "set_temperature": "set temperature",
     "set_to": "set to",
-    "set_position": "set position"
+    "set_position": "set position",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "climate",
     "cover": "covers",
     "fan": "fans",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "lights",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "switches",
     "vacuum": "vacuum"
   }

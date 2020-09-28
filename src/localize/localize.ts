@@ -63,3 +63,37 @@ export function getLanguage(): string {
   }
   return String(lang);
 }
+
+
+
+export const ServiceNameTranslations = {
+  turn_on: 'services.turn_on',
+  turn_off: 'services.turn_off',
+  open_cover: 'services.open_cover',
+  close_cover: 'services.close_cover',
+  set_temperature: 'services.set_temperature',
+  set_cover_position: 'services.set_cover_position',
+  set_hvac_mode: 'services.set_hvac_mode',
+  set_preset_mode: 'services.set_preset_mode',
+  set_value: 'services.set_value',
+  select_option: 'services.select_option',
+  select_source: 'services.select_source',
+  start: 'services.start',
+}
+
+
+export const DomainNameTranslations = {
+  camera: 'domains.camera',
+  climate: 'domains.climate',
+  cover: 'domains.cover',
+  fan: 'domains.fan',
+  group: 'domains.group',
+  input_boolean: 'domains.input_boolean',
+  input_number: 'domains.input_number',
+  input_select: 'domains.input_select',
+  light: 'domains.light',
+  media_player: 'domains.media_player',
+  scene: 'domains.scene',
+  switch: 'domains.switch',
+  vacuum: 'domains.vacuum'
+}
