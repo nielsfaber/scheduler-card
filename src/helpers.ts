@@ -110,7 +110,7 @@ export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: 
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
     event_string = "sunrise";
   }
-  else if (time.event == ETimeEvent.Sunrise && options.sunset !== null) {
+  else if (time.event == ETimeEvent.Sunset && options.sunset !== null) {
     let time_with_offset = wrapTime(Number(options.sunset) + time.value);
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
     event_string = "sunset";
