@@ -49,7 +49,7 @@
     "sun": "domingo"
   },
   "words": {
-    "on": "el",
+    "on": "en",
     "every": "cada",
     "and": "y",
     "at": "a las",
@@ -63,28 +63,29 @@
     "turn_off": "apagar",
     "close_cover": "cerrar",
     "open_cover": "abrir",
+    "cover.set_cover_position": "Establecer Posición",
     "set_temperature": "establecer temperatura",
     "set_to": "establecer a",
     "set_position": "posición de ajuste",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
-    "start": "start"
+    "set_hvac_mode": "establecer modo de A/A",
+    "set_preset_mode": "establecer modo",
+    "set_value": "establecer valor",
+    "select_option": "seleccionar opción",
+    "select_source": "seleccionar fuente",
+    "start": "empezar"
   },
   "domains": {
-    "camera": "cameras",
+    "camera": "cámaras",
     "climate": "climatización",
     "cover": "persiana",
     "fan": "ventilador",
-    "group": "groups",
+    "group": "grupos",
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
     "light": "luces",
-    "media_player": "media players",
-    "scene": "scenes",
+    "media_player": "reproductores multimedia",
+    "scene": "scenas",
     "switch": "interruptores",
     "vacuum": "aspirador"
   }
