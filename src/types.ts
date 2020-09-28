@@ -115,10 +115,16 @@ export interface ILevelVariableConfig {
   type: EVariableType,
 }
 
+export interface IListVariableOption {
+  value: string,
+  icon?: string,
+  name?: string,
+}
+
 export interface IListVariableConfig {
   field: string,
   name: string,
-  options: string[],
+  options: IListVariableOption[],
   supported_feature?: number,
   type: EVariableType,
 }
@@ -167,6 +173,7 @@ export interface IUserConfig {
   am_pm: boolean,
   time_step: number,
   temperature_unit: string
+  is_admin: boolean
 }
 
 /* interface */

@@ -1,6 +1,6 @@
 
 import { IEntityConfig, IActionConfig, IDictionary, IDomainConfig, IGroupElement, IHassEntity } from './types'
-import { DefaultDomainConfig } from './const';
+import { DefaultDomainConfig, DiscoveredEntitiesGroup } from './const';
 import { EntityList, IsSchedulerEntity } from './entity';
 import { CreateAction, GetActionConfig, reverseParseAction, importHassAction } from './action';
 import { GroupList } from './group';
@@ -29,8 +29,8 @@ export class Config {
 
     Object.assign(domainConfig, cfg.domains);
 
-    this.entities.SetConfig({ entities: entityConfig, domains: domainConfig });
-    this.groups.SetConfig({ groups: groupConfig });
+    this.entities.SetConfig({ entities: entityConfig, domains: domainConfig, standard_configuration: this.standard_configuration });
+    this.groups.SetConfig({ groups: groupConfig, standard_configuration: this.standard_configuration });
   }
 
   GetGroups() {
@@ -64,7 +64,9 @@ export class Config {
     let entity = this.entities.Find(entity_id);
     if (!entity) return [];
 
-    return entity.actions;
+    let output = [...entity.actions];
+    output.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    return output;
   }
 
   GetEntityConfig(entity: IHassEntity) {
@@ -84,28 +86,40 @@ export class Config {
       }
     });
 
-    if (this.discover_existing) {
-      Object.entries(entityList).filter(([entity_id]) => IsSchedulerEntity(entity_id)).forEach(([_entity_id, entity]) => {
-        let actions = entity.attributes.actions;
-        if (!actions) return;
-
-        actions.forEach(action => {
-          let domain = getDomainFromEntityId(action.entity) || getDomainFromEntityId(action.service);
-          let id = domain + "." + action.entity.split('.').pop();
-          if (!(id in entityList)) return;
-
-          let entity = entityList[id];
-          let entityConfig = this.GetEntityConfig(entity);
-          this.entities.Add(id, entityConfig);
-
-          let actionConfig = entityConfig.actions ? reverseParseAction(action, entityConfig.actions) : null;
-          if (!actionConfig) actionConfig = <IActionConfig>pick(importHassAction(action), ['service', 'service_data']);
-          let actionObj = CreateAction(actionConfig);
-          this.entities.AddAction(id, actionObj);
-        });
-      });
-    }
-
     this.groups.CreateGroups(this.entities.Get().map(e => e.id));
+
+    if (!this.discover_existing) return;
+    let discovered_entities: string[] = [];
+
+    Object.entries(entityList).filter(([entity_id]) => IsSchedulerEntity(entity_id)).forEach(([_entity_id, entity]) => {
+      let actions = entity.attributes.actions;
+      if (!actions) return;
+
+      actions.forEach(action => {
+        let domain = getDomainFromEntityId(action.entity) || getDomainFromEntityId(action.service);
+        let id = domain + "." + action.entity.split('.').pop();
+        if (!(id in entityList)) return;
+
+        let entity = entityList[id];
+        let entityConfig = this.GetEntityConfig(entity);
+        if (!this.entities.Find(id)) {
+          this.entities.Add(id, entityConfig);
+          discovered_entities.push(id);
+        }
+
+        let actionConfig = entityConfig.actions ? reverseParseAction(action, entityConfig.actions) : null;
+        if (!actionConfig) actionConfig = <IActionConfig>pick(importHassAction(action), ['service', 'service_data']);
+        let actionObj = CreateAction(actionConfig);
+        this.entities.AddAction(id, actionObj);
+      });
+    });
+
+    if (discovered_entities.length) {
+      let group: Partial<IGroupElement> = {
+        entities: discovered_entities,
+        icon: 'reload-alert'
+      }
+      this.groups.Add(DiscoveredEntitiesGroup, group);
+    }
   }
 }

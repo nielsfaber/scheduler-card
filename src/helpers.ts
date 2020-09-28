@@ -18,14 +18,14 @@ export function extend(oldObj: IDictionary<any> | any[], newObj: IDictionary<any
       return;
     }
     if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite) val = extend(mergedObj[key], val, options);
-    else if (typeof val == "object" && typeof mergedObj[key] == "object" && !options.overwrite) val = extend(mergedObj[key], val, options);
+    else if (typeof val == "object" && val !== null && typeof mergedObj[key] == "object" && !options.overwrite) val = extend(mergedObj[key], val, options);
     if (Array.isArray(newObj)) {
       if (val !== null) {
         if (options.overwrite) mergedObj = val;
         else mergedObj.push(val);
       }
     } else {
-      if ((Array.isArray(val) || typeof val == "object") && !Object.keys(val).length && options.compact) {
+      if ((Array.isArray(val) || typeof val == "object") && val !== null && !Object.keys(val).length && options.compact) {
         delete mergedObj[key];
         return;
       }

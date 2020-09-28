@@ -16,14 +16,40 @@
         "variable": {
           "field": "temperature",
           "min": "attribute:min_temp",
-          "max": "attribute:max_temp"
+          "max": "attribute:max_temp",
+          "step": 0.5
         }
       },
       {
         "service": "set_hvac_mode",
         "variable": {
           "field": "mode",
-          "options": "attribute:hvac_modes"
+          "options": [
+            {
+              "value": "attribute:hvac_modes:auto",
+              "icon": "autorenew"
+            },
+            {
+              "value": "attribute:hvac_modes:off",
+              "icon": "power"
+            },
+            {
+              "value": "attribute:hvac_modes:cool",
+              "icon": "snowflake"
+            },
+            {
+              "value": "attribute:hvac_modes:heat",
+              "icon": "fire"
+            },
+            {
+              "value": "attribute:hvac_modes:dry",
+              "icon": "water-percent"
+            },
+            {
+              "value": "attribute:hvac_modes:fan_only",
+              "icon": "fan"
+            }
+          ]
         }
       },
       {
@@ -72,6 +98,9 @@
         "icon": "fan-off"
       }
     ]
+  },
+  "group": {
+    "icon": "expand-all-outline"
   },
   "input_boolean": {
     "icon": "flash",
@@ -133,10 +162,55 @@
     ]
   },
   "media_player": {
-    "icon": "speaker"
+    "icon": "speaker",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "power",
+        "supported_feature": 128
+      },
+      {
+        "service": "turn_off",
+        "icon": "power-off",
+        "supported_feature": 256
+      },
+      {
+        "service": "select_source",
+        "icon": "music-box-multiple-outline",
+        "supported_feature": 2048,
+        "variable": {
+          "field": "source",
+          "options": "attribute:source_list"
+        }
+      }
+    ]
+  },
+  "scene": {
+    "icon": "lightbulb-group-outline",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "play"
+      }
+    ]
   },
   "script": {
-    "icon": "script-text"
+    "icon": "script-text",
+    "actions": [
+      {
+        "service": "turn_on",
+        "icon": "power"
+      },
+      {
+        "service": "turn_off",
+        "icon": "power-off"
+      },
+      {
+        "service": "attribute:entity_id",
+        "icon": "play",
+        "name": "run"
+      }
+    ]
   },
   "switch": {
     "icon": "flash",
@@ -156,7 +230,7 @@
     "actions": [
       {
         "service": "turn_on",
-        "icon": "power-on",
+        "icon": "power",
         "supported_feature": 1
       },
       {

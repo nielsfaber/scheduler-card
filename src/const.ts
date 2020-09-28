@@ -10,7 +10,8 @@ export const DefaultUserConfig: IUserConfig = {
   title: true,
   am_pm: false,
   time_step: 10,
-  temperature_unit: ''
+  temperature_unit: '',
+  is_admin: true
 }
 
 export const DefaultDomainConfig: IDictionary<IDomainConfig> = {
@@ -24,6 +25,7 @@ export const DefaultDomainConfig: IDictionary<IDomainConfig> = {
 export const DefaultGroupIcon = "folder-outline"
 export const DefaultEntityIcon = "folder-outline"
 export const DefaultActionIcon = "flash"
+export const DiscoveredEntitiesGroup = "discovered"
 
 export const DefaultEntry: IEntry = {
   time: { value: parseTimestamp('12:00') },

@@ -3,7 +3,7 @@ import { LitElement, html, customElement, property, CSSResult, TemplateResult } 
 import { HomeAssistant } from 'custom-card-helpers';
 
 import { Config } from './config';
-import { ITimeSlot, IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, IHassData, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable } from './types'
+import { ITimeSlot, IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, IHassData, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption } from './types'
 import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, calculateTimeSlots, IsEqual, pick, filterObject } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
@@ -86,14 +86,15 @@ export class SchedulerCard extends LitElement {
 
   private init(hass) {
     if (hass.states['sun.sun'] !== undefined) {
-      Object.assign(this._config, {
+      this._config = Object.assign({ ...this._config }, {
         sunrise: parseTimestamp(hass.states['sun.sun'].attributes.next_rising),
         sunset: parseTimestamp(hass.states['sun.sun'].attributes.next_setting),
       })
     }
     if (hass.config.unit_system && hass.config.unit_system.temperature) {
-      Object.assign(this._config, <IUserConfig>{ temperature_unit: hass.config.unit_system.temperature });
+      this._config = Object.assign({ ...this._config }, <IUserConfig>{ temperature_unit: hass.config.unit_system.temperature });
     }
+    if (!hass.user.is_admin) this._config = Object.assign({ ...this._config }, { is_admin: false });
 
     this.Config.LoadEntities(hass.states);
   }
@@ -107,11 +108,8 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config) {
-    let userCfg: any = {}, options: any = {};
-
-    ValidateConfig(config);
     const userCfgKeys = ['groups', 'domains', 'entities', 'discover_existing', 'standard_configuration'];
-    Object.assign(this._config, pick(options, Object.keys(this._config)));
+    this._config = Object.assign({ ...this._config }, pick(config, Object.keys(this._config)));
     this.Config.setUserConfig(pick(config, userCfgKeys));
   }
 
@@ -128,9 +126,10 @@ export class SchedulerCard extends LitElement {
         <div class="card-section first">
         ${this.getEntries()}
         </div>
+        ${this._config.is_admin ? html`
         <div class="card-section last">
           <mwc-button outlined @click="${this._addItemClick}">${localize('actions.add')}</mwc-button>
-        </div>
+        </div>`: ''}
       </ha-card>
       `;
 
@@ -401,7 +400,7 @@ export class SchedulerCard extends LitElement {
 
     <div class="card-section last">
       <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
-      ${this.newItem ? '' : html`<mwc-button outlined @click="${this._saveItemClick}">${localize('actions.delete')}</mwc-button>`}
+      ${this.newItem || !this._config.is_admin ? '' : html`<mwc-button outlined @click="${this._deleteItemClick}">${localize('actions.delete')}</mwc-button>`}
       <mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>
     </div>
     `;
@@ -485,7 +484,6 @@ export class SchedulerCard extends LitElement {
     }
 
     if (!entity || !action) return html``;
-
     return html`
     <div class="card-section first">
       <div class="header">${localize('fields.action')}</div>
@@ -532,7 +530,7 @@ export class SchedulerCard extends LitElement {
 
     <div class="card-section last">
       <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
-      ${this.newItem ? '' : html`<mwc-button outlined @click="${this._deleteItemClick}">${localize('actions.delete')}</mwc-button>`}
+      ${this.newItem || !this._config.is_admin ? '' : html`<mwc-button outlined @click="${this._deleteItemClick}">${localize('actions.delete')}</mwc-button>`}
       <mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>
     </div>
     `;
@@ -634,10 +632,11 @@ export class SchedulerCard extends LitElement {
     let options = cfg.options;
     let fields;
     if (!options.length) fields = html`<div class="text-field">No options</div>`;
-    else fields = options.map((el: string) => {
+    else fields = options.map((el: IListVariableOption) => {
       return html`
-        <mwc-button class="${this._entry.variable?.value == el ? ' active' : ''}" @click="${() => { this.selectListItem(el) }}">
-          ${PrettyPrintName(el)}
+        <mwc-button class="${this._entry.variable?.value == el.value ? ' active' : ''}" @click="${() => { this.selectListItem(el.value) }}">
+          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
+          ${PrettyPrintName(el.value)}
         </mwc-button>
       `;
     });
@@ -681,7 +680,7 @@ export class SchedulerCard extends LitElement {
       }
       else if (actionCfg?.variable.type == EVariableType.List) {
         let listConfig = actionCfg.variable as IListVariableConfig;
-        cfg = <IListVariable>{ type: EVariableType.List, value: listConfig.options[0] };
+        cfg = <IListVariable>{ type: EVariableType.List, value: listConfig.options[0].value };
       }
       this._entry = Object.assign(this._entry, <IEntry>{ variable: cfg });
     }

@@ -14,19 +14,22 @@ export class EntityList {
   domainConfig: IDictionary<IDomainConfig> = {};
   entityConfig: IDictionary<IEntityConfig> = {};
   entities: IEntityElement[] = [];
+  standard_configuration: boolean = true;
 
   constructor() {
   }
 
-  SetConfig(cfg: { domains: IDictionary<IDomainConfig>, entities: IDictionary<IDomainConfig> }) {
+  SetConfig(cfg: { domains: IDictionary<IDomainConfig>, entities: IDictionary<IDomainConfig>, standard_configuration: boolean }) {
     this.domainConfig = cfg.domains;
     this.entityConfig = cfg.entities;
+    this.standard_configuration = cfg.standard_configuration;
   }
 
   InDomainCfg(entity_id: string) {
     let domain = getDomainFromEntityId(entity_id);
     if (!(domain in this.domainConfig)) return false;
     let domainCfg = this.domainConfig[domain];
+    if (typeof domainCfg == "boolean" && !domainCfg) return false;
     if (domainCfg?.include && !domainCfg.include.includes(entity_id)) return false;
     if (domainCfg?.exclude && domainCfg.exclude.includes(entity_id)) return false;
     return true;
@@ -45,8 +48,13 @@ export class EntityList {
     return this.entities.find(el => el.id == entity_id);
   }
 
-  Get(): IEntityElement[] {
-    let output = [... this.entities];
+  Get(entities: string[] | string = []): IEntityElement[] {
+    let output: IEntityElement[] = [];
+    if (!entities || !entities.length) output = [... this.entities];
+    else {
+      let list = Array.isArray(entities) ? entities : [entities];
+      list.filter(e => this.Find(e) !== undefined).forEach(e => output.push({ ...this.entities[e] }));
+    }
     output.sort((a, b) => (a.name > b.name) ? 1 : -1);
     return output;
   }
@@ -86,10 +94,12 @@ export class EntityList {
 
     let actionFilter: string[] = [];
 
-    if (standardConfig[domain]) {
+    if (standardConfig[domain] && this.standard_configuration) {
       cfg = extend(cfg, omit(standardConfig[domain], ['actions']));
+      //if (this.domainConfig[domain] === undefined || this.domainConfig[domain] === null || typeof this.domainConfig[domain] != "boolean" || this.domainConfig[domain]) {
       if (standardConfig[domain]?.actions)
         actionCfg = extend(actionCfg, keyMap(standardConfig[domain].actions!, getActionId));
+      //}
     }
 
     cfg = extend(cfg, {

@@ -2,7 +2,7 @@ import { localize } from "./localize/localize"
 import { DefaultActionIcon, DefaultLevelVariableConfig, DefaultListVariableConfig } from "./const"
 
 import { extend, pick, getDomainFromEntityId, mapObject, omit } from "./helpers";
-import { IActionConfig, IActionElement, IHassEntity, ILevelVariable, ILevelVariableConfig, IListVariableConfig, IDictionary, IListVariable, IHassAction, EVariableType } from "./types";
+import { IActionConfig, IActionElement, IHassEntity, ILevelVariable, ILevelVariableConfig, IListVariableConfig, IDictionary, IListVariable, IHassAction, EVariableType, IListVariableOption } from "./types";
 
 export function getNameForService(service: string): string {
   if (service == 'turn_on') return localize('services.turn_on')
@@ -35,7 +35,10 @@ export function GetActionConfig(cfg: IActionConfig, entity: IHassEntity) {
   let domain = getDomainFromEntityId(entity.entity_id);
 
   if (getDomainFromEntityId(obj.service) == domain) obj = <IActionConfig>extend(obj, { service: obj.service.split('.').pop() });
-  obj = filterUnsupportedActions(cfg, entity.attributes.supported_features!);
+
+  obj = <IActionConfig>mapObject(obj, val => replaceAttributeTemplate(val, entity));
+
+  obj = filterUnsupportedActions(obj, entity.attributes.supported_features!);
   if (obj?.variable) obj = extendActionVariables(obj, entity);
   return obj;
 }
@@ -58,9 +61,14 @@ function filterUnsupportedActions(cfg: IActionConfig, supported_features: number
 
 function replaceAttributeTemplate(val: any, entity: IHassEntity) {
   if (typeof val != "string") return val;
-  let res = String(val).match(/^attribute:(\w+)$/);
+  let res = String(val).match(/^attribute:(\w+):?(\w+)?$/);
   if (res === null) return val;
+  if (res[1] == 'entity_id') return entity.entity_id;
   if (!(res[1] in entity.attributes)) return null;
+  if (res[2] !== undefined) {
+    if (Array.isArray(entity.attributes[res[1]]) && entity.attributes[res[1]].includes(res[2])) return res[2];
+    return null;
+  }
   else return entity.attributes[res[1]];
 }
 
@@ -73,13 +81,24 @@ function extendActionVariables(cfg: IActionConfig, entity: IHassEntity) {
   variableCfg = mapObject(variableCfg, val => replaceAttributeTemplate(val, entity));
 
   if ('options' in variableCfg) {
-    let listCfg = <IListVariableConfig>extend(DefaultListVariableConfig, variableCfg);
-    obj = <IActionConfig>extend(obj, <IActionConfig>{ variable: listCfg });
+    let optionCfg = [...variableCfg.options!];
+
+    optionCfg = optionCfg.map(e => {
+      if (typeof e != "object") return <IListVariableOption>{ value: e };
+      return <IListVariableOption>extend(e, { value: replaceAttributeTemplate(e.value, entity) });
+    }).filter(e => e.value);
+    if (optionCfg.length) {
+      variableCfg = extend(variableCfg, { options: optionCfg }, { overwrite: true });
+
+      let listCfg = <IListVariableConfig>extend(DefaultListVariableConfig, variableCfg);
+      obj = <IActionConfig>extend(obj, <IActionConfig>{ variable: listCfg }, { overwrite: true });
+    }
   }
   else {
     let levelCfg = <ILevelVariableConfig>extend(DefaultLevelVariableConfig, variableCfg);
     obj = <IActionConfig>extend(obj, <IActionConfig>{ variable: levelCfg });
   }
+
   return obj;
 }
 

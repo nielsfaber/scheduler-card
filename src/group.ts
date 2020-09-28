@@ -1,5 +1,5 @@
 import { localize } from "./localize/localize";
-import { DefaultGroupIcon } from "./const";
+import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
 import { extend, getDomainFromEntityId } from "./helpers";
 import { IDictionary, IGroupElement } from "./types";
 import { default as standardConfig } from './standard-configuration.json';
@@ -17,17 +17,18 @@ export function getNameForDomain(domain: string): string {
   else return domain;
 }
 
-
 export class GroupList {
   groupConfig: IDictionary<Partial<IGroupElement>> = {};
   groups: IGroupElement[] = [];
+  standard_configuration: boolean = true;
 
   constructor() {
 
   }
 
-  SetConfig(cfg: { groups: IDictionary<Partial<IGroupElement>> }) {
+  SetConfig(cfg: { groups: IDictionary<Partial<IGroupElement>>, standard_configuration: boolean }) {
     this.groupConfig = cfg.groups;
+    this.standard_configuration = cfg.standard_configuration;
   }
 
   Find(group_id: string) {
@@ -35,8 +36,9 @@ export class GroupList {
   }
 
   Get(): IGroupElement[] {
-    let output = [... this.groups];
+    let output = [... this.groups].filter(e => e.id != DiscoveredEntitiesGroup);
     output.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    if (this.Find(DiscoveredEntitiesGroup)) output.push({ ...this.Find(DiscoveredEntitiesGroup)! });
     return output;
   }
 
@@ -92,7 +94,7 @@ export class GroupList {
       }
       else {
         let cfg: Partial<IGroupElement> = { entities: [entity_id] }
-        if (standardConfig[domain]?.icon) Object.assign(cfg, { icon: standardConfig[domain].icon });
+        if (standardConfig[domain]?.icon && this.standard_configuration) Object.assign(cfg, { icon: standardConfig[domain].icon });
         this.Add(domain, cfg);
       }
     });
