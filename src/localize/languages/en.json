@@ -22,7 +22,7 @@
     "days": "Days",
     "time": "Time",
     "options": "Options",
-    "day_type_daily": "every day",
+    "day_type_daily": "daily",
     "day_type_weekdays": "weekdays",
     "day_type_custom": "custom",
     "shift_with_sun": "automatically adjust time to sunrise/sunset",
