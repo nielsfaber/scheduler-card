@@ -108,6 +108,7 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config) {
+    ValidateConfig(config);
     const userCfgKeys = ['groups', 'domains', 'entities', 'discover_existing', 'standard_configuration'];
     this._config = Object.assign({ ...this._config }, pick(config, Object.keys(this._config)));
     this.Config.setUserConfig(pick(config, userCfgKeys));

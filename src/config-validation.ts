@@ -15,7 +15,7 @@ const ConfigSchema = {
     domains: {
       type: "object",
       additionalProperties: {
-        type: ["object", "null"],
+        type: ["object", "null", "boolean"],
         properties: {
           icon: { type: "string" },
           actions: {
@@ -29,21 +29,45 @@ const ConfigSchema = {
                 service_data: { type: "object" },
                 variable: {
                   type: "object",
-                  properties: {
-                    field: { type: "string" },
-                    name: { type: "string" },
-                    unit: { type: "string" },
-                    min: { type: "number", minimum: 0 },
-                    max: { type: "number", minimum: 1 },
-                    step: { type: "number", minimum: 0.1 },
-                    optional: { type: "boolean" },
-                    show_percentage: { type: "boolean" }
-                  },
-                  required: ['field'],
-                  additionalProperties: false
+                  oneOf: [
+                    {
+                      properties: {
+                        field: { type: "string" },
+                        name: { type: "string" },
+                        unit: { type: "string" },
+                        min: { type: "number", minimum: 0 },
+                        max: { type: "number", minimum: 1 },
+                        step: { type: "number", minimum: 0.1 },
+                        optional: { type: "boolean" },
+                      },
+                      required: ['field'],
+                      additionalProperties: false
+                    },
+                    {
+                      properties: {
+                        field: { type: "string" },
+                        name: { type: "string" },
+                        options: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              value: { type: "string" },
+                              name: { type: "string" },
+                              icon: { type: "string" },
+                            },
+                            required: ["value"],
+                            additionalProperties: false
+                          },
+                        },
+                      },
+                      required: ["field"],
+                      additionalProperties: false
+                    }
+                  ],
                 }
               },
-              required: ['service'],
+              required: ["service"],
               additionalProperties: false
             },
           },
@@ -62,7 +86,7 @@ const ConfigSchema = {
     entities: {
       type: "object",
       additionalProperties: {
-        type: ["object", "null"],
+        type: ["object", "null", "boolean"],
         properties: {
           name: { type: "string" },
           icon: { type: "string" },
@@ -77,18 +101,42 @@ const ConfigSchema = {
                 service_data: { type: "object" },
                 variable: {
                   type: "object",
-                  properties: {
-                    field: { type: "string" },
-                    name: { type: "string" },
-                    unit: { type: "string" },
-                    min: { type: "number", minimum: 0 },
-                    max: { type: "number", minimum: 1 },
-                    step: { type: "number", minimum: 0.1 },
-                    optional: { type: "boolean" },
-                    show_percentage: { type: "boolean" }
-                  },
-                  required: ['field'],
-                  additionalProperties: false
+                  oneOf: [
+                    {
+                      properties: {
+                        field: { type: "string" },
+                        name: { type: "string" },
+                        unit: { type: "string" },
+                        min: { type: "number", minimum: 0 },
+                        max: { type: "number", minimum: 1 },
+                        step: { type: "number", minimum: 0.1 },
+                        optional: { type: "boolean" },
+                      },
+                      required: ['field'],
+                      additionalProperties: false
+                    },
+                    {
+                      properties: {
+                        field: { type: "string" },
+                        name: { type: "string" },
+                        options: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              value: { type: "string" },
+                              name: { type: "string" },
+                              icon: { type: "string" },
+                            },
+                            required: ["value"],
+                            additionalProperties: false
+                          },
+                        },
+                      },
+                      required: ["field"],
+                      additionalProperties: false
+                    }
+                  ],
                 }
               },
               required: ["service"],
@@ -133,8 +181,7 @@ export function ValidateConfig(config: any) {
       let path = e.dataPath.substr(1).split('/');
       let item = path.pop();
 
-
-      if (path.length) output += `in '${path.join('->')}' `;
+      if (path.length) output += `in ${path.join('/')} `;
       if (e.keyword == 'type') output += 'type of ';
       if (!item) output += 'card ';
       else if (item) output += `${isNaN(+item) ? `'${item}'` : `[item ${item}]`} `;
@@ -144,6 +191,6 @@ export function ValidateConfig(config: any) {
       return `${output.charAt(0).toUpperCase() + output.slice(1)}.`;
     });
 
-    throw new Error(`Invalid configuration provided. ${errors.map((e, i) => { return `(${i + 1}) ${e}` }).join(` `)}`);
+    throw new Error(`Invalid configuration provided. ${errors.join(` //////////////////////////////////// `)}`);
   }
 }

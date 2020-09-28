@@ -10,8 +10,16 @@
     - [Choosing the days](#choosing-the-days)
     - [Choosing the time](#choosing-the-time)
 - [Configuration](#configuration)
-  - [General](#general)
-    - [About the standard configuration](#about-the-standard-configuration)
+  - [Introduction](#introduction-1)
+  - [Overview](#overview)
+  - [Quick start guide: using the standard configuration](#quick-start-guide-using-the-standard-configuration)
+    - [Adding a domain](#adding-a-domain)
+    - [Removing a domain](#removing-a-domain)
+    - [Adding or removing specific entities](#adding-or-removing-specific-entities)
+  - [Schedule discovery](#schedule-discovery)
+  - [Using multiple cards](#using-multiple-cards)
+    - [Step 1: Make sure your configuration has no overlap](#step-1-make-sure-your-configuration-has-no-overlap)
+    - [Step 2: Disable the schedule discovery](#step-2-disable-the-schedule-discovery)
   - [Domains](#domains)
     - [Options](#options)
     - [Examples](#examples)
@@ -20,14 +28,13 @@
     - [Examples](#examples-1)
   - [Actions](#actions)
     - [Options](#options-2)
-    - [Action variables](#action-variables)
-    - [Examples](#examples-2)
+    - [Numeric action variable](#numeric-action-variable)
+    - [List action variable](#list-action-variable)
   - [Groups](#groups)
     - [Options](#options-3)
-    - [Examples](#examples-3)
+    - [Examples](#examples-2)
 - [Translations](#translations)
 - [FAQ](#faq)
-  - [*Can I set the card to Fahrenheit instead of Celsius?*](#can-i-set-the-card-to-fahrenheit-instead-of-celsius)
   - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
   - [*How do i check which version i am using?*](#how-do-i-check-which-version-i-am-using)
   - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
@@ -160,7 +167,6 @@ choose your own days. A list with all days of the week appears. You can select o
 
 
 #### Choosing the time 
-:round_pushpin: Updated in v1.3.0. May contain bugs.
 
 The time at which you want schedule to be activated can be set using the timepicker.
 
@@ -188,10 +194,25 @@ Also here, buttons can be clicked to toggle.
 ---
 
 ## Configuration
-### General
-Configuration is not mandatory.
-Out of the box, the card should already find most of your HA entities and provide some basic actions for each.
-If you want to modify which entities and/or actions can be used, then keep reading.
+
+
+### Introduction
+The configuration of the card is in yaml.
+Currently there is no UI editor provided (this may change in the future).
+
+_Configuration is not necessary_, it is only used for customization.
+
+The card includes a _standard configuration_.
+It is intended to make setting up the card easy.
+The standard configuration consists of the following:
+* Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
+* Defining actions per entity based on their capabilities
+* Icons for groups, entities and actions
+
+:warning: **Tip**: If you want to define your own configuration, provide `standard_configuration:false` to disable it completely.
+
+
+### Overview
 
 | Name                   | Type              | Default      | Available from | Description                                                                                                                          |
 | ---------------------- | ----------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -207,47 +228,59 @@ If you want to modify which entities and/or actions can be used, then keep readi
 
 :warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discover_existing:false` and `standard_configuration:false` in both cards to avoid duplicates.
 
-#### About the standard configuration
-The standard configuration is intended to help you started without needing coding (yaml) skills.
+### Quick start guide: using the standard configuration
 
-Included in the standard configuration:
-| Device type/domain | Supported actions                    | Remarks                                          |
-| ------------------ | ------------------------------------ | ------------------------------------------------ |
-| light              | *Turn on*<br> *Turn off*             | Brightness is configurable from 0-100% <br><br>  |
-| switch             | *Turn on*<br> *Turn off*             |
-| cover              | *Open*<br> *Close*<br>*Set position* | <br><br>Position is configurable from 0-100%     |
-| climate            | *Set temperature*<br> *Turn off*     | Temperature is configurable from 10-30C <br><br> |
-| fan                | *Turn on* <br> *Turn off*            |
+By default, the card will show your `climate`, `cover`, `fan`, `light`, `switch` entities.
+These types are called _domains_ in HA and thus are referred to as _domains_ configuration in the card.
 
-Are you missing something that should be long in the standard configuration? [Let me know](https://github.com/nielsfaber/scheduler-card/issues)
-
-### Domains
-With the `domains` configuration you can specify configuration options for multiple HA entities of the same type (domain).
-
-#### Options
-
-:warning: **Tip**: By default, ALL entities that you have in HA under the configured domain will show up in the card. If you don't want this, then use `include` or `exclude` option to filter the entity_ids that you want to add.
-
-| Name    | Type   | Default      | Description                                                                |
-| ------- | ------ | ------------ | -------------------------------------------------------------------------- |
-| domain  | key    | **Required** | Entity domain from home assistant                                          |
-| actions | list   | none         | See [actions](#actions)                                                    |
-| icon    | string | none         | Displayed icon for entities in the domain (overwrites HA config)           |
-| include | list   | none         | Filter the entities for this domain, only add the entity_ids in this list  |
-| exclude | list   | none         | Filter the entities for this domain, leave out the entity_ids in this list |
-
-
-
-
-#### Examples
-Scenario: *"I want to be able to turn on/off all the lamps in my house"*
+The standard configuration has the same effect as putting the following in your card:
 ```yaml
 domains:
+  climate:
+  cover:
+  fan:
   light:
-    actions:
-      - service: turn_on
-      - service: turn_off
+  switch:
 ```
+If you don't like this set of devices, you can make changes to it.
+
+#### Adding a domain
+
+You can add `<domain_name>:` to include additional domains to the standard configuration.
+
+Example: *"I would like to be able to run `script`s with the scheduler"*
+
+```yaml
+domains:
+  script:
+```
+:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a  [feature request](https://github.com/nielsfaber/scheduler-card/issues) for it.
+
+#### Removing a domain
+
+You can use `<domain_name>:false` to exclude it from the standard configuration.
+
+Example: *"I don't want `fan` entities to show up, but the others can stay"*
+
+```yaml
+domains:
+  fan: false
+```
+:warning: **Note**: This notation is only applicable for `climate`, `cover`, `fan`, `light`, `switch`, since they are included by default.
+
+
+#### Adding or removing specific entities
+
+If you don't want to have the complete list of all entities in that domain, there are two options for achieving this:
+1. By applying filtering to the domain
+2. By providing `entities` configuration
+
+
+If you don't want to customize specific entities (changing the displayed name/icon, showing specific actions), it's best to use the domain filtering.
+
+Domain filtering is done using the `include` and `exclude` options options.
+With `include` you can specify which entities to add and with `exclude` you can specify which entities to hide.
+You shouldn't use them together.
 
 Scenario: *“I have a lot of lights in my house, but i only want to control some of them with the scheduler.”*
 
@@ -272,6 +305,92 @@ domain:
     exclude:
       - light.my_light_that_i_never_use
     # rest of domain config (actions, icon, ...)
+```
+
+
+### Schedule discovery
+
+The card checks for the created schedules in your HA config and show them in the overview page. 
+
+The schedule discovery is a feature that will ensure that **all** your schedules will be there.
+
+What is the benefit of this feature?
+
+It could occur that you make changes in the configuration, resulting in previously created schedules to become hidden.
+For example, you made a schedule for controlling a `fan`.
+The day after you decide to remove the `fan` domain from the card. But you forgot to delete the previously created schedule.
+
+Without the discovery, you now have a schedule that is hidden from the card, but will keep running. You cannot remove or change it anymore (unless via the HA configuration panel).
+
+Discovery makes sure that you will always find it back in the card.
+The feature can be turned on/off through the `discover_existing` option.
+
+For your protection, it is enabled by default.
+
+
+
+### Using multiple cards
+
+It is possible to use multiple scheduler-cards in your Lovelace configuration.
+
+For doing this, you can follow these steps.
+
+#### Step 1: Make sure your configuration has no overlap
+
+The easiest way to split is to split by _domain_. But it is also possible to make different grouping (for example by room): make use of the `entities` configuration (or domain filtering) if so.
+
+Example: *"I want one card for lights, and one card for thermostats."*
+
+Apply filtering to the _standard configuration_, to hide the domains that you don't want to see.
+
+Card one (only has `light` enabled):
+```yaml
+title: "My lights"
+domains:
+  climate: false
+  cover: false
+  fan: false
+  switch: false
+```
+Card two (only has `climate` enabled):
+```yaml
+title: "My thermostats"
+domains:
+  cover: false
+  fan: false
+  light: false
+  switch: false
+```
+
+#### Step 2: Disable the schedule discovery
+If you have multiple cards defined, you don't want the running schedules to appear twice.
+
+Provide `discover_existing:false` to both cards, to prevent the unwanted schedules to show up. Only schedules matching your `domain`/`entities` configuration will show up.
+
+### Domains
+With the `domains` configuration you can specify configuration options for multiple HA entities of the same type (domain).
+
+#### Options
+
+:warning: **Tip**: By default, ALL entities that you have in HA under the configured domain will show up in the card. If you don't want this, then use `include` or `exclude` option to filter the entity_ids that you want to add.
+
+| Name    | Type   | Default      | Description                                                                |
+| ------- | ------ | ------------ | -------------------------------------------------------------------------- |
+| domain  | key    | **Required** | Entity domain from home assistant                                          |
+| actions | list   | none         | See [actions](#actions)                                                    |
+| icon    | string | none         | Displayed icon for entities in the domain (overwrites HA config)           |
+| include | list   | none         | Filter the entities for this domain, only add the entity_ids in this list  |
+| exclude | list   | none         | Filter the entities for this domain, leave out the entity_ids in this list |
+
+
+#### Examples
+Scenario: *"I want to be able to turn on/off all the lamps in my house"*
+```yaml
+domains:
+  light:
+    actions:
+      - service: turn_on
+      - service: turn_off
 ```
 
 ### Entities
@@ -327,29 +446,24 @@ Actions are linked to their entities, so the entity ID is sent together with the
 
 :warning: **Note**: Templates (jinja code) are not supported at this point.
 
-#### Action variables
-
-:round_pushpin: Introduced in v1.2.6
+#### Numeric action variable
 
 Some devices allow to operate on a variable working point. For example lights can be dimmed with a `brightness`, fans can spin at a `speed` etc.
 
 By providing an action variable, the card allows you to choose the setting you want to apply with the action.
 
-| Name            | Type    | Default       | Description                                                                                                                                                                                           |
-| --------------- | ------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| field           | string  | **Required**  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
-| name            | string  | same as field | Name under which the variable is visible in the card                                                                                                                                                  |
-| unit            | string  | " "           | Displayed unit                                                                                                                                                                                        |
-| min             | number  | 0             | Minimum value that can be set                                                                                                                                                                         |
-| max             | number  | 255           | Maximum value that can be set                                                                                                                                                                         |
-| step            | number  | 1             | Step size                                                                                                                                                                                             |
-| optional        | boolean | false         | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable |
-| show_percentage | boolean | false         | Show slider in percentage instead of from min to max.                                                                                                                                                 |
+| Name                | Type        | Default       | Description                                                                                                                                                                                           |
+| ------------------- | ----------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| field               | string      | **Required**  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
+| name                | string      | same as field | Name under which the variable is visible in the card                                                                                                                                                  |
+| unit                | string      | " "           | Displayed unit                                                                                                                                                                                        |
+| min                 | number      | 0             | Minimum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
+| max                 | number      | 255           | Maximum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
+| step                | number      | 1             | Step size                                                                                                                                                                                             |
+| optional            | boolean     | false         | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable |
+| ~~show_percentage~~ | ~~boolean~~ | ~~false~~     | This option is removed in v1.5.0. Use '%' as unit instead.                                                                                                                                            |
 
-
-:warning: **Note**: At this point it is only possible to use a single action variable per action. The variable *is required* to be numeric.
-
-#### Examples
+**Example**
 
 The Xiaomi Air Purifier can be controlled using the [xiaomi miio](https://www.home-assistant.io/integrations/xiaomi_miio/#service-xiaomi_miiofan_set_favorite_level-air-purifiers-only) integration.
 To be able to set the speed of this device in your action, you can use:
@@ -366,14 +480,59 @@ You can now select the speed for this action in the schedule editor:
 
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_example.png?raw=true)
 
+#### List action variable
+
+With some actions, you can provide an option from a limited list of options.
+For example, setting the value of an `input_select`, but also the operation mode of a thermostat.
+
+By providing the list variable, the card allows you to choose the option when you set up the action.
+
+| Name     | Type   | Default       | Description                                                                   |
+| -------- | ------ | ------------- | ----------------------------------------------------------------------------- |
+| field    | string | **Required**  | field name in the `service_data` that is represented by this variable         |
+| name     | string | same as field | Name under which the variable is visible in the card                          |
+| options  | list   | **Required**  | List of options to choose from                                                |
+| -- value | string | **Required**  | Option value (which is passed with together with the field as `service_data`) |
+| -- name  | string | same as value | Name to show for the option                                                   |
+| -- icon  | string | none          | Icon to show with the option                                                  |
+
+**Example**
+
+Setting the operation mode of a thermostat.
+
+Note that this configuration will already be set up when using _standard configuration_.
+
+```yaml
+        entities: 
+          climate.my_thermostat:
+            name: My thermostat
+            icon: thermometer
+            actions:
+              - service: set_hvac_mode
+                name: Set mode
+                icon: 
+                variable:
+                  field: hvac_mode
+                  name: Operation mode
+                  options:
+                    - value: heat
+                      icon: fire
+                    - value: cool
+                      icon: snowflake
+                    - value: 'off'
+                      icon: power
+```
+Now the list of options become visible when you set up the action:
+
+![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_list_example.png?raw=true)
+
 ### Groups
 The `groups` configuration provides the capability of organizing the entities. 
+They have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
 
 #### Options
 
 :warning: **Tip**: The card will automatically create groups based on the domains of the entities in your configuration. If you're OK with this, you don't need to configure `groups`.
-
-:warning: **Warning**: Make sure that the `entities` and `domains` in your groups are also included in their specific configurations, else they will not show up.
 
 | Name     | Type   | Default            | Description                                     |
 | -------- | ------ | ------------------ | ----------------------------------------------- |
@@ -426,23 +585,6 @@ If you are missing a translation, or a translation needs to be improved, please 
 
 ---
 ## FAQ
-
-### *Can I set the card to Fahrenheit instead of Celsius?*
-
-The standard configuration uses Celsius as unit. If you prefer Fahrenheit, then simply overwrite it.
-```
-domains:
-  climate:
-    icon: thermometer
-    actions:
-      - service: set_temperature
-        variable:
-          field: temperature
-          unit: "F"
-          min: 50
-          max: 80
-```
-<br>
 
 ### *Can I make a schedule that checks a condition before executing the action?*
 
