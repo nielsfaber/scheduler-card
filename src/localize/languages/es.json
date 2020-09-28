@@ -63,7 +63,7 @@
     "turn_off": "apagar",
     "close_cover": "cerrar",
     "open_cover": "abrir",
-    "cover.set_cover_position": "Establecer Posición",
+    "set_cover_position": "Establecer Posición",
     "set_temperature": "establecer temperatura",
     "set_to": "establecer a",
     "set_position": "posición de ajuste",
