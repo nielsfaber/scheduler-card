@@ -285,7 +285,7 @@ Scenario: *“I have a lot of lights in my house, but I only want to control som
 Use the include option to specify which lights you want to add:
 
 ```yaml
-domain:
+domains:
   light:
     include:
       - light.my_light_1
@@ -298,7 +298,7 @@ Scenario: *“I have a lot of lights in my house, but I only want to control all
 Use the exclude option to specify which lights you want to be ignored:
 
 ```yaml
-domain:
+domains:
   light:
     exclude:
       - light.my_light_that_i_never_use
