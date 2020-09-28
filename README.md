@@ -64,7 +64,7 @@ Manual installation
 
 1. Download the latest release of `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
 
-2. Add a reference to the card in the resources section of `ui-lovelace.yaml`:
+2. Use the GUI to add `/local/scheduler-card/scheduler-card.js?v=0`, or add a reference to the card in the resources section of `configuration.yaml`:
 
 ```yaml
 resources:
@@ -73,7 +73,7 @@ resources:
 ```
 
  3. Add the card in the view where you want it to be shown:
- 
+
   ```yaml
  type: custom:scheduler-card
  domains:
@@ -115,13 +115,13 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 Click the button 'add item' in the bottom of the card, to start creating a schedule.
 
 #### Choosing an entity and action
-The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view. 
+The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view.
 
 __Groups__
 Since HA may contain many entities, the card divides the entities into different groups.
 Clicking a group automatically will show the entities contained in the group.
 
-The groups that are displayed are depending on your HA configuration. 
+The groups that are displayed are depending on your HA configuration.
 Typically the groups are based on the _domain_ of your entities.
 If you want to make changes to the groups, you can do this by defining [groups](#groups) configuration.
 
@@ -129,9 +129,9 @@ __Entities__
 The entities that you can to control with the scheduler show up here.
 Clicking a entity automatically will show the actions that you can program for this entity.
 
-Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. If you are missing one or more entities, you can add these yourself using the [entities](#entities) or [domains](#domains) configuration. 
+Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. If you are missing one or more entities, you can add these yourself using the [entities](#entities) or [domains](#domains) configuration.
 
-__Actions__ 
+__Actions__
 The actions that you can perform for the selected entity show up here.
  Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself to either entity or the complete domain (group) using the [actions](#actions) configuration.
 
@@ -152,7 +152,7 @@ __Every day__
  the default option. The schedule will perform the action every day at the specified time.
 
 __Weekdays__
-perform action only on monday thru friday. Typically weekdays are the same as working days, but it may depend on your country. Holidays are not taken into account as of yet.
+perform action only on Monday thru Friday. Typically weekdays are the same as working days, but it may depend on your country. Holidays are not taken into account as of yet.
 
 __Custom__
 choose your own days. A list with all days of the week appears. You can select one or more days by clicking them.
@@ -166,13 +166,13 @@ choose your own days. A list with all days of the week appears. You can select o
 :construction: WIP add option to choose the first day of the week
 
 
-#### Choosing the time 
+#### Choosing the time
 
-The time at which you want schedule to be activated can be set using the timepicker.
+The time at which you want schedule to be activated can be set using the time picker.
 
 
 
-The timepicker shows the current time setting, and features arrow buttons to increase or decrease the hour and minutes. Note that you can infinitely loop through time. 
+The time picker shows the current time setting, and features arrow buttons to increase or decrease the hour and minutes. Note that you can infinitely loop through time.
 The step size for minutes is 10 minutes by default, but can be configured to your preference.
 
 If you have the AM/PM option enabled, 12-hour format will be used. You can click on the button to switch between AM and PM.
@@ -182,7 +182,7 @@ __Sunrise / sunset mode__
 If you have the [sun](https://www.home-assistant.io/integrations/sun/) integration in HA, a button with sun/moon icon shows up on the right. This is the _mode button_, which allows you to switch from a fixed time, to time relative to sunrise or sunset.  
 The card allows you to choose a time that is 2 hours around sunrise or sunset. The button will be disabled if the current time is not in this range.
 
-In sunrise/sunset mode, the timepicker will show the offset relative to sunrise/sunset. The time offset is automatically calculated from fixed time. 
+In sunrise/sunset mode, the time picker will show the offset relative to sunrise/sunset. The time offset is automatically calculated from fixed time.
 The _sunrise/sunrise button_ will show a sun icon when offset is relative to sunrise, or a moon icon when offset is relative sunset.
 The _before/after button_ indicates whether the offset is applied in positive direction (so triggers after sunrise/sunset), or in negative direction (before sunrise/sunset).
 Also here, buttons can be clicked to toggle.
@@ -197,7 +197,7 @@ Also here, buttons can be clicked to toggle.
 
 
 ### Introduction
-The configuration of the card is in yaml.
+The configuration of the card is in YAML.
 Currently there is no UI editor provided (this may change in the future).
 
 _Configuration is not necessary_, it is only used for customization.
@@ -254,7 +254,7 @@ Example: *"I would like to be able to run `script`s with the scheduler"*
 domains:
   script:
 ```
-:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a  [feature request](https://github.com/nielsfaber/scheduler-card/issues) for it.
+:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a  [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
 
 #### Removing a domain
 
@@ -278,11 +278,11 @@ If you don't want to have the complete list of all entities in that domain, ther
 
 If you don't want to customize specific entities (changing the displayed name/icon, showing specific actions), it's best to use the domain filtering.
 
-Domain filtering is done using the `include` and `exclude` options options.
+Domain filtering is done using the `include` and `exclude` options.
 With `include` you can specify which entities to add and with `exclude` you can specify which entities to hide.
 You shouldn't use them together.
 
-Scenario: *“I have a lot of lights in my house, but i only want to control some of them with the scheduler.”*
+Scenario: *“I have a lot of lights in my house, but I only want to control some of them with the scheduler.”*
 
 Use the include option to specify which lights you want to add:
 
@@ -293,9 +293,9 @@ domain:
       - light.my_light_1
       - light.my_light_2
       - light.my_light_3
-    # rest of domain config (actions, icon, ...)
+    # rest of domain config (actions, icon, etc.)
 ```
-Scenario: *“I have a lot of lights in my house, but i only want to control all but some of them with the scheduler.”*
+Scenario: *“I have a lot of lights in my house, but I only want to control all but some of them with the scheduler.”*
 
 Use the exclude option to specify which lights you want to be ignored:
 
@@ -310,7 +310,7 @@ domain:
 
 ### Schedule discovery
 
-The card checks for the created schedules in your HA config and show them in the overview page. 
+The card checks for the created schedules in your HA config and show them in the overview page.
 
 The schedule discovery is a feature that will ensure that **all** your schedules will be there.
 
@@ -365,14 +365,14 @@ domains:
 #### Step 2: Disable the schedule discovery
 If you have multiple cards defined, you don't want the running schedules to appear twice.
 
-Provide `discover_existing:false` to both cards, to prevent the unwanted schedules to show up. Only schedules matching your `domain`/`entities` configuration will show up.
+Provide `discover_existing: false` to both cards, to prevent the unwanted schedules to show up. Only schedules matching your `domain` / `entities` configuration will show up.
 
 ### Domains
 With the `domains` configuration you can specify configuration options for multiple HA entities of the same type (domain).
 
 #### Options
 
-:warning: **Tip**: By default, ALL entities that you have in HA under the configured domain will show up in the card. If you don't want this, then use `include` or `exclude` option to filter the entity_ids that you want to add.
+:warning: **Tip**: By default, ALL entities that you have in HA under the configured domain will show up in the card. If you don't want this, then use `include` or `exclude` option to filter the entity ids that you want to add.
 
 | Name    | Type   | Default      | Description                                                                |
 | ------- | ------ | ------------ | -------------------------------------------------------------------------- |
@@ -415,7 +415,7 @@ entities:
     light.my_lamp:
       name: "Dining light"
       icon: ceiling-light
-      actions: 
+      actions:
         - service: turn_on
           service_data:
             brightness: 40
@@ -465,7 +465,7 @@ By providing an action variable, the card allows you to choose the setting you w
 
 **Example**
 
-The Xiaomi Air Purifier can be controlled using the [xiaomi miio](https://www.home-assistant.io/integrations/xiaomi_miio/#service-xiaomi_miiofan_set_favorite_level-air-purifiers-only) integration.
+The Xiaomi Air Purifier can be controlled using the [Xiaomi Miio](https://www.home-assistant.io/integrations/xiaomi_miio/#service-xiaomi_miiofan_set_favorite_level-air-purifiers-only) integration.
 To be able to set the speed of this device in your action, you can use:
 ```
 - service: xiaomi_miio.fan_set_favorite_level
@@ -503,14 +503,14 @@ Setting the operation mode of a thermostat.
 Note that this configuration will already be set up when using _standard configuration_.
 
 ```yaml
-        entities: 
+        entities:
           climate.my_thermostat:
             name: My thermostat
             icon: thermometer
             actions:
               - service: set_hvac_mode
                 name: Set mode
-                icon: 
+                icon:
                 variable:
                   field: hvac_mode
                   name: Operation mode
@@ -527,7 +527,7 @@ Now the list of options become visible when you set up the action:
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_list_example.png?raw=true)
 
 ### Groups
-The `groups` configuration provides the capability of organizing the entities. 
+The `groups` configuration provides the capability of organizing the entities.
 They have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
 
 #### Options
@@ -581,7 +581,7 @@ Currently the following languages are supported:
 
 
 The translations are maintained by users.
-If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a starting point. 
+If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a starting point.
 
 ---
 ## FAQ
@@ -616,10 +616,10 @@ First create the `script` (for setting up scripts see [here](https://www.home-as
 my_script:
   fields:
     temperature: {} # allow temperature as variable field
-  sequence: # sequence for multiple steps, aborts if a step fails 
+  sequence: # sequence for multiple steps, aborts if a step fails
     - condition: state # check the condition
       entity_id: binary_sensor.my_window
-      state: 'off' 
+      state: 'off'
     - service: climate.set_temperature # update the temperature
       data_template:
         entity_id: climate.my_thermostat
@@ -636,7 +636,7 @@ entities:
   script.my_script:
     name: My thermostat script
     actions:
-      - service: script.my_script # service is the same as entity_id for scripts 
+      - service: script.my_script # service is the same as entity_id for scripts
         name: set temperature
         variable: # add action variable to show a slider for choosing the temperature
           field: temperature
@@ -664,7 +664,7 @@ But let's see if we can get convince them to adopt this scheduler, simply by mak
 
 ## Troubleshooting
 
-If you have an issue with this card, please report it [here](https://github.com/nielsfaber/scheduler-card/issues). 
+If you have an issue with this card, please report it [here](https://github.com/nielsfaber/scheduler-card/issues).
 
 
 ---
@@ -674,4 +674,3 @@ If you have an issue with this card, please report it [here](https://github.com/
 If you want to make donation as appreciation of my work, you can buy me a coffee. Thank you!
 
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
-
