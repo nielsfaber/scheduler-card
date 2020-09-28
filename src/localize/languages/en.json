@@ -62,6 +62,7 @@
     "turn_off": "turn off",
     "close_cover": "close",
     "open_cover": "open",
+    "set_cover_position": "set position",
     "set_temperature": "set temperature",
     "set_to": "set to"
   },
