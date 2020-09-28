@@ -30,6 +30,10 @@ export const defaultDomainConfig: IDictionary<IDomainConfig> = {
   cover: {
     actions: [
       {
+        service: "set_cover_position",
+        name: localize('services.set_cover_position')
+      },
+      {
         service: "open_cover",
         name: localize('services.open_cover')
       },
@@ -123,6 +127,7 @@ export function getIconForAction(action: string): string {
   if (action == 'turn_on') return 'toggle-switch-outline';
   else if (action == 'turn_off') return 'toggle-switch-off-outline';
   else if (action == 'open_cover') return 'window-shutter-open';
+  else if (action == 'set_cover_position') return 'window-shutter-alert';
   else if (action == 'close_cover') return 'window-shutter';
   else if (action == 'set_temperature') return 'thermometer';
   return 'flash';
@@ -133,6 +138,7 @@ export function getNameForService(service: string): string {
   else if (service == 'turn_off') return localize('services.turn_off')
   else if (service == 'open_cover') return localize('services.open_cover')
   else if (service == 'close_cover') return localize('services.close_cover')
+  else if (service == 'set_cover_position') return localize('services.set_cover_position')
   else if (service == 'set_temperature') return localize('services.set_temperature')
   if (service.indexOf('.') !== -1) return service.split('.').pop()!;
   return service;
