@@ -57,7 +57,40 @@
         "supported_feature": 16,
         "variable": {
           "field": "preset",
-          "options": "attribute:preset_modes"
+          "options": [
+            {
+              "value": "attribute:preset_modes:none",
+              "icon": "account-outline"
+            },
+            {
+              "value": "attribute:preset_modes:eco",
+              "icon": "leaf"
+            },
+            {
+              "value": "attribute:preset_modes:away",
+              "icon": "car-traction-control"
+            },
+            {
+              "value": "attribute:preset_modes:boost",
+              "icon": "rocket-launch-outline"
+            },
+            {
+              "value": "attribute:preset_modes:comfort",
+              "icon": "car-seat-cooler"
+            },
+            {
+              "value": "attribute:preset_modes:home",
+              "icon": "home-outline"
+            },
+            {
+              "value": "attribute:preset_modes:sleep",
+              "icon": "sleep"
+            },
+            {
+              "value": "attribute:preset_modes:activity",
+              "icon": "motion-sensor"
+            }
+          ]
         }
       }
     ]
@@ -96,6 +129,107 @@
       {
         "service": "turn_off",
         "icon": "fan-off"
+      },
+      {
+        "service": "set_speed",
+        "supported_feature": 1,
+        "variable": {
+          "field": "speed",
+          "options": "attribute:speed_list"
+        }
+      },
+      {
+        "service": "oscillate",
+        "icon": "arrow-left-right",
+        "supported_feature": 2,
+        "variable": {
+          "field": "oscillating",
+          "options": [
+            {
+              "value": "True"
+            },
+            {
+              "value": "False"
+            }
+          ]
+        }
+      },
+      {
+        "service": "set_direction",
+        "icon": "autorenew",
+        "supported_feature": 4,
+        "variable": {
+          "field": "direction",
+          "options": [
+            {
+              "value": "forward",
+              "icon": "rotate-right"
+            },
+            {
+              "value": "reverse",
+              "icon": "rotate-left"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "humidifier": {
+    "icon": "humidity",
+    "actions": [
+      {
+        "service": "set_humidity",
+        "variable": {
+          "field": "humidity",
+          "min": "attribute:min_humidity",
+          "max": "attribute:max_humidity",
+          "step": 1
+        }
+      },
+      {
+        "service": "set_mode",
+        "supported_feature": 1,
+        "variable": {
+          "field": "mode",
+          "options": [
+            {
+              "value": "attribute:available_modes:normal",
+              "icon": "account-outline"
+            },
+            {
+              "value": "attribute:available_modes:eco",
+              "icon": "leaf"
+            },
+            {
+              "value": "attribute:available_modes:away",
+              "icon": "car-traction-control"
+            },
+            {
+              "value": "attribute:available_modes:boost",
+              "icon": "rocket-launch-outline"
+            },
+            {
+              "value": "attribute:available_modes:comfort",
+              "icon": "car-seat-cooler"
+            },
+            {
+              "value": "attribute:available_modes:home",
+              "icon": "home-outline"
+            },
+            {
+              "value": "attribute:available_modes:sleep",
+              "icon": "sleep"
+            },
+            {
+              "value": "attribute:available_modes:auto",
+              "icon": "autorenew"
+            },
+            {
+              "value": "attribute:available_modes:baby",
+              "icon": "baby-bottle-outline"
+            }
+          ]
+        }
       }
     ]
   },
@@ -237,6 +371,11 @@
         "service": "start",
         "icon": "play-circle-outline",
         "supported_feature": 8192
+      },
+      {
+        "service": "start_pause",
+        "icon": "play-circle-outline",
+        "supported_feature": 4
       }
     ]
   }
