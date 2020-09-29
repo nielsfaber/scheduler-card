@@ -4,15 +4,14 @@ import { loadHaForm } from './load-ha-form';
 import { UnitPercent } from './const';
 
 function Bool(val: string) {
-  if (val == "true") return true;
-  else if (val == "false") return false;
+  if (val == 'true') return true;
+  else if (val == 'false') return false;
   else if (val.length) return true;
   else return false;
 }
 
 @customElement('variable-slider')
 export class VariableSlider extends LitElement {
-
   @property({ type: Number })
   min = 0;
 
@@ -29,16 +28,15 @@ export class VariableSlider extends LitElement {
   unit = '';
 
   @property({ type: String })
-  optional = "false";
+  optional = 'false';
 
   @property({ type: String })
-  disabled = "false";
+  disabled = 'false';
 
   scaleGain = 1;
   scaleOffset = 0;
 
-  updated() {
-  }
+  updated() {}
 
   firstUpdated() {
     (async () => await loadHaForm())();
@@ -49,25 +47,19 @@ export class VariableSlider extends LitElement {
       this.min = 0;
       this.max = 100;
     }
-    if (Bool(this.disabled) && !Bool(this.optional)) this.disabled = "false";
+    if (Bool(this.disabled) && !Bool(this.optional)) this.disabled = 'false';
     if (isNaN(this.value)) this.value = this.min;
 
     this.requestUpdate();
   }
 
-
   render() {
     return html`
       <div class="container">
-        <div class="checkbox">
-        ${this.getCheckbox()}
-        </div>
-        <div class="slider">
-        ${this.getSlider()}
-        </div>
-        <div class="value${Bool(this.disabled) ? ' disabled' : ''}">
-        ${this.getScaledValue()}${this.unit}
-        </div>
+        <div class="checkbox">${this.getCheckbox()}</div>
+        <div class="slider">${this.getSlider()}</div>
+        <div class="value${Bool(this.disabled) ? ' disabled' : ''}">${this.getScaledValue()}${this.unit}</div>
+      </div>
     `;
   }
 
@@ -82,25 +74,23 @@ export class VariableSlider extends LitElement {
 
   getSlider() {
     if (!Bool(this.disabled)) {
-      return html`
-        <ha-paper-slider
+      return html` <ha-paper-slider
         pin
         min=${this.min}
         max=${this.max}
         step=${this.step}
         value=${this.getScaledValue()}
         @change=${this.updateValue}
-        ></ha-paper-slider>`;
+      ></ha-paper-slider>`;
     } else {
-      return html`
-        <ha-paper-slider
+      return html` <ha-paper-slider
         pin
         min=${this.min}
         max=${this.max}
         step=${this.step}
         value=${this.getScaledValue()}
         disabled
-        ></ha-paper-slider>`;
+      ></ha-paper-slider>`;
     }
   }
 
@@ -112,7 +102,7 @@ export class VariableSlider extends LitElement {
 
   toggleChecked(e: Event) {
     let checked = (e.target as HTMLInputElement).checked;
-    this.disabled = checked ? "false" : "true";
+    this.disabled = checked ? 'false' : 'true';
   }
 
   updateValue(e: Event) {
@@ -123,44 +113,43 @@ export class VariableSlider extends LitElement {
   }
 
   static styles = css`
+    :host {
+      width: 100%;
+    }
 
-      :host {
-        width: 100%;
-      }
+    div.container {
+      display: grid;
+      grid-template-columns: min-content 1fr max-content;
+      grid-template-rows: min-content;
+      grid-template-areas: 'checkbox slider value';
+    }
 
-      div.container {
-        display: grid;
-        grid-template-columns: min-content 1fr max-content;
-        grid-template-rows: min-content;
-        grid-template-areas: "checkbox slider value";
-      }
+    div.checkbox {
+      grid-area: checkbox;
+      display: flex;
+      align-items: center;
+    }
 
-      div.checkbox {
-        grid-area: checkbox;
-        display: flex;
-        align-items: center;
-      }
+    div.slider {
+      grid-area: slider;
+      display: flex;
+      align-items: center;
+    }
 
-      div.slider {
-        grid-area: slider;
-        display: flex;
-        align-items: center;
-      }
+    div.value {
+      grid-area: value;
+      min-width: 40px;
+      display: flex;
+      align-items: center;
+    }
 
-      div.value {
-        grid-area: value;
-        min-width: 40px;
-        display: flex;
-        align-items: center;
-      }
+    ha-paper-slider {
+      width: 100%;
+      --paper-slider-pin-start-color: var(--primary-color);
+    }
 
-      ha-paper-slider {
-        width: 100%;
-        --paper-slider-pin-start-color: var(--primary-color);
-      }
-      
-       .disabled {
-        color: var(--disabled-text-color);
-      }
+    .disabled {
+      color: var(--disabled-text-color);
+    }
   `;
 }
