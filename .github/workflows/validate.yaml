@@ -9,6 +9,7 @@ on:
 jobs:
   hacs_validate:
     runs-on: "ubuntu-latest"
+    name: "HACS validation"
     steps:
       - uses: "actions/checkout@v2"
       - name: HACS validation
@@ -17,10 +18,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
   eslint_validate:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
+    name: "ESLint validation"
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
-      run: yarn
+      run: |
+        npm install eslint --save-dev
+        npm install eslint --save-dev
     - name: Run ESLint
-      run: eslint . --ext .js,.ts
+      run: npx eslint . --ext .js,.ts
