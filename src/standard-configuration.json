@@ -175,16 +175,26 @@
     ]
   },
   "humidifier": {
-    "icon": "humidity",
+    "icon": "air-humidifier",
     "actions": [
       {
         "service": "set_humidity",
+        "icon": "water-percent",
         "variable": {
           "field": "humidity",
           "min": "attribute:min_humidity",
           "max": "attribute:max_humidity",
+          "unit": "%",
           "step": 1
         }
+      },
+      {
+        "service": "turn_on",
+        "icon": "air-humidifier"
+      },
+      {
+        "service": "turn_off",
+        "icon": "air-humidifier-off"
       },
       {
         "service": "set_mode",
