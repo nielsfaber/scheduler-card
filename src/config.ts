@@ -1,11 +1,9 @@
-
-import { IEntityConfig, IActionConfig, IDictionary, IDomainConfig, IGroupElement, IHassEntity } from './types'
+import { IEntityConfig, IActionConfig, IDictionary, IDomainConfig, IGroupElement, IHassEntity } from './types';
 import { DefaultDomainConfig, DiscoveredEntitiesGroup } from './const';
 import { EntityList, IsSchedulerEntity } from './entity';
 import { CreateAction, GetActionConfig, reverseParseAction, importHassAction } from './action';
 import { GroupList } from './group';
 import { getDomainFromEntityId, pick } from './helpers';
-
 
 export class Config {
   private entities: EntityList;
@@ -19,7 +17,15 @@ export class Config {
     this.groups = new GroupList();
   }
 
-  setUserConfig(cfg: Partial<{ entities: IDictionary<IEntityConfig>, domains: IDictionary<IDomainConfig>, groups: IDictionary<Partial<IGroupElement>>, discover_existing: boolean, standard_configuration: boolean }>) {
+  setUserConfig(
+    cfg: Partial<{
+      entities: IDictionary<IEntityConfig>;
+      domains: IDictionary<IDomainConfig>;
+      groups: IDictionary<Partial<IGroupElement>>;
+      discover_existing: boolean;
+      standard_configuration: boolean;
+    }>,
+  ) {
     if (cfg.discover_existing !== undefined) this.discover_existing = cfg.discover_existing;
     if (cfg.standard_configuration !== undefined) this.standard_configuration = cfg.standard_configuration;
 
@@ -29,7 +35,11 @@ export class Config {
 
     Object.assign(domainConfig, cfg.domains);
 
-    this.entities.SetConfig({ entities: entityConfig, domains: domainConfig, standard_configuration: this.standard_configuration });
+    this.entities.SetConfig({
+      entities: entityConfig,
+      domains: domainConfig,
+      standard_configuration: this.standard_configuration,
+    });
     this.groups.SetConfig({ groups: groupConfig, standard_configuration: this.standard_configuration });
   }
 
@@ -65,7 +75,7 @@ export class Config {
     if (!entity) return [];
 
     let output = [...entity.actions];
-    output.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    output.sort((a, b) => (a.name > b.name ? 1 : -1));
     return output;
   }
 
@@ -91,34 +101,36 @@ export class Config {
     if (!this.discover_existing) return;
     let discovered_entities: string[] = [];
 
-    Object.entries(entityList).filter(([entity_id]) => IsSchedulerEntity(entity_id)).forEach(([_entity_id, entity]) => {
-      let actions = entity.attributes.actions;
-      if (!actions) return;
+    Object.entries(entityList)
+      .filter(([entity_id]) => IsSchedulerEntity(entity_id))
+      .forEach(([_entity_id, entity]) => {
+        let actions = entity.attributes.actions;
+        if (!actions) return;
 
-      actions.forEach(action => {
-        let domain = getDomainFromEntityId(action.entity) || getDomainFromEntityId(action.service);
-        let id = domain + "." + action.entity.split('.').pop();
-        if (!(id in entityList)) return;
+        actions.forEach(action => {
+          let domain = getDomainFromEntityId(action.entity) || getDomainFromEntityId(action.service);
+          let id = domain + '.' + action.entity.split('.').pop();
+          if (!(id in entityList)) return;
 
-        let entity = entityList[id];
-        let entityConfig = this.GetEntityConfig(entity);
-        if (!this.entities.Find(id)) {
-          this.entities.Add(id, entityConfig);
-          discovered_entities.push(id);
-        }
+          let entity = entityList[id];
+          let entityConfig = this.GetEntityConfig(entity);
+          if (!this.entities.Find(id)) {
+            this.entities.Add(id, entityConfig);
+            discovered_entities.push(id);
+          }
 
-        let actionConfig = entityConfig.actions ? reverseParseAction(action, entityConfig.actions) : null;
-        if (!actionConfig) actionConfig = <IActionConfig>pick(importHassAction(action), ['service', 'service_data']);
-        let actionObj = CreateAction(actionConfig);
-        this.entities.AddAction(id, actionObj);
+          let actionConfig = entityConfig.actions ? reverseParseAction(action, entityConfig.actions) : null;
+          if (!actionConfig) actionConfig = <IActionConfig>pick(importHassAction(action), ['service', 'service_data']);
+          let actionObj = CreateAction(actionConfig);
+          this.entities.AddAction(id, actionObj);
+        });
       });
-    });
 
     if (discovered_entities.length) {
       let group: Partial<IGroupElement> = {
         entities: discovered_entities,
-        icon: 'reload-alert'
-      }
+        icon: 'reload-alert',
+      };
       this.groups.Add(DiscoveredEntitiesGroup, group);
     }
   }

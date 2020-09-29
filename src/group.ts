@@ -1,7 +1,7 @@
-import { DomainNameTranslations, localize } from "./localize/localize";
-import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
-import { extend, getDomainFromEntityId } from "./helpers";
-import { IDictionary, IGroupElement } from "./types";
+import { DomainNameTranslations, localize } from './localize/localize';
+import { DefaultGroupIcon, DiscoveredEntitiesGroup } from './const';
+import { extend, getDomainFromEntityId } from './helpers';
+import { IDictionary, IGroupElement } from './types';
 import { default as standardConfig } from './standard-configuration.json';
 
 export class GroupList {
@@ -9,11 +9,9 @@ export class GroupList {
   groups: IGroupElement[] = [];
   standard_configuration: boolean = true;
 
-  constructor() {
+  constructor() {}
 
-  }
-
-  SetConfig(cfg: { groups: IDictionary<Partial<IGroupElement>>, standard_configuration: boolean }) {
+  SetConfig(cfg: { groups: IDictionary<Partial<IGroupElement>>; standard_configuration: boolean }) {
     this.groupConfig = cfg.groups;
     this.standard_configuration = cfg.standard_configuration;
   }
@@ -23,8 +21,8 @@ export class GroupList {
   }
 
   Get(): IGroupElement[] {
-    let output = [... this.groups].filter(e => e.id != DiscoveredEntitiesGroup);
-    output.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    let output = [...this.groups].filter(e => e.id != DiscoveredEntitiesGroup);
+    output.sort((a, b) => (a.name > b.name ? 1 : -1));
     if (this.Find(DiscoveredEntitiesGroup)) output.push({ ...this.Find(DiscoveredEntitiesGroup)! });
     return output;
   }
@@ -44,7 +42,7 @@ export class GroupList {
   }
 
   Set(group_id: string, cfg: Partial<IGroupElement>) {
-    if (!this.Find(group_id)) throw (`Group '${group_id}' does not exist`);
+    if (!this.Find(group_id)) throw `Group '${group_id}' does not exist`;
     for (var i = 0; i < this.groups.length; i++) {
       if (this.groups[i].id == group_id) {
         let group = this.groups[i];
@@ -64,7 +62,7 @@ export class GroupList {
 
   InConfig(entity_id: string) {
     let res = this.groups.find(e => this.InGroup(e.id, entity_id));
-    return (res !== undefined);
+    return res !== undefined;
   }
 
   CreateGroups(entity_ids: string[]) {
@@ -78,10 +76,10 @@ export class GroupList {
         let entities = [...group.entities];
         entities.push(entity_id);
         this.Set(domain, { entities: entities });
-      }
-      else {
-        let cfg: Partial<IGroupElement> = { entities: [entity_id] }
-        if (standardConfig[domain]?.icon && this.standard_configuration) Object.assign(cfg, { icon: standardConfig[domain].icon });
+      } else {
+        let cfg: Partial<IGroupElement> = { entities: [entity_id] };
+        if (standardConfig[domain]?.icon && this.standard_configuration)
+          Object.assign(cfg, { icon: standardConfig[domain].icon });
         this.Add(domain, cfg);
       }
     });
