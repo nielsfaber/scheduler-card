@@ -17,13 +17,13 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
-  eslint_validate:
+  test_build:
     runs-on: "ubuntu-latest"
-    name: "ESLint validation"
+    name: "Test build"
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
       run: |
-        npm install --save-dev
-    - name: Run ESLint
-      run: npx eslint . --ext .js,.ts
+        npm install
+    - name: Build
+      run: npm run-script build
