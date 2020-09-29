@@ -73,10 +73,11 @@ export class VariableSlider extends LitElement {
 
   getScaledValue() {
     let value = this.value;
-    let scaledValue = Math.round((value - this.scaleOffset) / this.scaleGain);
+    let scaledValue = (value - this.scaleOffset) / this.scaleGain;
+    scaledValue = Math.round(scaledValue / this.step) * this.step;
     if (scaledValue < this.min) scaledValue = this.min;
     else if (scaledValue > this.max) scaledValue = this.max;
-    return Math.round((scaledValue * this.step) / this.step);
+    return scaledValue;
   }
 
   getSlider() {
@@ -117,7 +118,7 @@ export class VariableSlider extends LitElement {
   updateValue(e: Event) {
     let value = Number((e.target as HTMLInputElement).value);
     let unscaledValue = value * this.scaleGain + this.scaleOffset;
-    unscaledValue = Math.round(unscaledValue * this.step) / this.step;
+    unscaledValue = Math.round(unscaledValue / this.step) * this.step;
     this.value = unscaledValue;
   }
 
