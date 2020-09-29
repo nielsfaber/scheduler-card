@@ -1,6 +1,6 @@
 
-import { IDictionary, IDomainConfig, IActionElement, IUserConfig, ILevelVariableConfig, IListVariableConfig, ITimeSlot, IEntry, EVariableType } from './types'
-import { parseTimestamp, HoursPerDay, MinutesPerHour, EDayType } from './date-time'
+import { IDictionary, IDomainConfig, IActionElement, IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
+import { parseTimestamp, HoursPerDay, MinutesPerHour, EDayType, MinutesPerDay } from './date-time'
 
 export const CARD_VERSION = "1.5.2"
 
@@ -34,14 +34,29 @@ export const DefaultEntry: IEntry = {
   entity: ''
 }
 
-export const RoutineAction: IActionElement = {
-  id: 'create_routine',
-  service: 'create_routine',
-  name: 'create routine',
-  icon: 'cog-refresh-outline',
-  routine: false,
-};
-
+export const DefaultTimelineEntries: IEntry[] = [
+  {
+    time: { value: parseTimestamp('00:00') },
+    endTime: { value: parseTimestamp('08:00') },
+    days: { type: EDayType.Daily },
+    action: '',
+    entity: ''
+  },
+  {
+    time: { value: parseTimestamp('08:00') },
+    endTime: { value: parseTimestamp('16:00') },
+    days: { type: EDayType.Daily },
+    action: '',
+    entity: ''
+  },
+  {
+    time: { value: parseTimestamp('16:00') },
+    endTime: { value: MinutesPerDay },
+    days: { type: EDayType.Daily },
+    action: '',
+    entity: ''
+  }
+];
 
 export const DefaultLevelVariableConfig: ILevelVariableConfig = {
   type: EVariableType.Level,
@@ -63,10 +78,10 @@ export const DefaultListVariableConfig: IListVariableConfig = {
 
 export const FieldTemperature = "temperature";
 export const UnitPercent = "%";
+export const CreateTimeline = "create_timeline"
 
-
-export const DefaultRoutineSlots: ITimeSlot[] = [
-  { startTime: parseTimestamp('00:00'), endTime: parseTimestamp('08:00') },
-  { startTime: parseTimestamp('08:00'), endTime: parseTimestamp('16:00') },
-  { startTime: parseTimestamp('16:00'), endTime: HoursPerDay * MinutesPerHour },
-];
+// export const DefaultRoutineSlots: IEntry[] = [
+//   { startTime: parseTimestamp('00:00'), endTime: parseTimestamp('08:00') },
+//   { startTime: parseTimestamp('08:00'), endTime: parseTimestamp('16:00') },
+//   { startTime: parseTimestamp('16:00'), endTime: HoursPerDay * MinutesPerHour },
+// ];

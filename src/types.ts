@@ -133,18 +133,19 @@ export interface IListVariableConfig {
 
 export interface IEntry {
   time: ITime,
+  endTime?: ITime,
   days: IDays,
   action: string,
   entity: string,
   variable?: ILevelVariable | IListVariable
 }
 
-export interface ITimeSlot {
-  startTime: number,
-  endTime: number,
-  action?: string,
-  variable?: ILevelVariable | IListVariable
-}
+// export interface ITimeSlot {
+//   startTime: number,
+//   endTime: number,
+//   action?: string,
+//   variable?: ILevelVariable | IListVariable
+// }
 
 
 export interface IScheduleEntry {
@@ -194,6 +195,9 @@ export interface IHassData {
   entries: IHassEntry[],
   actions: IHassAction[]
 }
+
+/* other */
+
 
 // export interface IActionConfig {
 //   name?: string,

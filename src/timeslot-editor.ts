@@ -1,19 +1,19 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize } from './localize/localize';
 
-import { ITimeSlot, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from './types'
+import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from './types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from './date-time';
-import { PrettyPrintActionVariable } from './helpers';
+import { PrettyPrintActionVariable, pick } from './helpers';
 
-function Duration(el: ITimeSlot) {
-  return el.endTime - el.startTime;
+function Duration(el: IEntry) {
+  return el.endTime!.value - el.time.value;
 }
 
 @customElement('timeslot-editor')
 export class TimeslotEditor extends LitElement {
 
   @property({ type: Array })
-  slots: ITimeSlot[] = []
+  entries: IEntry[] = []
   shadowRoot: any;
 
   @property({ type: Array })
@@ -23,19 +23,10 @@ export class TimeslotEditor extends LitElement {
   stepSize: number = 15;
 
   @property({ type: Number })
-  _activeSlot: number | null = null;
-
-  @property({ type: Number })
-  _activeThumb: number | null = null;
+  _activeEntry: number | null = null;
 
   @property({ type: String })
   temperatureUnit: string = "";
-
-  updated() {
-  }
-
-  firstUpdated() {
-  }
 
   render() {
     return html`
@@ -58,7 +49,7 @@ export class TimeslotEditor extends LitElement {
         </div>
       </div>
       <div>
-        ${this._activeSlot !== null && this.slots.length < 10 ? html`
+        ${this._activeEntry !== null && this.entries.length < 10 ? html`
         <mwc-button @click="${this._addSlot}">
           <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
           Add
@@ -69,7 +60,7 @@ export class TimeslotEditor extends LitElement {
           Add
         </mwc-button>
         `}
-        ${this._activeSlot !== null && this.slots.length > 3 ? html`
+        ${this._activeEntry !== null && this.entries.length > 3 ? html`
         <mwc-button @click="${this._removeSlot}">
           <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
           Remove
@@ -84,20 +75,22 @@ export class TimeslotEditor extends LitElement {
     `;
   }
 
+
   protected getSlots(): TemplateResult[] {
     let output: TemplateResult[] = [];
-    this.slots.forEach((el, i) => {
+    this.entries.forEach((el, i) => {
       output.push(html`
-        <div class="slider-slot${this._activeSlot == i ? ' active' : ''}" @click="${this._handleSegmentClick}" index="${i}" style="width: ${Duration(el) / MinutesPerDay * 100}%">
-          ${this.getSlotAction(el)}
+        <div class="slider-slot${this._activeEntry == i ? ' active' : ''}" @click="${this._handleSegmentClick}" index="${i}" style="width: ${Duration(el) / MinutesPerDay * 100}%">
+          ${this.getEntryAction(el)}
         </div>
       `);
-      if (i < this.slots.length - 1) {
+      if (i < this.entries.length - 1) {
+        let ts = this.entries[i].endTime!.value;
         output.push(html`
-        <div class="slider-thumb${this._activeThumb == i ? ' active' : ''}" index="${i}">
+        <div class="slider-thumb">
           <ha-icon icon="hass:unfold-more-vertical"  @mousedown="${this._handleTouchStart}" @touchstart="${this._handleTouchStart}"></ha-icon>
           <div class="slider-thumb-tooltip" value="time" @update="${this._updateMarker}">
-            ${formatTime(this.slots[i].endTime).time}
+            ${formatTime(ts).time}
           </div>
         </div>`);
       }
@@ -105,30 +98,30 @@ export class TimeslotEditor extends LitElement {
     return output;
   }
 
-  getSlotAction(slot: ITimeSlot) {
-    if (!slot.action) return '';
-    let action = this.actions.find(e => { return e.id == slot.action })!;
-    if (slot.variable && slot.variable.type == EVariableType.Level) {
-      let variable = slot.variable as ILevelVariable;
+  getEntryAction(entry: IEntry) {
+    if (!entry.action) return '';
+    let action = this.actions.find(e => { return e.id == entry.action })!;
+    if (entry.variable && entry.variable.type == EVariableType.Level) {
+      let variable = entry.variable as ILevelVariable;
       let cfg = action.variable as ILevelVariableConfig;
       if (variable.enabled) return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
-    else if (slot.variable && slot.variable.type == EVariableType.List) {
-      let variable = slot.variable as IListVariable;
+    else if (entry.variable && entry.variable.type == EVariableType.List) {
+      let variable = entry.variable as IListVariable;
       let cfg = action.variable as IListVariableConfig;
       return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
-    if (slot.action == 'turn_on') return 'on';
-    else if (slot.action == 'turn_off') return 'off';
-    return `${slot.action}`;
+    if (entry.action == 'turn_on') return 'on';
+    else if (entry.action == 'turn_off') return 'off';
+    return `${entry.action}`;
   }
 
   private _handleSegmentClick(e: Event) {
     let el = e.target as HTMLElement;
-    let slot_id = Number(el.getAttribute("index"));
-    this._activeSlot = (this._activeSlot == slot_id) ? null : slot_id;
+    let entry_id = Number(el.getAttribute("index"));
+    this._activeEntry = (this._activeEntry == entry_id) ? null : entry_id;
 
-    let myEvent = new CustomEvent("update", { detail: { slot: this._activeSlot } });
+    let myEvent = new CustomEvent("update", { detail: { entry: this._activeEntry } });
     this.dispatchEvent(myEvent);
   }
 
@@ -138,8 +131,6 @@ export class TimeslotEditor extends LitElement {
     if (!thumbHandle) return;
 
     let thumbElement = thumbHandle.parentNode as HTMLElement;
-    let thumb_id = Number(thumbElement.getAttribute("index"));
-    this._activeThumb = thumb_id;
 
     let trackElement = thumbElement.parentElement as HTMLElement;
     let trackCoords = trackElement.getBoundingClientRect();
@@ -162,17 +153,12 @@ export class TimeslotEditor extends LitElement {
         xStart = xStart + slotWidths[i];
       }
     });
-    let mouseMoveHandler = (e: MouseEvent | TouchEvent) => {
+    var mouseMoveHandler = (e: MouseEvent | TouchEvent) => {
       let startDragX;
-      if (e instanceof TouchEvent) {
-        startDragX = e.changedTouches[0].pageX;
-      }
-      else {
-        startDragX = e.pageX;
-      }
+      if (e instanceof TouchEvent) startDragX = e.changedTouches[0].pageX;
+      else startDragX = e.pageX;
 
       let x = startDragX - trackCoords.left;
-
       if (x < 0) x = 0;
       else if (x > trackCoords.width) x = trackCoords.width;
       if (x > (availableWidth + xStart)) x = availableWidth + xStart;
@@ -191,21 +177,19 @@ export class TimeslotEditor extends LitElement {
       window.removeEventListener('mousemove', mouseMoveHandler);
       window.removeEventListener('touchmove', mouseMoveHandler);
       window.removeEventListener('mouseup', mouseUpHandler);
-      window.addEventListener('touchend', mouseUpHandler);
+      window.removeEventListener('touchend', mouseUpHandler);
+      mouseMoveHandler = () => { };
 
       let newStop = parseTimestamp(toolTip.innerText);
-      let totalDuration = Duration(this.slots[slotIndex]) + Duration(this.slots[slotIndex + 1]);
-      let startTime = this.slots[slotIndex].startTime;
+      let totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
+      let startTime = this.entries[slotIndex].time.value;
 
-      let slots = [... this.slots];
-      Object.assign(slots[slotIndex], { endTime: newStop })
-      Object.assign(slots[slotIndex + 1], { startTime: newStop, endTime: startTime + totalDuration });
+      let entries = [... this.entries];
+      Object.assign(entries[slotIndex], <IEntry>{ endTime: { value: newStop } })
+      Object.assign(entries[slotIndex + 1], <IEntry>{ time: { value: newStop }, endTime: { value: startTime + totalDuration } });
 
-      let myEvent = new CustomEvent("update", { detail: { slots: slots } });
+      let myEvent = new CustomEvent("update", { detail: { entries: entries } });
       this.dispatchEvent(myEvent);
-
-      mouseMoveHandler = () => { };
-      this._activeThumb = null;
     }
 
     window.addEventListener('mouseup', mouseUpHandler);
@@ -216,46 +200,39 @@ export class TimeslotEditor extends LitElement {
 
   private _updateMarker(e: CustomEvent) {
     let detail = e.detail;
-    let time = 0;
-
-    if (detail.hasOwnProperty('time')) {
-      time = Number(detail.time);
-    }
-    else if (detail.hasOwnProperty('index')) {
-      let index = detail.index;
-      time = this.slots[index].endTime;
-    }
-    let target = e.target as HTMLElement;
-
+    let time = Number(detail.time);
     if (time == MinutesPerDay) time -= 1;
+    let target = e.target as HTMLElement;
     target.innerText = formatTime(time).time;
   }
 
   private _addSlot() {
-    let activeSlot = this.slots[this._activeSlot!];
-    let startTime = activeSlot.startTime;
-    let endTime = activeSlot.endTime;
+    let activeSlot = this.entries[this._activeEntry!];
+    let startTime = activeSlot.time.value;
+    let endTime = activeSlot.endTime!.value;
     let newStop = roundTime(startTime + Duration(activeSlot) / 2, this.stepSize);
 
-    let slots = [... this.slots];
-    Object.assign(slots[this._activeSlot!], { endTime: newStop });
-    slots.splice(this._activeSlot! + 1, 0, {
-      startTime: newStop,
-      endTime: endTime
-    });
-
-    let myEvent = new CustomEvent("update", { detail: { slots: slots } });
+    let newEntry = Object.assign(<IEntry>{
+      time: { value: newStop },
+      endTime: { value: endTime },
+      action: ''
+    }, pick(activeSlot, ['entity', 'days']));
+    let entries = [... this.entries];
+    Object.assign(entries[this._activeEntry!], <IEntry>{ endTime: { value: newStop } });
+    entries.splice(this._activeEntry! + 1, 0, newEntry);
+    let myEvent = new CustomEvent("update", { detail: { entries: entries } });
     this.dispatchEvent(myEvent);
   }
 
   private _removeSlot() {
-    let cutIndex = (this._activeSlot == this.slots.length - 1) ? this._activeSlot - 1 : this._activeSlot;
-    let mergedSlot = { ... this.slots[cutIndex!] };
-    Object.assign(mergedSlot, { endTime: this.slots[cutIndex! + 1].endTime });
+    let cutIndex = (this._activeEntry == this.entries.length - 1) ? this._activeEntry - 1 : this._activeEntry;
+    let mergedEntry = { ... this.entries[cutIndex!] };
+    Object.assign(mergedEntry, { endTime: this.entries[cutIndex! + 1].endTime });
 
-    let slots = [... this.slots];
-    slots.splice(cutIndex!, 2, mergedSlot);
-    let myEvent = new CustomEvent("update", { detail: { slots: slots } });
+    let entries = [... this.entries];
+    entries.splice(cutIndex!, 2, mergedEntry);
+    if (this._activeEntry == this.entries.length) this._activeEntry--;
+    let myEvent = new CustomEvent("update", { detail: { entries: entries } });
     this.dispatchEvent(myEvent);
   }
 

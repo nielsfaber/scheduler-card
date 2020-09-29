@@ -85,6 +85,7 @@ export function ExportToHass(entryList: IEntry[], configData: Config): IHassData
 
   entryList.forEach(entry => {
     let actionCfg = configData.FindAction(entry.entity, entry.action) as IActionElement;
+    if (!actionCfg) return;
 
     let hassAction: IHassAction = {
       entity: entry.entity,
@@ -102,7 +103,11 @@ export function ExportToHass(entryList: IEntry[], configData: Config): IHassData
     }
 
     if (!entry.time.event) Object.assign(hassEntry, { time: formatTime(entry.time.value).time });
-    else Object.assign(hassEntry, { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time, });
+    else if (entry.time.event) Object.assign(hassEntry, { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time, });
+
+    if (entry.endTime) Object.assign(hassEntry, { end_time: formatTime(entry.endTime.value).time });
+    //TBD: endtime with event??
+
     if (entry.days.type != EDayType.Daily) Object.assign(hassEntry, { days: daysToArray(entry.days) });
 
     hassEntries.push(hassEntry);

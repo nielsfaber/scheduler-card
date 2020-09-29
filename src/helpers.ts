@@ -1,7 +1,7 @@
 
-import { IEntry, IDictionary, ITimeSlot, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
+import { IEntry, IDictionary, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
 import { localize } from './localize/localize';
-import { formatTime, ITime, wrapTime, HoursPerDay, MinutesPerHour, ETimeEvent, IDays, EDayType } from './date-time';
+import { formatTime, ITime, wrapTime, ETimeEvent, IDays, EDayType } from './date-time';
 import { UnitPercent, FieldTemperature } from "./const";
 
 
@@ -164,34 +164,6 @@ export function PrettyPrintActionVariable(input: ILevelVariable | IListVariable,
 
 export function capitalize(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
-}
-
-export function calculateTimeSlots(entries: IEntry[]): ITimeSlot[] {
-  let slots = entries.map(entry => {
-    let output: ITimeSlot = {
-      startTime: entry.time.value,
-      endTime: entry.time.value,
-      action: entry.action,
-    }
-    if (entry.hasOwnProperty('level')) Object.assign(output, <ITimeSlot>{ variable: entry.variable });
-    return output;
-  });
-
-  if (!slots.find(e => (e.startTime == 0))) slots.push({
-    startTime: 0,
-    endTime: 0
-  });
-
-  slots.sort((a, b) => (a.startTime > b.startTime) ? 1 : -1);
-
-  let endTime = MinutesPerHour * HoursPerDay;
-  let i;
-  for (i = slots.length - 1; i >= 0; i--) {
-    slots[i].endTime = endTime;
-    endTime = slots[i].startTime;
-  }
-
-  return slots;
 }
 
 export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<any>) {

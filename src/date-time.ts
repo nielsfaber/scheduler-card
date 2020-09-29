@@ -84,7 +84,7 @@ export function wrapTime(value: number, options: { stepSize?: number, signed?: b
   else return value;
 }
 
-export function parseTimestamp(input: string) {
+export function parseTimestamp(input: string): number {
   let hours, minutes, res;
   if ((res = /^([0-9]{2}):([0-9]{2})$/.exec(input)) !== null) {
     [hours, minutes] = [Number(res[1]), Number(res[2])];

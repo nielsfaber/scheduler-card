@@ -3,11 +3,11 @@ import { LitElement, html, customElement, property, CSSResult, TemplateResult } 
 import { HomeAssistant } from 'custom-card-helpers';
 
 import { Config } from './config';
-import { ITimeSlot, IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, IHassData, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption } from './types'
-import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, calculateTimeSlots, IsEqual, pick, filterObject } from './helpers'
+import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption } from './types'
+import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, IsEqual, pick, filterObject } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
-import { CARD_VERSION, DefaultUserConfig, RoutineAction, DefaultEntry, FieldTemperature } from './const'
+import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries } from './const'
 import { localize, getLanguage } from './localize/localize';
 import { parseTimestamp, EDayType, IDays, ETimeEvent, daysToArray } from './date-time';
 import { ImportFromHass, ExportToHass } from './interface';
@@ -64,18 +64,16 @@ export class SchedulerCard extends LitElement {
   @property({ type: Boolean })
   newItemConfirmed: boolean = false;
 
+  _entries: IEntry[] = [];
+  _activeEntry: number | null = null;
+
   @property({ type: Object })
   _entry: IEntry = { ...DefaultEntry };
-
-  @property({ type: Array })
-  _slots: ITimeSlot[] = [];
-
-  @property({ type: Number })
-  _slotNum: number | null = null;
 
   @property({ type: String })
   _selectedGroup: string = '';
 
+  _timeline = false;
 
   set hass(hass: HomeAssistant) {
     if (!this._hass) this.init(hass);
@@ -97,6 +95,11 @@ export class SchedulerCard extends LitElement {
     if (!hass.user.is_admin) this._config = Object.assign({ ...this._config }, { is_admin: false });
 
     this.Config.LoadEntities(hass.states);
+
+    // this.newItem = true;
+    // this._timeline = true;
+    // this.newItemConfirmed = true;
+    // this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: 'climate.mqtt_hvac' }));
   }
 
   protected updateScheduleList(hass) {
@@ -158,11 +161,11 @@ export class SchedulerCard extends LitElement {
         </ha-card>
       `;
     }
-    else if (this._entry.action == RoutineAction.id) {
+    else if (this._entries.length && !this._timeline) {
       return html`
       <ha-card>
         ${this.getTitle()}
-        ${this.showRoutineEditor()}
+        ${this.showEditor()}
       </ha-card>
       `;
     }
@@ -170,7 +173,7 @@ export class SchedulerCard extends LitElement {
       return html`
       <ha-card>
         ${this.getTitle()}
-        ${this.showEditor()}
+        ${this.showRoutineEditor()}
       </ha-card>
       `;
     }
@@ -294,12 +297,12 @@ export class SchedulerCard extends LitElement {
   }
 
   selectEntity(entity: string): void {
-    this._entry = Object.assign({ ...this._entry }, { entity: entity });
+    this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity });
     if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
   }
 
   getActions() {
-    if (!this._entry.entity) {
+    if (!this._entry || !this._entry.entity) {
       return html`
           <div class="card-section">
             <div class="header">${localize('fields.action')}</div>
@@ -321,7 +324,7 @@ export class SchedulerCard extends LitElement {
       `;
     }
     if (actions.length == 1) this.selectAction(actions[0].id);
-    let options_list = actions.filter(e => { return e.id != RoutineAction.id }).map((el: IActionElement) => {
+    let options_list = actions.map((el: IActionElement) => {
       return html`
         <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
           ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
@@ -330,20 +333,20 @@ export class SchedulerCard extends LitElement {
       `;
     });
 
-    let createRoutineButton = [html``];
-    createRoutineButton = actions.filter(e => { return e.id == RoutineAction.id }).map((el: IActionElement) => {
-      return html`
+    let createTimelineButton = html`
         <div class="card-section first">
           <div class="header">or</div>
           <div class="option-list">
-            <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
-              ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-              ${PrettyPrintName(el.name)}
+            <mwc-button class="${this._entry.action == CreateTimeline ? ' active' : ''}" @click="${() => { this.selectAction(CreateTimeline) }}">
+              <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
+              Create timeline
             </mwc-button>
           </div>
         </div>
       `;
-    });
+
+
+    createTimelineButton = html``;
 
     return html`
           <div class="card-section">
@@ -352,12 +355,30 @@ export class SchedulerCard extends LitElement {
               ${options_list}
             </div>
           </div>
-          ${createRoutineButton}
+          ${createTimelineButton}
       `;
   }
 
   selectAction(action: string): void {
-    this._entry = Object.assign({ ...this._entry }, <IEntry>{ action: action });
+    let actionCfg = this.Config.FindAction(this._entry.entity, action);
+    let entry = { ...this._entry };
+    if (!actionCfg) {
+      if (action == CreateTimeline) this._entry = Object.assign({ ...this._entry }, <IEntry>{ action: CreateTimeline });
+      return;
+    }
+
+    if (entry.action == action) Object.assign(entry, <IEntry>{ action: '' });
+    else Object.assign(entry, <IEntry>{ action: action });
+    if (actionCfg.variable) {
+      if (actionCfg.variable.type == EVariableType.Level) {
+        Object.assign(entry, <IEntry>{ variable: { type: EVariableType.Level, value: (actionCfg.variable as ILevelVariableConfig).min, enabled: !(actionCfg.variable as ILevelVariableConfig).optional } });
+      }
+      else if (actionCfg.variable.type == EVariableType.List) {
+        Object.assign(entry, <IEntry>{ variable: { type: EVariableType.List, value: (actionCfg.variable as IListVariableConfig).options[0].value } });
+      }
+    }
+    this._entry = entry;
+    this._entries[this._activeEntry!] = this._entry;
   }
 
   showEditor(): TemplateResult {
@@ -455,36 +476,16 @@ export class SchedulerCard extends LitElement {
       Object.assign(daysCfg, { custom_days: day_list });
     }
     this._entry = Object.assign({ ...this._entry }, <IEntry>{ days: daysCfg });
+    if (this._activeEntry === null) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
   }
 
   showRoutineEditor(): TemplateResult {
-    let entity = this.Config.FindEntity(this._entry.entity);
+    let entity = this.Config.FindEntity(this._entries[0].entity);
+    if (!entity) return html``;
+
+    let actions = this.Config.GetActionsForEntity(entity.id);
     let action = this.Config.FindAction(this._entry.entity, this._entry.action);
-    if (!entity || !action) return html``;
 
-    let actions = this.Config.GetActionsForEntity(this._entry.entity).filter(e => e.routine);
-    let activeSlot = this._slotNum !== null ? this._slots[this._slotNum] : null;
-    let activeAction = activeSlot ? actions.find(e => { return e.id == activeSlot!.action }) : null;
-
-    //if (!this.selection.plannerSlots) Object.assign(this.selection, { plannerSlots: defaultRoutineSlots });
-
-    if (this._slotNum !== null && activeAction && activeAction.variable) {
-      let slots = [... this._slots];
-      let activeSlot: ITimeSlot = { ...slots[this._slotNum] };
-
-      if (this._entry.variable?.type == EVariableType.Level) {
-        let variable = this._entry.variable as ILevelVariable;
-        Object.assign(activeSlot, <ITimeSlot>{ variable: { value: variable.value, enabled: variable.enabled } });
-      }
-      else if (this._entry.variable?.type == EVariableType.List) {
-        let variable = this._entry.variable as IListVariable;
-        Object.assign(activeSlot, <ITimeSlot>{ variable: { value: variable.value } });
-      }
-      slots[this._slotNum] = activeSlot;
-      this._slots = slots;
-    }
-
-    if (!entity || !action) return html``;
     return html`
     <div class="card-section first">
       <div class="header">${localize('fields.action')}</div>
@@ -502,10 +503,10 @@ export class SchedulerCard extends LitElement {
         </div>
         <div class="summary-action">
           <div class="summary-icon">
-            ${action.icon ? html`<ha-icon icon="${PrettyPrintIcon(action.icon)}"></ha-icon>` : ''}
+            <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"></ha-icon>
           </div>
           <div class="summary-text">
-            ${PrettyPrintName(action.name)}
+            Create Timeline
           </div>
         </div>
       </div>
@@ -516,8 +517,9 @@ export class SchedulerCard extends LitElement {
       <div class="header">${localize('fields.time')}</div>
       <timeslot-editor
         actions=${JSON.stringify(actions)}
-        slots=${JSON.stringify(this._slots)}
         @update=${this.handlePlannerUpdate}
+        temperatureunit=${this._config.temperature_unit}
+        entries=${JSON.stringify(this._entries)}
       >
       </timeslot-editor>
     </div>
@@ -527,7 +529,8 @@ export class SchedulerCard extends LitElement {
         <div class="text-field">${this.getPlannerActions()}</div>
       </div>
     </div>
-     ${activeAction && activeAction.variable ? this.getLevelPanel(activeAction.variable as ILevelVariableConfig, true) : ''}
+     ${action && this._entry.variable && this._entry.variable.type == EVariableType.Level ? this.getLevelPanel(action.variable as ILevelVariableConfig, true) : ''}
+     ${action && this._entry.variable && this._entry.variable.type == EVariableType.List ? this.getListPanel(action.variable as IListVariableConfig, true) : ''}
 
     <div class="card-section last">
       <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
@@ -538,35 +541,34 @@ export class SchedulerCard extends LitElement {
   }
 
   handlePlannerUpdate(e: CustomEvent) {
-    let el = e.target as HTMLInputElement;
-
-    if (e.detail.hasOwnProperty('slot')) {
-      let num = Number(e.detail.slot);
-      this._slotNum = num;
-
-      let activeSlot = this._slots[num];
-      if (activeSlot.variable) {
-        let variable = activeSlot.variable as ILevelVariable; //TBD
-        Object.assign(this._entry, { variable: { level: Number(variable.value), levelEnabled: variable.enabled } });
-      }
-      else Object.assign(this._entry, { variable: undefined });
-
-    } else if (e.detail.hasOwnProperty('slots')) {
-      let slots: ITimeSlot[] = e.detail.slots;
-      this._slots = [...slots];
+    if (e.detail.hasOwnProperty('entries')) {
+      let entries: IEntry[] = e.detail.entries;
+      if (entries.length < this._entries.length && this._activeEntry == (this._entries.length - 1)) this._activeEntry = this._entries.length - 2;
+      this._entries = [...entries];
+      if (this._activeEntry !== null) this._entry = this._entries[this._activeEntry];
     }
-    this.requestUpdate();
+    else if (e.detail.hasOwnProperty('entry')) {
+      if (this._activeEntry !== null) this._entries[this._activeEntry] = this._entry;
+      if (e.detail.entry !== null) {
+        let activeEntry = Number(e.detail.entry);
+
+        this._activeEntry = activeEntry;
+        this._entry = this._entries[activeEntry];
+      }
+      else {
+        this._activeEntry = null;
+        this._entry = { ... this._entry };
+      }
+    }
   }
 
 
   getPlannerActions() {
-    if (this._slotNum === null) return html`<div class="text-field">select a timeslot first</div>`;
+    if (this._activeEntry === null) return html`<div class="text-field">Select a timeslot first</div>`;
     let actions = this.Config.GetActionsForEntity(this._entry.entity);
-    let activeSlot = this._slots[this._slotNum];
-
-    return actions.filter(e => { return e.id != RoutineAction.id }).map((el: IActionElement) => {
+    return actions.map((el: IActionElement) => {
       return html`
-        <mwc-button class="${activeSlot.action == el.id ? ' active' : ''}" @click="${() => { this.selectPlannerAction(el) }}">
+        <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
           ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.name)}
         </mwc-button>
@@ -574,32 +576,8 @@ export class SchedulerCard extends LitElement {
     });
   }
 
-  selectPlannerAction(action: IActionElement) {
-    let slots: ITimeSlot[] = [... this._slots];
-    let activeSlot = { ...slots[this._slotNum!] };
-    Object.assign(activeSlot, { action: (activeSlot.action == action.id) ? null : action.id });
-
-    if (activeSlot.action && action.variable) {
-      if (action.variable.type == EVariableType.Level) {
-        let variable = activeSlot.variable as ILevelVariable;
-        let cfg = action.variable as ILevelVariableConfig;
-        Object.assign(this._entry, {
-          variable: {
-            level: variable.value !== undefined ? variable.value : cfg.min,
-            levelEnabled: variable.enabled !== undefined ? variable.enabled : !cfg.optional
-          }
-        });
-      }
-    }
-
-    slots[this._slotNum!] = activeSlot;
-    this._slots = slots;
-    this.requestUpdate();
-  }
-
-
   getLevelPanel(cfg: ILevelVariableConfig, updateCard: boolean = false): TemplateResult {
-    if (!cfg.unit.length && cfg.field == FieldTemperature) Object.assign(cfg, { unit: this._config.temperature_unit });
+    if (!cfg.unit.length && cfg.field == FieldTemperature) cfg = Object.assign({ ...cfg }, { unit: this._config.temperature_unit });
     let variable = this._entry.variable as ILevelVariable;
     return html`
     <div class="card-section">
@@ -622,20 +600,19 @@ export class SchedulerCard extends LitElement {
 
   updateLevel(e: Event, updateCard: boolean) {
     let el = e.target as HTMLInputElement;
-    if (!this._entry.variable) return;
 
     let variable: ILevelVariable = { type: EVariableType.Level, value: Number(el.value), enabled: String(el.disabled) == "false" };
     Object.assign(this._entry, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 
-  getListPanel(cfg: IListVariableConfig): TemplateResult {
+  getListPanel(cfg: IListVariableConfig, updateCard: boolean = false): TemplateResult {
     let options = cfg.options;
     let fields;
     if (!options.length) fields = html`<div class="text-field">${localize('instructions.no_entries_defined')}</div>`;
     else fields = options.map((el: IListVariableOption) => {
       return html`
-        <mwc-button class="${this._entry.variable?.value == el.value ? ' active' : ''}" @click="${() => { this.selectListItem(el.value) }}">
+        <mwc-button class="${this._entry.variable?.value == el.value ? ' active' : ''}" @click="${() => { this.selectListItem(el.value, updateCard) }}">
           ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
           ${PrettyPrintName(el.value)}
         </mwc-button>
@@ -649,14 +626,16 @@ export class SchedulerCard extends LitElement {
      </div>`;
   }
 
-  selectListItem(val: string) {
+  selectListItem(val: string, updateCard: boolean) {
     let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    this._entry = Object.assign({ ...this._entry }, { variable: variable });
+    Object.assign(this._entry, { variable: variable });
+    if (updateCard) this.requestUpdate();
   }
 
   private _addItemClick() {
     this.newItem = true;
     this.newItemConfirmed = false;
+    this._timeline = true;
     this._entry = { ...DefaultEntry };
     let groups = this.Config.GetGroups();
     if (groups.length == 1) {
@@ -673,38 +652,24 @@ export class SchedulerCard extends LitElement {
   private _confirmItemClick() {
     this.newItemConfirmed = true;
     let actionCfg = this.Config.FindAction(this._entry.entity, this._entry.action);
-    if (actionCfg && actionCfg!.variable) {
-      let cfg;
-      if (actionCfg?.variable.type == EVariableType.Level) {
-        let levelConfig = actionCfg.variable as ILevelVariableConfig;
-        cfg = <ILevelVariable>{ type: EVariableType.Level, value: null, enabled: !levelConfig.optional };
-      }
-      else if (actionCfg?.variable.type == EVariableType.List) {
-        let listConfig = actionCfg.variable as IListVariableConfig;
-        cfg = <IListVariable>{ type: EVariableType.List, value: listConfig.options[0].value };
-      }
-      this._entry = Object.assign(this._entry, <IEntry>{ variable: cfg });
+    if (actionCfg) {
+      this._entries = [this._entry];
+      this._activeEntry = 0;
+      this._timeline = false;
+    }
+    else if (this._entry.action == CreateTimeline) {
+      this._timeline = true;
+      this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: this._entry.entity }));
+      this._entry = this._entries[0];
+      this._activeEntry = null;
     }
   }
 
   _saveItemClick() {
-    let data: IHassData, entries: IEntry[];
-    if (this._entry.action == RoutineAction.id) {
-      let slots = this._slots.filter(e => e.action);
-      entries = slots.map(e => {
-        return Object.assign({ ...e }, <IEntry>{
-          time: { value: e.startTime },
-          days: this._entry.days,
-          action: e.action!,
-          entity: this._entry.entity,
-        });
-      });
-    }
-    else {
-      entries = [this._entry];
-    }
+    let entries = this._entries;
+    if (this._activeEntry !== null) entries[this._activeEntry] = this._entry;
 
-    data = ExportToHass(entries, this.Config);
+    let data = ExportToHass(entries, this.Config);
 
     if (this.newItem) {
       this._hass!.callService('scheduler', 'add', data);
@@ -733,9 +698,10 @@ export class SchedulerCard extends LitElement {
     }
     else {
       this._entry = { ...item.entries[0] };
-      this._slots = calculateTimeSlots(item.entries);
-      this._slotNum = null;
+      this._entries = item.entries;
+      this._activeEntry = 0;
     }
     this.editItem = entity_id;
+    this._timeline = false;
   }
 }
