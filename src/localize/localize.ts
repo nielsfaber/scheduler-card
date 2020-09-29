@@ -72,7 +72,7 @@ export const ServiceNameTranslations = {
   open_cover: 'services.open_cover',
   close_cover: 'services.close_cover',
   set_temperature: 'services.set_temperature',
-  set_cover_position: 'services.set_cover_position',
+  set_cover_position: 'services.set_position',
   set_hvac_mode: 'services.set_hvac_mode',
   set_preset_mode: 'services.set_preset_mode',
   set_value: 'services.set_value',
