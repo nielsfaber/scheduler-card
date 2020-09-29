@@ -7,7 +7,7 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  validate:
+  hacs_validate:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v2"
@@ -16,3 +16,11 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
+  eslint_validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: yarn
+    - name: Run ESLint
+      run: eslint . --ext .js,.ts
