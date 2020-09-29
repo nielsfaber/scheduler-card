@@ -25,6 +25,6 @@ jobs:
     - name: Install modules
       run: |
         npm install
-    - uses: stefanoeb/eslint-action@1.0.2
-      with:
-        files: src/
+    - name: Run ESLint
+      run: |
+        eslint . --ext .js,.ts
