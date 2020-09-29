@@ -112,9 +112,8 @@ export function daysToArray(dayCfg: IDays): number[] {
 export function ArraytoDays(input: number[]): IDays {
   let alldays = [1, 2, 3, 4, 5, 6, 7], weekdays = [1, 2, 3, 4, 5];
   let dayArray = [...input].sort().filter(e => e != 0);
-
-  if (dayArray.every((e, i) => e == alldays[i])) return { type: EDayType.Daily, custom_days: [] };
-  else if (dayArray.every((e, i) => e == weekdays[i])) return { type: EDayType.Weekdays, custom_days: [] };
+  if (dayArray.length == alldays.length && dayArray.every((e, i) => e == alldays[i])) return { type: EDayType.Daily, custom_days: [] };
+  else if (dayArray.length == weekdays.length && dayArray.every((e, i) => e == weekdays[i])) return { type: EDayType.Weekdays, custom_days: [] };
   else return { type: EDayType.Custom, custom_days: dayArray };
 }
 
