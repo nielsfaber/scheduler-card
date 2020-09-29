@@ -24,7 +24,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install modules
       run: |
+        npm init
         npm install eslint --save-dev
-        npm install eslint --save-dev
+        npx eslint --init
     - name: Run ESLint
       run: npx eslint . --ext .js,.ts
