@@ -89,9 +89,9 @@ function extendActionVariables(cfg: IActionConfig, entity: IHassEntity) {
   return obj;
 }
 
-export function exportVariableServiceData(input: ILevelVariable | IListVariable, cfg: ILevelVariableConfig | IListVariableConfig): IDictionary<string> {
+export function exportVariableServiceData(input: ILevelVariable | IListVariable, cfg: ILevelVariableConfig | IListVariableConfig): IDictionary<string | number> {
   if (input.type == EVariableType.Level) {
-    if ((input as ILevelVariable).enabled) return { [cfg.field]: String(input.value) };
+    if ((input as ILevelVariable).enabled) return { [cfg.field]: Number(input.value) };
     else return {};
   }
   else if (input.type == EVariableType.List) {
