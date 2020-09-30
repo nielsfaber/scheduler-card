@@ -1,10 +1,18 @@
-import { IDictionary, IEntityElement, IEntityConfig, IHassEntity, IActionElement, IActionConfig } from "./types";
-import { getDomainFromEntityId, extend, omit, keyMap, removeDomainFromEntityId, MatchPattern, mapObject, pick } from "./helpers";
-import { DefaultEntityIcon } from "./const";
+import { IDictionary, IEntityElement, IEntityConfig, IHassEntity, IActionElement, IActionConfig } from './types';
+import {
+  getDomainFromEntityId,
+  extend,
+  omit,
+  keyMap,
+  removeDomainFromEntityId,
+  MatchPattern,
+  mapObject,
+  pick,
+} from './helpers';
+import { DefaultEntityIcon } from './const';
 
 import { default as standardConfig } from './standard-configuration.json';
-import { getActionId } from "./action";
-
+import { getActionId } from './action';
 
 export function IsSchedulerEntity(entity_id: string) {
   return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
@@ -17,10 +25,14 @@ export class EntityList {
   customize: IDictionary<IEntityConfig> = {};
   standard_configuration: boolean = true;
 
-  constructor() {
-  }
+  constructor() {}
 
-  SetConfig(cfg: { include?: string[], exclude?: string[], customize?: IDictionary<IEntityConfig>, standard_configuration: boolean }) {
+  SetConfig(cfg: {
+    include?: string[];
+    exclude?: string[];
+    customize?: IDictionary<IEntityConfig>;
+    standard_configuration: boolean;
+  }) {
     this.standard_configuration = cfg.standard_configuration;
     this.include = cfg.include || [];
     this.exclude = cfg.exclude || [];
@@ -29,23 +41,23 @@ export class EntityList {
 
   InConfig(entity_id: string) {
     if (IsSchedulerEntity(entity_id)) return false;
-    if (!this.include.find(e => MatchPattern(e, entity_id))) return false;
-    if (this.exclude.find(e => MatchPattern(e, entity_id))) return false;
+    if (!this.include.find((e) => MatchPattern(e, entity_id))) return false;
+    if (this.exclude.find((e) => MatchPattern(e, entity_id))) return false;
     return true;
   }
 
   Find(entity_id: string) {
-    return this.entities.find(el => el.id == entity_id);
+    return this.entities.find((el) => el.id == entity_id);
   }
 
   Get(entities: string[] | string = []): IEntityElement[] {
     let output: IEntityElement[] = [];
-    if (!entities || !entities.length) output = [... this.entities];
+    if (!entities || !entities.length) output = [...this.entities];
     else {
       let list = Array.isArray(entities) ? entities : [entities];
-      list.filter(e => this.Find(e) !== undefined).forEach(e => output.push({ ...this.entities[e] }));
+      list.filter((e) => this.Find(e) !== undefined).forEach((e) => output.push({ ...this.entities[e] }));
     }
-    output.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    output.sort((a, b) => (a.name > b.name ? 1 : -1));
     return output;
   }
 
@@ -55,14 +67,14 @@ export class EntityList {
       id: entity_id,
       name: removeDomainFromEntityId(entity_id),
       icon: DefaultEntityIcon,
-      actions: []
-    }
+      actions: [],
+    };
     data = <IEntityElement>extend(data, omit(cfg, ['actions']));
     this.entities.push(data);
   }
 
   Set(entity_id: string, cfg: Partial<IEntityElement>) {
-    if (!this.Find(entity_id)) throw (`Entity '${entity_id}' does not exist`);
+    if (!this.Find(entity_id)) throw `Entity '${entity_id}' does not exist`;
     for (var i = 0; i < this.entities.length; i++) {
       if (this.entities[i].id == entity_id) {
         let entity = this.entities[i];
@@ -91,7 +103,7 @@ export class EntityList {
 
     cfg = extend(cfg, {
       name: entity.attributes.friendly_name,
-      icon: entity.attributes.icon
+      icon: entity.attributes.icon,
     });
 
     Object.entries(this.customize).forEach(([pattern, customCfg]) => {
@@ -108,28 +120,14 @@ export class EntityList {
     return cfg;
   }
 
-
   AddAction(entity_id: string, action: IActionElement) {
     let entity = this.Find(entity_id);
     if (!entity) throw Error(`Entity '${entity_id}' must be created before actions can be assigned`);
 
-    if (entity.actions.find(el => el.id == action.id)) return;
+    if (entity.actions.find((el) => el.id == action.id)) return;
 
     let actions = [...entity.actions];
     actions.push(action);
     this.Set(entity_id, { actions: actions });
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,5 +1,4 @@
 name: Validate
-
 on:
   push:
   pull_request:
@@ -8,7 +7,9 @@ on:
 
 jobs:
   validate:
+  hacs_validate:
     runs-on: "ubuntu-latest"
+    name: "HACS validation"
     steps:
       - uses: "actions/checkout@v2"
       - name: HACS validation
@@ -16,3 +17,14 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
+  eslint_validate:
+    runs-on: "ubuntu-latest"
+    name: "ESLint validate"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: |
+        npm install
+    - name: Run ESLint
+      run: |
+        npx eslint src/ --ext js,ts || true

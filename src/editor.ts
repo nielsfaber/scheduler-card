@@ -27,13 +27,28 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       <div class="card-section first">
         <div><b>Title of the card</b></div>
         <div>
-          <mwc-button class="${this.getTitleOption() == 'standard' ? ' active' : ''}" @click="${() => { this.updateTitleOption('standard') }}">
+          <mwc-button
+            class="${this.getTitleOption() == 'standard' ? ' active' : ''}"
+            @click="${() => {
+              this.updateTitleOption('standard');
+            }}"
+          >
             Standard
           </mwc-button>
-          <mwc-button class="${this.getTitleOption() == 'hidden' ? ' active' : ''}" @click="${() => { this.updateTitleOption('hidden') }}">
+          <mwc-button
+            class="${this.getTitleOption() == 'hidden' ? ' active' : ''}"
+            @click="${() => {
+              this.updateTitleOption('hidden');
+            }}"
+          >
             Hidden
           </mwc-button>
-          <mwc-button class="${this.getTitleOption() == 'custom' ? ' active' : ''}" @click="${() => { this.updateTitleOption('custom') }}">
+          <mwc-button
+            class="${this.getTitleOption() == 'custom' ? ' active' : ''}"
+            @click="${() => {
+              this.updateTitleOption('custom');
+            }}"
+          >
             Custom
           </mwc-button>
         </div>
@@ -41,12 +56,25 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       </div>
       <div class="card-section">
         <div><b>Show all schedules</b></div>
-        <div class="text-field">This sets the 'discover existing' parameter.<br> Disable if you want to use multiple scheduler-cards.</div>
+        <div class="text-field">
+          This sets the 'discover existing' parameter.<br />
+          Disable if you want to use multiple scheduler-cards.
+        </div>
         <div>
-          <mwc-button class="${this.getDiscoveryOption() ? ' active' : ''}" @click="${() => { this.updateDiscoveryOption(true) }}">
+          <mwc-button
+            class="${this.getDiscoveryOption() ? ' active' : ''}"
+            @click="${() => {
+              this.updateDiscoveryOption(true);
+            }}"
+          >
             On
           </mwc-button>
-          <mwc-button class="${this.getDiscoveryOption() ? '' : ' active'}" @click="${() => { this.updateDiscoveryOption(false) }}">
+          <mwc-button
+            class="${this.getDiscoveryOption() ? '' : ' active'}"
+            @click="${() => {
+              this.updateDiscoveryOption(false);
+            }}"
+          >
             Off
           </mwc-button>
         </div>
@@ -54,10 +82,20 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       <div class="card-section">
         <div><b>Time display</b></div>
         <div>
-          <mwc-button class="${this.getAmPmOption() ? '' : ' active'}" @click="${() => { this.updateAmPmOption(false) }}">
+          <mwc-button
+            class="${this.getAmPmOption() ? '' : ' active'}"
+            @click="${() => {
+              this.updateAmPmOption(false);
+            }}"
+          >
             24 hours
           </mwc-button>
-          <mwc-button class="${this.getAmPmOption() ? ' active' : ''}" @click="${() => { this.updateAmPmOption(true) }}">
+          <mwc-button
+            class="${this.getAmPmOption() ? ' active' : ''}"
+            @click="${() => {
+              this.updateAmPmOption(true);
+            }}"
+          >
             AM/PM
           </mwc-button>
         </div>
@@ -67,13 +105,13 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         <div class="text-field">Resolution (in minutes) for creating schedules</div>
         <div>
           <variable-slider
-            min=1
-            max=30
-            step=1
-            value=${this.getTimeStepOption()}      
+            min="1"
+            max="30"
+            step="1"
+            value=${this.getTimeStepOption()}
             unit=" min"
-            optional=false
-            disabled=false
+            optional="false"
+            disabled="false"
             @change=${this.updateTimeStepOption}
           >
           </variable-slider>
@@ -90,28 +128,28 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   private getTitleOption() {
     if (!this._config || !this.hass) return 'standard';
     if (this._config.title === undefined) return 'standard';
-    if (typeof this._config.title == "string") return 'custom';
+    if (typeof this._config.title == 'string') return 'custom';
     if (this._config.title == false) return 'hidden';
     else return 'standard';
   }
 
   getTitleCustom() {
     return html`
-        <div>
-          <paper-input
-            label="Custom title"
-            .value=${this.getTitle()}
-            .configValue=${'name'}
-            @value-changed=${this.updateTitle}
-          ></paper-input>
-        </div>
+      <div>
+        <paper-input
+          label="Custom title"
+          .value=${this.getTitle()}
+          .configValue=${'name'}
+          @value-changed=${this.updateTitle}
+        ></paper-input>
+      </div>
     `;
   }
 
   private getTitle() {
     if (!this._config || !this.hass) return localize('scheduler');
     if (this._config.title === undefined) return localize('scheduler');
-    if (typeof this._config.title == "string") return this._config.title;
+    if (typeof this._config.title == 'string') return this._config.title;
     if (this._config.title == false) return '';
     else return localize('scheduler');
   }
@@ -124,8 +162,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       if ('title' in this._config) {
         delete config.title;
       }
-    }
-    else if (type == 'hidden') {
+    } else if (type == 'hidden') {
       Object.assign(config, { title: false });
     }
     this._config = config;
@@ -171,7 +208,6 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     fireEvent(this, 'config-changed', { config: this._config });
   }
 
-
   getTimeStepOption() {
     if (!this._config || !this.hass) return;
     let time_step = this._config.hasOwnProperty('time_step') ? this._config.time_step : DefaultUserConfig.time_step;
@@ -191,62 +227,64 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
     let includedDomains = this._config.include ? [...this._config.include] : [];
-    return Object.entries(standardConfig).filter(([, v]) => v.hasOwnProperty('actions')).map(([domain, cfg]) => {
-      let enabled = includedDomains.includes(domain);
-      let count = Object.keys(this.hass!.states).filter(e => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e)).length;
-      if (!count) return ``;
-      return html`
-          <div class="list-item" @click="${() => { this.toggleSelectDomain(domain) }}">
+    return Object.entries(standardConfig)
+      .filter(([, v]) => v.hasOwnProperty('actions'))
+      .map(([domain, cfg]) => {
+        let enabled = includedDomains.includes(domain);
+        let count = Object.keys(this.hass!.states).filter(
+          (e) => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e),
+        ).length;
+        if (!count) return ``;
+        return html`
+          <div
+            class="list-item"
+            @click="${() => {
+              this.toggleSelectDomain(domain);
+            }}"
+          >
             <div class="list-item-icon">
               ${cfg.icon ? html`<ha-icon icon="${PrettyPrintIcon(cfg.icon)}"></ha-icon>` : ''}
             </div>
-            <div class="list-item-name">
-              ${domain}
-            </div>
-            <div class="list-item-action">
-              ${count} ${count == 1 ? 'entity' : 'entities'}
-            </div>
+            <div class="list-item-name">${domain}</div>
+            <div class="list-item-action">${count} ${count == 1 ? 'entity' : 'entities'}</div>
             <div class="list-item-switch">
-              ${this.selectedDomain == domain ? html`<ha-icon-button icon="mdi:chevron-down"></ha-icon-button>` : html`<ha-icon-button icon="mdi:chevron-right"></ha-icon-button>`}
+              ${this.selectedDomain == domain
+                ? html`<ha-icon-button icon="mdi:chevron-down"></ha-icon-button>`
+                : html`<ha-icon-button icon="mdi:chevron-right"></ha-icon-button>`}
             </div>
           </div>
           ${this.selectedDomain == domain ? this.getEntitySwitches(domain) : ''}
-      `;
-    });
+        `;
+      });
   }
 
   getEntitySwitches(domain: string) {
     if (!this._config || !this.hass) return;
     let includedEntities = this._config.include ? [...this._config.include] : [];
-    return Object.entries(this.hass.states).filter(([e,]) => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e)).map(([entity_id, cfg]) => {
-      let name = cfg.attributes.friendly_name || removeDomainFromEntityId(entity_id);
-      //let icon = cfg.attributes.icon || standardConfig[domain].icon || null;
-      let enabled = includedEntities.includes(entity_id);
-      return html`
+    return Object.entries(this.hass.states)
+      .filter(([e]) => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e))
+      .map(([entity_id, cfg]) => {
+        let name = cfg.attributes.friendly_name || removeDomainFromEntityId(entity_id);
+        //let icon = cfg.attributes.icon || standardConfig[domain].icon || null;
+        let enabled = includedEntities.includes(entity_id);
+        return html`
           <div class="list-item" @click="${() => this.toggleSelectEntity(entity_id)}">
-            <div class="list-item-icon">
-              
-            </div>
-            <div class="list-item-name">
-              ${name}
-            </div>
-            <div class="list-item-action">
-              ${entity_id}
-            </div>
+            <div class="list-item-icon"></div>
+            <div class="list-item-name">${name}</div>
+            <div class="list-item-action">${entity_id}</div>
             <div class="list-item-switch">
               ${enabled ? html`<ha-switch checked="checked"></ha-switch>` : html`<ha-switch></ha-switch>`}
             </div>
           </div>
-      `;
-    })
+        `;
+      });
   }
 
   toggleSelectDomain(domain: string) {
     if (!this._config || !this.hass) return;
     if (this.selectedDomain != domain) {
       this.selectedDomain = domain;
-    }
-    else {
+    } else {
       this.selectedDomain = '';
     }
   }
@@ -255,7 +293,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     let includedEntities = this._config.include ? [...this._config.include] : [];
     if (!includedEntities.includes(entity_id)) includedEntities.push(entity_id);
-    else includedEntities = includedEntities.filter(e => e != entity_id);
+    else includedEntities = includedEntities.filter((e) => e != entity_id);
     includedEntities.sort();
     this._config = Object.assign({ ...this._config }, { include: includedEntities });
     fireEvent(this, 'config-changed', { config: this._config });

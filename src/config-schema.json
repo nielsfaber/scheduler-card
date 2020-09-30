@@ -12,10 +12,7 @@
       "type": "boolean"
     },
     "title": {
-      "type": [
-        "boolean",
-        "string"
-      ]
+      "type": ["boolean", "string"]
     },
     "am_pm": {
       "type": "boolean"
@@ -61,18 +58,14 @@
             }
           }
         },
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "additionalProperties": false
       }
     },
     "customize": {
       "type": "object",
       "additionalProperties": {
-        "type": [
-          "object"
-        ],
+        "type": ["object"],
         "properties": {
           "icon": {
             "type": "string"
@@ -127,9 +120,7 @@
                           "type": "boolean"
                         }
                       },
-                      "required": [
-                        "field"
-                      ],
+                      "required": ["field"],
                       "additionalProperties": false
                     },
                     {
@@ -155,24 +146,18 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "value"
-                            ],
+                            "required": ["value"],
                             "additionalProperties": false
                           }
                         }
                       },
-                      "required": [
-                        "field"
-                      ],
+                      "required": ["field"],
                       "additionalProperties": false
                     }
                   ]
                 }
               },
-              "required": [
-                "service"
-              ],
+              "required": ["service"],
               "additionalProperties": false
             }
           }

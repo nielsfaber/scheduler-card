@@ -1,5 +1,3 @@
-
-
 import * as de from './languages/de.json';
 import * as en from './languages/en.json';
 import * as es from './languages/es.json';
@@ -13,8 +11,8 @@ import * as pt_br from './languages/pt-br.json';
 import * as ru from './languages/ru.json';
 
 type HassElement = {
-  hass?: any
-}
+  hass?: any;
+};
 
 var languages: any = {
   de: de,
@@ -35,7 +33,6 @@ var languages: any = {
 };
 
 export function localize(string: string, search: string = '', replace: string = '') {
-
   const lang = getLanguage();
 
   var translated: string;
@@ -58,13 +55,11 @@ export function localize(string: string, search: string = '', replace: string = 
 export function getLanguage(): string {
   let lang = localStorage.getItem('selectedLanguage')?.replace(/['"]+/g, '').replace('-', '_');
   if (!lang || lang == 'null') {
-    const hass = (document.querySelector("home-assistant") as HassElement).hass;
-    lang = hass.selectedLanguage || hass.language || "en"
+    const hass = (document.querySelector('home-assistant') as HassElement).hass;
+    lang = hass.selectedLanguage || hass.language || 'en';
   }
   return String(lang);
 }
-
-
 
 export const ServiceNameTranslations = {
   turn_on: 'services.turn_on',
@@ -79,8 +74,7 @@ export const ServiceNameTranslations = {
   select_option: 'services.select_option',
   select_source: 'services.select_source',
   start: 'services.start',
-}
-
+};
 
 export const DomainNameTranslations = {
   camera: 'domains.camera',
@@ -95,5 +89,5 @@ export const DomainNameTranslations = {
   media_player: 'domains.media_player',
   scene: 'domains.scene',
   switch: 'domains.switch',
-  vacuum: 'domains.vacuum'
-}
+  vacuum: 'domains.vacuum',
+};

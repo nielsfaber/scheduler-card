@@ -1,51 +1,69 @@
-
-import { IEntry, IDictionary, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
+import {
+  IEntry,
+  IDictionary,
+  IActionElement,
+  IListVariable,
+  ILevelVariable,
+  ILevelVariableConfig,
+  IListVariableConfig,
+  EVariableType,
+} from './types';
 import { localize } from './localize/localize';
 import { formatTime, ITime, wrapTime, ETimeEvent, IDays, EDayType } from './date-time';
-import { UnitPercent, FieldTemperature } from "./const";
+import { UnitPercent, FieldTemperature } from './const';
 
-
-export function extend(oldObj: IDictionary<any> | any[], newObj: IDictionary<any> | any[], options: Partial<{ compact: boolean, overwrite: boolean }> = {}) {
+export function extend(
+  oldObj: IDictionary<any> | any[],
+  newObj: IDictionary<any> | any[],
+  options: Partial<{ compact: boolean; overwrite: boolean }> = {},
+) {
   let mergedObj = Array.isArray(oldObj) ? [...oldObj] : { ...oldObj };
   if (oldObj === null) mergedObj = Array.isArray(newObj) ? [] : {};
   if (newObj === null || newObj === undefined) return oldObj;
   let keys = Object.keys(newObj);
-  keys.forEach(key => {
+  keys.forEach((key) => {
     let val = newObj[key];
     if (val === undefined) return;
     if (val === null && options.compact) {
       if (mergedObj[key] !== undefined) delete mergedObj[key];
       return;
     }
-    if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite) val = extend(mergedObj[key], val, options);
-    else if (typeof val == "object" && val !== null && typeof mergedObj[key] == "object" && !options.overwrite) val = extend(mergedObj[key], val, options);
+    if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite)
+      val = extend(mergedObj[key], val, options);
+    else if (typeof val == 'object' && val !== null && typeof mergedObj[key] == 'object' && !options.overwrite)
+      val = extend(mergedObj[key], val, options);
     if (Array.isArray(newObj)) {
       if (val !== null) {
         if (options.overwrite) mergedObj = val;
         else mergedObj.push(val);
       }
     } else {
-      if ((Array.isArray(val) || typeof val == "object") && val !== null && !Object.keys(val).length && options.compact) {
+      if (
+        (Array.isArray(val) || typeof val == 'object') &&
+        val !== null &&
+        !Object.keys(val).length &&
+        options.compact
+      ) {
         delete mergedObj[key];
         return;
       }
       Object.assign(mergedObj, { [key]: val });
     }
-  })
+  });
   return mergedObj;
 }
 
 export function pick(obj: IDictionary<any> | null | undefined, keys: string[]): IDictionary<any> {
   if (!obj) return {};
   return Object.entries(obj)
-    .filter(([key,]) => keys.includes(key))
+    .filter(([key]) => keys.includes(key))
     .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 }
 
 export function omit(obj: IDictionary<any> | null | undefined, keys: string[]): IDictionary<any> {
   if (!obj) return {};
   return Object.entries(obj)
-    .filter(([key,]) => !keys.includes(key))
+    .filter(([key]) => !keys.includes(key))
     .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 }
 
@@ -98,35 +116,40 @@ export function PrettyPrintDays(days: IDays): string {
   }
 }
 
-export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: number | null, sunset: number | null }): string {
-  let amPmFormat = (options.amPm) ? options.amPm : false;
+export function PrettyPrintTime(
+  time: ITime,
+  options: { amPm: boolean; sunrise: number | null; sunset: number | null },
+): string {
+  let amPmFormat = options.amPm ? options.amPm : false;
 
   if (!time.event) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
 
-  let time_string = "unknown";
-  let event_string = "";
+  let time_string = 'unknown';
+  let event_string = '';
   if (time.event === ETimeEvent.Sunrise && options.sunrise !== null) {
     let time_with_offset = wrapTime(Number(options.sunrise) + time.value);
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
-    event_string = "sunrise";
-  }
-  else if (time.event == ETimeEvent.Sunset && options.sunset !== null) {
+    event_string = 'sunrise';
+  } else if (time.event == ETimeEvent.Sunset && options.sunset !== null) {
     let time_with_offset = wrapTime(Number(options.sunset) + time.value);
     time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
-    event_string = "sunset";
+    event_string = 'sunset';
   }
 
   if (Math.abs(time.value) == 0) return `${localize('words.at')} ${localize(`words.${time.event}`)} (${time_string})`;
-  else return `${formatTime(time.value, { absolute: true }).time} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${localize(`words.${event_string}`)} (${time_string})`;
+  else
+    return `${formatTime(time.value, { absolute: true }).time} ${
+      formatTime(time.value).signed ? localize('words.before') : localize('words.after')
+    } ${localize(`words.${event_string}`)} (${time_string})`;
 }
 
 export function PrettyPrintName(input: string): string {
-  if (typeof input != typeof "x") input = String(input);
+  if (typeof input != typeof 'x') input = String(input);
   return capitalize(input.replace(/_/g, ' '));
 }
 
 export function PrettyPrintIcon(input: string): string {
-  if (typeof input != typeof "x") input = String(input);
+  if (typeof input != typeof 'x') input = String(input);
   if (input.match(/^[a-z]+:[a-z0-9-]+$/i)) return input;
   return `hass:${input}`;
 }
@@ -141,11 +164,14 @@ export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement, opti
   return capitalize(action_string);
 }
 
-
-export function PrettyPrintActionVariable(input: ILevelVariable | IListVariable, cfg: ILevelVariableConfig | IListVariableConfig, options: { temperature_unit: string }): string {
+export function PrettyPrintActionVariable(
+  input: ILevelVariable | IListVariable,
+  cfg: ILevelVariableConfig | IListVariableConfig,
+  options: { temperature_unit: string },
+): string {
   if (input.type == EVariableType.Level) {
     cfg = cfg as ILevelVariableConfig;
-    let unit = 'unit' in cfg ? cfg.unit : "";
+    let unit = 'unit' in cfg ? cfg.unit : '';
     if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
     let value = Number(input.value);
     if (cfg.unit == UnitPercent) {
@@ -154,13 +180,10 @@ export function PrettyPrintActionVariable(input: ILevelVariable | IListVariable,
       else if (value > cfg.max) value = cfg.max;
     }
     return `${value}${unit}`;
-  }
-  else {
+  } else {
     return String(input.value);
   }
 }
-
-
 
 export function capitalize(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
@@ -177,8 +200,7 @@ export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<
     }
 
     return true;
-  }
-  else if (typeof inA == "object" && typeof inB == "object") {
+  } else if (typeof inA == 'object' && typeof inB == 'object') {
     let objA = { ...inA };
     let objB = { ...inB };
     const keysA = Object.keys(objA);
@@ -191,35 +213,29 @@ export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<
     for (const key of keysA) {
       const valA = objA[key];
       const valB = objB[key];
-      const areObjects = typeof valA == "object" && typeof valB == "object" && valA !== null && valB !== null;
-      if (areObjects && !IsEqual(valA, valB) || !areObjects && valA !== valB) return false;
+      const areObjects = typeof valA == 'object' && typeof valB == 'object' && valA !== null && valB !== null;
+      if ((areObjects && !IsEqual(valA, valB)) || (!areObjects && valA !== valB)) return false;
     }
 
     return true;
-  }
-  else return false;
-};
-
+  } else return false;
+}
 
 export function MatchPattern(pattern: string, entity_id: string) {
   let res = false;
   if (pattern.match(/^[a-z0-9_\.]+$/)) {
     if (entity_id.startsWith(pattern)) res = true;
-  }
-  else {
+  } else {
     try {
       if ((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {
         if (!pattern.startsWith('/')) {
-          pattern = pattern
-            .replace(/\./g, '\.')
-            .replace(/\*/g, '.*');
+          pattern = pattern.replace(/\./g, '.').replace(/\*/g, '.*');
           pattern = `/^${pattern}$/`;
         }
         let regex = new RegExp(pattern.slice(1, -1));
         res = regex.test(entity_id);
       }
-    }
-    catch (e) { }
+    } catch (e) {}
   }
   return res;
 }
