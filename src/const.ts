@@ -2,7 +2,7 @@
 import { IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
 import { parseTimestamp, EDayType, MinutesPerDay } from './date-time'
 
-export const CARD_VERSION = "1.6.1"
+export const CARD_VERSION = "1.6.2"
 
 export const DefaultUserConfig: IUserConfig = {
   sunrise: null,

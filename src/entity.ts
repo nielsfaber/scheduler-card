@@ -89,20 +89,21 @@ export class EntityList {
         actionCfg = extend(actionCfg, keyMap(standardConfig[domain].actions!, getActionId));
     }
 
-    Object.entries(this.customize).forEach(([pattern, cfg]) => {
+    cfg = extend(cfg, {
+      name: entity.attributes.friendly_name,
+      icon: entity.attributes.icon
+    });
+
+    Object.entries(this.customize).forEach(([pattern, customCfg]) => {
       if (!MatchPattern(pattern, entity_id)) return;
-      cfg = extend(cfg, omit(cfg, ['actions']));
-      if (cfg.actions) customActionCfg = extend(customActionCfg, keyMap(cfg.actions!, getActionId));
+      cfg = extend(cfg, omit(customCfg, ['actions']));
+      if (customCfg.actions) customActionCfg = extend(customActionCfg, keyMap(customCfg.actions!, getActionId));
     });
     if (Object.keys(customActionCfg).length) {
       actionCfg = pick(actionCfg, Object.keys(customActionCfg));
       actionCfg = extend(actionCfg, customActionCfg);
     }
 
-    cfg = extend(cfg, {
-      name: entity.attributes.friendly_name,
-      icon: entity.attributes.icon
-    });
 
     cfg = extend(cfg, { actions: Object.values(actionCfg) });
     return cfg;
