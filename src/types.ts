@@ -1,6 +1,7 @@
 
 
 import { ITime, IDays } from './date-time';
+import { LovelaceCardConfig } from 'custom-card-helpers';
 
 export interface IDictionary<TValue> {
   [id: string]: TValue;
@@ -26,10 +27,16 @@ export interface IHassEntity {
 
 export interface IGroupElement {
   id: string,
-  domains: string[],
   entities: string[],
   name: string,
   icon: string,
+}
+
+export interface IGroupConfig {
+  name: string,
+  icon: string,
+  include: string[],
+  exclude?: string[]
 }
 
 /* entities */
@@ -45,14 +52,6 @@ export interface IEntityConfig {
   name?: string,
   icon?: string
   actions?: IActionConfig[]
-}
-
-export interface IDomainConfig {
-  icon?: string,
-  name?: string,
-  actions?: IActionConfig[]
-  include?: string[],
-  exclude?: string[]
 }
 
 /* actions */
@@ -158,15 +157,6 @@ export interface IScheduleEntry {
 
 /* config */
 
-export interface IConfig {
-  groups?: IDictionary<Partial<IGroupElement>>,
-  domains?: IDictionary<IDomainConfig>,
-  entities?: IDictionary<IEntityConfig>,
-  discover_existing?: boolean,
-  standard_configuration?: boolean,
-}
-
-
 export interface IUserConfig {
   sunrise: number | null,
   sunset: number | null,
@@ -176,6 +166,21 @@ export interface IUserConfig {
   temperature_unit: string
   is_admin: boolean
 }
+
+
+
+export interface ICardConfig extends LovelaceCardConfig {
+  discover_existing?: boolean,
+  standard_configuration?: boolean,
+  title?: boolean | string,
+  am_pm?: boolean,
+  time_step?: number,
+  include?: string[],
+  exclude?: string[],
+  groups?: IGroupConfig[],
+  customize?: IDictionary<IEntityConfig>,
+}
+
 
 /* interface */
 

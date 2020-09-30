@@ -1,4 +1,38 @@
 {
+  "alarm_control_panel": {
+    "icon": "alarm-light-outline",
+    "actions": [
+      {
+        "service": "alarm_arm_home",
+        "name": "arm home",
+        "icon": "home-outline",
+        "supported_feature": 1
+      },
+      {
+        "service": "alarm_arm_away",
+        "name": "arm away",
+        "icon": "exit-run",
+        "supported_feature": 2
+      },
+      {
+        "service": "alarm_arm_night",
+        "name": "arm night",
+        "icon": "power-sleep",
+        "supported_feature": 4
+      },
+      {
+        "service": "alarm_arm_custom_bypass",
+        "name": "arm custom bypass",
+        "icon": "shield-lock-outline",
+        "supported_feature": 8
+      },
+      {
+        "service": "alarm_disarm",
+        "name": "disarm",
+        "icon": "lock-open-variant-outline"
+      }
+    ]
+  },
   "camera": {
     "icon": "camera"
   },
@@ -302,6 +336,19 @@
       {
         "service": "turn_off",
         "icon": "lightbulb-off-outline"
+      }
+    ]
+  },
+  "lock": {
+    "icon": "lock-open-outline",
+    "actions": [
+      {
+        "service": "unlock",
+        "icon": "lock-open-variant-outline"
+      },
+      {
+        "service": "lock",
+        "icon": "lock-outline"
       }
     ]
   },

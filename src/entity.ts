@@ -1,5 +1,5 @@
-import { IDictionary, IDomainConfig, IEntityElement, IEntityConfig, IHassEntity, IActionElement, IActionConfig } from "./types";
-import { getDomainFromEntityId, extend, omit, keyMap, filterObject, removeDomainFromEntityId } from "./helpers";
+import { IDictionary, IEntityElement, IEntityConfig, IHassEntity, IActionElement, IActionConfig } from "./types";
+import { getDomainFromEntityId, extend, omit, keyMap, removeDomainFromEntityId, MatchPattern, mapObject, pick } from "./helpers";
 import { DefaultEntityIcon } from "./const";
 
 import { default as standardConfig } from './standard-configuration.json';
@@ -11,37 +11,27 @@ export function IsSchedulerEntity(entity_id: string) {
 }
 
 export class EntityList {
-  domainConfig: IDictionary<IDomainConfig> = {};
-  entityConfig: IDictionary<IEntityConfig> = {};
   entities: IEntityElement[] = [];
+  include: string[] = [];
+  exclude: string[] = [];
+  customize: IDictionary<IEntityConfig> = {};
   standard_configuration: boolean = true;
 
   constructor() {
   }
 
-  SetConfig(cfg: { domains: IDictionary<IDomainConfig>, entities: IDictionary<IDomainConfig>, standard_configuration: boolean }) {
-    this.domainConfig = cfg.domains;
-    this.entityConfig = cfg.entities;
+  SetConfig(cfg: { include?: string[], exclude?: string[], customize?: IDictionary<IEntityConfig>, standard_configuration: boolean }) {
     this.standard_configuration = cfg.standard_configuration;
-  }
-
-  InDomainCfg(entity_id: string) {
-    let domain = getDomainFromEntityId(entity_id);
-    if (!(domain in this.domainConfig)) return false;
-    let domainCfg = this.domainConfig[domain];
-    if (typeof domainCfg == "boolean" && !domainCfg) return false;
-    if (domainCfg?.include && !domainCfg.include.includes(entity_id)) return false;
-    if (domainCfg?.exclude && domainCfg.exclude.includes(entity_id)) return false;
-    return true;
-  }
-
-  InEntityCfg(entity_id: string) {
-    return (entity_id in this.entityConfig);
+    this.include = cfg.include || [];
+    this.exclude = cfg.exclude || [];
+    this.customize = cfg.customize || {};
   }
 
   InConfig(entity_id: string) {
     if (IsSchedulerEntity(entity_id)) return false;
-    return (this.InDomainCfg(entity_id) || this.InEntityCfg(entity_id));
+    if (!this.include.find(e => MatchPattern(e, entity_id))) return false;
+    if (this.exclude.find(e => MatchPattern(e, entity_id))) return false;
+    return true;
   }
 
   Find(entity_id: string) {
@@ -91,43 +81,28 @@ export class EntityList {
       actions: [],
     };
     let actionCfg: IDictionary<IActionConfig> = {};
-
-    let actionFilter: string[] = [];
+    let customActionCfg: IDictionary<IActionConfig> = {};
 
     if (standardConfig[domain] && this.standard_configuration) {
       cfg = extend(cfg, omit(standardConfig[domain], ['actions']));
-      //if (this.domainConfig[domain] === undefined || this.domainConfig[domain] === null || typeof this.domainConfig[domain] != "boolean" || this.domainConfig[domain]) {
       if (standardConfig[domain]?.actions)
         actionCfg = extend(actionCfg, keyMap(standardConfig[domain].actions!, getActionId));
-      //}
+    }
+
+    Object.entries(this.customize).forEach(([pattern, cfg]) => {
+      if (!MatchPattern(pattern, entity_id)) return;
+      cfg = extend(cfg, omit(cfg, ['actions']));
+      if (cfg.actions) customActionCfg = extend(customActionCfg, keyMap(cfg.actions!, getActionId));
+    });
+    if (Object.keys(customActionCfg).length) {
+      actionCfg = pick(actionCfg, Object.keys(customActionCfg));
+      actionCfg = extend(actionCfg, customActionCfg);
     }
 
     cfg = extend(cfg, {
       name: entity.attributes.friendly_name,
       icon: entity.attributes.icon
     });
-
-    if (this.InDomainCfg(entity_id)) {
-      cfg = extend(cfg, omit(this.domainConfig[domain], ['actions']));
-      if (this.domainConfig[domain] && this.domainConfig[domain].actions) {
-        let domainActionCfg = keyMap(this.domainConfig[domain].actions!, getActionId);
-        actionCfg = extend(actionCfg, domainActionCfg);
-        actionFilter = actionFilter.concat(Object.keys(domainActionCfg));
-      }
-    }
-
-    if (this.InEntityCfg(entity_id)) {
-      cfg = extend(cfg, omit(this.entityConfig[entity_id], ['actions']));
-      if (this.entityConfig[entity_id] && this.entityConfig[entity_id].actions) {
-        let entityActionCfg = keyMap(this.entityConfig[entity_id].actions!, getActionId);
-        actionCfg = extend(actionCfg, entityActionCfg);
-        actionFilter = actionFilter.concat(Object.keys(entityActionCfg));
-      }
-    }
-
-    if (actionFilter.length) {
-      actionCfg = filterObject(actionCfg, (_, key) => actionFilter.includes(key));
-    }
 
     cfg = extend(cfg, { actions: Object.values(actionCfg) });
     return cfg;

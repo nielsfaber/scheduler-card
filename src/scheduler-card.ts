@@ -1,9 +1,9 @@
 
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import { Config } from './config';
-import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption } from './types'
+import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption, ICardConfig } from './types'
 import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, IsEqual, pick, filterObject } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
@@ -16,6 +16,7 @@ import { IsSchedulerEntity } from './entity';
 import './time-picker';
 import './variable-slider';
 import './timeslot-editor';
+import './editor';
 
 
 (window as any).customCards = (window as any).customCards || [];
@@ -35,6 +36,9 @@ console.info(
 
 @customElement('scheduler-card')
 export class SchedulerCard extends LitElement {
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
+    return document.createElement('scheduler-card-editor') as LovelaceCardEditor;
+  }
 
   static get styles(): CSSResult {
     return styles;
@@ -110,9 +114,9 @@ export class SchedulerCard extends LitElement {
     this.scheduleItems = Object.values(entities).map(e => ImportFromHass(e, this.Config)).filter(e => e) as IScheduleEntry[];
   }
 
-  setConfig(config) {
+  setConfig(config: ICardConfig) {
     ValidateConfig(config);
-    const userCfgKeys = ['groups', 'domains', 'entities', 'discover_existing', 'standard_configuration'];
+    const userCfgKeys = ['discover_existing', 'standard_configuration', 'include', 'exclude', 'groups', 'customize'];
     this._config = Object.assign({ ...this._config }, pick(config, Object.keys(this._config)));
     this.Config.setUserConfig(pick(config, userCfgKeys));
   }
@@ -169,7 +173,7 @@ export class SchedulerCard extends LitElement {
       </ha-card>
       `;
     }
-    else {
+    else if (this._entries.length && this._timeline) {
       return html`
       <ha-card>
         ${this.getTitle()}
@@ -177,6 +181,14 @@ export class SchedulerCard extends LitElement {
       </ha-card>
       `;
     }
+    return html`
+      <ha-card>
+        ${this.getTitle()}
+        <div class="card-section first">
+          Something went wrong, refresh the page.
+        </div>
+      </ha-card>
+      `;;
   }
 
   private getTitle() {
@@ -297,8 +309,10 @@ export class SchedulerCard extends LitElement {
   }
 
   selectEntity(entity: string): void {
-    this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity });
-    if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
+    if (this._entry.entity != entity) {
+      this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity, action: '' });
+      if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
+    }
   }
 
   getActions() {
@@ -323,7 +337,7 @@ export class SchedulerCard extends LitElement {
           </div>
       `;
     }
-    if (actions.length == 1) this.selectAction(actions[0].id);
+    if (actions.length == 1 && !this._entry.action) this.selectAction(actions[0].id);
     let options_list = actions.map((el: IActionElement) => {
       return html`
         <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
@@ -693,14 +707,10 @@ export class SchedulerCard extends LitElement {
     let item = this.scheduleItems.find(e => e.id == entity_id);
     if (!item) return;
 
-    if (item.entries.length == 1) {
-      this._entry = { ...item.entries[0] };
-    }
-    else {
-      this._entry = { ...item.entries[0] };
-      this._entries = item.entries;
-      this._activeEntry = 0;
-    }
+    this._entry = { ...item.entries[0] };
+    this._entries = item.entries;
+    this._activeEntry = 0;
+
     this.editItem = entity_id;
     this._timeline = false;
   }

@@ -1,6 +1,6 @@
 
-import { IEntityConfig, IActionConfig, IDictionary, IDomainConfig, IGroupElement, IHassEntity } from './types'
-import { DefaultDomainConfig, DiscoveredEntitiesGroup } from './const';
+import { IEntityConfig, IActionConfig, IDictionary, IGroupElement, IHassEntity, IGroupConfig } from './types'
+import { DiscoveredEntitiesGroup } from './const';
 import { EntityList, IsSchedulerEntity } from './entity';
 import { CreateAction, GetActionConfig, reverseParseAction, importHassAction } from './action';
 import { GroupList } from './group';
@@ -19,18 +19,12 @@ export class Config {
     this.groups = new GroupList();
   }
 
-  setUserConfig(cfg: Partial<{ entities: IDictionary<IEntityConfig>, domains: IDictionary<IDomainConfig>, groups: IDictionary<Partial<IGroupElement>>, discover_existing: boolean, standard_configuration: boolean }>) {
+  setUserConfig(cfg: Partial<{ include: string[], exclude: string[], groups: IGroupConfig[], customize: IDictionary<IEntityConfig>, discover_existing: boolean, standard_configuration: boolean }>) {
     if (cfg.discover_existing !== undefined) this.discover_existing = cfg.discover_existing;
     if (cfg.standard_configuration !== undefined) this.standard_configuration = cfg.standard_configuration;
 
-    let entityConfig: IDictionary<IEntityConfig> = cfg.entities || {};
-    let domainConfig: IDictionary<IDomainConfig> = this.standard_configuration ? DefaultDomainConfig : {};
-    let groupConfig: IDictionary<Partial<IGroupElement>> = cfg.groups || {};
-
-    Object.assign(domainConfig, cfg.domains);
-
-    this.entities.SetConfig({ entities: entityConfig, domains: domainConfig, standard_configuration: this.standard_configuration });
-    this.groups.SetConfig({ groups: groupConfig, standard_configuration: this.standard_configuration });
+    this.entities.SetConfig({ include: cfg.include, exclude: cfg.exclude, customize: cfg.customize, standard_configuration: this.standard_configuration });
+    this.groups.SetConfig({ groups: cfg.groups, standard_configuration: this.standard_configuration });
   }
 
   GetGroups() {
@@ -40,7 +34,6 @@ export class Config {
   GetEntitiesForGroup(group_id: string) {
     let group = this.groups.Find(group_id);
     if (!group) return [];
-
     return this.entities.Get().filter(e => this.groups.InGroup(group_id, e.id));
   }
 
@@ -121,5 +114,6 @@ export class Config {
       }
       this.groups.Add(DiscoveredEntitiesGroup, group);
     }
+
   }
 }

@@ -12,31 +12,20 @@
 - [Configuration](#configuration)
   - [Introduction](#introduction-1)
   - [Overview](#overview)
-  - [Quick start guide: using the standard configuration](#quick-start-guide-using-the-standard-configuration)
-    - [Adding a domain](#adding-a-domain)
-    - [Removing a domain](#removing-a-domain)
-    - [Adding or removing specific entities](#adding-or-removing-specific-entities)
+  - [Standard configuration](#standard-configuration)
+  - [Adding entities](#adding-entities)
+    - [Include](#include)
+    - [Exclude](#exclude)
+  - [Groups](#groups)
   - [Schedule discovery](#schedule-discovery)
-  - [Using multiple cards](#using-multiple-cards)
-    - [Step 1: Make sure your configuration has no overlap](#step-1-make-sure-your-configuration-has-no-overlap)
-    - [Step 2: Disable the schedule discovery](#step-2-disable-the-schedule-discovery)
-  - [Domains](#domains)
-    - [Options](#options)
-    - [Examples](#examples)
-  - [Entities](#entities)
-    - [Options](#options-1)
-    - [Examples](#examples-1)
-  - [Actions](#actions)
-    - [Options](#options-2)
+  - [Customization](#customization)
+    - [Actions](#actions)
     - [Numeric action variable](#numeric-action-variable)
     - [List action variable](#list-action-variable)
-  - [Groups](#groups)
-    - [Options](#options-3)
-    - [Examples](#examples-2)
 - [Translations](#translations)
 - [FAQ](#faq)
   - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
-  - [*How do i check which version i am using?*](#how-do-i-check-which-version-i-am-using)
+  - [*How do I check which version I am using?*](#how-do-i-check-which-version-i-am-using)
   - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
   - [*Why is there no such scheduler in HA yet?*](#why-is-there-no-such-scheduler-in-ha-yet)
 - [Troubleshooting](#troubleshooting)
@@ -212,99 +201,98 @@ The standard configuration consists of the following:
 
 ### Overview
 
-| Name                   | Type              | Default      | Available from | Description                                                                                                                          |
-| ---------------------- | ----------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| type                   | string            | **Required** | -              | `custom:scheduler-card`                                                                                                              |
-| domains                | map               | none         | v1.0.0         | Configure options for multiple entities of same domain. <br>See [here](#domains) for information about domain configuration options. |
-| entities               | map               | none         | v1.0.0         | Configure options for a individual entities. <br>See [here](#entities) for information about entities configuration options.         |
-| groups                 | map               | none         | v1.0.0         | Organize the entities menu. <br>See [here](#groups) for information about group configuration options.                               |
-| discover_existing      | boolean           | True         | v1.2.0         | Always show the existing schedules, also if the related entities are not included in the configuration.                              |
-| standard_configuration | boolean           | True         | v1.2.0         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                         |
-| title                  | boolean or string | True         | v1.2.8         | Provide your own name to overwrite the title of the card, or set to _false_ to hide the title.                                       |
-| am_pm                  | boolean           | False        | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                               |
-| time_step              | number            | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                   |
+| Name                     | Type           | Default      | Available from | Description                                                                                                                                                                                                                                |
+| ------------------------ | -------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`                   | string         | **Required** | -              | `custom:scheduler-card`                                                                                                                                                                                                                    |
+| `standard_configuration` | boolean        | *true*       | v1.2.0         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                                                                                                                               |
+| `discover_existing`      | boolean        | *true*       | v1.2.0         | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info. |
+| `include`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                            |
+| `exclude`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                    |
+| `groups`                 | list           | none         | v1.0.0         | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                       |
+| `customize`              | dictionary     | none         | v1.6.0         | Customize the available actions or visualization of entities.                                                                                                                                                                              |
+| `title`                  | boolean/string | *true*       | v1.2.8         | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                     |
+| `am_pm`                  | boolean        | *false*      | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                                                                                                                                     |
+| `time_step`              | number         | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                                                                                                                         |
 
-:warning: **Tip**: It is possible to use multiple scheduler-cards in your HA config. In this case it is recommended to set `discover_existing:false` and `standard_configuration:false` in both cards to avoid duplicates.
 
-### Quick start guide: using the standard configuration
+### Standard configuration
 
-By default, the card will show your `climate`, `cover`, `fan`, `light`, `switch` entities.
-These types are called _domains_ in HA and thus are referred to as _domains_ configuration in the card.
+The card includes a _standard configuration_.
+It is intended to make setting up the card easy.
+The standard configuration has actions defined for most types of entities in Home assistant.
 
-The standard configuration has the same effect as putting the following in your card:
+When including an entity, the standard configuration will automatically detect which actions are supported by it, and will make these available.
+
+Also it has icons for most entity types and actions.
+
+If you would rather set up your own configuration of entities and actions, you can provide `standard_configuration:false` to disable it.
+
+### Adding entities
+
+#### Include
+
+The `include` configuration allows you to pick entities from your HA config that you can use for creating schedules.
+
+You can either provide the full `entity_id` of the entities, or only the domain.
+
+The list supports wildcards (*) as well. It is recommended to use quotes ("") around your input, else it may be wrongly interpretated.
+
+<u>Example:</u>
+
 ```yaml
-domains:
-  climate:
-  cover:
-  fan:
-  light:
-  switch:
+include:
+  - climate.my_thermostat # include an individual entity
+  - light # include all light entities
+  - "*garden*" # include all entities containing the word 'garden'
+  ...
 ```
-If you don't like this set of devices, you can make changes to it.
+:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
 
-#### Adding a domain
 
-You can add `<domain_name>:` to include additional domains to the standard configuration.
+#### Exclude
 
-Example: *"I would like to be able to run `script`s with the scheduler"*
+The `exclude` configuration allows you to remove entities from your HA config from appearing in the scheduler.
+
+The `exclude` list works on top of the `include` list, so it behaves like *'ADD (includes) EXCEPT (excludes)'*.
+
+Like with `include`, you can either provide the full `entity_id` of the entities, or the domain, or use wildcards.
+
 
 ```yaml
-domains:
-  script:
+include:
+  - light # include all light entities
+exclude:
+  - light.my_light_that_i_never_use # exclude
 ```
-:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a  [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
 
-#### Removing a domain
 
-You can use `<domain_name>:false` to exclude it from the standard configuration.
+### Groups
+The `groups` configuration provides the capability of organizing the entities.
+To be clear, they have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
 
-Example: *"I don't want `fan` entities to show up, but the others can stay"*
+By default, entities will be grouped based on their type (domain). 
+Entities that are assigned to your own defined group will not be grouped by type.
 
+| Name    | Type   | Default            | Description                                                                                                                                                                         |
+| ------- | ------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                            |
+| icon    | string | none               | Displayed icon for group                                                                                                                                                            |
+| include | list   | none               | List of filter to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card. |
+| exclude | list   | none               | [domains](#domains) to be added in this group                                                                                                                                       |
+
+<u>Example:</u>
+
+*Place all `light` entities in group labelled "lighting"*
 ```yaml
-domains:
-  fan: false
-```
-:warning: **Note**: This notation is only applicable for `climate`, `cover`, `fan`, `light`, `switch`, since they are included by default.
-
-
-#### Adding or removing specific entities
-
-If you don't want to have the complete list of all entities in that domain, there are two options for achieving this:
-1. By applying filtering to the domain
-2. By providing `entities` configuration
-
-
-If you don't want to customize specific entities (changing the displayed name/icon, showing specific actions), it's best to use the domain filtering.
-
-Domain filtering is done using the `include` and `exclude` options.
-With `include` you can specify which entities to add and with `exclude` you can specify which entities to hide.
-You shouldn't use them together.
-
-Scenario: *“I have a lot of lights in my house, but I only want to control some of them with the scheduler.”*
-
-Use the include option to specify which lights you want to add:
-
-```yaml
-domains:
-  light:
+groups:
+  - name: "Lighting"
+    icon: ceiling-light
     include:
-      - light.my_light_1
-      - light.my_light_2
-      - light.my_light_3
-    # rest of domain config (actions, icon, etc.)
+      - light
 ```
-Scenario: *“I have a lot of lights in my house, but I only want to control all but some of them with the scheduler.”*
+Result:
 
-Use the exclude option to specify which lights you want to be ignored:
-
-```yaml
-domains:
-  light:
-    exclude:
-      - light.my_light_that_i_never_use
-    # rest of domain config (actions, icon, ...)
-```
-
+![groups example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/groups_example.png?raw=true)
 
 ### Schedule discovery
 
@@ -325,109 +313,23 @@ The feature can be turned on/off through the `discover_existing` option.
 
 For your protection, it is enabled by default.
 
+:warning: **Tip**: You should set `discover_existing:false` if you want to use multiple cards. Else you will see each created schedule in every card.
 
 
-### Using multiple cards
+### Customization
+With the `customize` configuration you can specify configuration for specific HA entities.
 
-It is possible to use multiple scheduler-cards in your Lovelace configuration.
+:warning: **Tip**: You can use entities `configuration` in combination with the standard configuration. The configurations will be merged.
 
-For doing this, you can follow these steps.
+| Name    | Type   | Default               | Description                                                                                                 |
+| ------- | ------ | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| entity  | key    | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities. |
+| actions | list   | none                  | See [actions](#actions)                                                                                     |
+| name    | string | (take from HA config) | Displayed name for entity                                                                                   |
+| icon    | string | (take from HA config) | Displayed icon for entity                                                                                   |
 
-#### Step 1: Make sure your configuration has no overlap
-
-The easiest way to split is to split by _domain_. But it is also possible to make different grouping (for example by room): make use of the `entities` configuration (or domain filtering) if so.
-
-Example: *"I want one card for lights, and one card for thermostats."*
-
-Apply filtering to the _standard configuration_, to hide the domains that you don't want to see.
-
-Card one (only has `light` enabled):
-```yaml
-title: "My lights"
-domains:
-  climate: false
-  cover: false
-  fan: false
-  switch: false
-```
-Card two (only has `climate` enabled):
-```yaml
-title: "My thermostats"
-domains:
-  cover: false
-  fan: false
-  light: false
-  switch: false
-```
-
-#### Step 2: Disable the schedule discovery
-If you have multiple cards defined, you don't want the running schedules to appear twice.
-
-Provide `discover_existing: false` to both cards, to prevent the unwanted schedules to show up. Only schedules matching your `domain` / `entities` configuration will show up.
-
-### Domains
-With the `domains` configuration you can specify configuration options for multiple HA entities of the same type (domain).
-
-#### Options
-
-:warning: **Tip**: By default, ALL entities that you have in HA under the configured domain will show up in the card. If you don't want this, then use `include` or `exclude` option to filter the entity ids that you want to add.
-
-| Name    | Type   | Default      | Description                                                                |
-| ------- | ------ | ------------ | -------------------------------------------------------------------------- |
-| domain  | key    | **Required** | Entity domain from home assistant                                          |
-| actions | list   | none         | See [actions](#actions)                                                    |
-| icon    | string | none         | Displayed icon for entities in the domain (overwrites HA config)           |
-| include | list   | none         | Filter the entities for this domain, only add the entity_ids in this list  |
-| exclude | list   | none         | Filter the entities for this domain, leave out the entity_ids in this list |
-
-
-#### Examples
-Scenario: *"I want to be able to turn on/off all the lamps in my house"*
-```yaml
-domains:
-  light:
-    actions:
-      - service: turn_on
-      - service: turn_off
-```
-
-### Entities
-With the `entities` configuration you can specify configuration for specific HA entities.
-
-#### Options
-
-
-:warning: **Tip**: You can use entities `configuration` in combination with `domains` configuration, the configurations will be merged. The `entities` configuration will overwrite `domains` configuration.
-
-| Name    | Type   | Default               | Description                   |
-| ------- | ------ | --------------------- | ----------------------------- |
-| entity  | key    | **Required**          | Entity id from home assistant |
-| actions | list   | none                  | See [actions](#actions)       |
-| name    | string | (take from HA config) | Displayed name for entity     |
-| icon    | string | (take from HA config) | Displayed icon for entity     |
-
-#### Examples
-For adding an action to turn on a light with 40% brightness, and styling the light with a custom icon and name:
-  ```yaml
-entities:
-    light.my_lamp:
-      name: "Dining light"
-      icon: ceiling-light
-      actions:
-        - service: turn_on
-          service_data:
-            brightness: 40
-          name: "Turn on at 40%"
-          icon: lightbulb-on-outline
-  ```
-Result:
-
-![entities example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/entities_example.png?raw=true)
-
-### Actions
+#### Actions
 An action defines **what** needs to be done when a schedule timer expires.
-
-#### Options
 
 An action is similar to a [service call](https://www.home-assistant.io/docs/scripts/service-calls/) in HA. It requires a `service` with optionally additional parameters given by `service_data`.
 
@@ -441,8 +343,27 @@ Actions are linked to their entities, so the entity ID is sent together with the
 | name         | string | (same as service) | Displayed name for action                               |
 | icon         | string | "flash"           | Displayed icon for action                               |
 
-
 :warning: **Note**: Templates (jinja code) are not supported at this point.
+
+<u>Example:</u>
+
+*Adding an action to turn on a light with 40% brightness*
+  ```yaml
+entities:
+    light.my_lamp:
+      name: "Dining light"
+      icon: ceiling-light
+      actions:
+        - service: turn_on
+          service_data:
+            brightness: 100 # note that brightness is from 0-255 so 100 = 40%
+          name: "Turn on at 40%"
+          icon: lightbulb-on-outline
+  ```
+Result:
+
+![customize example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/entities_example.png?raw=true)
+
 
 #### Numeric action variable
 
@@ -465,14 +386,16 @@ By providing an action variable, the card allows you to choose the setting you w
 
 The Xiaomi Air Purifier can be controlled using the [Xiaomi Miio](https://www.home-assistant.io/integrations/xiaomi_miio/#service-xiaomi_miiofan_set_favorite_level-air-purifiers-only) integration.
 To be able to set the speed of this device in your action, you can use:
-```
-- service: xiaomi_miio.fan_set_favorite_level
-  name: "set speed"
-  variable:
-    field: level
-    name: "Speed"
-    min: 1
-    max: 16
+```yaml
+customize:
+  fan.xiaomi_purifier:
+    - service: xiaomi_miio.fan_set_favorite_level
+      name: "set speed"
+      variable:
+        field: level
+        name: "Speed"
+        min: 1
+        max: 16
 ```
 You can now select the speed for this action in the schedule editor:
 
@@ -485,14 +408,14 @@ For example, setting the value of an `input_select`, but also the operation mode
 
 By providing the list variable, the card allows you to choose the option when you set up the action.
 
-| Name     | Type   | Default       | Description                                                                   |
-| -------- | ------ | ------------- | ----------------------------------------------------------------------------- |
-| field    | string | **Required**  | field name in the `service_data` that is represented by this variable         |
-| name     | string | same as field | Name under which the variable is visible in the card                          |
-| options  | list   | **Required**  | List of options to choose from                                                |
-| -- value | string | **Required**  | Option value (which is passed with together with the field as `service_data`) |
-| -- name  | string | same as value | Name to show for the option                                                   |
-| -- icon  | string | none          | Icon to show with the option                                                  |
+| Name                          | Type   | Default       | Description                                                                   |
+| ----------------------------- | ------ | ------------- | ----------------------------------------------------------------------------- |
+| field                         | string | **Required**  | field name in the `service_data` that is represented by this variable         |
+| name                          | string | same as field | Name under which the variable is visible in the card                          |
+| options                       | list   | **Required**  | List of options to choose from                                                |
+| &nbsp;&nbsp;&nbsp;&nbsp;value | string | **Required**  | Option value (which is passed with together with the field as `service_data`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;name  | string | same as value | Name to show for the option                                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;icon  | string | none          | Icon to show with the option                                                  |
 
 **Example**
 
@@ -501,63 +424,33 @@ Setting the operation mode of a thermostat.
 Note that this configuration will already be set up when using _standard configuration_.
 
 ```yaml
-        entities:
-          climate.my_thermostat:
-            name: My thermostat
-            icon: thermometer
-            actions:
-              - service: set_hvac_mode
-                name: Set mode
-                icon:
-                variable:
-                  field: hvac_mode
-                  name: Operation mode
-                  options:
-                    - value: heat
-                      icon: fire
-                    - value: cool
-                      icon: snowflake
-                    - value: 'off'
-                      icon: power
+customize:
+  climate.my_thermostat:
+    name: My thermostat
+    icon: thermometer
+    actions:
+      - service: set_hvac_mode
+        name: Set mode
+        icon:
+        variable:
+          field: hvac_mode
+          name: Operation mode
+          options:
+            - value: heat
+              icon: fire
+            - value: cool
+              icon: snowflake
+            - value: 'off'
+              icon: power
 ```
 Now the list of options become visible when you set up the action:
 
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_list_example.png?raw=true)
 
-### Groups
-The `groups` configuration provides the capability of organizing the entities.
-They have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
-
-#### Options
-
-:warning: **Tip**: The card will automatically create groups based on the domains of the entities in your configuration. If you're OK with this, you don't need to configure `groups`.
-
-| Name     | Type   | Default            | Description                                     |
-| -------- | ------ | ------------------ | ----------------------------------------------- |
-| group_id | key    | **Required**       | Identifier for group                            |
-| name     | string | (same as group_id) | Displayed name for group                        |
-| icon     | string | none               | Displayed icon for group                        |
-| entities | list   | none               | [entities](#entities) to be added in this group |
-| domains  | list   | none               | [domains](#domains) to be added in this group   |
-
-#### Examples
-Simple example: Place all `light` entities in group labelled "lighting" (this is part of the standard configuration):
-```yaml
-groups:
-  lights:
-    name: "Lighting"
-    icon: ceiling-light
-    domains: [light]
-```
-Result:
-
-![groups example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/groups_example.png?raw=true)
 
 ## Translations
 
 The card is available in multiple languages. The card will automatically detect the appropriate translation based on the language setting for your user account in HA.
-
-:warning: **Important**: The language setting for your HA account is stored in the browser cache. If a translation does not work for you as expected, you should try to update your language setting on that specific device. The scheduler-card _attempts_ to update the cache based on the HA configuration as a workaround.
 
 Currently the following languages are supported:
 
@@ -609,7 +502,7 @@ Currently this is considered the best option.
 
 Example: _Turn on my thermostat at X degrees. but only if my window is closed_
 
-First create the `script` (for setting up scripts see [here](https://www.home-assistant.io/integrations/script/)):
+Create the `script` (for setting up scripts see [here](https://www.home-assistant.io/integrations/script/)):
 ```yaml
 my_script:
   fields:
@@ -626,21 +519,9 @@ my_script:
 ```
 To add the newly created script to HA you need to restart HA (or run 'reload scripts').
 
-Now, add the `script` entity to the card:
-```yaml
-type: custom:scheduler-card
-(...)
-entities:
-  script.my_script:
-    name: My thermostat script
-    actions:
-      - service: script.my_script # service is the same as entity_id for scripts
-        name: set temperature
-        variable: # add action variable to show a slider for choosing the temperature
-          field: temperature
-```
+Now make sure to `include` it in the scheduler-card and you should be able to schedule a *run* action for it.
 
-### *How do i check which version i am using?*
+### *How do I check which version I am using?*
 
 In your browser, open the console log. This is usually accessible from the developer tools (MS Edge: F12, Chrome: ctrl+shift+i). There should be a badge titled _"SCHEDULER-CARD"_ with the version number included.
 

@@ -1,8 +1,8 @@
 
-import { IDictionary, IDomainConfig, IActionElement, IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
-import { parseTimestamp, HoursPerDay, MinutesPerHour, EDayType, MinutesPerDay } from './date-time'
+import { IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
+import { parseTimestamp, EDayType, MinutesPerDay } from './date-time'
 
-export const CARD_VERSION = "1.5.2"
+export const CARD_VERSION = "1.6.0"
 
 export const DefaultUserConfig: IUserConfig = {
   sunrise: null,
@@ -12,14 +12,6 @@ export const DefaultUserConfig: IUserConfig = {
   time_step: 10,
   temperature_unit: '',
   is_admin: true
-}
-
-export const DefaultDomainConfig: IDictionary<IDomainConfig> = {
-  climate: {},
-  cover: {},
-  fan: {},
-  light: {},
-  switch: {},
 }
 
 export const DefaultGroupIcon = "folder-outline"

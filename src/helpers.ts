@@ -200,3 +200,26 @@ export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<
   else return false;
 };
 
+
+export function MatchPattern(pattern: string, entity_id: string) {
+  let res = false;
+  if (pattern.match(/^[a-z0-9_\.]+$/)) {
+    if (entity_id.startsWith(pattern)) res = true;
+  }
+  else {
+    try {
+      if ((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {
+        if (!pattern.startsWith('/')) {
+          pattern = pattern
+            .replace(/\./g, '\.')
+            .replace(/\*/g, '.*');
+          pattern = `/^${pattern}$/`;
+        }
+        let regex = new RegExp(pattern.slice(1, -1));
+        res = regex.test(entity_id);
+      }
+    }
+    catch (e) { }
+  }
+  return res;
+}
