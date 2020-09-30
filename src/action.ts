@@ -71,11 +71,21 @@ function extendActionVariables(cfg: IActionConfig, entity: IHassEntity) {
 
   if ('options' in variableCfg) {
     let optionCfg = [...variableCfg.options!];
-
+    let hasValueTemplates = typeof optionCfg == "object" ? Object.values(optionCfg).map(e => e.value.match(/^attribute:(\w+):\w+$/)).find(e => e) : null;
     optionCfg = optionCfg.map(e => {
       if (typeof e != "object") return <IListVariableOption>{ value: e };
       return <IListVariableOption>extend(e, { value: replaceAttributeTemplate(e.value, entity) });
     }).filter(e => e.value);
+    if (hasValueTemplates !== null) {
+      let discoveredOptions: IListVariableOption[] = entity.attributes[hasValueTemplates![1]].filter(e => Object.values(optionCfg).every(el => el.value != e)).map(e => <IListVariableOption>{ value: e });
+      optionCfg = optionCfg.concat(discoveredOptions);
+    }
+
+    optionCfg.sort((a, b) => {
+      let val_a = a.name ? a.name : a.value;
+      let val_b = b.name ? b.name : b.value;
+      return val_a > val_b ? 1 : -1
+    })
     variableCfg = extend(variableCfg, { options: optionCfg }, { overwrite: true });
 
     let listCfg = <IListVariableConfig>extend(DefaultListVariableConfig, variableCfg);
