@@ -118,11 +118,11 @@ __Entities__
 The entities that you can to control with the scheduler show up here.
 Clicking a entity automatically will show the actions that you can program for this entity.
 
-Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. If you are missing one or more entities, you can add these yourself using the [entities](#entities) or [domains](#domains) configuration.
+Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. You can add all entities that you want to control in the [include](#include) list.
 
 __Actions__
 The actions that you can perform for the selected entity show up here.
- Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself to either entity or the complete domain (group) using the [actions](#actions) configuration.
+ Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself using the [customize](#customization) configuration.
 
 
  Actions can contain a variable setting (e.g. turn on a lamp at specific brightness, or change the setpoint for a thermostat).
@@ -209,7 +209,7 @@ The standard configuration consists of the following:
 | `include`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                            |
 | `exclude`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                    |
 | `groups`                 | list           | none         | v1.0.0         | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                       |
-| `customize`              | dictionary     | none         | v1.6.0         | Customize the available actions or visualization of entities.                                                                                                                                                                              |
+| `customize`              | dictionary     | none         | v1.6.0         | Customize the available actions or visualization of entities.   <br>See [customize](#customization) for more info.                                                                                                                         |
 | `title`                  | boolean/string | *true*       | v1.2.8         | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                     |
 | `am_pm`                  | boolean        | *false*      | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                                                                                                                                     |
 | `time_step`              | number         | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                                                                                                                         |
@@ -273,12 +273,12 @@ To be clear, they have nothing to do with the [group](https://www.home-assistant
 By default, entities will be grouped based on their type (domain). 
 Entities that are assigned to your own defined group will not be grouped by type.
 
-| Name    | Type   | Default            | Description                                                                                                                                                                          |
-| ------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                             |
-| icon    | string | none               | Displayed icon for group                                                                                                                                                             |
-| include | list   | none               | List of filters to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card. |
-| exclude | list   | none               | List of filters to determine which of the do not belong in this group.<br>This has the same functionality as the [exclude](#exclude) filter for defining the entities in the card.   |  |
+| Name    | Type   | Default            | Description                                                                                                                                                                                 |
+| ------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                                    |
+| icon    | string | none               | Displayed icon for group                                                                                                                                                                    |
+| include | list   | none               | List of filters to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card.        |
+| exclude | list   | none               | List of filters to determine which of the entities do not belong in this group.<br>This has the same functionality as the [exclude](#exclude) filter for defining the entities in the card. |  |
 
 <u>Example:</u>
 
