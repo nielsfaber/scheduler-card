@@ -227,6 +227,9 @@ Also it has icons for most entity types and actions.
 
 If you would rather set up your own configuration of entities and actions, you can provide `standard_configuration:false` to disable it.
 
+
+:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
+
 ### Adding entities
 
 #### Include
@@ -246,9 +249,6 @@ include:
   - "*garden*" # include all entities containing the word 'garden'
   ...
 ```
-:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
-
-
 #### Exclude
 
 The `exclude` configuration allows you to remove entities from your HA config from appearing in the scheduler.
