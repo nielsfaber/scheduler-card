@@ -1,6 +1,7 @@
 
 
 import { ITime, IDays } from './date-time';
+import { LovelaceCardConfig } from 'custom-card-helpers';
 
 export interface IDictionary<TValue> {
   [id: string]: TValue;
@@ -156,7 +157,6 @@ export interface IScheduleEntry {
 
 /* config */
 
-
 export interface IUserConfig {
   sunrise: number | null,
   sunset: number | null,
@@ -166,6 +166,21 @@ export interface IUserConfig {
   temperature_unit: string
   is_admin: boolean
 }
+
+
+
+export interface ICardConfig extends LovelaceCardConfig {
+  discover_existing?: boolean,
+  standard_configuration?: boolean,
+  title?: boolean | string,
+  am_pm?: boolean,
+  time_step?: number,
+  include?: string[],
+  exclude?: string[],
+  groups?: IGroupConfig[],
+  customize?: IDictionary<IEntityConfig>,
+}
+
 
 /* interface */
 
