@@ -349,7 +349,7 @@ Actions are linked to their entities, so the entity ID is sent together with the
 
 *Adding an action to turn on a light with 40% brightness*
   ```yaml
-entities:
+customize:
     light.my_lamp:
       name: "Dining light"
       icon: ceiling-light
@@ -389,13 +389,14 @@ To be able to set the speed of this device in your action, you can use:
 ```yaml
 customize:
   fan.xiaomi_purifier:
-    - service: xiaomi_miio.fan_set_favorite_level
-      name: "set speed"
-      variable:
-        field: level
-        name: "Speed"
-        min: 1
-        max: 16
+    actions:
+      - service: xiaomi_miio.fan_set_favorite_level
+        name: "set speed"
+        variable:
+          field: level
+          name: "Speed"
+          min: 1
+          max: 16
 ```
 You can now select the speed for this action in the schedule editor:
 
