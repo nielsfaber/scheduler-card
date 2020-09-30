@@ -8,8 +8,5 @@ module.exports = {
     sourceType: 'module',  // Allows for the use of imports
     experimentalDecorators: true,
   },
-  rules: {
-    "@typescript-eslint/camelcase": "off",
-    "prefer-const": "off"
-  }
+  rules: {}
 };
