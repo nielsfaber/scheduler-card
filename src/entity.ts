@@ -100,10 +100,9 @@ export class EntityList {
       if (customCfg.actions) customActionCfg = extend(customActionCfg, keyMap(customCfg.actions!, getActionId));
     });
     if (Object.keys(customActionCfg).length) {
-      actionCfg = pick(actionCfg, Object.keys(customActionCfg));
+      //actionCfg = pick(actionCfg, Object.keys(customActionCfg));
       actionCfg = extend(actionCfg, customActionCfg);
     }
-
 
     cfg = extend(cfg, { actions: Object.values(actionCfg) });
     return cfg;
