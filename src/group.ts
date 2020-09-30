@@ -1,11 +1,19 @@
 import { DomainNameTranslations, localize } from "./localize/localize";
 import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
-import { extend, getDomainFromEntityId } from "./helpers";
-import { IDictionary, IGroupElement } from "./types";
+import { extend, getDomainFromEntityId, MatchPattern, pick } from "./helpers";
+import { IDictionary, IGroupElement, IGroupConfig } from "./types";
 import { default as standardConfig } from './standard-configuration.json';
 
+
+function GroupId(name: string) {
+  let id = name.replace(/[^a-z0-9_]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_');
+  return id;
+}
+
 export class GroupList {
-  groupConfig: IDictionary<Partial<IGroupElement>> = {};
+  groupConfig: IGroupConfig[] = [];
   groups: IGroupElement[] = [];
   standard_configuration: boolean = true;
 
@@ -13,8 +21,8 @@ export class GroupList {
 
   }
 
-  SetConfig(cfg: { groups: IDictionary<Partial<IGroupElement>>, standard_configuration: boolean }) {
-    this.groupConfig = cfg.groups;
+  SetConfig(cfg: { groups?: IGroupConfig[], standard_configuration: boolean }) {
+    this.groupConfig = cfg.groups || [];
     this.standard_configuration = cfg.standard_configuration;
   }
 
@@ -36,7 +44,6 @@ export class GroupList {
       id: group_id,
       name: group_id in DomainNameTranslations ? localize(DomainNameTranslations[group_id]) : group_id,
       icon: DefaultGroupIcon,
-      domains: [],
       entities: [],
     };
     data = <IGroupElement>extend(data, cfg);
@@ -57,9 +64,16 @@ export class GroupList {
 
   InGroup(group_id: string, entity_id: string) {
     let group = this.Find(group_id);
-    let domain = getDomainFromEntityId(entity_id);
     if (!group) return false;
-    return group.entities.includes(entity_id) || group.domains.includes(domain);
+
+    if (group.entities.includes(entity_id)) return true;
+
+    let groupCfg = this.groupConfig.find(e => GroupId(e.name) == group_id);
+    if (!groupCfg) return false;
+
+    if (!groupCfg.include.find(e => MatchPattern(e, entity_id))) return false;
+    if (groupCfg.exclude?.find(e => MatchPattern(e, entity_id))) return false;
+    return true;
   }
 
   InConfig(entity_id: string) {
@@ -68,8 +82,7 @@ export class GroupList {
   }
 
   CreateGroups(entity_ids: string[]) {
-    Object.entries(this.groupConfig).forEach(([id, cfg]) => this.Add(id, cfg));
-
+    this.groupConfig.forEach(cfg => this.Add(GroupId(cfg.name), pick(cfg, ['name', 'icon'])));
     entity_ids.forEach(entity_id => {
       if (this.InConfig(entity_id)) return;
       let domain = getDomainFromEntityId(entity_id);

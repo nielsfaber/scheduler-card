@@ -56,7 +56,7 @@ export class SchedulerCard extends LitElement {
   private _hass?: HomeAssistant;
 
   @property({ type: Boolean })
-  newItem: boolean = false;
+  newItem: boolean = true;
 
   @property({ type: Boolean })
   editItem: boolean = false;
@@ -111,8 +111,8 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config) {
-    ValidateConfig(config);
-    const userCfgKeys = ['groups', 'domains', 'entities', 'discover_existing', 'standard_configuration'];
+    //ValidateConfig(config);
+    const userCfgKeys = ['discover_existing', 'standard_configuration', 'include', 'exclude', 'groups', 'customize'];
     this._config = Object.assign({ ...this._config }, pick(config, Object.keys(this._config)));
     this.Config.setUserConfig(pick(config, userCfgKeys));
   }
@@ -297,8 +297,10 @@ export class SchedulerCard extends LitElement {
   }
 
   selectEntity(entity: string): void {
-    this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity });
-    if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
+    if (this._entry.entity != entity) {
+      this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity, action: '' });
+      if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
+    }
   }
 
   getActions() {
@@ -323,7 +325,7 @@ export class SchedulerCard extends LitElement {
           </div>
       `;
     }
-    if (actions.length == 1) this.selectAction(actions[0].id);
+    if (actions.length == 1 && !this._entry.action) this.selectAction(actions[0].id);
     let options_list = actions.map((el: IActionElement) => {
       return html`
         <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
