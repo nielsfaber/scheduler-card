@@ -704,7 +704,6 @@ export class SchedulerCard extends LitElement {
 
 
   _editItemClick(entity_id) {
-    console.log(entity_id);
     let item = this.scheduleItems.find(e => e.id == entity_id);
     if (!item) return;
 

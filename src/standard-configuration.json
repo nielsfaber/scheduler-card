@@ -344,13 +344,11 @@
     "actions": [
       {
         "service": "unlock",
-        "icon": "lock-open-variant-outline",
-        "supported_feature": 1
+        "icon": "lock-open-variant-outline"
       },
       {
         "service": "lock",
-        "icon": "lock-outline",
-        "supported_feature": 2
+        "icon": "lock-outline"
       }
     ]
   },
