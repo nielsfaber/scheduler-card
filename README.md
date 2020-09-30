@@ -273,12 +273,12 @@ To be clear, they have nothing to do with the [group](https://www.home-assistant
 By default, entities will be grouped based on their type (domain). 
 Entities that are assigned to your own defined group will not be grouped by type.
 
-| Name    | Type   | Default            | Description                                                                                                                                                                         |
-| ------- | ------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                            |
-| icon    | string | none               | Displayed icon for group                                                                                                                                                            |
-| include | list   | none               | List of filter to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card. |
-| exclude | list   | none               | [domains](#domains) to be added in this group                                                                                                                                       |
+| Name    | Type   | Default            | Description                                                                                                                                                                          |
+| ------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                             |
+| icon    | string | none               | Displayed icon for group                                                                                                                                                             |
+| include | list   | none               | List of filters to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card. |
+| exclude | list   | none               | List of filters to determine which of the do not belong in this group.<br>This has the same functionality as the [exclude](#exclude) filter for defining the entities in the card.   |  |
 
 <u>Example:</u>
 
