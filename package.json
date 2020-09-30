@@ -50,6 +50,7 @@
     "typescript": "^3.6.4"
   },
   "devDependencies": {
+    "eslint-formatter-summary": "^1.0.4",
     "rollup-plugin-commonjs": "^10.1.0"
   }
 }

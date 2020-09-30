@@ -27,4 +27,4 @@ jobs:
         npm install
     - name: Run ESLint
       run: |
-        npx eslint src/ --quiet --ext js,ts || true
+        npx eslint src/ --quiet -f summary --ext js,ts || true
