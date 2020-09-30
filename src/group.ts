@@ -1,12 +1,20 @@
 import { DomainNameTranslations, localize } from "./localize/localize";
 import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
 import { extend, getDomainFromEntityId, MatchPattern, pick } from "./helpers";
-import { IDictionary, IGroupElement, IGroupConfig } from "./types";
+import { IGroupElement, IGroupConfig } from "./types";
 import { default as standardConfig } from './standard-configuration.json';
 
 
+export function IsReservedGroupName(name: string) {
+  let group_id = GroupId(name);
+  if (group_id == DiscoveredEntitiesGroup) return true;
+  else if (Object.keys(standardConfig).map(GroupId).find(e => e == group_id)) return true;
+  return false;
+}
+
+
 function GroupId(name: string) {
-  let id = name.replace(/[^a-z0-9_]/g, '')
+  let id = name.replace(/[^a-z0-9_\ ]/g, '')
     .replace(/\s+/g, '_')
     .replace(/_+/g, '_');
   return id;

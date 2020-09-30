@@ -56,7 +56,7 @@ export class SchedulerCard extends LitElement {
   private _hass?: HomeAssistant;
 
   @property({ type: Boolean })
-  newItem: boolean = true;
+  newItem: boolean = false;
 
   @property({ type: Boolean })
   editItem: boolean = false;
@@ -111,7 +111,7 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config) {
-    //ValidateConfig(config);
+    ValidateConfig(config);
     const userCfgKeys = ['discover_existing', 'standard_configuration', 'include', 'exclude', 'groups', 'customize'];
     this._config = Object.assign({ ...this._config }, pick(config, Object.keys(this._config)));
     this.Config.setUserConfig(pick(config, userCfgKeys));
