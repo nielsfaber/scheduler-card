@@ -11,6 +11,8 @@ module.exports = {
     experimentalDecorators: true,
   },
   rules: {
-    "@typescript-eslint/camelcase": 0
+    "@typescript-eslint/camelcase": "off",
+    "prefer-const": "off",
+    "prettier/prettier": "off"
   }
 };
