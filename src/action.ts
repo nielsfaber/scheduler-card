@@ -114,11 +114,14 @@ export function importHassAction(action: IHassAction) {
   let entity = action.entity;
   let service = action.service;
 
-  if (getDomainFromEntityId(entity) && getDomainFromEntityId(service)) {
-    service = removeDomainFromEntityId(service);
+  let entity_domain = getDomainFromEntityId(entity);
+  let service_domain = getDomainFromEntityId(service);
+
+  if (entity_domain && service_domain) {
+    if (entity_domain == service_domain) service = removeDomainFromEntityId(service);
   }
-  else if (!getDomainFromEntityId(entity) && getDomainFromEntityId(service)) {
-    entity = getDomainFromEntityId(service) + "." + entity;
+  else if (!entity_domain) {
+    entity = service_domain + "." + entity;
     service = removeDomainFromEntityId(service);
   }
 
@@ -137,20 +140,24 @@ export function importHassAction(action: IHassAction) {
 
 export function reverseParseAction(hassAction: IHassAction, actionConfig: IActionConfig[] | IActionElement[]) {
   let action = importHassAction(hassAction);
+
   let match = actionConfig.find(cfg => {
     let action_id = getActionId(cfg);
     if (cfg.service != action.service) return false;
     if (action_id == getActionId(action)) return true;
     if (cfg.variable && action.service_data) {
-      if (Object.keys(action.service_data).includes(cfg.variable.field))
+      if (Object.keys(action.service_data).includes(cfg.variable.field)) {
         return action_id == getActionId(<IHassAction>extend(action, { service_data: { [cfg.variable.field]: null } }, { compact: true }));
+      }
     }
-    return false;
+    return action_id == getActionId(<IHassAction>extend(action, { service_data: { entity_id: action.entity } }));
   });
   if (match) return match;
   return null;
 }
+
 export function getActionId(action: IActionConfig | IActionElement) {
+  //if (action.hasOwnProperty('id')) return (action as IActionElement).id;
   let sortObject = (e) => Object.entries(e)
     .sort((a, b) => a[0] > b[0] ? 1 : -1)
     .map(([k, v]) => [k, typeof v === 'object' && v !== null ? sortObject(v) : v])
