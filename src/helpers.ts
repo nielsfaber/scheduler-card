@@ -204,7 +204,8 @@ export function IsEqual(inA: any[] | IDictionary<any>, inB: any[] | IDictionary<
 export function MatchPattern(pattern: string, entity_id: string) {
   let res = false;
   if (pattern.match(/^[a-z0-9_\.]+$/)) {
-    if (entity_id.startsWith(pattern)) res = true;
+    if (pattern.includes(".")) res = pattern == entity_id;
+    else res = pattern == getDomainFromEntityId(entity_id);
   }
   else {
     try {
