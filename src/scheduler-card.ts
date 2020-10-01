@@ -642,7 +642,7 @@ export class SchedulerCard extends LitElement {
 
   selectListItem(val: string, updateCard: boolean) {
     let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    Object.assign(this._entry, { variable: variable });
+    this._entry = Object.assign({ ...this._entry }, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 
