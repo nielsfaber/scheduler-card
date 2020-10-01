@@ -66,7 +66,7 @@
     "set_cover_position": "Establecer Posición",
     "set_temperature": "establecer temperatura",
     "set_to": "establecer a",
-    "set_position": "posición de ajuste",
+    "set_position": "establecer posición",
     "set_hvac_mode": "establecer modo de A/A",
     "set_preset_mode": "establecer modo",
     "set_value": "establecer valor",
@@ -79,14 +79,14 @@
     "climate": "climatización",
     "cover": "persiana",
     "fan": "ventilador",
-    "group": "grupos",
+    "group": "grupo",
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
     "light": "luces",
-    "media_player": "reproductores multimedia",
-    "scene": "scenas",
-    "switch": "interruptores",
+    "media_player": "reproductor multimedia",
+    "scene": "escena",
+    "switch": "interruptor",
     "vacuum": "aspirador"
   }
 }
