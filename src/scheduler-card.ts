@@ -353,7 +353,7 @@ export class SchedulerCard extends LitElement {
           <div class="option-list">
             <mwc-button class="${this._entry.action == CreateTimeline ? ' active' : ''}" @click="${() => { this.selectAction(CreateTimeline) }}">
               <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
-              Create timeline
+              ${PrettyPrintName(CreateTimeline)}
             </mwc-button>
           </div>
         </div>
@@ -491,7 +491,7 @@ export class SchedulerCard extends LitElement {
       Object.assign(daysCfg, { custom_days: day_list });
     }
     this._entry = Object.assign({ ...this._entry }, <IEntry>{ days: daysCfg });
-    if (this._activeEntry === null) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
+    if (this._timeline) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
   }
 
   showRoutineEditor(): TemplateResult {
@@ -520,14 +520,15 @@ export class SchedulerCard extends LitElement {
             <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"></ha-icon>
           </div>
           <div class="summary-text">
-            Create Timeline
+            ${PrettyPrintName(CreateTimeline)}
           </div>
         </div>
       </div>
+      <div style="margin-top: 10px"><i>This is feature is still in development. Use it at your own risk. Please leave your feedback in the <a href="https://community.home-assistant.io/t/scheduler-card-custom-component/217458">HA forum</a>.</i></div>
      </div>
     ${this.getDayPicker()}
       
-    <div class="card-section">
+    <div class="card-section" style="margin-top: 15px">
       <div class="header">${localize('fields.time')}</div>
       <timeslot-editor
         actions=${JSON.stringify(actions)}
@@ -549,7 +550,7 @@ export class SchedulerCard extends LitElement {
     <div class="card-section last">
       <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
       ${this.newItem || !this._config.is_admin ? '' : html`<mwc-button outlined @click="${this._deleteItemClick}">${localize('actions.delete')}</mwc-button>`}
-      <mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>
+      ${this._entries.find(e => e.action) ? html`<mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>` : html`<mwc-button outlined disabled>${localize('actions.save')}</mwc-button>`}
     </div>
     `;
   }
@@ -560,6 +561,7 @@ export class SchedulerCard extends LitElement {
       if (entries.length < this._entries.length && this._activeEntry == (this._entries.length - 1)) this._activeEntry = this._entries.length - 2;
       this._entries = [...entries];
       if (this._activeEntry !== null) this._entry = this._entries[this._activeEntry];
+      this._entry = { ...this._entry };
     }
     else if (e.detail.hasOwnProperty('entry')) {
       if (this._activeEntry !== null) this._entries[this._activeEntry] = this._entry;
@@ -575,7 +577,6 @@ export class SchedulerCard extends LitElement {
       }
     }
   }
-
 
   getPlannerActions() {
     if (this._activeEntry === null) return html`<div class="text-field">Select a timeslot first</div>`;
@@ -642,7 +643,7 @@ export class SchedulerCard extends LitElement {
 
   selectListItem(val: string, updateCard: boolean) {
     let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    this._entry = Object.assign({ ...this._entry }, { variable: variable });
+    Object.assign(this._entry, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 
@@ -674,7 +675,7 @@ export class SchedulerCard extends LitElement {
     else if (this._entry.action == CreateTimeline) {
       this._timeline = true;
       this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: this._entry.entity }));
-      this._entry = this._entries[0];
+      this._entry = { ...DefaultEntry };
       this._activeEntry = null;
     }
   }

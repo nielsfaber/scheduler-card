@@ -161,7 +161,7 @@ export function PrettyPrintActionVariable(input: ILevelVariable | IListVariable,
     return `${value}${unit}`;
   }
   else {
-    return String(input.value);
+    return PrettyPrintName(String(input.value));
   }
 }
 

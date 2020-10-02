@@ -2,7 +2,7 @@
 import { IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
 import { parseTimestamp, EDayType, MinutesPerDay } from './date-time'
 
-export const CARD_VERSION = "1.6.2"
+export const CARD_VERSION = "1.7.0"
 
 export const DefaultUserConfig: IUserConfig = {
   sunrise: null,
@@ -70,10 +70,4 @@ export const DefaultListVariableConfig: IListVariableConfig = {
 
 export const FieldTemperature = "temperature";
 export const UnitPercent = "%";
-export const CreateTimeline = "create_timeline"
-
-// export const DefaultRoutineSlots: IEntry[] = [
-//   { startTime: parseTimestamp('00:00'), endTime: parseTimestamp('08:00') },
-//   { startTime: parseTimestamp('08:00'), endTime: parseTimestamp('16:00') },
-//   { startTime: parseTimestamp('16:00'), endTime: HoursPerDay * MinutesPerHour },
-// ];
+export const CreateTimeline = "make_scheme"

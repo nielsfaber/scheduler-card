@@ -3,7 +3,7 @@ import { localize } from './localize/localize';
 
 import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from './types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from './date-time';
-import { PrettyPrintActionVariable, pick } from './helpers';
+import { PrettyPrintActionVariable, pick, PrettyPrintName } from './helpers';
 
 function Duration(el: IEntry) {
   return el.endTime!.value - el.time.value;
@@ -20,13 +20,16 @@ export class TimeslotEditor extends LitElement {
   actions: IActionElement[] = [];
 
   @property({ type: Number })
-  stepSize: number = 15;
+  stepSize: number = 10;
 
   @property({ type: Number })
   _activeEntry: number | null = null;
 
   @property({ type: String })
   temperatureUnit: string = "";
+
+  @property({ type: Number })
+  _activeThumb: number | null = null;
 
   render() {
     return html`
@@ -75,7 +78,6 @@ export class TimeslotEditor extends LitElement {
     `;
   }
 
-
   protected getSlots(): TemplateResult[] {
     let output: TemplateResult[] = [];
     this.entries.forEach((el, i) => {
@@ -87,7 +89,7 @@ export class TimeslotEditor extends LitElement {
       if (i < this.entries.length - 1) {
         let ts = this.entries[i].endTime!.value;
         output.push(html`
-        <div class="slider-thumb">
+        <div class="slider-thumb${this._activeThumb == i ? ' active' : ''}" index=${i}>
           <ha-icon icon="hass:unfold-more-vertical"  @mousedown="${this._handleTouchStart}" @touchstart="${this._handleTouchStart}"></ha-icon>
           <div class="slider-thumb-tooltip" value="time" @update="${this._updateMarker}">
             ${formatTime(ts).time}
@@ -96,6 +98,14 @@ export class TimeslotEditor extends LitElement {
       }
     });
     return output;
+  }
+
+
+  updated() {
+    this.shadowRoot.querySelectorAll(".slider-thumb-tooltip").forEach((el, i) => {
+      let ts = this.entries[i].endTime!.value;
+      el.innerText = formatTime(ts).time;
+    });
   }
 
   getEntryAction(entry: IEntry) {
@@ -111,8 +121,8 @@ export class TimeslotEditor extends LitElement {
       let cfg = action.variable as IListVariableConfig;
       return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
-    if (entry.action == 'turn_on') return 'on';
-    else if (entry.action == 'turn_off') return 'off';
+    if (entry.action == 'turn_on') return PrettyPrintName('on');
+    else if (entry.action == 'turn_off') return PrettyPrintName('off');
     return `${entry.action}`;
   }
 
@@ -138,6 +148,8 @@ export class TimeslotEditor extends LitElement {
     let secondSlot: HTMLElement = thumbElement.nextElementSibling as HTMLElement;
 
     let toolTip = thumbElement.querySelector(".slider-thumb-tooltip") as HTMLElement;
+    this._activeThumb = Number(thumbElement.getAttribute("index"));
+
     const availableWidth = firstSlot.offsetWidth + secondSlot.offsetWidth;
     const trackWidth = trackCoords.width;
 
@@ -187,6 +199,8 @@ export class TimeslotEditor extends LitElement {
       let entries = [... this.entries];
       Object.assign(entries[slotIndex], <IEntry>{ endTime: { value: newStop } })
       Object.assign(entries[slotIndex + 1], <IEntry>{ time: { value: newStop }, endTime: { value: startTime + totalDuration } });
+
+      this._activeThumb = null;
 
       let myEvent = new CustomEvent("update", { detail: { entries: entries } });
       this.dispatchEvent(myEvent);
@@ -239,7 +253,7 @@ export class TimeslotEditor extends LitElement {
   static styles = css`
 
       div.slider-track {
-        height: 45px;
+        height: 50px;
         width: 100%;
         display: flex;
       }
@@ -309,15 +323,18 @@ export class TimeslotEditor extends LitElement {
         z-index: 5;
         margin: 0px -1px;
       }
+      div.slider-thumb.active {
+        z-index: 100;
+      }
       div.slider-thumb ha-icon {
         background: var(--card-background-color);
         color: var(--primary-text-color);
-        width: 26px;
-        height: 26px;
-        --mdc-icon-size: 26px;
+        width: 28px;
+        height: 28px;
+        --mdc-icon-size: 28px;
         border-radius: 100%;
-        margin-left: -12px;
-        margin-top: 10px;
+        margin-left: -13px;
+        margin-top: 12px;
       }
 
       div.slider-legend {
@@ -326,44 +343,71 @@ export class TimeslotEditor extends LitElement {
       }
       div.slider-legend-item {
         width: calc(100% / 8);
-        font-size: 0.8em;
+        font-size: 0.9em;
+        line-height: 25px;
         display: flex;
         justify-content: center;
+        position: relative;
+      }
+
+      div.slider-legend-item:before {
+        content: " ";
+        background: var(--disabled-text-color);
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 1px;
+        height: 8px;
+        margin-left: 50%;
+        margin-top: -4px;
       }
       div.slider-legend-item.empty {
         width: calc(100% / 16);
         display: flex;
       }
+      div.slider-legend-item.empty:before {
+        display: none;
+      }
       div.slider-thumb-tooltip {
-        background: none;
+        background: var(--primary-color);
+        border-radius: 5px;
         color: var(--text-primary-color);
         font-size: 1em;
         position: absolute;
-        height: 44px;
-        width: 44px;
-        margin-top: -44px;
-        margin-left: -22px;
+        height: 26px;
+        width: 50px;
+        margin-top: -28px;
+        margin-left: -25px;
         text-align: center;
-        line-height: 45px;
+        line-height: 26px;
         z-index: 1;
       }
 
       div.slider-thumb-tooltip:before {
         content: " ";
-        border-radius: 22px 22px 22px 5px;
-        background:  var(--primary-color);
+        background: var(--primary-color);
         transform: rotate(-45deg);
-        transform-origin: center center;
+        transform-origin: center;
         opacity: 1;
         position: absolute;
+        margin-top: 20px;
+        margin-left: 21px;
         left: 0px;
         top: 0px;
-        margin-top: -2px;
-        width: 100%;
-        height: 100%;
+        width: 10px;
+        height: 10px;
         z-index: -1;
       
       }
+
+      div.slider-thumb.active div.slider-thumb-tooltip {
+        background: var(--accent-color);
+        z-index: 10;
+      }
+      div.slider-thumb.active div.slider-thumb-tooltip:before {
+        background: var(--accent-color);
+      }
+
 
       .padded-right {
         margin-right: 11px;
