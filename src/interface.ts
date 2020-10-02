@@ -7,8 +7,7 @@ import { getDomainFromEntityId, IsEqual, extend } from "./helpers";
 import { parseTimestamp, formatTime, ETimeEvent, EDayType, timeEventToString } from "./date-time";
 import { exportVariableServiceData, importHassAction, reverseParseAction } from "./action";
 
-
-const EntryPattern = /^([0-9]+)?D([0-7]+)?T([0-9SRDUW\-\+]+)T?([0-9SRDUW\-\+]+)?([A0-9+]+)$/
+const EntryPattern = /^([0-9]+)?D([0-7]+)?T([0-9SRDUW]+)T?([0-9SRDUW]+)?A([A0-9]+)+(C([C0-9]+))?(F([F0-9]+))?$/
 const ActionPattern = /^(A([0-9]+))+$/
 const SunTimePattern = /^([0-9]{4})?([SRDUW]{2})([0-9]{4})?$/
 
@@ -86,8 +85,7 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
         }
       });
     }
-
-    let actionNums = ActionPattern.exec(res![5])!.map(Number);
+    let actionNums = String(res![5]).split("A").map(Number);
     return actionNums.filter(e => e !== null && actions[e]).forEach(num => {
       entries.push(<IEntry>extend(actions[num]!, { ...entryCfg }));
     });
