@@ -24,11 +24,12 @@
     "options": "Suvandid",
     "day_type_daily": "iga päev",
     "day_type_weekdays": "tööpäevadel",
+    "day_type_weekend": "nädalavahetus",
     "day_type_custom": "valikuline",
     "shift_with_sun": "määrake automaatselt Päikese tõus/loojang",
     "brightness": "Heledus",
     "temperature": "Temperatuur",
-    "position": "Asukoht"
+    "position": "Asend"
   },
   "days_short": {
     "mon": "E",
@@ -55,8 +56,8 @@
     "at": "kell",
     "before": "enne",
     "after": "pärast",
-    "sunrise": "päikesetõus",
-    "sunset": "loojang"
+    "sunrise": "päikesetõusu",
+    "sunset": "loojangut"
   },
   "services": {
     "turn_on": "lülita sisse",
@@ -64,27 +65,27 @@
     "close_cover": "sulge",
     "open_cover": "ava",
     "set_temperature": "määra temperatuur",
-    "set_to": "seadista väärtusele",
+    "set_to": "määra väärtus",
     "set_position": "seadista asendisse",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
-    "start": "start"
+    "set_hvac_mode": "vali töörežiim",
+    "set_preset_mode": "eelseadistatud",
+    "set_value": "määra väärtus",
+    "select_option": "valikud",
+    "select_source": "vali allikas",
+    "start": "alusta"
   },
   "domains": {
-    "camera": "cameras",
+    "camera": "kaamerad",
     "climate": "kliimaseade",
     "cover": "(akna)katted",
     "fan": "ventilaatorid",
-    "group": "groups",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
+    "group": "grupid",
+    "input_boolean": "binaarsisestus",
+    "input_number": "arvsisestus",
+    "input_select": "sisendivalik",
     "light": "valgustid",
     "media_player": "media players",
-    "scene": "scenes",
+    "scene": "stseenid",
     "switch": "lülitid",
     "vacuum": "tolmuimejad"
   }
