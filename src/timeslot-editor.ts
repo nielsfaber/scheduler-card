@@ -80,7 +80,7 @@ export class TimeslotEditor extends LitElement {
     let output: TemplateResult[] = [];
     this.entries.forEach((el, i) => {
       output.push(html`
-        <div class="slider-slot${this._activeEntry == i ? ' active' : ''}" @click="${this._handleSegmentClick}" index="${i}" style="width: ${Duration(el) / MinutesPerDay * 100}%">
+        <div class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.action ? ' filled' : ''}" @click="${this._handleSegmentClick}" index="${i}" style="width: ${Duration(el) / MinutesPerDay * 100}%">
           ${this.getEntryAction(el)}
         </div>
       `);
@@ -255,19 +255,49 @@ export class TimeslotEditor extends LitElement {
         color: var(--text-primary-color);
         justify-content: center;
         align-items: center;
+        background: none;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
       }
-      div.slider-slot.active {
+
+      div.slider-slot:before  {
+        content: " ";
+        background: var(--primary-color);
+        opacity: 0.3;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+       }
+
+      div.slider-slot:hover:before  {
+        opacity: 0.6;
+       }
+
+
+      div.slider-slot.filled:before  {
+        opacity: 0.8;
+       }
+
+      div.slider-slot.filled:hover:before  {
+        opacity: 1;
+       }
+
+      div.slider-slot.active:before {
         opacity: 0.85;
         background: var(--accent-color);
       }
-      div.slider-slot:hover, div.slider-slot.active:hover {
-        opacity: 1;
-      }
+      // div.slider-slot:hover, div.slider-slot.active:hover {
+      //   opacity: 1;
+      // }
       
-      div.slider-track div.slider-slot:first-of-type {
+      div.slider-track div.slider-slot:first-of-type:before {
         border-radius: 4px 0px 0px 4px;
       }
-      div.slider-track div.slider-slot:last-of-type {
+      div.slider-track div.slider-slot:last-of-type:before {
         border-radius: 0px 4px 4px 0px;
       }
       div.slider-thumb {
@@ -305,17 +335,34 @@ export class TimeslotEditor extends LitElement {
         display: flex;
       }
       div.slider-thumb-tooltip {
-        background: var(--primary-color);
+        background: none;
         color: var(--text-primary-color);
-        border-radius: 5px;
-        font-size: 0.8em;
+        font-size: 1em;
         position: absolute;
-        height: 20px;
-        width: 50px;
-        margin-top: -21px;
-        margin-left: -25px;
+        height: 44px;
+        width: 44px;
+        margin-top: -44px;
+        margin-left: -22px;
         text-align: center;
-        line-height: 20px;
+        line-height: 45px;
+        z-index: 1;
+      }
+
+      div.slider-thumb-tooltip:before {
+        content: " ";
+        border-radius: 22px 22px 22px 5px;
+        background:  var(--primary-color);
+        transform: rotate(-45deg);
+        transform-origin: center center;
+        opacity: 1;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        margin-top: -2px;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      
       }
 
       .padded-right {

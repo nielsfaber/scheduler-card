@@ -1,4 +1,5 @@
 
+
 export const MinutesPerHour = 60;
 export const HoursPerDay = 24;
 export const MinutesPerDay = HoursPerDay * MinutesPerHour
@@ -15,7 +16,8 @@ export interface ITime {
 
 export enum EDayType {
   Daily = "DAILY",
-  Weekdays = "WEEKDAYS",
+  Workday = "WORKDAY",
+  Weekend = "WEEKEND",
   Custom = "CUSTOM",
 }
 
@@ -43,6 +45,8 @@ export function roundTime(value: number, stepSize: number) {
 export function formatTime(value: number, options: { amPm?: boolean, absolute?: boolean } = {}) {
   let amPmFormat = options.amPm ? options.amPm : false;
   let absolute = options.absolute ? options.absolute : false;
+
+  if (value >= MinutesPerDay) value -= MinutesPerDay;
 
   let hours = value >= 0 ? Math.floor(value / MinutesPerHour) : Math.ceil(value / MinutesPerHour);
   let minutes = value - hours * MinutesPerHour;
@@ -103,19 +107,11 @@ export function parseTimestamp(input: string): number {
   return value;
 }
 
-export function daysToArray(dayCfg: IDays): number[] {
-  if (dayCfg.type == EDayType.Weekdays) return [1, 2, 3, 4, 5];
-  else if (dayCfg.type == EDayType.Custom && dayCfg.custom_days) return dayCfg.custom_days.sort().filter(e => e != 0);
+export function daysToArray(dayCfg: IDays) {
+  if (dayCfg.type == EDayType.Daily) return [1, 2, 3, 4, 5, 6, 7]
+  else if (dayCfg.type == EDayType.Workday) return [1, 2, 3, 4, 5]
+  else if (dayCfg.type == EDayType.Weekend) return [6, 7];
   else return [];
-}
-
-export function ArraytoDays(input: number[]): IDays {
-  let alldays = [1, 2, 3, 4, 5, 6, 7], weekdays = [1, 2, 3, 4, 5];
-  if (input.length == 1 && input[0] == 0) return { type: EDayType.Daily, custom_days: [] };
-  let dayArray = [...input].sort().filter(e => e != 0);
-  if (dayArray.length == alldays.length && dayArray.every((e, i) => e == alldays[i])) return { type: EDayType.Daily, custom_days: [] };
-  else if (dayArray.length == weekdays.length && dayArray.every((e, i) => e == weekdays[i])) return { type: EDayType.Weekdays, custom_days: [] };
-  else return { type: EDayType.Custom, custom_days: dayArray };
 }
 
 export function stringToTimeEvent(input: string): ETimeEvent {

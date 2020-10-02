@@ -4,7 +4,7 @@ import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import { Config } from './config';
 import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption, ICardConfig } from './types'
-import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, IsEqual, pick, filterObject } from './helpers'
+import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, IsEqual, pick, filterObject, calculateTimeline } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
 import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries } from './const'
@@ -224,7 +224,7 @@ export class SchedulerCard extends LitElement {
               ${capitalize(PrettyPrintDays(scheduleItem.entries[0].days))}
             </div>
             <div class="list-item-time">
-              ${capitalize(PrettyPrintTime(scheduleItem.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset }))}
+              ${capitalize(PrettyPrintTime(scheduleItem.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset, endTime: scheduleItem.entries[0].endTime }))}
             </div>
             <div class="list-item-switch">
               ${scheduleItem.enabled ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>`}
@@ -236,7 +236,7 @@ export class SchedulerCard extends LitElement {
         let description: TemplateResult[] = scheduleItem.entries.map(el => {
           let currentAction = this.Config.FindAction(el.entity, el.action) as IActionElement;
           let actionStr = PrettyPrintAction(el, currentAction, { temperature_unit: this._config.temperature_unit });
-          let timeStr = PrettyPrintTime(el.time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset });
+          let timeStr = PrettyPrintTime(el.time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset, endTime: el.endTime });
           return html`${actionStr} ${timeStr}<br>`;
         });
 
@@ -360,7 +360,7 @@ export class SchedulerCard extends LitElement {
       `;
 
 
-    createTimelineButton = html``;
+    //createTimelineButton = html``;
 
     return html`
           <div class="card-section">
@@ -390,7 +390,7 @@ export class SchedulerCard extends LitElement {
       else if (actionCfg.variable.type == EVariableType.List) {
         Object.assign(entry, <IEntry>{ variable: { type: EVariableType.List, value: (actionCfg.variable as IListVariableConfig).options[0].value } });
       }
-    }
+    } else if (entry.variable) delete entry.variable;
     this._entry = entry;
     this._entries[this._activeEntry!] = this._entry;
   }
@@ -460,9 +460,10 @@ export class SchedulerCard extends LitElement {
     <div class="card-section">
       <div class="header">${localize('fields.days')}</div>
       <div class="day-list">
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Daily ? ' active' : ''}" @click="${() => this.selectDays('daily')}">${localize('fields.day_type_daily')}</mwc-button>
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Weekdays ? ' active' : ''}" @click="${() => this.selectDays('weekdays')}">${localize('fields.day_type_weekdays')}</mwc-button>
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Custom ? ' active' : ''}" @click="${() => this.selectDays('custom')}">${localize('fields.day_type_custom')}</mwc-button>
+        <mwc-button class="day-item${this._entry.days?.type == EDayType.Daily ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Daily)}">${localize('fields.day_type_daily')}</mwc-button>
+        <mwc-button class="day-item${this._entry.days?.type == EDayType.Workday ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Workday)}">${localize('fields.day_type_workday')}</mwc-button>
+        <mwc-button class="day-item${this._entry.days?.type == EDayType.Weekend ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Weekend)}">${localize('fields.day_type_weekend')}</mwc-button>
+        <mwc-button class="day-item${this._entry.days?.type == EDayType.Custom ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Custom)}">${localize('fields.day_type_custom')}</mwc-button>
       </div>
       ${customDayPicker}
     </div>`;
@@ -475,14 +476,14 @@ export class SchedulerCard extends LitElement {
     Object.assign(this._entry, <IEntry>{ time: e.detail.event ? { event: event, value: value } : { value: value } });
   }
 
-  selectDays(input: number | string) {
+  selectDays(input: number | EDayType) {
     let daysCfg: IDays = { ...this._entry.days! };
     if (typeof input == "string") {
-      let dayType = EDayType.Custom;
-      if (input == "daily") dayType = EDayType.Daily;
-      else if (input == "weekdays") dayType = EDayType.Weekdays;
+      let dayType = input;
       Object.assign(daysCfg, { type: dayType });
-      if (dayType == EDayType.Custom && !daysCfg.custom_days) Object.assign(daysCfg, { custom_days: daysToArray(this._entry.days!) });
+      if (dayType == EDayType.Custom && !daysCfg.custom_days) {
+        Object.assign(daysCfg, { custom_days: daysToArray(this._entry.days!) });
+      }
     } else {
       let day_list = this._entry.days?.custom_days ? [... this._entry.days.custom_days] : [];
       if (!day_list.includes(input)) day_list.push(input);
@@ -498,8 +499,7 @@ export class SchedulerCard extends LitElement {
     if (!entity) return html``;
 
     let actions = this.Config.GetActionsForEntity(entity.id);
-    let action = this.Config.FindAction(this._entry.entity, this._entry.action);
-
+    let action = (this._activeEntry !== null) ? this.Config.FindAction(this._entry.entity, this._entry.action) : null;
     return html`
     <div class="card-section first">
       <div class="header">${localize('fields.action')}</div>
@@ -707,11 +707,20 @@ export class SchedulerCard extends LitElement {
     let item = this.scheduleItems.find(e => e.id == entity_id);
     if (!item) return;
 
-    this._entry = { ...item.entries[0] };
-    this._entries = item.entries;
+    let entries = [...item.entries];
+
+    if (item.entries.every(e => e.endTime)) {
+      this._timeline = true;
+      entries = calculateTimeline(entries);
+    }
+    else {
+      this._timeline = false;
+    }
+
+    this._entry = entries[0];
+    this._entries = entries;
     this._activeEntry = 0;
 
     this.editItem = entity_id;
-    this._timeline = false;
   }
 }

@@ -3,19 +3,18 @@
 
 import { Config } from "./config";
 import { IScheduleEntry, IEntry, IHassAction, IHassData, IActionElement, IHassEntity, ILevelVariable, IListVariable, IHassEntry, EVariableType, } from "./types";
-import { getDomainFromEntityId, IsEqual, omit, extend } from "./helpers";
-import { ITime, parseTimestamp, formatTime, ETimeEvent, EDayType, ArraytoDays, daysToArray, timeEventToString } from "./date-time";
-import { exportVariableServiceData, importHassAction, getActionId, reverseParseAction } from "./action";
+import { getDomainFromEntityId, IsEqual, extend } from "./helpers";
+import { parseTimestamp, formatTime, ETimeEvent, EDayType, timeEventToString } from "./date-time";
+import { exportVariableServiceData, importHassAction, reverseParseAction } from "./action";
 
 
-const EntryPattern = /^D([0-7]+)T([0-9SR\-\+]+)([A0-9+]+)$/
+const EntryPattern = /^([0-9]+)?D([0-7]+)?T([0-9SRDUW\-\+]+)T?([0-9SRDUW\-\+]+)?([A0-9+]+)$/
 const ActionPattern = /^(A([0-9]+))+$/
-const SunTimePattern = /^([0-9]{4})?(S[SR])([0-9]{4})?$/
+const SunTimePattern = /^([0-9]{4})?([SRDUW]{2})([0-9]{4})?$/
 
 
 export function ImportFromHass(entity: IHassEntity, config: Config) {
   if (!entity.attributes.actions || !entity.attributes.entries) return null;
-
   let actions = entity.attributes.actions.map(hassAction => {
     let actionCfg = importHassAction(hassAction);
     if (!config.FindEntity(actionCfg.entity)) return null;
@@ -51,21 +50,46 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
   let entries: IEntry[] = [];
   entity.attributes.entries.forEach(entry => {
     let res = EntryPattern.exec(entry);
-    let actionNums = ActionPattern.exec(res![3])!.map(Number);
 
-    let isSunTime = SunTimePattern.exec(res![2]);
-    let time: ITime;
-    if (!isSunTime) time = { value: parseTimestamp(res![2]) };
-    else time = {
-      event: isSunTime![2] == "SR" ? ETimeEvent.Sunrise : ETimeEvent.Sunset,
-      value: isSunTime![1] ? -parseTimestamp(isSunTime![1]) : parseTimestamp(isSunTime![3])
-    };
+    let entryCfg: Partial<IEntry> = {}
 
-    return actionNums.filter(e => actions[e]).forEach(num => {
-      entries.push(<IEntry>extend(actions[num]!, {
-        time: time,
-        days: ArraytoDays(res![1].split("").map(Number))
-      }));
+    if (res![1]) {
+      let dayType = res![1];
+      if (dayType == "0") Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Daily } });
+      else if (dayType == "15") Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Workday } });
+      else if (dayType == "67") Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Weekend } });
+      else Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Daily } }); //fallback case
+    }
+    else {
+      let dayList = res![2].split("").map(Number);
+      dayList.sort();
+      if (dayList.length == 1 && dayList[0] == 0) Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Daily } });
+      else Object.assign(entryCfg, <IEntry>{ days: { type: EDayType.Custom, custom_days: dayList.filter(e => e != 0) } });
+    }
+
+    let isSunTime = SunTimePattern.exec(res![3]);
+    if (!isSunTime) Object.assign(entryCfg, <IEntry>{ time: { value: parseTimestamp(res![3]) } });
+    else Object.assign(entryCfg, <IEntry>{
+      time: {
+        event: isSunTime![2] == "SR" ? ETimeEvent.Sunrise : ETimeEvent.Sunset,
+        value: isSunTime![1] ? -parseTimestamp(isSunTime![1]) : parseTimestamp(isSunTime![3])
+      }
+    });
+
+    if (res![4]) {
+      isSunTime = SunTimePattern.exec(res![4]);
+      if (!isSunTime) Object.assign(entryCfg, <IEntry>{ endTime: { value: parseTimestamp(res![4]) } });
+      else Object.assign(entryCfg, <IEntry>{
+        endTime: {
+          event: isSunTime![2] == "SR" ? ETimeEvent.Sunrise : ETimeEvent.Sunset,
+          value: isSunTime![1] ? -parseTimestamp(isSunTime![1]) : parseTimestamp(isSunTime![3])
+        }
+      });
+    }
+
+    let actionNums = ActionPattern.exec(res![5])!.map(Number);
+    return actionNums.filter(e => e !== null && actions[e]).forEach(num => {
+      entries.push(<IEntry>extend(actions[num]!, { ...entryCfg }));
     });
   });
 
@@ -103,12 +127,19 @@ export function ExportToHass(entryList: IEntry[], configData: Config): IHassData
     }
 
     if (!entry.time.event) Object.assign(hassEntry, { time: formatTime(entry.time.value).time });
-    else if (entry.time.event) Object.assign(hassEntry, { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time, });
+    else if (entry.time.event) Object.assign(hassEntry, { time: { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time, } });
 
-    if (entry.endTime) Object.assign(hassEntry, { end_time: formatTime(entry.endTime.value).time });
-    //TBD: endtime with event??
+    if (entry.endTime) {
+      if (!entry.time.event) Object.assign(hassEntry, { end_time: formatTime(entry.endTime.value).time });
+      else if (entry.time.event) Object.assign(hassEntry, { end_time: { event: timeEventToString(entry.endTime.event!), offset: formatTime(entry.endTime.value).time, } });
+    }
+    let dayType = "daily";
+    if (entry.days.type == EDayType.Workday) dayType = "workday";
+    else if (entry.days.type == EDayType.Weekend) dayType = "weekend";
+    else if (entry.days.type == EDayType.Custom) dayType = "custom";
 
-    if (entry.days.type != EDayType.Daily) Object.assign(hassEntry, { days: daysToArray(entry.days) });
+    if (entry.days.type == EDayType.Custom) Object.assign(hassEntry, { days: { type: dayType, list: entry.days.custom_days } });
+    else Object.assign(hassEntry, { days: { type: dayType } });
 
     hassEntries.push(hassEntry);
   });

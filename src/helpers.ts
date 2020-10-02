@@ -1,8 +1,9 @@
 
 import { IEntry, IDictionary, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
 import { localize } from './localize/localize';
-import { formatTime, ITime, wrapTime, ETimeEvent, IDays, EDayType } from './date-time';
+import { formatTime, ITime, wrapTime, ETimeEvent, IDays, EDayType, MinutesPerDay } from './date-time';
 import { UnitPercent, FieldTemperature } from "./const";
+import { Config } from './config';
 
 
 export function extend(oldObj: IDictionary<any> | any[], newObj: IDictionary<any> | any[], options: Partial<{ compact: boolean, overwrite: boolean }> = {}) {
@@ -80,7 +81,8 @@ export function removeDomainFromEntityId(entity_id: string): string {
 
 export function PrettyPrintDays(days: IDays): string {
   if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
-  else if (days.type == EDayType.Weekdays) return `${localize('words.on')} ${localize('fields.day_type_weekdays')}`;
+  else if (days.type == EDayType.Workday) return `${localize('words.on')} ${localize('fields.day_type_workday')}`;
+  else if (days.type == EDayType.Weekend) return `${localize('words.every')} ${localize('fields.day_type_weekend')}`;
   else {
     let dayList = days.custom_days || [];
     let output = Array();
@@ -98,10 +100,13 @@ export function PrettyPrintDays(days: IDays): string {
   }
 }
 
-export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: number | null, sunset: number | null }): string {
+export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: number | null, sunset: number | null, endTime?: ITime }): string {
   let amPmFormat = (options.amPm) ? options.amPm : false;
 
-  if (!time.event) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
+  if (!time.event) {
+    if (!options.endTime) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
+    else return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time} - ${formatTime(options.endTime.value, { amPm: amPmFormat }).time}`;
+  }
 
   let time_string = "unknown";
   let event_string = "";
@@ -223,4 +228,32 @@ export function MatchPattern(pattern: string, entity_id: string) {
     catch (e) { }
   }
   return res;
+}
+
+
+
+export function calculateTimeline(entries: IEntry[]): IEntry[] {
+  //TBD implementation for sun
+  entries.sort((a, b) => (a.time.value > b.time.value) ? 1 : -1);
+  entries = entries.map(e => (e.endTime!.value < e.time.value) ? Object.assign(e, { endTime: { value: e.endTime!.value + MinutesPerDay } }) : e);
+
+  let startTime = 0;
+  for (var i = 0; i < entries.length; i++) {
+    let entry = entries[i];
+    if (entry.time.value > startTime) {
+      entries.splice(i, 0, Object.assign(<IEntry>{
+        time: { value: startTime },
+        endTime: { value: entry.time!.value },
+      }, pick(entry, ['entity', 'days'])));
+    }
+    startTime = entry.endTime!.value;
+  }
+  if (startTime < MinutesPerDay) {
+    entries.push(Object.assign(<IEntry>{
+      time: { value: startTime },
+      endTime: { value: MinutesPerDay },
+    }, pick(entries[0], ['entity', 'days'])));
+  }
+
+  return entries;
 }
