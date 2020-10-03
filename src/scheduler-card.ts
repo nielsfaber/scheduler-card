@@ -524,7 +524,7 @@ export class SchedulerCard extends LitElement {
           </div>
         </div>
       </div>
-      <div style="margin-top: 10px"><i>This is feature is still in development. Use it at your own risk. Please leave your feedback in the <a href="https://community.home-assistant.io/t/scheduler-card-custom-component/217458">HA forum</a>.</i></div>
+      <div style="margin-top: 10px"><i>This feature is still in development. Use it at your own risk. Please leave your feedback in the <a href="https://community.home-assistant.io/t/scheduler-card-custom-component/217458">HA forum</a>.</i></div>
      </div>
     ${this.getDayPicker()}
       
@@ -713,14 +713,16 @@ export class SchedulerCard extends LitElement {
     if (item.entries.every(e => e.endTime)) {
       this._timeline = true;
       entries = calculateTimeline(entries);
+      this._entry = Object.assign({ ...DefaultEntry }, pick(entries[0], ['entity', 'days']));
+      this._activeEntry = null;
     }
     else {
       this._timeline = false;
+      this._entry = entries[0];
+      this._activeEntry = 0;
     }
 
-    this._entry = entries[0];
     this._entries = entries;
-    this._activeEntry = 0;
 
     this.editItem = entity_id;
   }
