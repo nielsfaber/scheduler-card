@@ -136,11 +136,12 @@ export class TimeslotEditor extends LitElement {
   }
 
   private _handleTouchStart(e: MouseEvent | TouchEvent) {
+
     let thumbHandle: HTMLElement | null;
     thumbHandle = e.target as HTMLElement;
     if (!thumbHandle) return;
 
-    let thumbElement = thumbHandle.parentNode as HTMLElement;
+    let thumbElement = thumbHandle!.parentNode as HTMLElement;
 
     let trackElement = thumbElement.parentElement as HTMLElement;
     let trackCoords = trackElement.getBoundingClientRect();
@@ -167,8 +168,11 @@ export class TimeslotEditor extends LitElement {
     });
     var mouseMoveHandler = (e: MouseEvent | TouchEvent) => {
       let startDragX;
-      if (e instanceof TouchEvent) startDragX = e.changedTouches[0].pageX;
-      else startDragX = e.pageX;
+
+      if (typeof TouchEvent !== 'undefined') {
+        if (e instanceof TouchEvent) startDragX = e.changedTouches[0].pageX;
+        else startDragX = e.pageX;
+      } else startDragX = (e as MouseEvent).pageX;
 
       let x = startDragX - trackCoords.left;
       if (x < 0) x = 0;
