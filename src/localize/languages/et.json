@@ -1,0 +1,92 @@
+{
+  "scheduler": "Ajastaja",
+  "actions": {
+    "add": "lisa",
+    "cancel": "loobu",
+    "next": "edasi",
+    "save": "salvesta",
+    "delete": "kustuta"
+  },
+  "instructions": {
+    "no_group_selected": "Vali grupp",
+    "no_entity_selected": "Vali olem",
+    "no_groups_defined": "Gruppe pole määratud",
+    "no_entities_for_group": "Antud grupis puuduvad olemid",
+    "no_actions_for_entity": "Selles olemis puuduvad tegevused",
+    "no_entries_defined": "Pole midagi kuvada"
+  },
+  "fields": {
+    "group": "Grupp",
+    "entity": "Olem",
+    "action": "Tegevus",
+    "days": "Päev",
+    "time": "Aeg",
+    "options": "Suvandid",
+    "day_type_daily": "iga päev",
+    "day_type_weekdays": "tööpäevadel",
+    "day_type_weekend": "nädalavahetus",
+    "day_type_custom": "valikuline",
+    "shift_with_sun": "määrake automaatselt Päikese tõus/loojang",
+    "brightness": "Heledus",
+    "temperature": "Temperatuur",
+    "position": "Asend"
+  },
+  "days_short": {
+    "mon": "E",
+    "tue": "T",
+    "wed": "K",
+    "thu": "N",
+    "fri": "R",
+    "sat": "L",
+    "sun": "P"
+  },
+  "days_long": {
+    "mon": "Esmaspäev",
+    "tue": "Teisipäev",
+    "wed": "Kolmapäev",
+    "thu": "Neljapäev",
+    "fri": "Reede",
+    "sat": "Laupäev",
+    "sun": "Pühapäev"
+  },
+  "words": {
+    "on": " ",
+    "every": "iga",
+    "and": "ja",
+    "at": "kell",
+    "before": "enne",
+    "after": "pärast",
+    "sunrise": "päikesetõusu",
+    "sunset": "loojangut"
+  },
+  "services": {
+    "turn_on": "lülita sisse",
+    "turn_off": "lülita välja",
+    "close_cover": "sulge",
+    "open_cover": "ava",
+    "set_temperature": "määra temperatuur",
+    "set_to": "määra väärtus",
+    "set_position": "seadista asendisse",
+    "set_hvac_mode": "vali töörežiim",
+    "set_preset_mode": "eelseadistatud",
+    "set_value": "määra väärtus",
+    "select_option": "valikud",
+    "select_source": "vali allikas",
+    "start": "alusta"
+  },
+  "domains": {
+    "camera": "kaamerad",
+    "climate": "kliimaseade",
+    "cover": "(akna)katted",
+    "fan": "ventilaatorid",
+    "group": "grupid",
+    "input_boolean": "binaarsisestus",
+    "input_number": "arvsisestus",
+    "input_select": "sisendivalik",
+    "light": "valgustid",
+    "media_player": "media players",
+    "scene": "stseenid",
+    "switch": "lülitid",
+    "vacuum": "tolmuimejad"
+  }
+}

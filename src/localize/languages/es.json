@@ -1,0 +1,92 @@
+{
+  "scheduler": "Programador",
+  "actions": {
+    "add": "Agregar",
+    "cancel": "cancelar",
+    "next": "siguiente",
+    "save": "guardar",
+    "delete": "borrar"
+  },
+  "instructions": {
+    "no_group_selected": "Selecciona un grupo primero",
+    "no_entity_selected": "Selecciona una entidad primero",
+    "no_groups_defined": "No hay grupos definidos",
+    "no_entities_for_group": "No hay entidades en este grupo",
+    "no_actions_for_entity": "No hay acciones para esta entidad",
+    "no_entries_defined": "No hay dispositivos definidos"
+  },
+  "fields": {
+    "group": "Grupo",
+    "entity": "Entidad",
+    "action": "Acción",
+    "days": "Días",
+    "time": "Hora",
+    "options": "Opciones",
+    "day_type_daily": "cada día",
+    "day_type_weekdays": "dias semanales",
+    "day_type_custom": "personalizado",
+    "shift_with_sun": "ajusta automaticamente la hora al amanecer/atardecer",
+    "brightness": "Brillo",
+    "temperature": "Temperatura",
+    "position": "Posición"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mie",
+    "thu": "jue",
+    "fri": "vie",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "lunes",
+    "tue": "martes",
+    "wed": "miércoles",
+    "thu": "jueves",
+    "fri": "viernes",
+    "sat": "sábado",
+    "sun": "domingo"
+  },
+  "words": {
+    "on": "en",
+    "every": "cada",
+    "and": "y",
+    "at": "a las",
+    "before": "antes",
+    "after": "después",
+    "sunrise": "amanecer",
+    "sunset": "atardecer"
+  },
+  "services": {
+    "turn_on": "encender",
+    "turn_off": "apagar",
+    "close_cover": "cerrar",
+    "open_cover": "abrir",
+    "set_cover_position": "Establecer Posición",
+    "set_temperature": "establecer temperatura",
+    "set_to": "establecer a",
+    "set_position": "establecer posición",
+    "set_hvac_mode": "establecer modo de A/A",
+    "set_preset_mode": "establecer modo",
+    "set_value": "establecer valor",
+    "select_option": "seleccionar opción",
+    "select_source": "seleccionar fuente",
+    "start": "empezar"
+  },
+  "domains": {
+    "camera": "cámaras",
+    "climate": "climatización",
+    "cover": "persiana",
+    "fan": "ventilador",
+    "group": "grupo",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "luces",
+    "media_player": "reproductor multimedia",
+    "scene": "escena",
+    "switch": "interruptor",
+    "vacuum": "aspirador"
+  }
+}

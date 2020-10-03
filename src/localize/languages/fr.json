@@ -2,7 +2,7 @@
   "scheduler": "Planificateur",
   "actions": {
     "add": "ajouter un item",
-    "cancel": "canceller",
+    "cancel": "annuler",
     "next": "suivant",
     "save": "sauvegarder",
     "delete": "effacer"
@@ -27,7 +27,8 @@
     "day_type_custom": "sur mesure",
     "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil",
     "brightness": "Luminosité",
-    "temperature": "Température"
+    "temperature": "Température",
+    "position": "Position"
   },
   "days_short": {
     "mon": "lun",
@@ -63,13 +64,27 @@
     "close_cover": "fermer",
     "open_cover": "ouvrir",
     "set_temperature": "régler la température",
-    "set_to": "défini à"
+    "set_to": "défini à",
+    "set_position": "position définie",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "climat",
     "cover": "contrôleur",
     "fan": "ventilateur",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "lumière",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "interrupteurs",
     "vacuum": "aspirateur"
   }

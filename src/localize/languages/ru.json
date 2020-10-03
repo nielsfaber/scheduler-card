@@ -2,9 +2,9 @@
   "scheduler": "Планирование",
   "actions": {
     "add": "добавить",
-    "cancel": "отмена",
+    "cancel": "отменить",
     "next": "далее",
-    "save": "записать",
+    "save": "сохранить",
     "delete": "удалить"
   },
   "instructions": {
@@ -27,7 +27,8 @@
     "day_type_custom": "выбрать дни",
     "shift_with_sun": "автоматически настраивать время на восход / закат",
     "brightness": "Яркость",
-    "temperature": "Температура"
+    "temperature": "Температура",
+    "position": "Позицию"
   },
   "days_short": {
     "mon": "пн",
@@ -63,12 +64,26 @@
     "close_cover": "закрыть",
     "open_cover": "открыть",
     "set_temperature": "задать температуру",
-    "set_to": "установить"
+    "set_to": "установить",
+    "set_position": "установить позицию",
+    "set_hvac_mode": "set mode",
+    "set_preset_mode": "set preset",
+    "set_value": "set value",
+    "select_option": "select option",
+    "select_source": "select source",
+    "start": "start"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "Климат",
     "cover": "Жалюзи",
     "fan": "Вентиляторы",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
     "light": "Свет",
     "switch": "Выключатели",
     "vacuum": "Пылесосы"
