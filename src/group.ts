@@ -14,7 +14,7 @@ export function IsReservedGroupName(name: string) {
 
 
 function GroupId(name: string) {
-  let id = name.replace(/[^a-z0-9_\ ]/g, '')
+  let id = name.replace(/[^A-Za-z0-9_\ ]/g, '')
     .replace(/\s+/g, '_')
     .replace(/_+/g, '_');
   return id;
@@ -91,6 +91,7 @@ export class GroupList {
 
   CreateGroups(entity_ids: string[]) {
     this.groupConfig.forEach(cfg => this.Add(GroupId(cfg.name), pick(cfg, ['name', 'icon'])));
+
     entity_ids.forEach(entity_id => {
       if (this.InConfig(entity_id)) return;
       let domain = getDomainFromEntityId(entity_id);
