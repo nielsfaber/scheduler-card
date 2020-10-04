@@ -438,5 +438,72 @@
         "supported_feature": 4
       }
     ]
+  },
+  "water_heater": {
+    "icon": "water-boiler",
+    "actions": [
+      {
+        "service": "set_temperature",
+        "icon": "thermometer",
+        "supported_feature": 1,
+        "variable": {
+          "field": "temperature",
+          "min": "attribute:min_temp",
+          "max": "attribute:max_temp",
+          "step": 0.5
+        }
+      },
+      {
+        "service": "set_operation_mode",
+        "icon": "cog-transfer-outline",
+        "variable": {
+          "field": "operation_mode",
+          "options": [
+            {
+              "value": "attribute:operation_list:eco",
+              "icon": "leaf"
+            },
+            {
+              "value": "attribute:operation_list:electric",
+              "icon": "flash"
+            },
+            {
+              "value": "attribute:operation_list:performance",
+              "icon": "rocket-launch-outline"
+            },
+            {
+              "value": "attribute:operation_list:high_demand",
+              "icon": "water-plus-outline"
+            },
+            {
+              "value": "attribute:operation_list:heat_pump",
+              "icon": "pump"
+            },
+            {
+              "value": "attribute:operation_list:gas",
+              "icon": "flame"
+            }
+          ]
+        }
+      },
+      {
+        "service": "set_away_mode",
+        "icon": "car-traction-control",
+        "supported_feature": 4,
+        "variable": {
+          "field": "mode",
+          "options": [
+            {
+              "value": "on",
+              "icon": "toggle-switch-outline"
+            },
+            {
+              "value": "off",
+              "icon": "toggle-switch-off-outline"
+            }
+          ]
+        }
+      }
+    ]
   }
 }
