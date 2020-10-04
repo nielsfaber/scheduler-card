@@ -58,7 +58,7 @@
         "service": "set_hvac_mode",
         "icon": "cog-transfer-outline",
         "variable": {
-          "field": "mode",
+          "field": "hvac_mode",
           "options": [
             {
               "value": "attribute:hvac_modes:auto",
@@ -92,7 +92,7 @@
         "icon": "cloud-download-outline",
         "supported_feature": 16,
         "variable": {
-          "field": "preset",
+          "field": "preset_mode",
           "options": [
             {
               "value": "attribute:preset_modes:none",
