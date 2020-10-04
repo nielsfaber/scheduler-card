@@ -140,6 +140,7 @@ export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement, opti
   let action_string = PrettyPrintName(actionCfg.name);
 
   if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
+    if (entry.variable.type == EVariableType.Level && !(entry.variable as ILevelVariable).enabled) return capitalize(action_string);
     let value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
     action_string = `${localize('services.set_to')} ${value}`;
   }

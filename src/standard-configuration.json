@@ -333,7 +333,8 @@
         "variable": {
           "field": "brightness",
           "unit": "%",
-          "supported_feature": 1
+          "supported_feature": 1,
+          "optional": true
         }
       },
       {
