@@ -3,6 +3,7 @@ import { DefaultGroupIcon, DiscoveredEntitiesGroup } from "./const";
 import { extend, getDomainFromEntityId, MatchPattern, pick } from "./helpers";
 import { IGroupElement, IGroupConfig } from "./types";
 import { default as standardConfig } from './standard-configuration.json';
+import { IsSchedulerEntity } from "./entity";
 
 
 export function IsReservedGroupName(name: string) {
@@ -70,7 +71,7 @@ export class GroupList {
     }
   }
 
-  InGroup(group_id: string, entity_id: string) {
+  GroupHasEntity(group_id: string, entity_id: string) {
     let group = this.Find(group_id);
     if (!group) return false;
 
@@ -84,16 +85,27 @@ export class GroupList {
     return true;
   }
 
-  InConfig(entity_id: string) {
-    let res = this.groups.find(e => this.InGroup(e.id, entity_id));
+  InConfig(entity_id: string) { //entity is in group config, but no groups are created yet
+    let res = this.groupConfig.find(group => {
+      if (!group.include.find(e => MatchPattern(e, entity_id))) return false;
+      if (group.exclude?.find(e => MatchPattern(e, entity_id))) return false;
+      if (IsSchedulerEntity(entity_id)) return false;
+      return true;
+    });
     return (res !== undefined);
   }
+
+  InGroup(entity_id: string) {
+    let res = this.groups.find(group => group.entities.includes(entity_id));
+    return (res !== undefined);
+  }
+
 
   CreateGroups(entity_ids: string[]) {
     this.groupConfig.forEach(cfg => this.Add(GroupId(cfg.name), pick(cfg, ['name', 'icon'])));
 
     entity_ids.forEach(entity_id => {
-      if (this.InConfig(entity_id)) return;
+      if (this.InConfig(entity_id) || this.InGroup(entity_id)) return;
       let domain = getDomainFromEntityId(entity_id);
       let group = this.Find(domain);
       if (group) {

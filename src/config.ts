@@ -34,7 +34,7 @@ export class Config {
   GetEntitiesForGroup(group_id: string) {
     let group = this.groups.Find(group_id);
     if (!group) return [];
-    return this.entities.Get().filter(e => this.groups.InGroup(group_id, e.id));
+    return this.entities.Get().filter(e => this.groups.GroupHasEntity(group_id, e.id));
   }
 
   FindEntity(entity_id: string | undefined) {
@@ -67,9 +67,15 @@ export class Config {
   }
 
   LoadEntities(entityList: IHassEntity[]) {
+    let included_entities = Object.keys(entityList).filter(entity_id => {
+      if (this.entities.InConfig(entity_id)) return true;
+      if (this.groups.InConfig(entity_id)) return true;
+      return false;
+    });
+
     //load the entities from configuration
-    Object.entries(entityList).forEach(([entity_id, entity]) => {
-      if (!this.entities.InConfig(entity_id)) return;
+    included_entities.forEach(entity_id => {
+      let entity = entityList[entity_id];
       let entityConfig = this.GetEntityConfig(entity);
       this.entities.Add(entity_id, entityConfig);
       if (entityConfig.actions) {
