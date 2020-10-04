@@ -83,24 +83,24 @@ export class VariableSlider extends LitElement {
   getSlider() {
     if (!Bool(this.disabled)) {
       return html`
-        <ha-paper-slider
+        <ha-slider
         pin
         min=${this.min}
         max=${this.max}
         step=${this.step}
         value=${this.getScaledValue()}
         @change=${this.updateValue}
-        ></ha-paper-slider>`;
+        ></ha-slider>`;
     } else {
       return html`
-        <ha-paper-slider
+        <ha-slider
         pin
         min=${this.min}
         max=${this.max}
         step=${this.step}
         value=${this.getScaledValue()}
         disabled
-        ></ha-paper-slider>`;
+        ></ha-slider>`;
     }
   }
 
@@ -156,7 +156,7 @@ export class VariableSlider extends LitElement {
         align-items: center;
       }
 
-      ha-paper-slider {
+      ha-slider {
         width: 100%;
         --paper-slider-pin-start-color: var(--primary-color);
       }
