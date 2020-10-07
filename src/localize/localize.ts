@@ -10,6 +10,7 @@ import * as nl from './languages/nl.json';
 import * as no from './languages/no.json';
 import * as pl from './languages/pl.json';
 import * as pt_br from './languages/pt-br.json';
+import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 
 type HassElement = {
@@ -31,6 +32,7 @@ var languages: any = {
   pl: pl,
   pt: pt_br,
   pt_BR: pt_br,
+  ro: ro,
   ru: ru,
 };
 
