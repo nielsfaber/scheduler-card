@@ -25,11 +25,7 @@
     "day_type_daily": "iga päev",
     "day_type_weekdays": "tööpäevadel",
     "day_type_weekend": "nädalavahetus",
-    "day_type_custom": "valikuline",
-    "shift_with_sun": "määrake automaatselt Päikese tõus/loojang",
-    "brightness": "Heledus",
-    "temperature": "Temperatuur",
-    "position": "Asend"
+    "day_type_custom": "valikuline"
   },
   "days_short": {
     "mon": "E",
@@ -50,14 +46,9 @@
     "sun": "Pühapäev"
   },
   "words": {
-    "on": " ",
-    "every": "iga",
     "and": "ja",
-    "at": "kell",
     "before": "enne",
-    "after": "pärast",
-    "sunrise": "päikesetõusu",
-    "sunset": "loojangut"
+    "after": "pärast"
   },
   "services": {
     "turn_on": "lülita sisse",
@@ -117,11 +108,11 @@
     "midnight": "keskööl",
     "noon": "keskpäeval",
     "at_sun_event": "{sunEvent}",
-    "sun_event_sunrise": "Päikese tõusul",
-    "sun_event_sunset": "Päikese loojangul"
+    "sun_event_sunrise": "päikesetõusu",
+    "sun_event_sunset": "loojangut"
   },
   "misc": {
     "one_additional_task": "veel 1 ajastus",
     "x_additional_tasks": "{count} ajastust"
-  }  
+  }
 }
