@@ -466,8 +466,10 @@ Currently the following languages are supported:
 | Polski      | pl         | v1.2.6         |                                                                                        |
 | Português   | pt, pt-br  | v1.3.0         | Translation is brazilian Portuguese, improvements may be needed for native Portuguese. |
 | Русский     | ru         | v1.2.8         |                                                                                        |
+| Română      | ro         | v1.7.3         |                                                                                        |
 | Nederlands  | nl         | v1.2.2         |                                                                                        |
 | Norsk       | no, nb, nn | v1.2.8         |                                                                                        |
+
 
 
 
