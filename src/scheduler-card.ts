@@ -57,7 +57,7 @@ export class SchedulerCard extends LitElement {
   @property({ type: Array })
   schedules: IScheduleEntry[] = [];
 
-  @property({ type: Object })
+  //@property({ type: Object })
   private _hass?: HomeAssistant;
 
   @property({ type: Boolean })
@@ -205,7 +205,19 @@ export class SchedulerCard extends LitElement {
       </div>
     `];
     let items = this.schedules;
-    items.sort((a, b) => getRemaining(a.next_trigger) > getRemaining(b.next_trigger) ? 1 : -1);
+    items.sort((a, b) => {
+      let remainingA = getRemaining(a.next_trigger);
+      let remainingB = getRemaining(b.next_trigger);
+
+      if (remainingA !== null && remainingB !== null) {
+        if (remainingA > remainingB) return 1;
+        else if (remainingA < remainingB) return -1;
+        else return a.id < b.id ? 1 : -1;
+      }
+      else if (remainingB !== null) return 1;
+      else if (remainingA !== null) return -1;
+      else return a.id < b.id ? 1 : -1;
+    });
     return items.map(scheduleItem => {
       return html`
         <schedule-entity-row
@@ -588,7 +600,7 @@ export class SchedulerCard extends LitElement {
 
   selectListItem(val: string, updateCard: boolean) {
     let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    this._entry = Object.assign({...this._entry}, { variable: variable });
+    this._entry = Object.assign({ ...this._entry }, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 

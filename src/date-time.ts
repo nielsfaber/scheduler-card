@@ -158,5 +158,5 @@ export function getRemaining(time_str: string | undefined) {
     return Math.round(remaining);
 
   }
-  else return 100000000000000;
+  else return null;
 }
