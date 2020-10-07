@@ -13,7 +13,8 @@
     "no_groups_defined": "Nu există grupuri definite",
     "no_entities_for_group": "Nu există entități definite în acest grup",
     "no_actions_for_entity": "Nu există acțiuni pentru această entitate",
-    "no_entries_defined": "Nu există elemente de afișat"
+    "no_entries_defined": "Nu există elemente de afișat",
+    "no_timeslot_selected": "Prima dată selectați un interval orar"
   },
   "fields": {
     "group": "Grup",
@@ -25,11 +26,7 @@
     "day_type_daily": "zilnic",
     "day_type_workday": "zile lucrătoare",
     "day_type_weekend": "sfârșit de săptămână",
-    "day_type_custom": "personalizat",
-    "shift_with_sun": "ajustare automată a timpului după răsărit/apus",
-    "brightness": "Intensitate luminoasă",
-    "temperature": "Temperatură",
-    "position": "Poziție"
+    "day_type_custom": "personalizat"
   },
   "days_short": {
     "mon": "lun",
@@ -37,27 +34,23 @@
     "wed": "mie",
     "thu": "joi",
     "fri": "vin",
-    "sat": "sam",
+    "sat": "sâm",
     "sun": "dum"
   },
   "days_long": {
-    "mon": "luni",
-    "tue": "marți",
-    "wed": "miercuri",
-    "thu": "joi",
-    "fri": "vineri",
-    "sat": "sâmbătă",
-    "sun": "duminică"
+    "mon": "Luni",
+    "tue": "Marți",
+    "wed": "Miercuri",
+    "thu": "Joi",
+    "fri": "Vineri",
+    "sat": "Sâmbătă",
+    "sun": "Duminică"
   },
   "words": {
-    "on": "în",
-    "every": "fiecare",
     "and": "și",
-    "at": "la",
+    "or": "sau",
     "before": "înainte",
-    "after": "după",
-    "sunrise": "răsărit",
-    "sunset": "apus"
+    "after": "după"
   },
   "services": {
     "turn_on": "pornire",
@@ -74,6 +67,13 @@
     "select_source": "selectare sursă",
     "start": "start"
   },
+  "service_parameters": {
+    "brightness": "intensitate luminoasă",
+    "temperature": "temperatură",
+    "position": "poziție",
+    "hvac_mode": "mod",
+    "preset": "preset"
+  },
   "domains": {
     "camera": "camere",
     "climate": "climat",
@@ -88,5 +88,33 @@
     "scene": "scene",
     "switch": "întrerupătpare",
     "vacuum": "aspiratoare"
+  },
+  "days": {
+    "tomorrow": "mâine",
+    "daily": "zilnic",
+    "daily_except_days": "zilnic cu excepția {days}",
+    "working_days": "zile lucrătoare",
+    "weekend": "sfârșit de săptămână",
+    "interval": "{startDay} până la {endDay}"
+  },
+  "time": {
+    "absolute": "la {time}",
+    "relative": "în {time}",
+    "interval": "de la {startTime} la {endTime}",
+    "seconds": "{seconds} secunde",
+    "hour": "1 oră",
+    "hours": "{hours} ore",
+    "minute": "1 minut",
+    "minutes": "{minutes} minute",
+    "now": "acum",
+    "midnight": "miezul nopții",
+    "noon": "amiază",
+    "at_sun_event": "la {sunEvent}",
+    "sun_event_sunrise": "răsărit",
+    "sun_event_sunset": "apus"
+  },
+  "misc": {
+    "one_additional_task": "încă o sarcină",
+    "x_additional_tasks": "încă {count} sarcini"
   }
 }
