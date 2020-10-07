@@ -19,7 +19,7 @@
     "group": "Grupp",
     "entity": "Olem",
     "action": "Tegevus",
-    "days": "Päev",
+    "days": "Päevad",
     "time": "Aeg",
     "options": "Suvandid",
     "day_type_daily": "iga päev",
@@ -74,6 +74,13 @@
     "select_source": "vali allikas",
     "start": "alusta"
   },
+  "service_parameters": {
+    "brightness": "heledus",
+    "temperature": "temperatuur",
+    "position": "asend",
+    "hvac_mode": "töörežiim",
+    "preset": "eelseadistus"
+  },
   "domains": {
     "camera": "kaamerad",
     "climate": "kliimaseade",
@@ -88,5 +95,33 @@
     "scene": "stseenid",
     "switch": "lülitid",
     "vacuum": "tolmuimejad"
-  }
+  },
+  "days": {
+    "tomorrow": "homme",
+    "daily": "iga päev",
+    "daily_except_days": "iga päev välja arvatud {days}",
+    "working_days": "tööpäevadel",
+    "weekend": "nädalavahetusel",
+    "interval": "{startDay} kuni {endDay}"
+  },
+  "time": {
+    "absolute": "kell {time}",
+    "relative": "{time} pärast",
+    "interval": "alates {startTime} kuni {endTime}",
+    "seconds": "{seconds} sekundit",
+    "hour": "1 tund",
+    "hours": "{hours} tundi",
+    "minute": "1 minut",
+    "minutes": "{minutes} minutit",
+    "now": "kohe",
+    "midnight": "keskööl",
+    "noon": "keskpäeval",
+    "at_sun_event": "{sunEvent}",
+    "sun_event_sunrise": "Päikese tõusul",
+    "sun_event_sunset": "Päikese loojangul"
+  },
+  "misc": {
+    "one_additional_task": "veel 1 ajastus",
+    "x_additional_tasks": "{count} ajastust"
+  }  
 }
