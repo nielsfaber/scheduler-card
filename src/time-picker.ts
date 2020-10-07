@@ -109,21 +109,21 @@ export class TimePicker extends LitElement {
   private getSunModeToggle() {
     if (isNaN(this.sunrise) || isNaN(this.sunset)) return html``;
 
-    let diff_sunrise = Math.abs(wrapTime(this._val - this.sunrise, { stepSize: this.stepSize, signed: true }));
-    let diff_sunset = Math.abs(wrapTime(this._val - this.sunset, { stepSize: this.stepSize, signed: true }));
-    let enabled = (this.event || diff_sunrise <= this.maxOffset * MinutesPerHour || diff_sunset <= this.maxOffset * MinutesPerHour);
-    if (enabled)
+    // let diff_sunrise = Math.abs(wrapTime(this._val - this.sunrise, { stepSize: this.stepSize, signed: true }));
+    // let diff_sunset = Math.abs(wrapTime(this._val - this.sunset, { stepSize: this.stepSize, signed: true }));
+    //let enabled = (this.event || diff_sunrise <= this.maxOffset * MinutesPerHour || diff_sunset <= this.maxOffset * MinutesPerHour);
+    //if (enabled)
       return html`
           <mwc-button @click="${this.toggleMode}" class="${this.event ? 'active' : ''}">
             <ha-icon icon="hass:theme-light-dark"></ha-icon>
           </mwc-button>
       `;
-    else
-      return html`
-          <mwc-button disabled="disabled">
-            <ha-icon icon="hass:theme-light-dark"></ha-icon>
-          </mwc-button>
-      `;
+    // else
+    //   return html`
+    //       <mwc-button disabled="disabled">
+    //         <ha-icon icon="hass:theme-light-dark"></ha-icon>
+    //       </mwc-button>
+    //   `;
   }
 
   private getAmPm() {
@@ -188,6 +188,8 @@ export class TimePicker extends LitElement {
         this.event = "sunset";
       }
       this.value = ts - ts_ref;
+      if(this.value > this.maxOffset * MinutesPerHour) this.value = this.maxOffset * MinutesPerHour;
+      else if(this.value < -this.maxOffset * MinutesPerHour) this.value = -this.maxOffset * MinutesPerHour;
     }
     else {
       let ts_ref = (this.event == "sunrise") ? this.sunrise : this.sunset;
