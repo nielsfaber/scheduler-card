@@ -25,11 +25,7 @@
     "day_type_daily": "daily",
     "day_type_workday": "workdays",
     "day_type_weekend": "weekend",
-    "day_type_custom": "custom",
-    "shift_with_sun": "automatically adjust time to sunrise/sunset",
-    "brightness": "Brightness",
-    "temperature": "Temperature",
-    "position": "Position"
+    "day_type_custom": "custom"
   },
   "days_short": {
     "mon": "mon",
@@ -41,23 +37,16 @@
     "sun": "sun"
   },
   "days_long": {
-    "mon": "monday",
-    "tue": "tuesday",
-    "wed": "wednesday",
-    "thu": "thursday",
-    "fri": "friday",
-    "sat": "saturday",
-    "sun": "sunday"
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
   },
   "words": {
-    "on": "on",
-    "every": "every",
-    "and": "and",
-    "at": "at",
-    "before": "before",
-    "after": "after",
-    "sunrise": "sunrise",
-    "sunset": "sunset"
+    "and": "and"
   },
   "services": {
     "turn_on": "turn on",
@@ -74,6 +63,13 @@
     "select_source": "select source",
     "start": "start"
   },
+  "service_parameters": {
+    "brightness": "brightness",
+    "temperature": "temperature",
+    "position": "position",
+    "hvac_mode": "mode",
+    "preset": "preset"
+  },
   "domains": {
     "camera": "cameras",
     "climate": "climate",
@@ -88,5 +84,35 @@
     "scene": "scenes",
     "switch": "switches",
     "vacuum": "vacuum"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "after_sun_event": "{time} after {sunEvent}",
+    "before_sun_event": "{time} before {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }
