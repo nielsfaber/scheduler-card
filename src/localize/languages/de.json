@@ -24,11 +24,12 @@
     "options": "Optionen",
     "day_type_daily": "jeden Tag",
     "day_type_weekdays": "Werktags",
-    "day_type_custom": "benutzerdefiniert",
-    "shift_with_sun": "Zeit automatisch an Sonnenauf- bzw. Sonnenuntergang anpassen",
-    "brightness": "Helligkeit",
-    "temperature": "Temperatur",
-    "position": "Position"
+    "day_type_custom": "benutzerdefiniert"
+  },
+  "words": {
+    "and": "und",
+    "before": "vor",
+    "after": "nach"
   },
   "days_short": {
     "mon": "Mo",
@@ -73,6 +74,13 @@
     "select_source": "Quelle auswählen",
     "start": "Start"
   },
+  "service_parameters": {
+    "brightness": "Helligkeit",
+    "temperature": "Temperatur",
+    "position": "Position",
+    "hvac_mode": "Modus",
+    "preset": "Voreinstellung"
+  },  
   "domains": {
     "camera": "Kameras",
     "climate": "Heizung",
@@ -84,8 +92,37 @@
     "input_select": "input_select",
     "light": "Licht",
     "media_player": "Media Player",
-    "scene": "Szenen",
+    "scene": "Szene",
     "switch": "Schalter",
     "vacuum": "Staubsauger"
-  }
+  },
+  "days": {
+    "tomorrow": "morgen",
+    "daily": "täglich",
+    "daily_except_days": "täglich außer {days}",
+    "working_days": "Werktags",
+    "weekend": "Wochenende",
+    "interval": "{startDay} bis {endDay}"
+  },
+
+  "time": {
+    "absolute": "um {time}",
+    "relative": "in {time}",
+    "interval": "von {startTime} bis {endTime}",
+    "seconds": "{seconds} Sekunden",
+    "hour": "1 Stunde",
+    "hours": "{hours} Stunden",
+    "minute": "1 Minute",
+    "minutes": "{minutes} Minuten",
+    "now": "jetzt",
+    "midnight": "Mitternacht",
+    "noon": "Mittag",
+    "at_sun_event": "am {sunEvent}",
+    "sun_event_sunrise": "Sonnenaufgang",
+    "sun_event_sunset": "Sonnenuntergang"
+  },  
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
+  }  
 }
