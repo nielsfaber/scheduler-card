@@ -46,7 +46,9 @@
     "sun": "zondag"
   },
   "words": {
-    "and": "en"
+    "and": "en",
+    "before": "voor",
+    "after": "na"
   },
   "services": {
     "turn_on": "aanzetten",
@@ -106,8 +108,6 @@
     "midnight": "middernacht",
     "noon": "12 uur",
     "at_sun_event": "bij {sunEvent}",
-    "after_sun_event": "{time} na {sunEvent}",
-    "before_sun_event": "{time} voor {sunEvent}",
     "sun_event_sunrise": "zonsopgang",
     "sun_event_sunset": "zonsondergang"
   },

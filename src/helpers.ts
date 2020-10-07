@@ -100,8 +100,7 @@ export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: 
   }
 
   if (Math.abs(time.value) == 0) return localize('time.at_sun_event','{sunEvent}',event_string);
-  else if(formatTime(time.value).signed) return localize('time.before_sun_event',['{time}','{sunEvent}'],[time_string, event_string]);
-  else return localize('time.after_sun_event',['{time}','{sunEvent}'],[time_string, event_string]);
+  return `${time_string} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${event_string}`;
 }
 
 export function PrettyPrintName(input: string): string {

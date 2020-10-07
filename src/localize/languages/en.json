@@ -46,7 +46,9 @@
     "sun": "Sunday"
   },
   "words": {
-    "and": "and"
+    "and": "and",
+    "before": "before",
+    "after": "after"
   },
   "services": {
     "turn_on": "turn on",
@@ -106,8 +108,6 @@
     "midnight": "midnight",
     "noon": "noon",
     "at_sun_event": "at {sunEvent}",
-    "after_sun_event": "{time} after {sunEvent}",
-    "before_sun_event": "{time} before {sunEvent}",
     "sun_event_sunrise": "sunrise",
     "sun_event_sunset": "sunset"
   },
