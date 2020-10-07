@@ -1,4 +1,7 @@
 
+import { html } from 'lit-element';
+import { localize } from './localize/localize';
+
 
 export const MinutesPerHour = 60;
 export const HoursPerDay = 24;
@@ -111,6 +114,7 @@ export function daysToArray(dayCfg: IDays) {
   if (dayCfg.type == EDayType.Daily) return [1, 2, 3, 4, 5, 6, 7]
   else if (dayCfg.type == EDayType.Workday) return [1, 2, 3, 4, 5]
   else if (dayCfg.type == EDayType.Weekend) return [6, 7];
+  else if (dayCfg.type == EDayType.Custom) return dayCfg.custom_days as number[]
   else return [];
 }
 
@@ -123,4 +127,36 @@ export function timeEventToString(input: ETimeEvent): string {
   if (input == ETimeEvent.Sunrise) return "sunrise";
   else return "sunset";
 
+}
+
+
+export function weekdayToString(day: number) {
+  switch (day) {
+    case 1: return localize('days_long.mon');
+    case 2: return localize('days_long.tue');
+    case 3: return localize('days_long.wed');
+    case 4: return localize('days_long.thu');
+    case 5: return localize('days_long.fri');
+    case 6: return localize('days_long.sat');
+    case 7: return localize('days_long.sun');
+    default: return '';
+  }
+}
+
+export function weekday(ts: Date) {
+  let day = ts.getDay();
+  if (day == 0) day = 7;
+  return day;
+}
+
+export function getRemaining(time_str: string | undefined) {
+  if (time_str) {
+
+    let ts = new Date(time_str);
+    let now = new Date();
+    let remaining = (ts.valueOf() - now.valueOf()) / 1000;
+    return Math.round(remaining);
+
+  }
+  else return 100000000000000;
 }

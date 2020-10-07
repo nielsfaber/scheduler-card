@@ -1,5 +1,5 @@
 
-import { IEntry, IDictionary, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType } from './types'
+import { IEntry, IDictionary, IActionElement, IListVariable, ILevelVariable, ILevelVariableConfig, IListVariableConfig, EVariableType, IScheduleEntry } from './types'
 import { localize } from './localize/localize';
 import { formatTime, ITime, wrapTime, ETimeEvent, IDays, EDayType, MinutesPerDay } from './date-time';
 import { UnitPercent, FieldTemperature } from "./const";
@@ -79,50 +79,29 @@ export function removeDomainFromEntityId(entity_id: string): string {
   return res;
 }
 
-export function PrettyPrintDays(days: IDays): string {
-  if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
-  else if (days.type == EDayType.Workday) return `${localize('words.on')} ${localize('fields.day_type_workday')}`;
-  else if (days.type == EDayType.Weekend) return `${localize('words.every')} ${localize('fields.day_type_weekend')}`;
-  else {
-    let dayList = days.custom_days || [];
-    let output = Array();
-    if (dayList.includes(1)) output.push(localize('days_long.mon'));
-    if (dayList.includes(2)) output.push(localize('days_long.tue'));
-    if (dayList.includes(3)) output.push(localize('days_long.wed'));
-    if (dayList.includes(4)) output.push(localize('days_long.thu'));
-    if (dayList.includes(5)) output.push(localize('days_long.fri'));
-    if (dayList.includes(6)) output.push(localize('days_long.sat'));
-    if (dayList.includes(7)) output.push(localize('days_long.sun'));
-    let output_str = output.join(', ');
-    var n = output_str.lastIndexOf(', ');
-    if (n) output_str = output_str.slice(0, n) + output_str.slice(n).replace(', ', ` ${localize('words.and')} `);
-    return `${localize('words.every')} ${output_str}`;
-  }
-}
 
 export function PrettyPrintTime(time: ITime, options: { amPm: boolean, sunrise: number | null, sunset: number | null, endTime?: ITime }): string {
   let amPmFormat = (options.amPm) ? options.amPm : false;
 
   if (!time.event) {
-    if (!options.endTime) return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time}`;
-    else return `${localize('words.at')} ${formatTime(time.value, { amPm: amPmFormat }).time} - ${formatTime(options.endTime.value, { amPm: amPmFormat }).time}`;
+    if (!options.endTime) return localize('time.absolute','{time}', formatTime(time.value, { amPm: amPmFormat }).time);
+    else return localize('time.interval',['{startTime}','{endTime}'], [formatTime(time.value, { amPm: amPmFormat }).time, formatTime(options.endTime.value, { amPm: amPmFormat }).time]);
   }
 
   let time_string = "unknown";
   let event_string = "";
   if (time.event === ETimeEvent.Sunrise && options.sunrise !== null) {
-    let time_with_offset = wrapTime(Number(options.sunrise) + time.value);
-    time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
-    event_string = "sunrise";
+    time_string = formatTime(time.value, { absolute: true }).time;
+    event_string = localize('time.sun_event_sunrise');
   }
   else if (time.event == ETimeEvent.Sunset && options.sunset !== null) {
-    let time_with_offset = wrapTime(Number(options.sunset) + time.value);
-    time_string = formatTime(time_with_offset, { amPm: amPmFormat }).time;
-    event_string = "sunset";
+    time_string = formatTime(time.value, { absolute: true }).time;
+    event_string = localize('time.sun_event_sunset');
   }
 
-  if (Math.abs(time.value) == 0) return `${localize('words.at')} ${localize(`words.${time.event}`)} (${time_string})`;
-  else return `${formatTime(time.value, { absolute: true }).time} ${formatTime(time.value).signed ? localize('words.before') : localize('words.after')} ${localize(`words.${event_string}`)} (${time_string})`;
+  if (Math.abs(time.value) == 0) return localize('time.at_sun_event','{sunEvent}',event_string);
+  else if(formatTime(time.value).signed) return localize('time.before_sun_event',['{time}','{sunEvent}'],[time_string, event_string]);
+  else return localize('time.after_sun_event',['{time}','{sunEvent}'],[time_string, event_string]);
 }
 
 export function PrettyPrintName(input: string): string {
@@ -144,7 +123,7 @@ export function PrettyPrintAction(entry: IEntry, actionCfg: IActionElement, opti
     let value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
     action_string = `${localize('services.set_to')} ${value}`;
   }
-  return capitalize(action_string);
+  return action_string;
 }
 
 
@@ -258,3 +237,25 @@ export function calculateTimeline(entries: IEntry[]): IEntry[] {
 
   return entries;
 }
+
+
+// export function PrettyPrintDays(days: IDays): string {
+//   if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
+//   else if (days.type == EDayType.Workday) return `${localize('words.on')} ${localize('fields.day_type_workday')}`;
+//   else if (days.type == EDayType.Weekend) return `${localize('words.every')} ${localize('fields.day_type_weekend')}`;
+//   else {
+//     let dayList = days.custom_days || [];
+//     let output = Array();
+//     if (dayList.includes(1)) output.push(localize('days_long.mon'));
+//     if (dayList.includes(2)) output.push(localize('days_long.tue'));
+//     if (dayList.includes(3)) output.push(localize('days_long.wed'));
+//     if (dayList.includes(4)) output.push(localize('days_long.thu'));
+//     if (dayList.includes(5)) output.push(localize('days_long.fri'));
+//     if (dayList.includes(6)) output.push(localize('days_long.sat'));
+//     if (dayList.includes(7)) output.push(localize('days_long.sun'));
+//     let output_str = output.join(', ');
+//     var n = output_str.lastIndexOf(', ');
+//     if (n) output_str = output_str.slice(0, n) + output_str.slice(n).replace(', ', ` ${localize('words.and')} `);
+//     return `${localize('words.every')} ${output_str}`;
+//   }
+// }

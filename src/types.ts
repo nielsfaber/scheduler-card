@@ -19,7 +19,8 @@ export interface IHassEntity {
     icon?: string,
     supported_features?: number,
     actions?: IHassAction[],
-    entries?: string[]
+    entries?: string[],
+    next_trigger?: string
   }
 }
 
@@ -151,6 +152,7 @@ export interface IScheduleEntry {
   id: string,
   enabled: boolean,
   entries: IEntry[],
+  next_trigger: string | undefined
 }
 
 

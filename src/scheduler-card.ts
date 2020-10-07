@@ -1,15 +1,15 @@
 
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, ActionHandlerEvent } from 'custom-card-helpers';
 
 import { Config } from './config';
 import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption, ICardConfig } from './types'
-import { PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, PrettyPrintAction, capitalize, IsEqual, pick, filterObject, calculateTimeline } from './helpers'
+import { PrettyPrintName, PrettyPrintIcon, IsEqual, pick, filterObject, calculateTimeline } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
 import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries } from './const'
-import { localize, getLanguage } from './localize/localize';
-import { parseTimestamp, EDayType, IDays, ETimeEvent, daysToArray } from './date-time';
+import { localize, getLanguage, ServiceParamTranslations } from './localize/localize';
+import { parseTimestamp, EDayType, IDays, ETimeEvent, daysToArray, getRemaining, } from './date-time';
 import { ImportFromHass, ExportToHass } from './interface';
 import { IsSchedulerEntity } from './entity';
 
@@ -17,6 +17,7 @@ import './time-picker';
 import './variable-slider';
 import './timeslot-editor';
 import './editor';
+import './schedule-entity-row';
 
 
 (window as any).customCards = (window as any).customCards || [];
@@ -54,7 +55,7 @@ export class SchedulerCard extends LitElement {
   _entities: IDictionary<IHassEntity> = {};
 
   @property({ type: Array })
-  scheduleItems: IScheduleEntry[] = [];
+  schedules: IScheduleEntry[] = [];
 
   @property({ type: Object })
   private _hass?: HomeAssistant;
@@ -111,7 +112,7 @@ export class SchedulerCard extends LitElement {
     if (IsEqual(entities, this._entities)) return;
     this._entities = entities;
 
-    this.scheduleItems = Object.values(entities).map(e => ImportFromHass(e, this.Config)).filter(e => e) as IScheduleEntry[];
+    this.schedules = (Object.values(entities).map(e => ImportFromHass(e, this.Config)).filter(e => e) as IScheduleEntry[]).filter(e => e);
   }
 
   setConfig(config: ICardConfig) {
@@ -122,8 +123,8 @@ export class SchedulerCard extends LitElement {
   }
 
   public getCardSize() {
-    if (!this._hass || !this.scheduleItems.length) return 6;
-    return (6 + this.scheduleItems.length * 2);
+    if (!this._hass || !this.schedules.length) return 6;
+    return (6 + this.schedules.length * 2);
   }
 
   protected render(): TemplateResult {
@@ -198,82 +199,26 @@ export class SchedulerCard extends LitElement {
   }
 
   getEntries(): TemplateResult[] {
-    if (!this.scheduleItems || !this.scheduleItems.length) return [html`
+    if (!this.schedules.length) return [html`
       <div class="text-field">
         ${localize('instructions.no_entries_defined')}
       </div>
     `];
-    return this.scheduleItems.map(scheduleItem => {
-      let entity = this.Config.FindEntity(scheduleItem.entries[0].entity);
-      let action = this.Config.FindAction(scheduleItem.entries[0].entity, scheduleItem.entries[0].action);
-      if (!entity || !action) return html``;
-      if (scheduleItem.entries.length == 1) {
-
-        return html`
-          <div class="list-item${scheduleItem['enabled'] ? '' : ' disabled'}" @click="${() => this._editItemClick(scheduleItem.id)}">
-            <div class="list-item-icon">
-              ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
-            </div>
-            <div class="list-item-name">
-              ${PrettyPrintName(entity.name)}
-            </div>
-            <div class="list-item-action">
-              ${PrettyPrintAction(scheduleItem.entries[0], action, { temperature_unit: this._config.temperature_unit })}
-            </div>
-            <div class="list-item-days">
-              ${capitalize(PrettyPrintDays(scheduleItem.entries[0].days))}
-            </div>
-            <div class="list-item-time">
-              ${capitalize(PrettyPrintTime(scheduleItem.entries[0].time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset, endTime: scheduleItem.entries[0].endTime }))}
-            </div>
-            <div class="list-item-switch">
-              ${scheduleItem.enabled ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>`}
-            </div>
-          </div>
+    let items = this.schedules;
+    items.sort((a, b) => getRemaining(a.next_trigger) > getRemaining(b.next_trigger) ? 1 : -1);
+    return items.map(scheduleItem => {
+      return html`
+        <schedule-entity-row
+          .config=${this.Config}
+          .userConfig=${this._config}
+          .schedule=${scheduleItem}
+          @action=${(e) => this._handleScheduleClick(e, scheduleItem.id)}
+        >
+        </schedule-entity-row>
       `;
-      }
-      else {
-        let description: TemplateResult[] = scheduleItem.entries.map(el => {
-          let currentAction = this.Config.FindAction(el.entity, el.action) as IActionElement;
-          let actionStr = PrettyPrintAction(el, currentAction, { temperature_unit: this._config.temperature_unit });
-          let timeStr = PrettyPrintTime(el.time, { amPm: this._config.am_pm, sunrise: this._config.sunrise, sunset: this._config.sunset, endTime: el.endTime });
-          return html`${actionStr} ${timeStr}<br>`;
-        });
-
-        return html`
-          <div class="list-item${scheduleItem['enabled'] ? '' : ' disabled'}" @click="${() => this._editItemClick(scheduleItem.id)}">
-            <div class="list-item-icon">
-              ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
-            </div>
-            <div class="list-item-name">
-              ${PrettyPrintName(entity.name)}
-            </div>
-            <div class="list-item-action">
-              ${description}
-            </div>
-            <div class="list-item-days">
-              ${capitalize(PrettyPrintDays(scheduleItem.entries[0].days))}
-            </div>
-            <div class="list-item-time">
-            </div>
-            <div class="list-item-switch">
-              ${scheduleItem.enabled ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(scheduleItem.id, e)}"></ha-switch>`}
-            </div>
-          </div>
-        `;
-      }
     });
   }
 
-  toggleDisable(entity_id, evt) {
-    evt.stopPropagation();
-    let enabled = !evt.target.checked;
-    if (enabled) {
-      this._hass!.callService('switch', 'turn_on', { entity_id: entity_id });
-    } else {
-      this._hass!.callService('switch', 'turn_off', { entity_id: entity_id });
-    }
-  }
 
   getGroups(): TemplateResult[] {
     let groups = this.Config.GetGroups();
@@ -596,7 +541,7 @@ export class SchedulerCard extends LitElement {
     let variable = this._entry.variable as ILevelVariable;
     return html`
     <div class="card-section">
-      <div class="header">${cfg['name']}</div>
+      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : cfg.name}</div>
       <div class="option-item">
         <variable-slider
           min=${cfg.min}
@@ -636,14 +581,14 @@ export class SchedulerCard extends LitElement {
 
     return html`
     <div class="card-section">
-      <div class="header">${cfg['name']}</div>
+      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : cfg.name}</div>
       ${fields}
      </div>`;
   }
 
   selectListItem(val: string, updateCard: boolean) {
     let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    Object.assign(this._entry, { variable: variable });
+    this._entry = Object.assign({...this._entry}, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 
@@ -703,9 +648,14 @@ export class SchedulerCard extends LitElement {
     this.editItem = false;
   }
 
+  _handleScheduleClick(e: ActionHandlerEvent, schedule_id: string) {
+    let action = e.detail.action;
+    if (action == 'tap') this._editItemClick(schedule_id);
+    else this._toggleDisable(schedule_id);
+  }
 
   _editItemClick(entity_id) {
-    let item = this.scheduleItems.find(e => e.id == entity_id);
+    let item = this.schedules.find(e => e.id == entity_id);
     if (!item) return;
 
     let entries = [...item.entries];
@@ -725,5 +675,17 @@ export class SchedulerCard extends LitElement {
     this._entries = entries;
 
     this.editItem = entity_id;
+  }
+
+
+  _toggleDisable(entity_id) {
+    let item = this.schedules.find(e => e.id == entity_id);
+    if (!item) return;
+
+    if (item.enabled) {
+      this._hass!.callService('switch', 'turn_off', { entity_id: entity_id });
+    } else {
+      this._hass!.callService('switch', 'turn_on', { entity_id: entity_id });
+    }
   }
 }

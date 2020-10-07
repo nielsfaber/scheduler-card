@@ -96,7 +96,8 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
   return <IScheduleEntry>{
     entries: entries,
     id: entity.entity_id,
-    enabled: entity.state != 'off'
+    enabled: entity.state != 'off',
+    next_trigger: entity.attributes.next_trigger
   };
 }
 
