@@ -36,7 +36,7 @@ var languages: any = {
   ru: ru,
 };
 
-export function localize(string: string, search: string = '', replace: string = '') {
+export function localize(string: string, search: string | string[] = '', replace: string | string[] = '') {
 
   const lang = getLanguage();
 
@@ -52,7 +52,11 @@ export function localize(string: string, search: string = '', replace: string = 
   if (translated === undefined) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
 
   if (search !== '' && replace !== '') {
-    translated = translated.replace(search, replace);
+    if(Array.isArray(search) || Array.isArray(replace)) {
+      for(var i = 0; i < search.length; i++)  translated = translated.replace(search[i], replace[i]);
+    } else {
+      translated = translated.replace(search, replace);
+    }
   }
   return translated;
 }
@@ -99,3 +103,14 @@ export const DomainNameTranslations = {
   switch: 'domains.switch',
   vacuum: 'domains.vacuum'
 }
+
+
+
+export const ServiceParamTranslations = {
+  brightness: 'service_parameters.brightness',
+  position: 'service_parameters.position',
+  temperature: 'service_parameters.temperature',
+  hvac_mode: 'service_parameters.hvac_mode',
+  preset: 'service_parameters.preset'
+}
+
