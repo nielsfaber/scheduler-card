@@ -15,7 +15,7 @@ export function IsReservedGroupName(name: string) {
 
 
 function GroupId(name: string) {
-  let id = name.replace(/[^A-Za-z0-9_\ ]/g, '')
+  let id = name.toLowerCase().trim()
     .replace(/\s+/g, '_')
     .replace(/_+/g, '_');
   return id;
