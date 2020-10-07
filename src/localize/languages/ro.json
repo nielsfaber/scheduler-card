@@ -1,0 +1,92 @@
+{
+  "scheduler": "Planificator",
+  "actions": {
+    "add": "adaugă element",
+    "cancel": "abandon",
+    "next": "următorul",
+    "save": "salvează",
+    "delete": "șterge"
+  },
+  "instructions": {
+    "no_group_selected": "Prima dată selectați un grup",
+    "no_entity_selected": "Prima dată selectați o entitate",
+    "no_groups_defined": "Nu există grupuri definite",
+    "no_entities_for_group": "Nu există entități definite în acest grup",
+    "no_actions_for_entity": "Nu există acțiuni pentru această entitate",
+    "no_entries_defined": "Nu există elemente de afișat"
+  },
+  "fields": {
+    "group": "Grup",
+    "entity": "Entitate",
+    "action": "Acțiune",
+    "days": "Zile",
+    "time": "Timp",
+    "options": "Opțiuni",
+    "day_type_daily": "zilnic",
+    "day_type_workday": "zile lucrătoare",
+    "day_type_weekend": "sfârșit de săptămână",
+    "day_type_custom": "personalizat",
+    "shift_with_sun": "ajustare automată a timpului după răsărit/apus",
+    "brightness": "Intensitate luminoasă",
+    "temperature": "Temperatură",
+    "position": "Poziție"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mie",
+    "thu": "joi",
+    "fri": "vin",
+    "sat": "sam",
+    "sun": "dum"
+  },
+  "days_long": {
+    "mon": "luni",
+    "tue": "marți",
+    "wed": "miercuri",
+    "thu": "joi",
+    "fri": "vineri",
+    "sat": "sâmbătă",
+    "sun": "duminică"
+  },
+  "words": {
+    "on": "în",
+    "every": "fiecare",
+    "and": "și",
+    "at": "la",
+    "before": "înainte",
+    "after": "după",
+    "sunrise": "răsărit",
+    "sunset": "apus"
+  },
+  "services": {
+    "turn_on": "pornire",
+    "turn_off": "oprire",
+    "close_cover": "închidere",
+    "open_cover": "deschidere",
+    "set_temperature": "setare temperatură",
+    "set_to": "setare la",
+    "set_position": "setare poziție",
+    "set_hvac_mode": "setare mod",
+    "set_preset_mode": "setare preset",
+    "set_value": "setare valoare",
+    "select_option": "selectare opțiune",
+    "select_source": "selectare sursă",
+    "start": "start"
+  },
+  "domains": {
+    "camera": "camere",
+    "climate": "climat",
+    "cover": "jaluzele",
+    "fan": "ventilatoare",
+    "group": "grupuri",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "lumini",
+    "media_player": "media playere",
+    "scene": "scene",
+    "switch": "întrerupătpare",
+    "vacuum": "aspiratoare"
+  }
+}
