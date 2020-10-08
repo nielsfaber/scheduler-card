@@ -71,7 +71,7 @@ export const DefaultListVariableConfig: IListVariableConfig = {
 
 export const FieldTemperature = "temperature";
 export const UnitPercent = "%";
-export const CreateTimeline = "make_scheme"
+export const CreateTimeScheme = "make_scheme"
 
 export const DayOptions = [
   { id: 1, name: localize('days_short.mon') },
@@ -89,3 +89,10 @@ export const DayTypeOptions = [
   { id: EDayType.Weekend, name: localize('fields.day_type_weekend') },
   { id: EDayType.Custom, name: localize('fields.day_type_custom') }
 ];
+
+export enum EViews {
+  Overview = "OVERVIEW",
+  NewSchedule = "NEW_SCHEDULE",
+  TimePicker = "TIME_PICKER",
+  TimeScheme = "TIME_SCHEME",
+}

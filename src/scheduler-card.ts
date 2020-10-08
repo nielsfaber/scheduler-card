@@ -3,11 +3,11 @@ import { LitElement, html, customElement, property, CSSResult, TemplateResult } 
 import { HomeAssistant, LovelaceCardEditor, ActionHandlerEvent } from 'custom-card-helpers';
 
 import { Config } from './config';
-import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEntityElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption, ICardConfig } from './types'
+import { IEntry, IScheduleEntry, IUserConfig, IActionElement, ILevelVariableConfig, IListVariableConfig, IHassEntity, IDictionary, EVariableType, ILevelVariable, IListVariable, IListVariableOption, ICardConfig } from './types'
 import { PrettyPrintName, PrettyPrintIcon, IsEqual, pick, filterObject, calculateTimeline } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
-import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries, DayTypeOptions, DayOptions } from './const'
+import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeScheme, DefaultTimelineEntries, DayTypeOptions, DayOptions, EViews } from './const'
 import { localize, getLanguage, ServiceParamTranslations } from './localize/localize';
 import { parseTimestamp, EDayType, IDays, ETimeEvent, daysToArray, getRemaining, } from './date-time';
 import { ImportFromHass, ExportToHass } from './interface';
@@ -62,14 +62,12 @@ export class SchedulerCard extends LitElement {
   //@property({ type: Object })
   private _hass?: HomeAssistant;
 
-  @property({ type: Boolean })
+  @property()
+  _view: EViews = EViews.Overview;
+
   newItem: boolean = false;
 
-  @property({ type: Boolean })
-  editItem: boolean = false;
-
-  @property({ type: Boolean })
-  newItemConfirmed: boolean = false;
+  editItem: string | null = null;
 
   _entries: IEntry[] = [];
   _activeEntry: number | null = null;
@@ -79,8 +77,6 @@ export class SchedulerCard extends LitElement {
 
   @property({ type: String })
   _selectedGroup: string = '';
-
-  _timeline = false;
 
   set hass(hass: HomeAssistant) {
     if (!this._hass) this.init(hass);
@@ -103,10 +99,10 @@ export class SchedulerCard extends LitElement {
 
     this.Config.LoadEntities(hass.states);
 
-    this.newItem = true;
-    this._timeline = true;
-    this.newItemConfirmed = true;
-    this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: 'climate.mqtt_hvac' }));
+    // this.newItem = true;
+    // this._timeline = true;
+    // this.newItemConfirmed = true;
+    // this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: 'climate.mqtt_hvac' }));
   }
 
   protected updateScheduleList(hass) {
@@ -130,7 +126,7 @@ export class SchedulerCard extends LitElement {
   }
 
   protected render(): TemplateResult {
-    if (!this.newItem && !this.editItem) {
+    if (this._view == EViews.Overview) {
       return html`
       <ha-card>
         ${this.getTitle()}
@@ -144,10 +140,10 @@ export class SchedulerCard extends LitElement {
       </ha-card>
       `;
 
-    } else if (this.newItem && !this.newItemConfirmed) {
+    } else if (this._view == EViews.NewSchedule) {
       return this.getNewItemPanel();
     }
-    else if (this._entries.length && !this._timeline) {
+    else if (this._view == EViews.TimePicker) {
       return html`
       <ha-card>
         ${this.getTitle()}
@@ -155,22 +151,14 @@ export class SchedulerCard extends LitElement {
       </ha-card>
       `;
     }
-    else if (this._entries.length && this._timeline) {
+    else {
       return html`
       <ha-card>
         ${this.getTitle()}
-        ${this.showRoutineEditor()}
+        ${this.showTimeSchemeEditor()}
       </ha-card>
       `;
     }
-    return html`
-      <ha-card>
-        ${this.getTitle()}
-        <div class="card-section first">
-          Something went wrong, refresh the page.
-        </div>
-      </ha-card>
-      `;;
   }
 
   private getTitle() {
@@ -217,9 +205,9 @@ export class SchedulerCard extends LitElement {
         <div class="card-section first">
           <div class="header">or</div>
           <div class="option-list">
-            <mwc-button class="${this._entry.action == CreateTimeline ? ' active' : ''}" @click="${() => { this.selectAction(CreateTimeline) }}">
+            <mwc-button class="${this._entry.action == CreateTimeScheme ? ' active' : ''}" @click="${() => { this.selectAction(CreateTimeScheme) }}">
               <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
-              ${PrettyPrintName(CreateTimeline)}
+              ${PrettyPrintName(CreateTimeScheme)}
             </mwc-button>
           </div>
         </div>
@@ -291,7 +279,7 @@ export class SchedulerCard extends LitElement {
     let actionCfg = this.Config.FindAction(this._entry.entity, action);
     let entry = { ...this._entry };
     if (!actionCfg) {
-      if (action == CreateTimeline) this._entry = Object.assign({ ...this._entry }, <IEntry>{ action: CreateTimeline });
+      if (action == CreateTimeScheme) this._entry = Object.assign({ ...this._entry }, <IEntry>{ action: CreateTimeScheme });
       return;
     }
 
@@ -402,10 +390,10 @@ export class SchedulerCard extends LitElement {
       }
     } else Object.assign(daysCfg, { custom_days: [...input] });
     this._entry = Object.assign({ ...this._entry }, <IEntry>{ days: daysCfg });
-    if (this._timeline) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
+    if (this._view == EViews.TimeScheme) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
   }
 
-  showRoutineEditor(): TemplateResult {
+  showTimeSchemeEditor(): TemplateResult {
     let entity = this.Config.FindEntity(this._entries[0].entity);
     if (!entity) return html``;
 
@@ -431,7 +419,7 @@ export class SchedulerCard extends LitElement {
             <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"></ha-icon>
           </div>
           <div class="summary-text">
-            ${PrettyPrintName(CreateTimeline)}
+            ${PrettyPrintName(CreateTimeScheme)}
           </div>
         </div>
       </div>
@@ -554,34 +542,33 @@ export class SchedulerCard extends LitElement {
 
   private _addItemClick() {
     this.newItem = true;
-    this.newItemConfirmed = false;
-    this._timeline = true;
     this._entry = { ...DefaultEntry };
     let groups = this.Config.GetGroups();
     if (groups.length == 1) {
       this.selectGroup(groups[0].id);
       if (this._entry.action) this._confirmItemClick();
     }
+    this._view = EViews.NewSchedule;
   }
 
   private _cancelEditClick() {
     this.newItem = false;
-    this.editItem = false;
+    this.editItem = null;
+    this._view = EViews.Overview;
   }
 
   private _confirmItemClick() {
-    this.newItemConfirmed = true;
     let actionCfg = this.Config.FindAction(this._entry.entity, this._entry.action);
     if (actionCfg) {
       this._entries = [this._entry];
       this._activeEntry = 0;
-      this._timeline = false;
+      this._view = EViews.TimePicker;
     }
-    else if (this._entry.action == CreateTimeline) {
-      this._timeline = true;
+    else if (this._entry.action == CreateTimeScheme) {
       this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: this._entry.entity }));
       this._entry = { ...DefaultEntry };
       this._activeEntry = null;
+      this._view = EViews.TimeScheme;
     }
   }
 
@@ -598,14 +585,16 @@ export class SchedulerCard extends LitElement {
     }
 
     this.newItem = false;
-    this.editItem = false;
+    this.editItem = null;
+    this._view = EViews.Overview;
   }
 
   _deleteItemClick(): void {
     let entity_id = this.editItem;
     this._hass!.callService('scheduler', 'remove', { entity_id: entity_id });
     this.newItem = false;
-    this.editItem = false;
+    this.editItem = null;
+    this._view = EViews.Overview;
   }
 
   _handleScheduleClick(e: ActionHandlerEvent, schedule_id: string) {
@@ -621,19 +610,18 @@ export class SchedulerCard extends LitElement {
     let entries = [...item.entries];
 
     if (item.entries.every(e => e.endTime)) {
-      this._timeline = true;
       entries = calculateTimeline(entries);
       this._entry = Object.assign({ ...DefaultEntry }, pick(entries[0], ['entity', 'days']));
       this._activeEntry = null;
+      this._view = EViews.TimeScheme;
     }
     else {
-      this._timeline = false;
       this._entry = entries[0];
       this._activeEntry = 0;
+      this._view = EViews.TimePicker;
     }
 
     this._entries = entries;
-
     this.editItem = entity_id;
   }
 
