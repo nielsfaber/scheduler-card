@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
-import { localize } from '../localize/localize';
+import { localize, ServiceNameTranslations } from '../localize/localize';
 
 import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from '../types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
@@ -121,9 +121,10 @@ export class TimeslotEditor extends LitElement {
       let cfg = action.variable as IListVariableConfig;
       return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
-    if (entry.action == 'turn_on') return PrettyPrintName('on');
-    else if (entry.action == 'turn_off') return PrettyPrintName('off');
-    return `${entry.action}`;
+    if (action.service == 'turn_on') return PrettyPrintName('on');
+    else if (action.service == 'turn_off') return PrettyPrintName('off');
+    else if (action.name in ServiceNameTranslations) return localize(ServiceNameTranslations[action.name]);
+    return PrettyPrintName(action.name);
   }
 
   private _handleSegmentClick(e: Event) {

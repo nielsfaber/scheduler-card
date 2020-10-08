@@ -400,7 +400,7 @@ export class SchedulerCard extends LitElement {
     let variable = this._entry.variable as ILevelVariable;
     return html`
     <div class="card-section">
-      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : cfg.name}</div>
+      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : PrettyPrintName(cfg.name)}</div>
       <div class="option-item">
         <variable-slider
           min=${cfg.min}
@@ -420,7 +420,7 @@ export class SchedulerCard extends LitElement {
   renderListPanel(cfg: IListVariableConfig, updateCard: boolean = false): TemplateResult {
     return html`
     <div class="card-section">
-      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : cfg.name}</div>
+      <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : PrettyPrintName(cfg.name)}</div>
       <div class="option-item">
       <button-group
         .items=${cfg.options.map(e => Object.assign(e, { name: e.value }))}
