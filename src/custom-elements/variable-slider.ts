@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 
-import { loadHaForm } from './load-ha-form';
-import { UnitPercent } from './const';
+import { loadHaForm } from '../load-ha-form';
+import { UnitPercent } from '../const';
 
 function Bool(val: string) {
   if (val == "true") return true;

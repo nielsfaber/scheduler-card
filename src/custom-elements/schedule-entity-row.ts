@@ -1,10 +1,10 @@
 import { LitElement, html, customElement, css, property, eventOptions, queryAsync } from 'lit-element';
-import { IScheduleEntry, IUserConfig } from './types';
-import { Config } from './config';
-import { formatTime, parseTimestamp, weekdayToString, weekday, IDays, EDayType, ITime, MinutesPerHour, daysToArray } from './date-time';
-import { PrettyPrintIcon, PrettyPrintName, PrettyPrintAction, capitalize, PrettyPrintTime } from './helpers';
-import { localize } from './localize/localize';
-import { actionHandler } from './action-handler-directive';
+import { IScheduleEntry, IUserConfig } from '../types';
+import { Config } from '../config';
+import { formatTime, parseTimestamp, weekdayToString, weekday, IDays, EDayType, ITime, MinutesPerHour, daysToArray } from '../date-time';
+import { PrettyPrintIcon, PrettyPrintName, PrettyPrintAction, capitalize, PrettyPrintTime } from '../helpers';
+import { localize } from '../localize/localize';
+import { actionHandler } from '../action-handler-directive';
 import { Ripple } from '@material/mwc-ripple';
 import { RippleHandlers } from '@material/mwc-ripple/ripple-handlers';
 
@@ -36,7 +36,7 @@ export class ScheduleEntityRow extends LitElement {
           ${PrettyPrintName(entity.name)} - ${PrettyPrintAction(nextEntry, action, { temperature_unit: this.userConfig.temperature_unit })}
         </div>
         <div class="list-item-summary">
-          ${capitalize(PrettyPrintTime(nextEntry.time, { amPm: this.userConfig.am_pm, sunrise: this.userConfig.sunrise, sunset: this.userConfig.sunset, endTime: nextEntry.endTime }))}, ${this.showDays(nextEntry.days)}${this.schedule.entries.length == 1 ? '' : `, ${this.schedule.entries.length == 2 ? localize('misc.one_additional_task') : localize('misc.x_additional_tasks','{count}', String(this.schedule.entries.length - 1))}`}
+          ${capitalize(PrettyPrintTime(nextEntry.time, { amPm: this.userConfig.am_pm, sunrise: this.userConfig.sunrise, sunset: this.userConfig.sunset, endTime: nextEntry.endTime }))}, ${this.showDays(nextEntry.days)}${this.schedule.entries.length == 1 ? '' : `, ${this.schedule.entries.length == 2 ? localize('misc.one_additional_task') : localize('misc.x_additional_tasks', '{count}', String(this.schedule.entries.length - 1))}`}
         </div>
         <div class="list-item-counter">
           ${capitalize(this.showRelativeTime())}
@@ -89,7 +89,7 @@ export class ScheduleEntityRow extends LitElement {
     }
 
     if (secondsRemaining < 60) {
-      return localize('time.relative','{time}', localize('time.seconds', '{seconds}', String(secondsRemaining)));
+      return localize('time.relative', '{time}', localize('time.seconds', '{seconds}', String(secondsRemaining)));
     }
 
     if (secondsRemaining < 3300) { //max 55 mins
@@ -97,29 +97,29 @@ export class ScheduleEntityRow extends LitElement {
       let mins = Math.round(secondsRemaining / 60);
 
       if (sec < 5 || sec > 55) {
-        if(mins == 1) return localize('time.relative','{time}', localize('time.minute'));
-        else return localize('time.relative','{time}', localize('time.minutes', '{minutes}', String(mins)));
+        if (mins == 1) return localize('time.relative', '{time}', localize('time.minute'));
+        else return localize('time.relative', '{time}', localize('time.minutes', '{minutes}', String(mins)));
       }
 
       if (Math.floor(secondsRemaining / 60) == 1) {
         let value = Math.round(secondsRemaining - 60);
-        return localize('time.relative','{time}', `${localize('time.minute')} ${localize('words.and')} ${localize('time.seconds', '{seconds}', String(value))}`);
+        return localize('time.relative', '{time}', `${localize('time.minute')} ${localize('words.and')} ${localize('time.seconds', '{seconds}', String(value))}`);
       }
 
-      return localize('time.relative','{time}', localize('time.minutes', '{minutes}', String(mins)));
+      return localize('time.relative', '{time}', localize('time.minutes', '{minutes}', String(mins)));
     }
 
     if (Math.floor(secondsRemaining / 3600) == 1) {
       let value = Math.round(secondsRemaining / 60 - 60);
-      return localize('time.relative','{time}', `${localize('time.hour')} ${localize('words.and')} ${localize('time.minutes', '{minutes}', String(value))}`);
+      return localize('time.relative', '{time}', `${localize('time.hour')} ${localize('words.and')} ${localize('time.minutes', '{minutes}', String(value))}`);
 
     }
 
     let hoursRemaining = Math.round(secondsRemaining / 3600);
 
     if (hoursRemaining <= 6) {
-      if(hoursRemaining == 1) return localize('time.relative','{time}', localize('time.hour'));
-      else return localize('time.relative','{time}', localize('time.hours', '{hours}', String(hoursRemaining)));
+      if (hoursRemaining == 1) return localize('time.relative', '{time}', localize('time.hour'));
+      else return localize('time.relative', '{time}', localize('time.hours', '{hours}', String(hoursRemaining)));
     }
 
     let start_of_day = new Date();
@@ -164,12 +164,12 @@ export class ScheduleEntityRow extends LitElement {
       let len = Math.max(...seq);
       if (dayList.length == 6) {
         let missing = [1, 2, 3, 4, 5, 6, 7].filter(e => !dayList.includes(e));
-        return localize('days.daily_except_days','{days}', weekdayToString(missing.pop()!));
+        return localize('days.daily_except_days', '{days}', weekdayToString(missing.pop()!));
       }
       else if (dayList.length >= 3 && len >= 3) {
         let seq = findSequence(dayList);
         let start = seq.reduce((obj, e, i) => e == len ? i : obj, 0);
-        output.splice(start, len, localize('days.interval',['{startDay}','{endDay}'],[output[start], output[start + len - 1]]));
+        output.splice(start, len, localize('days.interval', ['{startDay}', '{endDay}'], [output[start], output[start + len - 1]]));
       }
       return (output.length > 1) ? `${output.slice(0, -1).join(', ')} ${localize('words.and')} ${output.pop()}` : `${output.pop()}`;
     }

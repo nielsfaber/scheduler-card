@@ -1,11 +1,11 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
 import { HomeAssistant, LovelaceCardEditor, fireEvent } from 'custom-card-helpers';
-import { ICardConfig } from './types';
-import { default as standardConfig } from './standard-configuration.json';
-import { PrettyPrintIcon, getDomainFromEntityId, removeDomainFromEntityId } from './helpers';
-import { IsSchedulerEntity } from './entity';
-import { localize } from './localize/localize';
-import { DefaultUserConfig } from './const';
+import { ICardConfig } from '../types';
+import { default as standardConfig } from '../standard-configuration.json';
+import { PrettyPrintIcon, getDomainFromEntityId, removeDomainFromEntityId } from '../helpers';
+import { IsSchedulerEntity } from '../entity';
+import { localize } from '../localize/localize';
+import { DefaultUserConfig } from '../const';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {

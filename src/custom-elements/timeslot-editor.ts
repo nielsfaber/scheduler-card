@@ -1,9 +1,9 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
-import { localize } from './localize/localize';
+import { localize } from '../localize/localize';
 
-import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from './types'
-import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from './date-time';
-import { PrettyPrintActionVariable, pick, PrettyPrintName } from './helpers';
+import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from '../types'
+import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
+import { PrettyPrintActionVariable, pick, PrettyPrintName } from '../helpers';
 
 function Duration(el: IEntry) {
   return el.endTime!.value - el.time.value;

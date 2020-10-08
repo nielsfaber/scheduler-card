@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { PrettyPrintIcon, PrettyPrintName } from './helpers';
+import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 
 type ButtonItem = {
   id?: string | number,
@@ -14,10 +14,13 @@ export class VariableSlider extends LitElement {
   items: (ButtonItem | string | number)[] = [];
 
   @property()
-  value?: string | number | (string | number)[];
+  value?: string | number | null | (string | number)[];
 
   @property({ type: Number })
   min?: number;
+
+  @property({ type: Boolean })
+  optional?: boolean;
 
   render() {
     if (!this.items.length) {
@@ -46,8 +49,11 @@ export class VariableSlider extends LitElement {
 
   selectItem(val: string | number) {
     if (!Array.isArray(this.value)) {
-      if (val == this.value) return;
-      this.value = val;
+      if (val == this.value) {
+        if (this.optional) this.value = null;
+        else return;
+      }
+      else this.value = val;
     }
     else {
       let value: (string | number)[] = Array.isArray(this.value) ? this.value : [];
