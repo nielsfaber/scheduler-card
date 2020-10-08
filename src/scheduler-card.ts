@@ -7,7 +7,7 @@ import { IEntry, IScheduleEntry, IUserConfig, IActionElement, IGroupElement, IEn
 import { PrettyPrintName, PrettyPrintIcon, IsEqual, pick, filterObject, calculateTimeline } from './helpers'
 import { styles } from './styles';
 import { ValidateConfig } from './config-validation'
-import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries } from './const'
+import { CARD_VERSION, DefaultUserConfig, DefaultEntry, FieldTemperature, CreateTimeline, DefaultTimelineEntries, DayTypeOptions, DayOptions } from './const'
 import { localize, getLanguage, ServiceParamTranslations } from './localize/localize';
 import { parseTimestamp, EDayType, IDays, ETimeEvent, daysToArray, getRemaining, } from './date-time';
 import { ImportFromHass, ExportToHass } from './interface';
@@ -18,6 +18,8 @@ import './variable-slider';
 import './timeslot-editor';
 import './editor';
 import './schedule-entity-row';
+import './button-group';
+
 
 
 (window as any).customCards = (window as any).customCards || [];
@@ -101,10 +103,10 @@ export class SchedulerCard extends LitElement {
 
     this.Config.LoadEntities(hass.states);
 
-    // this.newItem = true;
-    // this._timeline = true;
-    // this.newItemConfirmed = true;
-    // this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: 'climate.mqtt_hvac' }));
+    this.newItem = true;
+    this._timeline = true;
+    this.newItemConfirmed = true;
+    this._entries = [...DefaultTimelineEntries].map(e => Object.assign(e, { entity: 'climate.mqtt_hvac' }));
   }
 
   protected updateScheduleList(hass) {
@@ -143,28 +145,7 @@ export class SchedulerCard extends LitElement {
       `;
 
     } else if (this.newItem && !this.newItemConfirmed) {
-      return html`
-        <ha-card>
-          ${this.getTitle()}
-          <div class="card-section first">
-            <div class="header">${localize('fields.group')}</div>
-            <div class="option-list">
-            ${this.getGroups()}
-            </div>
-          </div>
-          <div class="card-section">
-            <div class="header">${localize('fields.entity')}</div>
-            <div class="option-list">
-            ${this.getEntities()}
-            </div>
-          </div>
-          ${this.getActions()}
-          <div class="card-section last">
-            <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
-            ${this._entry.action ? html`<mwc-button outlined @click="${this._confirmItemClick}">${localize('actions.next')}</mwc-button>` : html`<mwc-button outlined disabled>${localize('actions.next')}</mwc-button>`}
-          </div>
-        </ha-card>
-      `;
+      return this.getNewItemPanel();
     }
     else if (this._entries.length && !this._timeline) {
       return html`
@@ -231,80 +212,8 @@ export class SchedulerCard extends LitElement {
     });
   }
 
-
-  getGroups(): TemplateResult[] {
-    let groups = this.Config.GetGroups();
-    if (!groups.length) return [html`<div class="text-field">${localize('instructions.no_groups_defined')}</div>`];
-    return groups.map((el: IGroupElement) => {
-      return html`
-        <mwc-button class="${this._selectedGroup == el.id ? ' active' : ''}" @click="${() => { this.selectGroup(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    })
-  }
-
-  selectGroup(group: string): void {
-    this._selectedGroup = group;
-    if (this.Config.GetEntitiesForGroup(group).length == 1) this.selectEntity(this.Config.GetEntitiesForGroup(group)[0].id);
-    else this._entry = { ...DefaultEntry };
-  }
-
-  getEntities(): TemplateResult[] {
-    if (!this._selectedGroup) return [html`<div class="text-field">${localize('instructions.no_group_selected')}</div>`];
-    let entities = this.Config.GetEntitiesForGroup(this._selectedGroup);
-    if (!entities.length) return [html`<div class="text-field">${localize('instructions.no_entities_for_group')}</div>`];
-    return entities.map((el: IEntityElement) => {
-      return html`
-        <mwc-button class="${this._entry.entity == el.id ? ' active' : ''}" @click="${() => { this.selectEntity(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    })
-  }
-
-  selectEntity(entity: string): void {
-    if (this._entry.entity != entity) {
-      this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity, action: '' });
-      if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
-    }
-  }
-
-  getActions() {
-    if (!this._entry || !this._entry.entity) {
-      return html`
-          <div class="card-section">
-            <div class="header">${localize('fields.action')}</div>
-            <div class="option-list">
-              <div class="text-field">${localize('instructions.no_entity_selected')}</div>
-            </div>
-          </div>
-      `;
-    }
-    let actions = this.Config.GetActionsForEntity(this._entry.entity);
-    if (!actions.length) {
-      return html`
-          <div class="card-section">
-            <div class="header">${localize('fields.action')}</div>
-            <div class="option-list">
-              <div class="text-field">${localize('instructions.no_actions_for_entity')}</div>
-            </div>
-          </div>
-      `;
-    }
-    if (actions.length == 1 && !this._entry.action) this.selectAction(actions[0].id);
-    let options_list = actions.map((el: IActionElement) => {
-      return html`
-        <mwc-button class="${this._entry.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    });
-
-    let createTimelineButton = html`
+  getNewItemPanel() {
+    let timeSchemeButton = !this._entry || !this._entry.entity || !this.Config.GetActionsForEntity(this._entry.entity).length ? '' : html`
         <div class="card-section first">
           <div class="header">or</div>
           <div class="option-list">
@@ -314,23 +223,71 @@ export class SchedulerCard extends LitElement {
             </mwc-button>
           </div>
         </div>
-      `;
-
-
-    //createTimelineButton = html``;
+    `;
 
     return html`
+        <ha-card>
+          ${this.getTitle()}
+          <div class="card-section first">
+            <div class="header">${localize('fields.group')}</div>
+            <div class="option-list">
+              <button-group
+                .items=${this.Config.GetGroups()}
+                value=${this._selectedGroup}
+                @change=${this.selectGroup}
+              >
+                ${localize('instructions.no_groups_defined')}
+              </button-group>
+            </div>
+          </div>
+          <div class="card-section">
+            <div class="header">${localize('fields.entity')}</div>
+            <div class="option-list">
+              <button-group
+                .items=${this.Config.GetEntitiesForGroup(this._selectedGroup)}
+                value=${this._entry.entity}
+                @change=${this.selectEntity}
+              >
+                ${!this._selectedGroup ? localize('instructions.no_group_selected') : localize('instructions.no_entities_for_group')}
+              </button-group>
+            </div>
+          </div>
           <div class="card-section">
             <div class="header">${localize('fields.action')}</div>
             <div class="option-list">
-              ${options_list}
+              <button-group
+                .items=${this.Config.GetActionsForEntity(this._entry.entity)}
+                value=${this._entry.action}
+                @change=${this.selectAction}
+              >
+                ${!this._entry || !this._entry.entity ? localize('instructions.no_entity_selected') : localize('instructions.no_actions_for_entity')}
+              </button-group>
             </div>
           </div>
-          ${createTimelineButton}
-      `;
+          ${timeSchemeButton}
+          <div class="card-section last">
+            <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
+            ${this._entry.action ? html`<mwc-button outlined @click="${this._confirmItemClick}">${localize('actions.next')}</mwc-button>` : html`<mwc-button outlined disabled>${localize('actions.next')}</mwc-button>`}
+          </div>
+        </ha-card>
+    `;
   }
 
-  selectAction(action: string): void {
+  selectGroup(e: Event | string): void {
+    let group = typeof e == "string" ? e : (e.target as HTMLInputElement).value;
+    this._selectedGroup = group;
+    if (this.Config.GetEntitiesForGroup(group).length == 1) this.selectEntity(this.Config.GetEntitiesForGroup(group)[0].id);
+    else this._entry = { ...DefaultEntry };
+  }
+
+  selectEntity(e: Event | string): void {
+    let entity = typeof e == "string" ? e : (e.target as HTMLInputElement).value;
+    this._entry = <IEntry>Object.assign({ ...this._entry }, { entity: entity, action: '' });
+    if (this.Config.GetActionsForEntity(entity).length == 1) this.selectAction(this.Config.GetActionsForEntity(entity)[0].id);
+  }
+
+  selectAction(e: Event | string): void {
+    let action = typeof e == "string" ? e : (e.target as HTMLInputElement).value;
     let actionCfg = this.Config.FindAction(this._entry.entity, action);
     let entry = { ...this._entry };
     if (!actionCfg) {
@@ -401,26 +358,27 @@ export class SchedulerCard extends LitElement {
 
 
   getDayPicker() {
-    let customDayList = this._entry.days?.custom_days ? this._entry.days?.custom_days : [];
-    let customDayPicker = this._entry.days?.type == EDayType.Custom ? html`
+    let customDayPicker = this._entry.days.type == EDayType.Custom ? html`
       <div class="day-list" id="day-list-custom">
-        <mwc-button class="day-item${customDayList.includes(1) ? ' active' : ''}" @click="${() => this.selectDays(1)}">${localize('days_short.mon')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(2) ? ' active' : ''}" @click="${() => this.selectDays(2)}">${localize('days_short.tue')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(3) ? ' active' : ''}" @click="${() => this.selectDays(3)}">${localize('days_short.wed')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(4) ? ' active' : ''}" @click="${() => this.selectDays(4)}">${localize('days_short.thu')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(5) ? ' active' : ''}" @click="${() => this.selectDays(5)}">${localize('days_short.fri')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(6) ? ' active' : ''}" @click="${() => this.selectDays(6)}">${localize('days_short.sat')}</mwc-button>
-        <mwc-button class="day-item${customDayList.includes(7) ? ' active' : ''}" @click="${() => this.selectDays(7)}">${localize('days_short.sun')}</mwc-button>
+        <button-group
+          .items=${DayOptions}
+          .value=${this._entry.days.custom_days}
+          min="1"
+          @change=${this.selectDays}
+        >
+        </button-group>
       </div>` : '';
 
     return html`
     <div class="card-section">
       <div class="header">${localize('fields.days')}</div>
       <div class="day-list">
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Daily ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Daily)}">${localize('fields.day_type_daily')}</mwc-button>
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Workday ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Workday)}">${localize('fields.day_type_workday')}</mwc-button>
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Weekend ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Weekend)}">${localize('fields.day_type_weekend')}</mwc-button>
-        <mwc-button class="day-item${this._entry.days?.type == EDayType.Custom ? ' active' : ''}" @click="${() => this.selectDays(EDayType.Custom)}">${localize('fields.day_type_custom')}</mwc-button>
+        <button-group
+          .items=${DayTypeOptions}
+          value=${this._entry.days.type}
+          @change=${this.selectDays}
+        >
+        </button-group>
       </div>
       ${customDayPicker}
     </div>`;
@@ -433,20 +391,16 @@ export class SchedulerCard extends LitElement {
     Object.assign(this._entry, <IEntry>{ time: e.detail.event ? { event: event, value: value } : { value: value } });
   }
 
-  selectDays(input: number | EDayType) {
+  selectDays(e: Event) {
+    let input = (e.target as HTMLInputElement).value;
     let daysCfg: IDays = { ...this._entry.days! };
-    if (typeof input == "string") {
+    if (Object.values(EDayType).includes(input as EDayType)) {
       let dayType = input;
       Object.assign(daysCfg, { type: dayType });
       if (dayType == EDayType.Custom && !daysCfg.custom_days) {
         Object.assign(daysCfg, { custom_days: daysToArray(this._entry.days!) });
       }
-    } else {
-      let day_list = this._entry.days?.custom_days ? [... this._entry.days.custom_days] : [];
-      if (!day_list.includes(input)) day_list.push(input);
-      else if (day_list.length > 1) day_list = day_list.filter(e => e != input);
-      Object.assign(daysCfg, { custom_days: day_list });
-    }
+    } else Object.assign(daysCfg, { custom_days: [...input] });
     this._entry = Object.assign({ ...this._entry }, <IEntry>{ days: daysCfg });
     if (this._timeline) this._entries = this._entries.map(e => Object.assign(e, { days: daysCfg }));
   }
@@ -579,28 +533,22 @@ export class SchedulerCard extends LitElement {
   }
 
   getListPanel(cfg: IListVariableConfig, updateCard: boolean = false): TemplateResult {
-    let options = cfg.options;
-    let fields;
-    if (!options.length) fields = html`<div class="text-field">${localize('instructions.no_entries_defined')}</div>`;
-    else fields = options.map((el: IListVariableOption) => {
-      return html`
-        <mwc-button class="${this._entry.variable?.value == el.value ? ' active' : ''}" @click="${() => { this.selectListItem(el.value, updateCard) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.value)}
-        </mwc-button>
-      `;
-    });
-
     return html`
-    <div class="card-section">
       <div class="header">${cfg.name in ServiceParamTranslations ? localize(ServiceParamTranslations[cfg.name]) : cfg.name}</div>
-      ${fields}
-     </div>`;
+      <button-group
+        .items=${cfg.options.map(e => Object.assign(e, { name: e.value }))}
+        value=${this._entry.variable?.value}
+        @change=${e => this.selectListItem(e, updateCard)}
+      >
+        ${localize('instructions.no_entries_defined')}
+      </button-group>
+    `;
   }
 
-  selectListItem(val: string, updateCard: boolean) {
-    let variable: IListVariable = { type: EVariableType.List, value: String(val) };
-    this._entry = Object.assign({ ...this._entry }, { variable: variable });
+  selectListItem(e: Event, updateCard: boolean) {
+    let value = (e.target as HTMLInputElement).value;
+    let variable: IListVariable = { type: EVariableType.List, value: value };
+    Object.assign(this._entry, { variable: variable });
     if (updateCard) this.requestUpdate();
   }
 

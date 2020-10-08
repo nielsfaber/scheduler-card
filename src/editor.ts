@@ -2,7 +2,6 @@ import { LitElement, html, customElement, property, TemplateResult, CSSResult, c
 import { HomeAssistant, LovelaceCardEditor, fireEvent } from 'custom-card-helpers';
 import { ICardConfig } from './types';
 import { default as standardConfig } from './standard-configuration.json';
-import { styles } from './styles';
 import { PrettyPrintIcon, getDomainFromEntityId, removeDomainFromEntityId } from './helpers';
 import { IsSchedulerEntity } from './entity';
 import { localize } from './localize/localize';
@@ -23,43 +22,53 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this.hass) {
       return html``;
     }
+
+    let titleCustom = this.titleOption == 'custom' ?
+      html`
+        <div>
+          <paper-input
+            label="Custom title"
+            .value=${this.getTitle()}
+            .configValue=${'name'}
+            @value-changed=${this.updateTitle}
+          ></paper-input>
+        </div>
+      `  : '';
+
     return html`
       <div class="card-section first">
         <div><b>Title of the card</b></div>
         <div>
-          <mwc-button class="${this.getTitleOption() == 'standard' ? ' active' : ''}" @click="${() => { this.updateTitleOption('standard') }}">
-            Standard
-          </mwc-button>
-          <mwc-button class="${this.getTitleOption() == 'hidden' ? ' active' : ''}" @click="${() => { this.updateTitleOption('hidden') }}">
-            Hidden
-          </mwc-button>
-          <mwc-button class="${this.getTitleOption() == 'custom' ? ' active' : ''}" @click="${() => { this.updateTitleOption('custom') }}">
-            Custom
-          </mwc-button>
+          <button-group
+            .items=${['standard', 'hidden', 'custom']}
+            value=${this.getTitleOption()}
+            @change=${this.updateTitleOption}
+          >
+          </button-group>
         </div>
-        ${this.titleOption == 'custom' ? this.getTitleCustom() : ''}
+        ${titleCustom}
       </div>
       <div class="card-section">
         <div><b>Show all schedules</b></div>
         <div class="text-field">This sets the 'discover existing' parameter.<br> Disable if you want to use multiple scheduler-cards.</div>
         <div>
-          <mwc-button class="${this.getDiscoveryOption() ? ' active' : ''}" @click="${() => { this.updateDiscoveryOption(true) }}">
-            On
-          </mwc-button>
-          <mwc-button class="${this.getDiscoveryOption() ? '' : ' active'}" @click="${() => { this.updateDiscoveryOption(false) }}">
-            Off
-          </mwc-button>
+          <button-group
+            .items=${[{ id: 'true', name: 'on' }, { id: 'false', name: 'off' }]}
+            value=${this.getDiscoveryOption()}
+            @change=${this.updateDiscoveryOption}
+          >
+          </button-group>
         </div>
       </div>
       <div class="card-section">
         <div><b>Time display</b></div>
         <div>
-          <mwc-button class="${this.getAmPmOption() ? '' : ' active'}" @click="${() => { this.updateAmPmOption(false) }}">
-            24 hours
-          </mwc-button>
-          <mwc-button class="${this.getAmPmOption() ? ' active' : ''}" @click="${() => { this.updateAmPmOption(true) }}">
-            AM/PM
-          </mwc-button>
+          <button-group
+            .items=${[{ id: 'false', name: '24 hours' }, { id: 'true', name: 'AM/PM' }]}
+            value=${this.getAmPmOption()}
+            @change=${this.updateAmPmOption}
+          >
+          </button-group>
         </div>
       </div>
       <div class="card-section">
@@ -95,19 +104,6 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     else return 'standard';
   }
 
-  getTitleCustom() {
-    return html`
-        <div>
-          <paper-input
-            label="Custom title"
-            .value=${this.getTitle()}
-            .configValue=${'name'}
-            @value-changed=${this.updateTitle}
-          ></paper-input>
-        </div>
-    `;
-  }
-
   private getTitle() {
     if (!this._config || !this.hass) return localize('scheduler');
     if (this._config.title === undefined) return localize('scheduler');
@@ -116,7 +112,9 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     else return localize('scheduler');
   }
 
-  private updateTitleOption(type: string) {
+  private updateTitleOption(e: Event) {
+    let type = (e.target as HTMLInputElement).value;
+    console.log(type);
     if (!this._config || !this.hass) return;
     this.titleOption = type;
     let config = { ...this._config };
@@ -147,7 +145,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     return discover_existing;
   }
 
-  private updateDiscoveryOption(value: boolean) {
+  private updateDiscoveryOption(e: Event) {
+    let value = (e.target as HTMLInputElement).value == 'true';
     if (!this._config || !this.hass) return;
     let config = { ...this._config };
     if (!value) Object.assign(config, { discover_existing: value });
@@ -162,7 +161,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     return am_pm;
   }
 
-  private updateAmPmOption(value: boolean) {
+  private updateAmPmOption(e: Event) {
+    let value = (e.target as HTMLInputElement).value == 'true';
     if (!this._config || !this.hass) return;
     let config = { ...this._config };
     if (value) Object.assign(config, { am_pm: value });
@@ -203,7 +203,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
             <div class="list-item-name">
               ${domain}
             </div>
-            <div class="list-item-action">
+            <div class="list-item-summary">
               ${count} ${count == 1 ? 'entity' : 'entities'}
             </div>
             <div class="list-item-switch">
@@ -230,7 +230,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
             <div class="list-item-name">
               ${name}
             </div>
-            <div class="list-item-action">
+            <div class="list-item-summary">
               ${entity_id}
             </div>
             <div class="list-item-switch">
@@ -262,6 +262,84 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   }
 
   static get styles(): CSSResult {
-    return styles;
+    return css`
+
+      div.card-section {
+        padding: 10px 10px;
+      }
+
+      div.card-section.first {
+        padding-top: 0px;
+      }
+      
+      div.card-section.last {
+        padding-bottom: 10px;
+      }
+
+      div.text-field {
+        color: var(--disabled-text-color);
+      }
+
+
+      div.list-item {
+        display: grid;
+        grid-template-columns: min-content 1fr min-content;
+        grid-template-rows: min-content min-content;
+        grid-template-areas: "icon name switch"
+                             "icon summary switch";
+        grid-gap: 2px 20px;
+        background: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      div.list-item:before  {
+        content: " ";
+        background: var(--list-item-background-color);
+        opacity: 0.1;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+       }
+
+      div.list-item:hover:before {
+          background: var(--primary-color);
+          border-radius: 4px;
+      }
+
+      div.list-item-icon {
+        grid-area: icon;
+        color: var(--state-icon-color);
+      }
+
+      div.list-item-icon ha-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      div.list-item-name {
+        grid-area: name;
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+
+      div.list-item-summary {
+        grid-area: summary;
+        color: var(--secondary-text-color);
+      }
+
+      div.list-item-switch {
+        grid-area: switch;
+      }
+
+      div.list-item-switch ha-switch {
+        margin-top: 3px;
+      }
+    `;
   }
 }
