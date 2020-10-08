@@ -1,0 +1,118 @@
+{
+  "scheduler": "Schedulatore",
+  "actions": {
+    "add": "aggiungi oggetto",
+    "cancel": "annulla",
+    "next": "avanti",
+    "save": "salva",
+    "delete": "cancella"
+  },
+  "instructions": {
+    "no_group_selected": "Seleziona prima un gruppo",
+    "no_entity_selected": "Seleziona prima un'entità",
+    "no_groups_defined": "Non ci sono gruppi definiti",
+    "no_entities_for_group": "Non ci sono entità in questo gruppo",
+    "no_actions_for_entity": "Non ci sono azioni per questa entità",
+    "no_entries_defined": "Non ci sono oggetti da visualizzare"
+  },
+  "fields": {
+    "group": "Gruppo",
+    "entity": "Entità",
+    "action": "Azione",
+    "days": "Giorni",
+    "time": "Ora",
+    "options": "Opzioni",
+    "day_type_daily": "giornaliero",
+    "day_type_workday": "giorni lavorativi",
+    "day_type_weekend": "weekend",
+    "day_type_custom": "personalizzato"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mer",
+    "thu": "gio",
+    "fri": "ven",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "Lunedì",
+    "tue": "Martedì",
+    "wed": "Mercoledì",
+    "thu": "Giovedì",
+    "fri": "Venerdì",
+    "sat": "Sabato",
+    "sun": "Domenica"
+  },
+  "words": {
+    "and": "e",
+    "before": "prima",
+    "after": "dopo"
+  },
+  "services": {
+    "turn_on": "accendi",
+    "turn_off": "spegni",
+    "close_cover": "chiudi",
+    "open_cover": "apri",
+    "set_temperature": "imposta temperatura",
+    "set_to": "imposta a",
+    "set_position": "imposta posizione",
+    "set_hvac_mode": "imposta modalità",
+    "set_preset_mode": "imposta programmazione",
+    "set_value": "imposta valore",
+    "select_option": "seleziona opzione",
+    "select_source": "seleziona sorgente",
+    "start": "start"
+  },
+  "service_parameters": {
+    "brightness": "luminosità",
+    "temperature": "temperatura",
+    "position": "posizione",
+    "hvac_mode": "modalità",
+    "preset": "programmazione"
+  },
+  "domains": {
+    "camera": "telecamere",
+    "climate": "clima",
+    "cover": "cover",
+    "fan": "ventole",
+    "group": "gruppi",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "luci",
+    "media_player": "media player",
+    "scene": "scene",
+    "switch": "interruttori",
+    "vacuum": "aspirapolveri"
+  },
+  "days": {
+    "tomorrow": "domani",
+    "daily": "giornaliero",
+    "daily_except_days": "tutti i giorni eccetto {giorni}",
+    "working_days": "giorni lavorativi",
+    "weekend": "weekend",
+    "interval": "{giornoInizio} a {giornoFine}"
+  },
+  "time": {
+    "absolute": "alle {ora}",
+    "relative": "entro {ora}",
+    "interval": "dalle {oraInizio} alle {oraFine}",
+    "seconds": "{secondi} second1",
+    "hour": "1 ora",
+    "hours": "{ore} ore",
+    "minute": "1 minuto",
+    "minutes": "{minuti} minuti",
+    "now": "ora",
+    "midnight": "mezzanotte",
+    "noon": "noon",
+    "at_sun_event": "all' {eventoSole}",
+    "sun_event_sunrise": "alba",
+    "sun_event_sunset": "tramonto"
+  },
+  "misc": {
+    "one_additional_task": "1 altro task",
+    "x_additional_tasks": "{contatore} altri task"
+  }
+}
