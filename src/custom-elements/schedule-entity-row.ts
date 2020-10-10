@@ -35,6 +35,9 @@ export class ScheduleEntityRow extends LitElement {
         <div class="list-item-name">
           ${PrettyPrintName(entity.name)} - ${PrettyPrintAction(nextEntry, action, { temperature_unit: this.userConfig.temperature_unit })}
         </div>
+        <div class="list-item-friendly_name">
+          ${this.getFriendlyName()}
+        </div>
         <div class="list-item-summary">
           ${capitalize(PrettyPrintTime(nextEntry.time, { amPm: this.userConfig.am_pm, sunrise: this.userConfig.sunrise, sunset: this.userConfig.sunset, endTime: nextEntry.endTime }))}, ${this.showDays(nextEntry.days)}${this.schedule.entries.length == 1 ? '' : `, ${this.schedule.entries.length == 2 ? localize('misc.one_additional_task') : localize('misc.x_additional_tasks', '{count}', String(this.schedule.entries.length - 1))}`}
         </div>
@@ -175,14 +178,23 @@ export class ScheduleEntityRow extends LitElement {
     }
   }
 
+  getFriendlyName() {
+    let name = this.schedule.name;
+    if (!name) return '';
+    if (name.match(/^schedule\ #[0-9a-f]{6}$/i)) return '';
+
+    return capitalize(name);
+  }
+
   static styles = css`
       div.list-item {
         display: grid;
         grid-template-columns: min-content 1fr 30%;
-        grid-template-rows: min-content min-content;
-        grid-template-areas: " icon name counter"
-                             " icon summary counter";
-        grid-gap: 4px 20px;
+        grid-template-rows: min-content min-content min-content;
+        grid-template-areas: "icon name counter"
+                             "icon fname counter";
+                             "icon summary counter";
+        grid-gap: 0px 20px;
         background: none;
         cursor: pointer;
         padding: 15px 10px;
@@ -223,27 +235,37 @@ export class ScheduleEntityRow extends LitElement {
 
       div.list-item-summary {
         grid-area: summary;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        padding-top: 4px;
         color: var(--secondary-text-color);
         display: flex;
-        flex: 1;
       }
 
       div.list-item-name {
         grid-area: name;
+        grid-column-start: 2;
+        grid-column-end: 3;
         font-weight: 500;
         color: var(--primary-text-color);
       }
 
       div.list-item-counter {
         grid-area: counter;
-        display: flex;
-        flex: 1;
         justify-content: flex-end;
         text-align: right;
         font-weight: 500;
       }
 
-      div.disabled div.list-item-icon, div.disabled div.list-item-name, div.disabled div.list-item-summary, div.disabled div.list-item-counter {
+      div.list-item-friendly_name {
+        grid-area: fname;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        color: var(--secondary-text-color);
+        font-style: italic;
+      }
+
+      div.disabled div.list-item-icon, div.disabled div.list-item-name, div.disabled div.list-item-summary, div.disabled div.list-item-counter, div.disabled div.list-item-friendly_name {
         color: var(--disabled-text-color);
       }
 

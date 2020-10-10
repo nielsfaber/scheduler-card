@@ -95,4 +95,5 @@ export enum EViews {
   NewSchedule = "NEW_SCHEDULE",
   TimePicker = "TIME_PICKER",
   TimeScheme = "TIME_SCHEME",
+  Options = "OPTIONS",
 }

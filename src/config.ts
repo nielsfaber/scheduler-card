@@ -27,8 +27,20 @@ export class Config {
     this.groups.SetConfig({ groups: cfg.groups, standard_configuration: this.standard_configuration });
   }
 
-  GetGroups() {
-    return this.groups.Get();
+  GetGroups(options: Partial<{ conditions: boolean }> = {}) {
+    let groups = this.groups.Get();
+    if (options.conditions) {
+      groups = groups.filter(group => {
+        let entities = this.GetEntitiesForGroup(group.id);
+        return entities.find(e => e.states !== undefined);
+      });
+    } else {
+      groups = groups.filter(group => {
+        let entities = this.GetEntitiesForGroup(group.id);
+        return entities.find(e => e.actions.length);
+      });
+    }
+    return groups;
   }
 
   GetEntitiesForGroup(group_id: string) {

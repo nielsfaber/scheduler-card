@@ -114,7 +114,6 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   private updateTitleOption(e: Event) {
     let type = (e.target as HTMLInputElement).value;
-    console.log(type);
     if (!this._config || !this.hass) return;
     this.titleOption = type;
     let config = { ...this._config };

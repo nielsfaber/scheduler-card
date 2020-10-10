@@ -31,6 +31,19 @@
         "name": "disarm",
         "icon": "lock-open-variant-outline"
       }
+    ],
+    "states": [
+      "disarmed",
+      "armed_away",
+      "armed_home",
+      "armed_night"
+    ]
+  },
+  "binary_sensor": {
+    "icon": "motion-sensor",
+    "states": [
+      "on",
+      "off"
     ]
   },
   "camera": {
@@ -153,6 +166,10 @@
           "max": 100
         }
       }
+    ],
+    "states": [
+      "open",
+      "closed"
     ]
   },
   "fan": {
@@ -285,6 +302,7 @@
   },
   "input_boolean": {
     "icon": "flash",
+    "condition": true,
     "actions": [
       {
         "service": "turn_on",
@@ -380,6 +398,13 @@
       }
     ]
   },
+  "person": {
+    "icon": "account-outline",
+    "states": [
+      "home",
+      "not_home"
+    ]
+  },
   "scene": {
     "icon": "lightbulb-group-outline",
     "actions": [
@@ -407,6 +432,9 @@
       }
     ]
   },
+  "sensor": {
+    "icon": "eye"
+  },
   "switch": {
     "icon": "flash",
     "actions": [
@@ -418,6 +446,10 @@
         "service": "turn_off",
         "icon": "toggle-switch-off-outline"
       }
+    ],
+    "states": [
+      "on",
+      "off"
     ]
   },
   "vacuum": {
