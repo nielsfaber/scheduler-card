@@ -23,13 +23,9 @@
     "time": "Zeit",
     "options": "Optionen",
     "day_type_daily": "jeden Tag",
-    "day_type_weekdays": "Werktags",
+    "day_type_workday": "Werktags",
+    "day_type_weelemd": "Wochenende",
     "day_type_custom": "benutzerdefiniert"
-  },
-  "words": {
-    "and": "und",
-    "before": "vor",
-    "after": "nach"
   },
   "days_short": {
     "mon": "Mo",
@@ -50,14 +46,9 @@
     "sun": "Sonntag"
   },
   "words": {
-    "on": "An",
-    "every": "jeden",
     "and": "und",
-    "at": "um",
     "before": "vor",
-    "after": "nach",
-    "sunrise": "Sonnenaufgang",
-    "sunset": "Sonnenuntergang"
+    "after": "nach"
   },
   "services": {
     "turn_on": "anschalten",
@@ -80,7 +71,7 @@
     "position": "Position",
     "hvac_mode": "Modus",
     "preset": "Voreinstellung"
-  },  
+  },
   "domains": {
     "camera": "Kameras",
     "climate": "Heizung",
@@ -104,7 +95,6 @@
     "weekend": "Wochenende",
     "interval": "{startDay} bis {endDay}"
   },
-
   "time": {
     "absolute": "um {time}",
     "relative": "in {time}",
@@ -120,9 +110,9 @@
     "at_sun_event": "am {sunEvent}",
     "sun_event_sunrise": "Sonnenaufgang",
     "sun_event_sunset": "Sonnenuntergang"
-  },  
+  },
   "misc": {
     "one_additional_task": "1 more task",
     "x_additional_tasks": "{count} more tasks"
-  }  
+  }
 }

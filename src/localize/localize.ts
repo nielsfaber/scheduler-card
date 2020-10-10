@@ -6,6 +6,7 @@ import * as es from './languages/es.json';
 import * as et from './languages/et.json';
 import * as fr from './languages/fr.json';
 import * as hu from './languages/hu.json';
+import * as it from './languages/it.json';
 import * as nl from './languages/nl.json';
 import * as no from './languages/no.json';
 import * as pl from './languages/pl.json';
@@ -25,6 +26,7 @@ var languages: any = {
   es_419: es,
   fr: fr,
   hu: hu,
+  it: it,
   nb: no,
   nl: nl,
   nn: no,
@@ -52,8 +54,8 @@ export function localize(string: string, search: string | string[] = '', replace
   if (translated === undefined) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
 
   if (search !== '' && replace !== '') {
-    if(Array.isArray(search) || Array.isArray(replace)) {
-      for(var i = 0; i < search.length; i++)  translated = translated.replace(search[i], replace[i]);
+    if (Array.isArray(search) || Array.isArray(replace)) {
+      for (var i = 0; i < search.length; i++)  translated = translated.replace(search[i], replace[i]);
     } else {
       translated = translated.replace(search, replace);
     }

@@ -462,6 +462,7 @@ Currently the following languages are supported:
 | Eesti       | et         | v1.4.0         |                                                                                        |
 | Español     | es, es_419 | v1.2.8         |                                                                                        |
 | Français    | fr         | v1.2.3         |                                                                                        |
+| Italiano    | it         | v1.7.5         |                                                                                        |
 | Magyar      | hu         | v1.3.0         |                                                                                        |
 | Polski      | pl         | v1.2.6         |                                                                                        |
 | Português   | pt, pt-br  | v1.3.0         | Translation is brazilian Portuguese, improvements may be needed for native Portuguese. |
