@@ -4,8 +4,8 @@
     "add": "új időzítés",
     "cancel": "mégse",
     "next": "tovább",
-    "save": "törlés",
-    "delete": "delete"
+    "save": "mentés",
+    "delete": "törlés"
   },
   "instructions": {
     "no_group_selected": "Előbb egy csoportot szükséges választani",
@@ -23,12 +23,9 @@
     "time": "Időpontban",
     "options": "Opciók",
     "day_type_daily": "minden nap",
-    "day_type_weekdays": "munkanapokon",
-    "day_type_custom": "egyedi",
-    "shift_with_sun": "Az idő automatikus igazítása napkeltéhez/naplementéhez",
-    "brightness": "Fényerő",
-    "temperature": "Hőmérséklet",
-    "position": "Pozíciót"
+    "day_type_workday": "munkanapokon",
+    "day_type_weekend": "hétvégén",
+    "day_type_custom": "egyedi"
   },
   "days_short": {
     "mon": "hét",
@@ -49,14 +46,9 @@
     "sun": "vasárnap"
   },
   "words": {
-    "on": "on",
-    "every": "minden",
     "and": "és",
-    "at": "at",
     "before": "előtt",
-    "after": "után",
-    "sunrise": "napkelte",
-    "sunset": "naplemente"
+    "after": "után"
   },
   "services": {
     "turn_on": "bekapcsolás",
@@ -66,26 +58,61 @@
     "set_temperature": "hőmérséklet",
     "set_to": "beállítva",
     "set_position": "változtass pozíciót",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
-    "start": "start"
+    "set_hvac_mode": "mód beállítása",
+    "set_preset_mode": "preset beállítása",
+    "set_value": "érték beállítása",
+    "select_option": "opció kiválasztása",
+    "select_source": "forrás kiválasztása",
+    "start": "kezdés"
+  },
+  "service_parameters": {
+    "brightness": "világosság",
+    "temperature": "hőmérséklet",
+    "position": "pozíció",
+    "hvac_mode": "mód",
+    "preset": "preset"
   },
   "domains": {
-    "camera": "cameras",
+    "camera": "kamera",
     "climate": "termosztát",
     "cover": "redőny",
     "fan": "ventilátor",
-    "group": "groups",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
+    "group": "csoportok",
+    "input_boolean": "logikai bemenet",
+    "input_number": "szám bemenet",
+    "input_select": "legördülő bemenet",
     "light": "lámpa",
-    "media_player": "media players",
-    "scene": "scenes",
+    "media_player": "lejátszó",
+    "scene": "jelenetek",
     "switch": "kapcsoló",
     "vacuum": "pórszívó"
+  },
+  "days": {
+    "tomorrow": "holnap",
+    "daily": "minden nap",
+    "daily_except_days": "minden nap, kivéve {days}",
+    "working_days": "munkanapokon",
+    "weekend": "hétvégén",
+    "interval": "{startDay} - {endDay}"
+  },
+  "time": {
+    "absolute": "{time}-kor",
+    "relative": "{time} múlva",
+    "interval": "{startTime} - {endTime}",
+    "seconds": "{seconds} másodperc",
+    "hour": "1 óra",
+    "hours": "{hours} óra",
+    "minute": "1 perc",
+    "minutes": "{minutes} perc",
+    "now": "most",
+    "midnight": "éjfél",
+    "noon": "dél",
+    "at_sun_event": "{sunEvent}kor",
+    "sun_event_sunrise": "napfelkelte",
+    "sun_event_sunset": "napnyugta"
+  },
+  "misc": {
+    "one_additional_task": "még egy feladat",
+    "x_additional_tasks": "még {count} feladat"
   }
 }
