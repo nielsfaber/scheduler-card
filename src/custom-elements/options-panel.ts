@@ -229,8 +229,8 @@ export class OptionsPanel extends LitElement {
   confirmConditionClick() {
     if (!this.entity || !this.Config) return;
     let states = this.Config.FindEntity(this.entity)!.states!;
-    let default_state = Array.isArray(states) ? states[0] : Math.round((states.min + states.max) / 2 / states.step) * states.step;
-
+    let step = Array.isArray(states) ? 1 : states.step || 1;
+    let default_state = Array.isArray(states) ? states[0] : Number((Math.round((states.min + states.max) / 2 / step) * step).toPrecision(5));
     let condition: ICondition = {
       entity: this.entity,
       match_type: EConditionMatchType.Equal,

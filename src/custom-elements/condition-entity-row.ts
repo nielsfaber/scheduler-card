@@ -92,7 +92,7 @@ export class ConditionEntityRow extends LitElement {
     } else if (!this.editMode) {
       return html`
         <mwc-button class="button" @click="${this.toggleEditMode}">
-          ${this.item.state}
+          ${this.getState()}
         </mwc-button>
       `;
     } else {
@@ -113,7 +113,7 @@ export class ConditionEntityRow extends LitElement {
           </div>
           <div class="value">
             <mwc-button class="button" @click="${this.toggleEditMode}">
-              ${this.item.state}
+              ${this.getState()}
             </mwc-button>
           </div>
           <div class="button-right">
@@ -155,9 +155,10 @@ export class ConditionEntityRow extends LitElement {
     let state = Number(this.item.state);
     let cfg = this.Config.FindEntity(this.item.entity)!.states!;
     if (Array.isArray(cfg)) return;
-    state = state - cfg.step;
+    let step = cfg.step || 1;
+    state = state - step;
     if (state < cfg.min) state = cfg.min;
-    state = Number((Math.round(state / cfg.step) * cfg.step).toPrecision(5));
+    state = Number((Math.round(state / step) * step).toPrecision(5));
     this.item = Object.assign({ ...this.item }, { state: state });
 
     let timeout = time !== null ? Number(time * 0.9) : 300;
@@ -173,9 +174,10 @@ export class ConditionEntityRow extends LitElement {
     let state = Number(this.item.state);
     let cfg = this.Config.FindEntity(this.item.entity)!.states!;
     if (Array.isArray(cfg)) return;
-    state = state + cfg.step;
+    let step = cfg.step || 1;
+    state = state + step;
     if (state > cfg.max) state = cfg.max;
-    state = Number((Math.round(state / cfg.step) * cfg.step).toPrecision(5));
+    state = Number((Math.round(state / step) * step).toPrecision(5));
     this.item = Object.assign({ ...this.item }, { state: state });
 
     let timeout = time !== null ? Number(time * 0.9) : 300;
@@ -192,6 +194,14 @@ export class ConditionEntityRow extends LitElement {
 
   toggleEditMode() {
     this.editMode = !this.editMode;
+  }
+
+  getState() {
+    if (!this.item || !this.Config) return;
+    let state = this.item.state;
+    let cfg = this.Config.FindEntity(this.item.entity)!.states!;
+    if (!Array.isArray(cfg) && cfg.unit) return `${state}${cfg.unit}`;
+    return state;
   }
 
   fireEvent() {

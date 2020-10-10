@@ -49,14 +49,14 @@ export interface IEntityElement extends IEntityConfig {
   name: string,
   icon: string,
   actions: IActionElement[],
-  states?: string[] | { min: number, max: number, step: number }
+  states?: string[] | { min: number, max: number, step?: number, unit?: string }
 }
 
 export interface IEntityConfig {
   name?: string,
   icon?: string,
   actions?: IActionConfig[],
-  states?: string[] | { min: number, max: number, step: number }
+  states?: string[] | { min: number, max: number, step?: number, unit?: string }
 }
 
 /* actions */

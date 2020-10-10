@@ -195,8 +195,16 @@
                   },
                   "step": {
                     "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
               }
             ]
           }

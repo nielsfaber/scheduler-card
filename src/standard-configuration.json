@@ -40,7 +40,7 @@
     ]
   },
   "binary_sensor": {
-    "icon": "motion-sensor",
+    "icon": "eye",
     "states": [
       "on",
       "off"
