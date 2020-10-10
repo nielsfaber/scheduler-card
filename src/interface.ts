@@ -2,8 +2,8 @@
 
 
 import { Config } from "./config";
-import { IScheduleEntry, IEntry, IHassAction, IHassData, IActionElement, IHassEntity, ILevelVariable, IListVariable, IHassEntry, EVariableType, } from "./types";
-import { getDomainFromEntityId, IsEqual, extend } from "./helpers";
+import { IScheduleEntry, IEntry, IHassAction, IHassData, IActionElement, IHassEntity, ILevelVariable, IListVariable, IHassEntry, EVariableType, ICondition, EConditionType, EConditionMatchType, IOptionConfig, } from "./types";
+import { getDomainFromEntityId, IsEqual, extend, pick } from "./helpers";
 import { parseTimestamp, formatTime, ETimeEvent, EDayType, timeEventToString } from "./date-time";
 import { exportVariableServiceData, importHassAction, reverseParseAction } from "./action";
 
@@ -46,10 +46,12 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
     return output;
   });
 
+  let conditions: ICondition[] = entity.attributes.conditions || [];
+  let options: IOptionConfig = entity.attributes.options || {};
+
   let entries: IEntry[] = [];
   entity.attributes.entries.forEach(entry => {
     let res = EntryPattern.exec(entry);
-
     let entryCfg: Partial<IEntry> = {}
 
     if (res![1]) {
@@ -85,9 +87,32 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
         }
       });
     }
+
+    if (res![6]) {
+      let items: number[] = [];
+      let type = EConditionType.Any;
+      let groups = res![6].match(/C[0-9]+/g);
+      groups?.forEach(el => {
+        items = items.concat(el.substring(1).split("").map(Number));
+        if (el.length > 2) type = EConditionType.All;
+      });
+      Object.assign(entryCfg, <IEntry>{
+        conditions: {
+          type: type,
+          items: items.filter(e => conditions.length >= (e - 1)).map(e => conditions[e])
+        }
+      });
+    }
+
+    if (res![8]) {
+      let groups = res![8].match(/F[0-9]+/g);
+      let optionCfg = groups?.map(el => Number(el.substring(1))).reduce((obj, el) => Object.assign(obj, pick(options, [Object.keys(options)[el]])), {});
+      Object.assign(entryCfg, <IEntry>{ options: optionCfg });
+    }
+
     let actionNums = String(res![5]).split("A").map(Number);
     return actionNums.filter(e => e !== null && actions[e]).forEach(num => {
-      entries.push(<IEntry>extend(actions[num]!, { ...entryCfg }));
+      entries.push(<IEntry>extend(actions[num]!, entryCfg));
     });
   });
 
@@ -96,15 +121,17 @@ export function ImportFromHass(entity: IHassEntity, config: Config) {
   return <IScheduleEntry>{
     entries: entries,
     id: entity.entity_id,
+    name: entity.attributes.friendly_name,
     enabled: entity.state != 'off',
     next_trigger: entity.attributes.next_trigger
   };
 }
 
-
-export function ExportToHass(entryList: IEntry[], configData: Config): IHassData {
+export function ExportToHass(entryList: IEntry[], configData: Config, friendlyName: string | undefined): IHassData {
   let hassEntries: IHassEntry[] = [];
   let hassActions: IHassAction[] = [];
+  let hassConditions: ICondition[] = [];
+  let hassOptions: IOptionConfig = {};
 
   entryList.forEach(entry => {
     let actionCfg = configData.FindAction(entry.entity, entry.action) as IActionElement;
@@ -140,11 +167,38 @@ export function ExportToHass(entryList: IEntry[], configData: Config): IHassData
     if (entry.days.type == EDayType.Custom) Object.assign(hassEntry, { days: { type: dayType, list: entry.days.custom_days } });
     else Object.assign(hassEntry, { days: { type: dayType } });
 
+    if ('conditions' in entry) {
+      let conditions: number[] = [];
+      entry.conditions?.items.forEach(condition => {
+        let conditionNum = hassConditions.findIndex(e => IsEqual(e, condition));
+        if (conditionNum < 0) conditionNum = hassConditions.push(condition) - 1;
+        conditions.push(conditionNum);
+      });
+      Object.assign(hassEntry, <IHassEntry>{ conditions: { list: conditions, type: entry.conditions!.type } });
+    }
+
+    if (entry.options) {
+      let options: number[] = [];
+      Object.entries(entry.options).forEach(([key, val]) => {
+        let optionNum = Object.entries(hassConditions).findIndex(([k, v]) => IsEqual({ [key]: val }, { [k]: v }));
+        if (optionNum < 0) {
+          Object.assign(hassOptions, { [key]: val });
+          optionNum = Object.keys(hassOptions).length - 1;
+        }
+        options.push(optionNum);
+      });
+      Object.assign(hassEntry, <IHassEntry>{ options: options });
+    }
+
     hassEntries.push(hassEntry);
   });
 
-  return {
+  let output = {
     actions: hassActions,
     entries: hassEntries
-  }
+  };
+  if (hassConditions.length) Object.assign(output, { conditions: hassConditions });
+  if (friendlyName && friendlyName !== undefined) Object.assign(output, { name: friendlyName });
+  if (Object.keys(hassOptions).length) Object.assign(output, { options: hassOptions });
+  return output;
 }

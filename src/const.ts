@@ -1,6 +1,7 @@
 
 import { IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariableType } from './types'
 import { parseTimestamp, EDayType, MinutesPerDay } from './date-time'
+import { localize } from './localize/localize'
 
 export const CARD_VERSION = "1.7.4"
 
@@ -70,4 +71,29 @@ export const DefaultListVariableConfig: IListVariableConfig = {
 
 export const FieldTemperature = "temperature";
 export const UnitPercent = "%";
-export const CreateTimeline = "make_scheme"
+export const CreateTimeScheme = "make_scheme"
+
+export const DayOptions = [
+  { id: 1, name: localize('days_short.mon') },
+  { id: 2, name: localize('days_short.tue') },
+  { id: 3, name: localize('days_short.wed') },
+  { id: 4, name: localize('days_short.thu') },
+  { id: 5, name: localize('days_short.fri') },
+  { id: 6, name: localize('days_short.sat') },
+  { id: 7, name: localize('days_short.sun') }
+];
+
+export const DayTypeOptions = [
+  { id: EDayType.Daily, name: localize('fields.day_type_daily') },
+  { id: EDayType.Workday, name: localize('fields.day_type_workday') },
+  { id: EDayType.Weekend, name: localize('fields.day_type_weekend') },
+  { id: EDayType.Custom, name: localize('fields.day_type_custom') }
+];
+
+export enum EViews {
+  Overview = "OVERVIEW",
+  NewSchedule = "NEW_SCHEDULE",
+  TimePicker = "TIME_PICKER",
+  TimeScheme = "TIME_SCHEME",
+  Options = "OPTIONS",
+}

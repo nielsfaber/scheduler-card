@@ -27,14 +27,22 @@ export class Config {
     this.groups.SetConfig({ groups: cfg.groups, standard_configuration: this.standard_configuration });
   }
 
-  GetGroups() {
-    return this.groups.Get();
+  GetGroups(showConditions: boolean = false) {
+    let groups = this.groups.Get();
+    groups = groups.filter(group => {
+      let entities = this.GetEntitiesForGroup(group.id, showConditions);
+      return (entities.length > 0);
+    });
+    return groups;
   }
 
-  GetEntitiesForGroup(group_id: string) {
+  GetEntitiesForGroup(group_id: string, showConditions: boolean = false) {
     let group = this.groups.Find(group_id);
     if (!group) return [];
-    return this.entities.Get().filter(e => this.groups.GroupHasEntity(group_id, e.id));
+    let entities = this.entities.Get().filter(e => this.groups.GroupHasEntity(group_id, e.id));
+    if (showConditions) entities = entities.filter(e => e.states !== undefined);
+    else entities = entities.filter(e => e.actions.length > 0);
+    return entities;
   }
 
   FindEntity(entity_id: string | undefined) {

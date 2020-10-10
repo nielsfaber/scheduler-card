@@ -194,6 +194,10 @@ export const styles = css`
       .padded-right {
         margin-right: 11px;
       }
+
+      mwc-button.warning {
+        --mdc-theme-primary: var(--error-color);
+      }
 `;
 
 export default styles;

@@ -116,6 +116,7 @@ export class GroupList {
       else {
         let cfg: Partial<IGroupElement> = { entities: [entity_id] }
         if (standardConfig[domain]?.icon && this.standard_configuration) Object.assign(cfg, { icon: standardConfig[domain].icon });
+        if (standardConfig[domain]?.states && this.standard_configuration) Object.assign(cfg, { states: standardConfig[domain].states });
         this.Add(domain, cfg);
       }
     });

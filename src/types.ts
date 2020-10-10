@@ -20,7 +20,9 @@ export interface IHassEntity {
     supported_features?: number,
     actions?: IHassAction[],
     entries?: string[],
-    next_trigger?: string
+    next_trigger?: string,
+    conditions?: ICondition[],
+    options?: IOptionConfig
   }
 }
 
@@ -37,7 +39,7 @@ export interface IGroupConfig {
   name: string,
   icon: string,
   include: string[],
-  exclude?: string[]
+  exclude?: string[],
 }
 
 /* entities */
@@ -45,14 +47,16 @@ export interface IGroupConfig {
 export interface IEntityElement extends IEntityConfig {
   id: string,
   name: string,
-  icon: string
-  actions: IActionElement[]
+  icon: string,
+  actions: IActionElement[],
+  states?: string[] | { min: number, max: number, step?: number, unit?: string }
 }
 
 export interface IEntityConfig {
   name?: string,
-  icon?: string
-  actions?: IActionConfig[]
+  icon?: string,
+  actions?: IActionConfig[],
+  states?: string[] | { min: number, max: number, step?: number, unit?: string }
 }
 
 /* actions */
@@ -137,25 +141,18 @@ export interface IEntry {
   days: IDays,
   action: string,
   entity: string,
-  variable?: ILevelVariable | IListVariable
+  variable?: ILevelVariable | IListVariable,
+  conditions?: IConditionConfig,
+  options?: IOptionConfig
 }
-
-// export interface ITimeSlot {
-//   startTime: number,
-//   endTime: number,
-//   action?: string,
-//   variable?: ILevelVariable | IListVariable
-// }
-
 
 export interface IScheduleEntry {
   id: string,
   enabled: boolean,
   entries: IEntry[],
-  next_trigger: string | undefined
+  next_trigger: string | undefined,
+  name?: string,
 }
-
-
 
 /* config */
 
@@ -195,116 +192,52 @@ export interface IHassAction {
 export interface IHassEntry {
   time?: ITime,
   days?: number[],
-  actions: number[]
+  actions: number[],
+  conditions?: {
+    type: "or" | "and",
+    list: number[]
+  },
+  options?: number[]
 }
 
 export interface IHassData {
   entries: IHassEntry[],
-  actions: IHassAction[]
+  actions: IHassAction[],
+  conditions?: ICondition[]
 }
 
 /* other */
 
 
-// export interface IActionConfig {
-//   name?: string,
-//   service: string,
-//   service_data?: IDictionary<any>,
-//   icon?: string,
-//   variable?: AtLeast<TActionVariableConfig, 'field'>,
-//   supported_feature?: number,
-//   routine?: boolean
-// }
+export enum EConditionMatchType {
+  Equal = "is",
+  Unequal = "not",
+  Below = "below",
+  Above = "above"
+}
 
+export interface ICondition {
+  entity: string,
+  match_type: EConditionMatchType,
+  state: string | number
+}
 
-// export interface IEntityConfig {
-//   icon?: string,
-//   name?: string,
-//   actions: IActionConfig[]
-// }
+export enum EConditionType {
+  Any = "or",
+  All = "and",
+}
 
-// export interface IDomainElement {
-//   icon: string,
-//   name: string,
-//   actions: IActionConfig[]
-//   include: string[],
-//   exclude: string[]
-// }
+export interface IConditionConfig {
+  type: EConditionType,
+  items: ICondition[],
+}
 
+export interface IOptionConfig {
+  run_once?: boolean,
+}
 
-
-// export interface IConfigFull extends IConfig {
-//   groups: IDictionary<Partial<IGroupElement>>,
-//   domains: IDictionary<Partial<IDomainElement>>,
-//   entities: IDictionary<IEntityConfig>,
-//   discover_existing: boolean,
-//   standard_configuration: boolean,
-// }
-
-// // export interface IUserSelection {
-// //   group?: string,
-// //   entity: string,
-// //   action: string,
-// //   newItem: boolean,
-// //   actionConfirmed: boolean,
-// //   editItem?: string,
-// //   time: ITime,
-// //   daysCustom: number[],
-// //   daysType: string,
-// //   levelEnabled: boolean | null,
-// //   level: number | null,
-// //   plannerSlots?: ITimeSlot[],
-// //   activePlannerSlot?: number | null
-// // }
-
-// export interface IUserSelection {
-//   group?: string,
-//   entry: Partial<IEntry>
-// }
-
-
-
-// export interface IHassEntry {
-//   time?: ITime,
-//   days?: number[],
-//   actions: number[]
-// }
-
-// export interface IHassAction {
-//   service: string,
-//   entity: string,
-//   service_data?: IDictionary<any>
-// }
-
-// export interface IHassData {
-//   entries: IHassEntry[],
-//   actions: IHassAction[]
-// }
-
-
-// // export interface IActionVariableConfig {
-// //   field: string,
-// //   name?: string,
-// //   min?: number,
-// //   max?: number,
-// //   step?: number
-// //   optional?: boolean,
-// //   show_percentage?: boolean
-// // }
-
-// // export interface IActionVariable {
-// //   field: string,
-// //   unit: string,
-// //   name: string,
-// //   min: number,
-// //   max: number,
-// //   step: number,
-// //   optional: boolean,
-// //   show_percentage: boolean
-// // }
-
-// export interface IScheduleEntry {
-//   id: string,
-//   enabled: boolean,
-//   entries: IEntry[],
-// }
+export interface IOptionPanelCfg {
+  conditions?: IConditionConfig,
+  friendly_name?: string,
+  options?: IOptionConfig,
+}

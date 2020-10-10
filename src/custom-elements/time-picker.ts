@@ -1,6 +1,6 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { formatTime, wrapTime, MinutesPerHour, roundTime } from './date-time';
-import { localize } from './localize/localize';
+import { formatTime, wrapTime, MinutesPerHour, roundTime } from '../date-time';
+import { localize } from '../localize/localize';
 
 @customElement('time-picker')
 export class TimePicker extends LitElement {
@@ -113,7 +113,7 @@ export class TimePicker extends LitElement {
     // let diff_sunset = Math.abs(wrapTime(this._val - this.sunset, { stepSize: this.stepSize, signed: true }));
     //let enabled = (this.event || diff_sunrise <= this.maxOffset * MinutesPerHour || diff_sunset <= this.maxOffset * MinutesPerHour);
     //if (enabled)
-      return html`
+    return html`
           <mwc-button @click="${this.toggleMode}" class="${this.event ? 'active' : ''}">
             <ha-icon icon="hass:theme-light-dark"></ha-icon>
           </mwc-button>
@@ -188,8 +188,8 @@ export class TimePicker extends LitElement {
         this.event = "sunset";
       }
       this.value = ts - ts_ref;
-      if(this.value > this.maxOffset * MinutesPerHour) this.value = this.maxOffset * MinutesPerHour;
-      else if(this.value < -this.maxOffset * MinutesPerHour) this.value = -this.maxOffset * MinutesPerHour;
+      if (this.value > this.maxOffset * MinutesPerHour) this.value = this.maxOffset * MinutesPerHour;
+      else if (this.value < -this.maxOffset * MinutesPerHour) this.value = -this.maxOffset * MinutesPerHour;
     }
     else {
       let ts_ref = (this.event == "sunrise") ? this.sunrise : this.sunset;
