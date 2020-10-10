@@ -3,7 +3,7 @@ import { IUserConfig, ILevelVariableConfig, IListVariableConfig, IEntry, EVariab
 import { parseTimestamp, EDayType, MinutesPerDay } from './date-time'
 import { localize } from './localize/localize'
 
-export const CARD_VERSION = "1.7.4"
+export const CARD_VERSION = "1.7.5"
 
 export const DefaultUserConfig: IUserConfig = {
   sunrise: null,
