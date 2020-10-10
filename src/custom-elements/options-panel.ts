@@ -71,7 +71,7 @@ export class OptionsPanel extends LitElement {
           <div class="header">${localize('fields.group')}</div>
           <div class="option-list">
             <button-group
-              .items=${this.Config.GetGroups({ conditions: true })}
+              .items=${this.Config.GetGroups(true)}
               value=${this.group}
               @change=${this.selectGroup}
             >
@@ -83,7 +83,7 @@ export class OptionsPanel extends LitElement {
           <div class="header">${localize('fields.entity')}</div>
           <div class="option-list">
             <button-group
-              .items=${this.Config.GetEntitiesForGroup(this.group)}
+              .items=${this.Config.GetEntitiesForGroup(this.group, true)}
               value=${this.entity}
               @change=${this.selectEntity}
             >
