@@ -24,7 +24,7 @@
     "options": "Optionen",
     "day_type_daily": "jeden Tag",
     "day_type_workday": "Werktags",
-    "day_type_weelemd": "Wochenende",
+    "day_type_weekend": "Wochenende",
     "day_type_custom": "benutzerdefiniert"
   },
   "days_short": {
@@ -112,7 +112,7 @@
     "sun_event_sunset": "Sonnenuntergang"
   },
   "misc": {
-    "one_additional_task": "1 more task",
-    "x_additional_tasks": "{count} more tasks"
+    "one_additional_task": "1 weitere Aufgabe",
+    "x_additional_tasks": "{count} weitere Aufgaben"
   }
 }
