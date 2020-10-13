@@ -23,21 +23,18 @@
     "time": "Czas",
     "options": "Opcje",
     "day_type_daily": "codziennie",
-    "day_type_weekdays": "dni tygodnia",
+    "day_type_workday": "dni robocze",
+    "day_type_weekend": "weekend",
     "day_type_custom": "niestandardowy",
-    "shift_with_sun": "automatycznie dopasuj czas do wschodów/zachodów",
-    "brightness": "Jasność",
-    "temperature": "Temperatura",
-    "position": "Pozycję"
   },
   "days_short": {
-    "mon": "pon",
-    "tue": "wt",
-    "wed": "śr",
-    "thu": "czw",
-    "fri": "pt",
-    "sat": "sob",
-    "sun": "niedz"
+    "mon": "pon.",
+    "tue": "wt.",
+    "wed": "śr.",
+    "thu": "czw.",
+    "fri": "pt.",
+    "sat": "sob.",
+    "sun": "niedz."
   },
   "days_long": {
     "mon": "poniedziałek",
@@ -56,36 +53,71 @@
     "before": "przed",
     "after": "po",
     "sunrise": "wschód",
-    "sunset": "zachodów"
+    "sunset": "zachód"
   },
   "services": {
     "turn_on": "włącz",
     "turn_off": "wyłącz",
     "close_cover": "zamknij",
     "open_cover": "otwórz",
-    "set_temperature": "Ustaw temperaturę",
+    "set_temperature": "ustaw temperaturę",
     "set_to": "ustaw na",
-    "set_position": "Ustaw pozycję",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
+    "set_position": "ustaw pozycję",
+    "set_hvac_mode": "ustaw tryb",
+    "set_preset_mode": "ustaw preset",
+    "set_value": "ustaw wartość",
+    "select_option": "wybierz opcję",
+    "select_source": "wybierz źródło",
     "start": "start"
   },
+  "service_parameters": {
+    "brightness": "jasność",
+    "temperature": "temperatura",
+    "position": "pozycja",
+    "hvac_mode": "tryb",
+    "preset": "preset"
+  },
   "domains": {
-    "camera": "cameras",
+    "camera": "kamera",
     "climate": "termostat",
     "cover": "roleta",
-    "fan": "wiatrak",
-    "group": "groups",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
-    "media_player": "media players",
-    "scene": "scenes",
+    "fan": "wentylator",
+    "group": "grupa",
+    "input_boolean": "wejście logiczne",
+    "input_number": "wejście liczbowe",
+    "input_select": "wybór wejścia",
+    "media_player": "odtwarzacz av",
+    "scene": "scena",
     "light": "światło",
     "switch": "włącznik",
     "vacuum": "odkurzacz"
+  },
+  "days": {
+    "tomorrow": "jutro",
+    "daily": "codziennie",
+    "daily_except_days": "codziennie za wyjątkiem {days}",
+    "working_days": "dni robocze",
+    "weekend": "weekend",
+    "interval": "{startDay} do {endDay}"
+  },
+  "time": {
+    "absolute": "o {time}",
+    "relative": "za {time}",
+    "interval": "od {startTime} do {endTime}",
+    "seconds": "{seconds} sekund(a/y)",
+    "hour": "1 godzina",
+    "hours": "{hours} godzin(y)",
+    "minute": "1 minuta",
+    "minutes": "{minutes} minut(y)",
+    "now": "teraz",
+    "midnight": "północ",
+    "noon": "południe",
+    "at_sun_event": "o {sunEvent}",
+    "sun_event_sunrise": "wschodzie",
+    "sun_event_sunset": "zachodzie"
+  },
+  "misc": {
+    "one_additional_task": "jeszcze 1 zadanie",
+    "x_additional_tasks": "{count} więcej zadań"
   }
 }
