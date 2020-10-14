@@ -101,9 +101,6 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 
 ## Usage
 
-:construction: WIP More usage instructions should follow soon.
-
-
 ### Creating a schedule
 Click the button 'add item' in the bottom of the card, to start creating a schedule.
 
@@ -144,17 +141,19 @@ Choose the days of the week for which the schedule should be active.
 __Every day__
  the default option. The schedule will perform the action every day at the specified time.
 
-__Weekdays__
-perform action only on Monday thru Friday. Typically weekdays are the same as working days, but it may depend on your country. Holidays are not taken into account as of yet.
+__Workdays__
+perform action only on Monday thru Friday. 
+If you have the [workday integration](https://www.home-assistant.io/integrations/workday/) installed, you can use it to define your own set of workdays.
+The workday integration and its settings will be automatically detected if it is installed.
+Note that if you define holidays, they will be excluded from workdays.
+
+__Weekend__
+perform action only on Saturday and Sunday. 
+If you have the workday integration installed, the weekend will be considered as the inverse as workdays. This means that holidays and your 'fixed day off' are included in the weekend setting.
+
 
 __Custom__
 choose your own days. A list with all days of the week appears. You can select one or more days by clicking them.
-
-:construction: WIP rename _weekdays_ to _workdays_, and take into account holidays and the actual workdays in your country using the [workday sensor](https://www.home-assistant.io/integrations/workday/)
-
-:construction: WIP add _weekends_ and make it the opposite of _workdays_
-
-:construction: WIP add option to choose the first day of the week
 
 
 #### Choosing the time
