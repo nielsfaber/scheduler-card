@@ -24,7 +24,8 @@
     "options": "Opciones",
     "day_type_daily": "cada día",
     "day_type_weekdays": "dias semanales",
-    "day_type_custom": "personalizado",
+    "day_type_weekend": "fin de semana",
+    "day_type_custom": "personalizado"
   },
   "days_short": {
     "mon": "lun",
@@ -54,7 +55,6 @@
     "turn_off": "apagar",
     "close_cover": "cerrar",
     "open_cover": "abrir",
-    "set_cover_position": "Establecer Posición",
     "set_temperature": "establecer temperatura",
     "set_to": "establecer a",
     "set_position": "establecer posición",

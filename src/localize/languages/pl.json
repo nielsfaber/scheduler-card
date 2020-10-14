@@ -25,7 +25,7 @@
     "day_type_daily": "codziennie",
     "day_type_workday": "dni robocze",
     "day_type_weekend": "weekend",
-    "day_type_custom": "niestandardowy",
+    "day_type_custom": "niestandardowy"
   },
   "days_short": {
     "mon": "pon.",
@@ -46,14 +46,9 @@
     "sun": "niedziela"
   },
   "words": {
-    "on": "w",
-    "every": "każdy",
     "and": "oraz",
-    "at": "o",
     "before": "przed",
     "after": "po",
-    "sunrise": "wschód",
-    "sunset": "zachód"
   },
   "services": {
     "turn_on": "włącz",
