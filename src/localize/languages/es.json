@@ -25,10 +25,6 @@
     "day_type_daily": "cada día",
     "day_type_weekdays": "dias semanales",
     "day_type_custom": "personalizado",
-    "shift_with_sun": "ajusta automaticamente la hora al amanecer/atardecer",
-    "brightness": "Brillo",
-    "temperature": "Temperatura",
-    "position": "Posición"
   },
   "days_short": {
     "mon": "lun",
@@ -49,14 +45,9 @@
     "sun": "domingo"
   },
   "words": {
-    "on": "en",
-    "every": "cada",
     "and": "y",
-    "at": "a las",
     "before": "antes",
-    "after": "después",
-    "sunrise": "amanecer",
-    "sunset": "atardecer"
+    "after": "después"
   },
   "services": {
     "turn_on": "encender",
@@ -74,6 +65,13 @@
     "select_source": "seleccionar fuente",
     "start": "empezar"
   },
+  "service_parameters": {
+    "brightness": "brillo",
+    "temperature": "temperatura",
+    "position": "posición",
+    "hvac_mode": "modo",
+    "preset": "pre-ajuste"
+  },
   "domains": {
     "camera": "cámaras",
     "climate": "climatización",
@@ -88,5 +86,33 @@
     "scene": "escena",
     "switch": "interruptor",
     "vacuum": "aspirador"
+  },
+  "days": {
+    "tomorrow": "mañana",
+    "daily": "a diario",
+    "daily_except_days": "todos los dias excepto {days}",
+    "working_days": "días hábiles",
+    "weekend": "fin de semana",
+    "interval": "{startDay} a {endDay}"
+  },
+  "time": {
+    "absolute": "a las {time}",
+    "relative": "en {time}",
+    "interval": "desde las {startTime} a las {endTime}",
+    "seconds": "{seconds} segundos",
+    "hour": "1 hora",
+    "hours": "{hours} horas",
+    "minute": "1 minuto",
+    "minutes": "{minutes} minutos",
+    "now": "ahora",
+    "midnight": "medianoche",
+    "noon": "mediodía",
+    "at_sun_event": "al {sunEvent}",
+    "sun_event_sunrise": "amanecer",
+    "sun_event_sunset": "atardecer"
+  },
+  "misc": {
+    "one_additional_task": "1 tarea más",
+    "x_additional_tasks": "{count} tareas más"
   }
 }
