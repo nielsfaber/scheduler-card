@@ -1,11 +1,11 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize, ServiceNameTranslations } from '../localize/localize';
 
-import { IEntry, IActionElement, EVariableType, ILevelVariable, ILevelVariableConfig, IListVariable, IListVariableConfig } from '../types'
+import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariable, ListVariableConfig } from '../types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
 import { PrettyPrintActionVariable, pick, PrettyPrintName } from '../helpers';
 
-function Duration(el: IEntry) {
+function Duration(el: Entry) {
   return el.endTime!.value - el.time.value;
 }
 
@@ -13,11 +13,11 @@ function Duration(el: IEntry) {
 export class TimeslotEditor extends LitElement {
 
   @property({ type: Array })
-  entries: IEntry[] = []
+  entries: Entry[] = []
   shadowRoot: any;
 
   @property({ type: Array })
-  actions: IActionElement[] = [];
+  actions: ActionElement[] = [];
 
   @property({ type: Number })
   stepSize: number = 10;
@@ -108,17 +108,17 @@ export class TimeslotEditor extends LitElement {
     });
   }
 
-  getEntryAction(entry: IEntry) {
+  getEntryAction(entry: Entry) {
     if (!entry.action) return '';
     let action = this.actions.find(e => { return e.id == entry.action })!;
     if (entry.variable && entry.variable.type == EVariableType.Level) {
-      let variable = entry.variable as ILevelVariable;
-      let cfg = action.variable as ILevelVariableConfig;
+      let variable = entry.variable as LevelVariable;
+      let cfg = action.variable as LevelVariableConfig;
       if (variable.enabled) return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
     else if (entry.variable && entry.variable.type == EVariableType.List) {
-      let variable = entry.variable as IListVariable;
-      let cfg = action.variable as IListVariableConfig;
+      let variable = entry.variable as ListVariable;
+      let cfg = action.variable as ListVariableConfig;
       return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
     }
     if (action.service == 'turn_on') return PrettyPrintName('on');
@@ -202,8 +202,8 @@ export class TimeslotEditor extends LitElement {
       let startTime = this.entries[slotIndex].time.value;
 
       let entries = [... this.entries];
-      Object.assign(entries[slotIndex], <IEntry>{ endTime: { value: newStop } })
-      Object.assign(entries[slotIndex + 1], <IEntry>{ time: { value: newStop }, endTime: { value: startTime + totalDuration } });
+      Object.assign(entries[slotIndex], <Entry>{ endTime: { value: newStop } })
+      Object.assign(entries[slotIndex + 1], <Entry>{ time: { value: newStop }, endTime: { value: startTime + totalDuration } });
 
       this._activeThumb = null;
 
@@ -231,13 +231,13 @@ export class TimeslotEditor extends LitElement {
     let endTime = activeSlot.endTime!.value;
     let newStop = roundTime(startTime + Duration(activeSlot) / 2, this.stepSize);
 
-    let newEntry = Object.assign(<IEntry>{
+    let newEntry = Object.assign(<Entry>{
       time: { value: newStop },
       endTime: { value: endTime },
       action: ''
     }, pick(activeSlot, ['entity', 'days']));
     let entries = [... this.entries];
-    Object.assign(entries[this._activeEntry!], <IEntry>{ endTime: { value: newStop } });
+    Object.assign(entries[this._activeEntry!], <Entry>{ endTime: { value: newStop } });
     entries.splice(this._activeEntry! + 1, 0, newEntry);
     let myEvent = new CustomEvent("update", { detail: { entries: entries } });
     this.dispatchEvent(myEvent);

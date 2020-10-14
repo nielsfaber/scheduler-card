@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, css, property, eventOptions, queryAsync } from 'lit-element';
-import { IScheduleEntry, IUserConfig } from '../types';
+import { ScheduleEntry, UserConfig } from '../types';
 import { Config } from '../config';
-import { formatTime, parseTimestamp, weekdayToString, weekday, IDays, EDayType, ITime, MinutesPerHour, daysToArray } from '../date-time';
+import { formatTime, parseTimestamp, weekdayToString, weekday, Days, EDayType, Time, MinutesPerHour, daysToArray } from '../date-time';
 import { PrettyPrintIcon, PrettyPrintName, PrettyPrintAction, capitalize, PrettyPrintTime } from '../helpers';
 import { localize } from '../localize/localize';
 import { actionHandler } from '../action-handler-directive';
@@ -12,10 +12,10 @@ import { RippleHandlers } from '@material/mwc-ripple/ripple-handlers';
 export class ScheduleEntityRow extends LitElement {
 
   @property({ type: Object })
-  schedule!: IScheduleEntry;
+  schedule!: ScheduleEntry;
 
   @property({ attribute: false }) public config?: Config;
-  @property({ attribute: false }) public userConfig?: IUserConfig;
+  @property({ attribute: false }) public userConfig?: UserConfig;
 
   render() {
     if (!this.config || !this.userConfig) return html``;
@@ -47,9 +47,9 @@ export class ScheduleEntityRow extends LitElement {
       </div>
     `;
   }
-  private calculateNext(entries: { time: ITime, days: IDays }[]) {
+  private calculateNext(entries: { time: Time, days: Days }[]) {
 
-    function nextEntry(entries: { time: ITime, days: IDays }[], startTime) {
+    function nextEntry(entries: { time: Time, days: Days }[], startTime) {
       let times = [...entries].map((entry, key) => {
         let hours = Math.floor(entry.time.value / MinutesPerHour);
         let minutes = entry.time.value - hours * MinutesPerHour;
@@ -145,7 +145,7 @@ export class ScheduleEntityRow extends LitElement {
   }
 
 
-  showDays(days: IDays) {
+  showDays(days: Days) {
     function findSequence(days: number[]): number[] {
       let len: number[] = [];
       for (var i = 0; i < days.length - 1; i++) {

@@ -1,99 +1,95 @@
-
-
-import { ITime, IDays } from './date-time';
+import { Time, Days } from './date-time';
 import { LovelaceCardEditor, LovelaceCardConfig } from 'custom-card-helpers';
 
 declare global {
   interface HTMLElementTagNameMap {
-    "scheduler-card-editor": LovelaceCardEditor;
+    'scheduler-card-editor': LovelaceCardEditor;
   }
 }
 
-export interface IDictionary<TValue> {
+export interface Dictionary<TValue> {
   [id: string]: TValue;
 }
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
-
 /* hass objects */
 
-export interface IHassEntity {
-  entity_id: string,
-  state: any,
+export interface HassEntity {
+  entity_id: string;
+  state: any;
   attributes: {
-    friendly_name?: string,
-    icon?: string,
-    supported_features?: number,
-    actions?: IHassAction[],
-    entries?: string[],
-    next_trigger?: string,
-    conditions?: ICondition[],
-    options?: IOptionConfig
-  }
+    friendly_name?: string;
+    icon?: string;
+    supported_features?: number;
+    actions?: HassAction[];
+    entries?: string[];
+    next_trigger?: string;
+    conditions?: Condition[];
+    options?: OptionConfig;
+  };
 }
 
 /* groups */
 
-export interface IGroupElement {
-  id: string,
-  entities: string[],
-  name: string,
-  icon: string,
+export interface GroupElement {
+  id: string;
+  entities: string[];
+  name: string;
+  icon: string;
 }
 
-export interface IGroupConfig {
-  name: string,
-  icon: string,
-  include: string[],
-  exclude?: string[],
+export interface GroupConfig {
+  name: string;
+  icon: string;
+  include: string[];
+  exclude?: string[];
 }
 
 /* entities */
 
-export interface IEntityElement extends IEntityConfig {
-  id: string,
-  name: string,
-  icon: string,
-  actions: IActionElement[],
-  states?: string[] | { min: number, max: number, step?: number, unit?: string }
+export interface EntityElement extends EntityConfig {
+  id: string;
+  name: string;
+  icon: string;
+  actions: ActionElement[];
+  states?: string[] | { min: number; max: number; step?: number; unit?: string };
 }
 
-export interface IEntityConfig {
-  name?: string,
-  icon?: string,
-  actions?: IActionConfig[],
-  states?: string[] | { min: number, max: number, step?: number, unit?: string }
+export interface EntityConfig {
+  name?: string;
+  icon?: string;
+  actions?: ActionConfig[];
+  states?: string[] | { min: number; max: number; step?: number; unit?: string };
 }
 
 /* actions */
 
-export interface IActionConfig {
-  name?: string,
-  service: string,
-  service_data?: IDictionary<any>,
-  icon?: string,
-  variable?: AtLeast<ILevelVariableConfig | IListVariableConfig, 'field'>,
-  supported_feature?: number,
-  routine?: boolean
+export interface ActionConfig {
+  name?: string;
+  service: string;
+  service_data?: Dictionary<any>;
+  icon?: string;
+  variable?: AtLeast<LevelVariableConfig | ListVariableConfig, 'field'>;
+  supported_feature?: number;
+  routine?: boolean;
 }
 
-export interface IActionElement extends IActionConfig {
-  id: string,
-  name: string,
-  service: string,
-  service_data?: IDictionary<any>,
-  icon: string,
-  variable?: ILevelVariableConfig | IListVariableConfig,
-  routine: boolean
-  supported_feature?: number,
+export interface ActionElement extends ActionConfig {
+  id: string;
+  name: string;
+  service: string;
+  service_data?: Dictionary<any>;
+  icon: string;
+  variable?: LevelVariableConfig | ListVariableConfig;
+  routine: boolean;
+  supported_feature?: number;
 }
 
 /* action variables */
 
-
 export enum EVariableType {
-  Level = "LEVEL",
-  List = "LIST",
+  Level = 'LEVEL',
+  List = 'LIST',
 }
 
 // export interface IVariable {
@@ -102,148 +98,144 @@ export enum EVariableType {
 //   type: EVariableType
 // }
 
-export interface ILevelVariable {
-  value: number | null,
-  enabled: boolean,
-  type: EVariableType
+export interface LevelVariable {
+  value: number | null;
+  enabled: boolean;
+  type: EVariableType;
 }
 
-export interface IListVariable {
-  value: string | null,
-  type: EVariableType
+export interface ListVariable {
+  value: string | null;
+  type: EVariableType;
 }
 
-export interface ILevelVariableConfig {
-  field: string,
-  unit: string,
-  name: string,
-  min: number,
-  max: number,
-  step: number,
-  optional: boolean,
-  supported_feature?: number,
-  type: EVariableType,
+export interface LevelVariableConfig {
+  field: string;
+  unit: string;
+  name: string;
+  min: number;
+  max: number;
+  step: number;
+  optional: boolean;
+  supported_feature?: number;
+  type: EVariableType;
 }
 
-export interface IListVariableOption {
-  value: string,
-  icon?: string,
-  name?: string,
+export interface ListVariableOption {
+  value: string;
+  icon?: string;
+  name?: string;
 }
 
-export interface IListVariableConfig {
-  field: string,
-  name: string,
-  options: IListVariableOption[],
-  supported_feature?: number,
-  type: EVariableType,
+export interface ListVariableConfig {
+  field: string;
+  name: string;
+  options: ListVariableOption[];
+  supported_feature?: number;
+  type: EVariableType;
 }
 
 /* entries */
 
-export interface IEntry {
-  time: ITime,
-  endTime?: ITime,
-  days: IDays,
-  action: string,
-  entity: string,
-  variable?: ILevelVariable | IListVariable,
-  conditions?: IConditionConfig,
-  options?: IOptionConfig
+export interface Entry {
+  time: Time;
+  endTime?: Time;
+  days: Days;
+  action: string;
+  entity: string;
+  variable?: LevelVariable | ListVariable;
+  conditions?: ConditionConfig;
+  options?: OptionConfig;
 }
 
-export interface IScheduleEntry {
-  id: string,
-  enabled: boolean,
-  entries: IEntry[],
-  next_trigger: string | undefined,
-  name?: string,
+export interface ScheduleEntry {
+  id: string;
+  enabled: boolean;
+  entries: Entry[];
+  next_trigger: string | undefined;
+  name?: string;
 }
 
 /* config */
 
-export interface IUserConfig {
-  sunrise: number | null,
-  sunset: number | null,
-  title: boolean | string,
-  am_pm: boolean,
-  time_step: number,
-  temperature_unit: string
-  is_admin: boolean
+export interface UserConfig {
+  sunrise: number | null;
+  sunset: number | null;
+  title: boolean | string;
+  am_pm: boolean;
+  time_step: number;
+  temperature_unit: string;
+  is_admin: boolean;
 }
 
-
-
-export interface ICardConfig extends LovelaceCardConfig {
-  discover_existing?: boolean,
-  standard_configuration?: boolean,
-  title?: boolean | string,
-  am_pm?: boolean,
-  time_step?: number,
-  include?: string[],
-  exclude?: string[],
-  groups?: IGroupConfig[],
-  customize?: IDictionary<IEntityConfig>,
+export interface CardConfig extends LovelaceCardConfig {
+  discover_existing?: boolean;
+  standard_configuration?: boolean;
+  title?: boolean | string;
+  am_pm?: boolean;
+  time_step?: number;
+  include?: string[];
+  exclude?: string[];
+  groups?: GroupConfig[];
+  customize?: Dictionary<EntityConfig>;
 }
-
 
 /* interface */
 
-export interface IHassAction {
-  service: string,
-  entity: string,
-  service_data?: IDictionary<any>
+export interface HassAction {
+  service: string;
+  entity: string;
+  service_data?: Dictionary<any>;
 }
 
-export interface IHassEntry {
-  time?: ITime,
-  days?: number[],
-  actions: number[],
+export interface HassEntry {
+  time?: Time;
+  days?: number[];
+  actions: number[];
   conditions?: {
-    type: "or" | "and",
-    list: number[]
-  },
-  options?: number[]
+    type: 'or' | 'and';
+    list: number[];
+  };
+  options?: number[];
 }
 
-export interface IHassData {
-  entries: IHassEntry[],
-  actions: IHassAction[],
-  conditions?: ICondition[]
+export interface HassData {
+  entries: HassEntry[];
+  actions: HassAction[];
+  conditions?: Condition[];
 }
 
 /* other */
 
-
 export enum EConditionMatchType {
-  Equal = "is",
-  Unequal = "not",
-  Below = "below",
-  Above = "above"
+  Equal = 'is',
+  Unequal = 'not',
+  Below = 'below',
+  Above = 'above',
 }
 
-export interface ICondition {
-  entity: string,
-  match_type: EConditionMatchType,
-  state: string | number
+export interface Condition {
+  entity: string;
+  match_type: EConditionMatchType;
+  state: string | number;
 }
 
 export enum EConditionType {
-  Any = "or",
-  All = "and",
+  Any = 'or',
+  All = 'and',
 }
 
-export interface IConditionConfig {
-  type: EConditionType,
-  items: ICondition[],
+export interface ConditionConfig {
+  type: EConditionType;
+  items: Condition[];
 }
 
-export interface IOptionConfig {
-  run_once?: boolean,
+export interface OptionConfig {
+  run_once?: boolean;
 }
 
-export interface IOptionPanelCfg {
-  conditions?: IConditionConfig,
-  friendly_name?: string,
-  options?: IOptionConfig,
+export interface OptionPanelCfg {
+  conditions?: ConditionConfig;
+  friendly_name?: string;
+  options?: OptionConfig;
 }

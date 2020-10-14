@@ -56,7 +56,7 @@ class ActionHandler extends HTMLElement implements ActionHandler {
           this.stopAnimation();
           this.timer = undefined;
         },
-        { passive: true },
+        { passive: true }
       );
     });
   }

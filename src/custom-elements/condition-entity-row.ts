@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { ICondition, EConditionMatchType } from '../types';
+import { Condition, EConditionMatchType } from '../types';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 import { localize } from '../localize/localize';
 import { Config } from '../config';
@@ -8,7 +8,7 @@ import { Config } from '../config';
 export class ConditionEntityRow extends LitElement {
 
   @property()
-  item?: ICondition;
+  item?: Condition;
 
   @property()
   Config?: Config;
@@ -75,7 +75,7 @@ export class ConditionEntityRow extends LitElement {
       else if (matchType == EConditionMatchType.Below) value = EConditionMatchType.Above;
       else if (matchType == EConditionMatchType.Above) value = EConditionMatchType.Equal;
     }
-    this.item = Object.assign({ ...this.item }, <ICondition>{ match_type: value });
+    this.item = Object.assign({ ...this.item }, <Condition>{ match_type: value });
 
     this.fireEvent();
   }

@@ -1,6 +1,6 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
 import { HomeAssistant, LovelaceCardEditor, fireEvent } from 'custom-card-helpers';
-import { ICardConfig } from '../types';
+import { CardConfig } from '../types';
 import { default as standardConfig } from '../standard-configuration.json';
 import { PrettyPrintIcon, getDomainFromEntityId, removeDomainFromEntityId } from '../helpers';
 import { IsSchedulerEntity } from '../entity';
@@ -10,11 +10,11 @@ import { DefaultUserConfig } from '../const';
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
   @property() public hass?: HomeAssistant;
-  @property() private _config?: ICardConfig;
+  @property() private _config?: CardConfig;
   @property() selectedDomain = '';
   @property() titleOption = 'standard';
 
-  public setConfig(config: ICardConfig): void {
+  public setConfig(config: CardConfig): void {
     this._config = config;
     this.titleOption = this.getTitleOption();
   }

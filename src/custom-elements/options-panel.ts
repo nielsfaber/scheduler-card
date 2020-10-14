@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 import { localize } from '../localize/localize';
 import { Config } from '../config';
-import { ICondition, EConditionMatchType, EConditionType, IConditionConfig, IOptionConfig, IOptionPanelCfg } from '../types';
+import { Condition, EConditionMatchType, EConditionType, ConditionConfig, OptionConfig, OptionPanelCfg } from '../types';
 
 import './condition-entity-row';
 
@@ -18,10 +18,10 @@ export class OptionsPanel extends LitElement {
   entity: string = "";
 
   @property()
-  conditions?: IConditionConfig;
+  conditions?: ConditionConfig;
 
   @property()
-  options?: IOptionConfig;
+  options?: OptionConfig;
 
   @property()
   friendlyName?: string;
@@ -200,7 +200,7 @@ export class OptionsPanel extends LitElement {
       if (this.editItem != num) this.editItem = num;
       let conditions = [...this.conditions!.items!];
       conditions[num] = { ...e.detail.item };
-      Object.assign(this.conditions, <IConditionConfig>{ items: conditions });
+      Object.assign(this.conditions, <ConditionConfig>{ items: conditions });
       this.fireEvent();
     }
   }
@@ -231,7 +231,7 @@ export class OptionsPanel extends LitElement {
     let states = this.Config.FindEntity(this.entity)!.states!;
     let step = Array.isArray(states) ? 1 : states.step || 1;
     let default_state = Array.isArray(states) ? states[0] : Number((Math.round((states.min + states.max) / 2 / step) * step).toPrecision(5));
-    let condition: ICondition = {
+    let condition: Condition = {
       entity: this.entity,
       match_type: EConditionMatchType.Equal,
       state: default_state
@@ -239,7 +239,7 @@ export class OptionsPanel extends LitElement {
     let conditions = this.conditions?.items.length ? [...this.conditions.items] : [];
     let type = (!this.conditions?.type) ? EConditionType.Any : this.conditions.type;
     conditions.push(condition);
-    this.conditions = <IConditionConfig>{ items: conditions, type: type };
+    this.conditions = <ConditionConfig>{ items: conditions, type: type };
     this.group = "";
     this.entity = "";
     this.selectedItem = null;
@@ -251,7 +251,7 @@ export class OptionsPanel extends LitElement {
     if (this.selectedItem === null) return;
     let conditions = [...this.conditions!.items];
     conditions.splice(this.selectedItem, 1);
-    Object.assign(this.conditions, <IConditionConfig>{ items: conditions });
+    Object.assign(this.conditions, <ConditionConfig>{ items: conditions });
     this.selectedItem = null;
     this.fireEvent();
   }
@@ -259,7 +259,7 @@ export class OptionsPanel extends LitElement {
   conditionTypeSwitchClick(e: Event) {
     let checked = (e.target as HTMLInputElement).checked;
     let type = checked ? EConditionType.All : EConditionType.Any;
-    Object.assign(this.conditions, <IConditionConfig>{ type: type });
+    Object.assign(this.conditions, <ConditionConfig>{ type: type });
     this.fireEvent();
   }
 
@@ -280,7 +280,7 @@ export class OptionsPanel extends LitElement {
   }
 
   fireEvent() {
-    let data: IOptionPanelCfg = {
+    let data: OptionPanelCfg = {
       conditions: this.conditions,
       options: this.options,
       friendly_name: this.friendlyName
