@@ -9,6 +9,10 @@
     - [Choosing an entity and action](#choosing-an-entity-and-action)
     - [Choosing the days](#choosing-the-days)
     - [Choosing the time](#choosing-the-time)
+  - [Options panel](#options-panel)
+    - [Condition editor](#condition-editor)
+    - [Friendly name](#friendly-name)
+    - [Disable after trigger](#disable-after-trigger)
 - [Configuration](#configuration)
   - [Introduction](#introduction-1)
   - [Overview](#overview)
@@ -22,6 +26,7 @@
     - [Actions](#actions)
     - [Numeric action variable](#numeric-action-variable)
     - [List action variable](#list-action-variable)
+    - [Conditions](#conditions)
 - [Translations](#translations)
 - [FAQ](#faq)
   - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
@@ -97,7 +102,6 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 ## Usage
 
 :construction: WIP More usage instructions should follow soon.
-
 
 
 ### Creating a schedule
@@ -179,6 +183,40 @@ Also here, buttons can be clicked to toggle.
 <img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_timepicker.png?raw=true" width="400">
 
 ---
+
+### Options panel
+The options panel gives you access to additional settings that you can set up for schedules.
+
+The options panel is called the way it is, because all settings here are *optional*. So it is OK to ignore it if you don't miss any of its functions.
+
+#### Condition editor
+
+The condition editor allows you to define a set of rules which need to pass before the action may be executed.
+Conditions are currently limited to checking the state of (other) HA entities (so not their attributes). States may be numeric, on/off or string type. Date/time format is not supported.
+
+The editor allows you to make rules in various ways: logic *AND*, *OR*, *NOT* functions, as well as *below* and *above* for numeric states.
+You can combine multiple entities if needed.
+
+All entities having `states` configured will show up in the editor.
+For more information on this, see [conditions](#conditions).
+
+:warning: **Note**: Conditions are only evaluated at the time the actions should fire. This means that if the conditions are not met, the timer event will be skipped. It will not be re-evaluated when any of the entities involved in the conditions change.
+
+#### Friendly name
+
+By default, all schedules will have an automatically generated entity ID and friendly name.
+This means they could be hard to find back in the entity registry.
+
+The friendly name setting allows you to change the name (not the entity ID) to anything that makes it recognizable for you.
+If you leave the field empty, the automatically generated name shall be used instead.
+
+Note if a custom friendly name is provided it shall be displayed in the overview page as well.
+
+#### Disable after trigger
+
+The *disable after trigger* option does exactly what it says.
+It waits for the timer to expire, executes the actions, and will then disable the schedule.
+You can enable the schedule again to reset it.
 
 ## Configuration
 
@@ -321,12 +359,13 @@ With the `customize` configuration you can specify configuration for specific HA
 
 :warning: **Tip**: You can use entities `configuration` in combination with the standard configuration. The configurations will be merged.
 
-| Name    | Type   | Default               | Description                                                                                                 |
-| ------- | ------ | --------------------- | ----------------------------------------------------------------------------------------------------------- |
-| entity  | key    | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities. |
-| actions | list   | none                  | See [actions](#actions)                                                                                     |
-| name    | string | (take from HA config) | Displayed name for entity                                                                                   |
-| icon    | string | (take from HA config) | Displayed icon for entity                                                                                   |
+| Name    | Type        | Default               | Description                                                                                                     |
+| ------- | ----------- | --------------------- | --------------------------------------------------------------------------------------------------------------- |
+| entity  | key         | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities.     |
+| actions | list        | none                  | See [actions](#actions)                                                                                         |
+| name    | string      | (take from HA config) | Displayed name for entity                                                                                       |
+| icon    | string      | (take from HA config) | Displayed icon for entity                                                                                       |
+| states  | list or map | none                  | Possible states of this entities, for using it in a condition.<br> See [conditions](#conditions) for more info. |
 
 #### Actions
 An action defines **what** needs to be done when a schedule timer expires.
@@ -447,6 +486,33 @@ customize:
 Now the list of options become visible when you set up the action:
 
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_list_example.png?raw=true)
+
+
+#### Conditions
+
+If you want to use a specific entity as a condition in a schedule, this can be configured by defining it in `customize` as well.
+
+To do so, you will need to tell the card which states the entity can have, which is done using the `states` parameter.
+
+There are two options for this:
+1. Define a list of possible states
+2. Define a numeric range for the state
+
+If an entity has its states defined, it will automatically show up when creating a condition.
+
+Example of defining a state list:
+```yaml
+customize:
+  input_boolean.my_condition_entity:
+    states: ['on','off']
+```
+
+Example of defining a numeric range:
+```yaml
+customize:
+  sensor.my_other_condition_entity:
+    states: {min: 0, max: 100, step: 1, unit: '%'}
+```
 
 
 ## Translations
