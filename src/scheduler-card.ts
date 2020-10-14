@@ -39,8 +39,8 @@ console.info(
 
 @customElement('scheduler-card')
 export class SchedulerCard extends LitElement {
-  public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    return document.createElement('scheduler-card-editor') as LovelaceCardEditor;
+  public static getConfigElement(): LovelaceCardEditor {
+    return document.createElement('scheduler-card-editor');
   }
 
   static get styles(): CSSResult {

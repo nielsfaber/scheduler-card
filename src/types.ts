@@ -1,7 +1,13 @@
 
 
 import { ITime, IDays } from './date-time';
-import { LovelaceCardConfig } from 'custom-card-helpers';
+import { LovelaceCardEditor, LovelaceCardConfig } from 'custom-card-helpers';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "scheduler-card-editor": LovelaceCardEditor;
+  }
+}
 
 export interface IDictionary<TValue> {
   [id: string]: TValue;
