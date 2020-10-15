@@ -3,6 +3,22 @@ import { css } from 'lit-element';
 export const styles = css`
   /* list view */
 
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-header .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-header ha-switch {
+    padding: 5px;
+  }
+
   div.list-item {
     display: grid;
     grid-template-columns: min-content 1fr min-content;

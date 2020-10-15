@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor, ActionHandlerEvent } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import { Config } from './config';
 import {
@@ -31,15 +31,15 @@ import {
   EViews,
 } from './const';
 import { localize, getLanguage, ServiceParamTranslations } from './localize/localize';
-import { parseTimestamp, EDayType, Days, ETimeEvent, daysToArray, getRemaining } from './date-time';
+import { parseTimestamp, EDayType, Days, ETimeEvent, daysToArray } from './date-time';
 import { ImportFromHass, ExportToHass } from './interface';
 import { IsSchedulerEntity } from './entity';
 
+import './custom-elements/scheduler-entities-card';
 import './custom-elements/time-picker';
 import './custom-elements/variable-slider';
 import './custom-elements/timeslot-editor';
 import './custom-elements/editor';
-import './custom-elements/schedule-entity-row';
 import './custom-elements/button-group';
 import './custom-elements/options-panel';
 
@@ -169,19 +169,12 @@ export class SchedulerCard extends LitElement {
 
   renderOverview() {
     return html`
-      <ha-card>
-        ${this.renderTitle()}
-        <div class="card-section first">
-          ${this.renderScheduleList()}
-        </div>
-        ${this._config.is_admin
-          ? html`
-              <div class="card-section last">
-                <mwc-button outlined @click="${this._addItemClick}">${localize('actions.add')}</mwc-button>
-              </div>
-            `
-          : ''}
-      </ha-card>
+      <scheduler-entities-card
+        .hass=${this._hass}
+        @editClick=${this._editItemClick}
+        @newClick=${this._addItemClick}
+      >
+      </scheduler-entities-card>
     `;
   }
 
@@ -196,8 +189,8 @@ export class SchedulerCard extends LitElement {
                 <mwc-button
                   class="${this._entry.action == CreateTimeScheme ? ' active' : ''}"
                   @click="${() => {
-                    this.selectAction(CreateTimeScheme);
-                  }}"
+            this.selectAction(CreateTimeScheme);
+          }}"
                 >
                   <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
                   ${PrettyPrintName(CreateTimeScheme)}
@@ -226,8 +219,8 @@ export class SchedulerCard extends LitElement {
               @change=${this.selectEntity}
             >
               ${!this._selectedGroup
-                ? localize('instructions.no_group_selected')
-                : localize('instructions.no_entities_for_group')}
+        ? localize('instructions.no_group_selected')
+        : localize('instructions.no_entities_for_group')}
             </button-group>
           </div>
         </div>
@@ -240,8 +233,8 @@ export class SchedulerCard extends LitElement {
               @change=${this.selectAction}
             >
               ${!this._entry || !this._entry.entity
-                ? localize('instructions.no_entity_selected')
-                : localize('instructions.no_actions_for_entity')}
+        ? localize('instructions.no_entity_selected')
+        : localize('instructions.no_actions_for_entity')}
             </button-group>
           </div>
         </div>
@@ -249,10 +242,10 @@ export class SchedulerCard extends LitElement {
         <div class="card-section last">
           <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
           ${this._entry.action
-            ? html`
+        ? html`
                 <mwc-button outlined @click="${this._confirmItemClick}">${localize('actions.next')}</mwc-button>
               `
-            : html`
+        : html`
                 <mwc-button outlined disabled>${localize('actions.next')}</mwc-button>
               `}
         </div>
@@ -274,12 +267,12 @@ export class SchedulerCard extends LitElement {
             <div class="summary-entity">
               <div class="summary-icon">
                 ${
-                  entity.icon
-                    ? html`
+      entity.icon
+        ? html`
                         <ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>
                       `
-                    : ''
-                }
+        : ''
+      }
               </div>
               <div class="summary-text">
                 ${PrettyPrintName(entity.name)}
@@ -291,12 +284,12 @@ export class SchedulerCard extends LitElement {
             <div class="summary-action">
               <div class="summary-icon">
                 ${
-                  action.icon
-                    ? html`
+      action.icon
+        ? html`
                         <ha-icon icon="${PrettyPrintIcon(action.icon)}"></ha-icon>
                       `
-                    : ''
-                }
+        : ''
+      }
               </div>
               <div class="summary-text">
                 ${PrettyPrintName(action.name)}
@@ -305,42 +298,42 @@ export class SchedulerCard extends LitElement {
           </div>
         </div>
         ${
-          action.variable && action.variable.type == EVariableType.Level
-            ? this.renderLevelPanel(action.variable as LevelVariableConfig)
-            : ''
-        }
+      action.variable && action.variable.type == EVariableType.Level
+        ? this.renderLevelPanel(action.variable as LevelVariableConfig)
+        : ''
+      }
         ${
-          action.variable && action.variable.type == EVariableType.List
-            ? this.renderListPanel(action.variable as ListVariableConfig)
-            : ''
-        }
+      action.variable && action.variable.type == EVariableType.List
+        ? this.renderListPanel(action.variable as ListVariableConfig)
+        : ''
+      }
         ${this.renderDayPicker()}
           
         <div class="card-section">
           <div class="header">${localize('fields.time')}</div>
           <time-picker value=${this._entry.time!.value} event=${this._entry.time!.event} stepSize="${
       this._config.time_step
-    }" formatAmPm="${this._config.am_pm}" sunrise="${this._config.sunrise}" sunset="${this._config.sunset}" @change="${
+      }" formatAmPm="${this._config.am_pm}" sunrise="${this._config.sunrise}" sunset="${this._config.sunset}" @change="${
       this.updateTime
-    }"></timepicker>
+      }"></timepicker>
         </div>
         ${
-          this.newItem || !this._config.is_admin
-            ? ''
-            : html`
+      this.newItem || !this._config.is_admin
+        ? ''
+        : html`
                 <div class="card-section">
                   <mwc-button outlined @click="${this._deleteItemClick}" class="warning"
                     >${localize('actions.delete')}</mwc-button
                   >
                 </div>
               `
-        }
+      }
         <div class="card-section last">
           <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
           <mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>
           <mwc-button outlined @click="${this._gotoOptionsClick}" style="float: right">${localize(
-      'fields.options'
-    )} <ha-icon icon="hass:chevron-right"></ha-icon></mwc-button>
+        'fields.options'
+      )} <ha-icon icon="hass:chevron-right"></ha-icon></mwc-button>
           <div style="clear: both"></div>
         </div>
       </ha-card>
@@ -362,10 +355,10 @@ export class SchedulerCard extends LitElement {
             <div class="summary-entity">
               <div class="summary-icon">
                 ${entity.icon
-                  ? html`
+        ? html`
                       <ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>
                     `
-                  : ''}
+        : ''}
               </div>
               <div class="summary-text">
                 ${PrettyPrintName(entity.name)}
@@ -416,14 +409,14 @@ export class SchedulerCard extends LitElement {
           </div>
         </div>
         ${action && this._entry.variable && this._entry.variable.type == EVariableType.Level
-          ? this.renderLevelPanel(action.variable as LevelVariableConfig, true)
-          : ''}
+        ? this.renderLevelPanel(action.variable as LevelVariableConfig, true)
+        : ''}
         ${action && this._entry.variable && this._entry.variable.type == EVariableType.List
-          ? this.renderListPanel(action.variable as ListVariableConfig, true)
-          : ''}
+        ? this.renderListPanel(action.variable as ListVariableConfig, true)
+        : ''}
         ${this.newItem || !this._config.is_admin
-          ? ''
-          : html`
+        ? ''
+        : html`
               <div class="card-section">
                 <mwc-button outlined @click="${this._deleteItemClick}" class="warning"
                   >${localize('actions.delete')}</mwc-button
@@ -433,8 +426,8 @@ export class SchedulerCard extends LitElement {
         <div class="card-section last">
           <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
           ${this.newItem || !this._config.is_admin
-            ? ''
-            : html`
+        ? ''
+        : html`
                 <mwc-button outlined @click="${this._deleteItemClick}">${localize('actions.delete')}</mwc-button>
               `}
           <mwc-button outlined @click="${this._gotoOptionsClick}" style="float: right"
@@ -461,10 +454,10 @@ export class SchedulerCard extends LitElement {
         <div class="card-section last">
           <mwc-button outlined @click="${this._cancelEditClick}">${localize('actions.cancel')}</mwc-button>
           ${this._entries.find(e => e.action)
-            ? html`
+        ? html`
                 <mwc-button outlined @click="${this._saveItemClick}">${localize('actions.save')}</mwc-button>
               `
-            : html`
+        : html`
                 <mwc-button outlined disabled>${localize('actions.save')}</mwc-button>
               `}
           <mwc-button outlined @click="${this._optionsBackClick}" style="float: right"
@@ -477,49 +470,17 @@ export class SchedulerCard extends LitElement {
   }
 
   private renderTitle() {
-    if (typeof this._config.title == 'string')
-      return html`
-        <div class="card-header">${this._config.title}</div>
-      `;
-    else if (this._config.title)
-      return html`
-        <div class="card-header">${localize('scheduler')}</div>
-      `;
-    else return html``;
-  }
-
-  renderScheduleList() {
-    if (!this.schedules.length)
-      return html`
-        <div class="text-field">
-          ${localize('instructions.no_entries_defined')}
+    if (!this._config.title) return html``;
+    let title = (typeof this._config.title == 'string') ? this._config.title : localize('scheduler');
+    return html`
+      <div class="card-header">
+        <div class="name">
+          ${title}
         </div>
-      `;
-    const items = this.schedules;
-    items.sort((a, b) => {
-      const remainingA = getRemaining(a.next_trigger);
-      const remainingB = getRemaining(b.next_trigger);
-
-      if (remainingA !== null && remainingB !== null) {
-        if (remainingA > remainingB) return 1;
-        else if (remainingA < remainingB) return -1;
-        else return a.id < b.id ? 1 : -1;
-      } else if (remainingB !== null) return 1;
-      else if (remainingA !== null) return -1;
-      else return a.id < b.id ? 1 : -1;
-    });
-    return items.map(scheduleItem => {
-      return html`
-        <schedule-entity-row
-          .config=${this.Config}
-          .userConfig=${this._config}
-          .schedule=${scheduleItem}
-          @action=${e => this._handleScheduleClick(e, scheduleItem.id)}
-        >
-        </schedule-entity-row>
-      `;
-    });
+      </div>
+    `;
   }
+
 
   renderDayPicker() {
     const customDayPicker =
@@ -557,8 +518,8 @@ export class SchedulerCard extends LitElement {
       <div class="card-section">
         <div class="header">
           ${cfg.name in ServiceParamTranslations
-            ? localize(ServiceParamTranslations[cfg.name])
-            : PrettyPrintName(cfg.name)}
+        ? localize(ServiceParamTranslations[cfg.name])
+        : PrettyPrintName(cfg.name)}
         </div>
         <div class="option-item">
           <variable-slider
@@ -570,8 +531,8 @@ export class SchedulerCard extends LitElement {
             optional=${cfg.optional}
             disabled=${!variable.enabled}
             @change="${e => {
-              this.updateLevel(e, updateCard);
-            }}"
+        this.updateLevel(e, updateCard);
+      }}"
           >
           </variable-slider>
         </div>
@@ -584,8 +545,8 @@ export class SchedulerCard extends LitElement {
       <div class="card-section">
         <div class="header">
           ${cfg.name in ServiceParamTranslations
-            ? localize(ServiceParamTranslations[cfg.name])
-            : PrettyPrintName(cfg.name)}
+        ? localize(ServiceParamTranslations[cfg.name])
+        : PrettyPrintName(cfg.name)}
         </div>
         <div class="option-item">
           <button-group
@@ -793,13 +754,8 @@ export class SchedulerCard extends LitElement {
     this._view = EViews.Overview;
   }
 
-  _handleScheduleClick(e: ActionHandlerEvent, schedule_id: string): void {
-    const action = e.detail.action;
-    if (action == 'tap') this._editItemClick(schedule_id);
-    else this._toggleDisable(schedule_id);
-  }
-
-  _editItemClick(entity_id): void {
+  _editItemClick(ev: CustomEvent): void {
+    let entity_id = ev.detail;
     const item = this.schedules.find(e => e.id == entity_id);
     if (!item) return;
 
@@ -819,18 +775,6 @@ export class SchedulerCard extends LitElement {
     this.editItem = entity_id;
     this._friendlyName = item.name;
   }
-
-  _toggleDisable(entity_id): void {
-    const item = this.schedules.find(e => e.id == entity_id);
-    if (!item) return;
-
-    if (item.enabled) {
-      this._hass!.callService('switch', 'turn_off', { entity_id: entity_id });
-    } else {
-      this._hass!.callService('switch', 'turn_on', { entity_id: entity_id });
-    }
-  }
-
   _gotoOptionsClick(): void {
     this._view = EViews.Options;
   }
@@ -838,5 +782,12 @@ export class SchedulerCard extends LitElement {
   _optionsBackClick(): void {
     if (this._entries.every(e => e.endTime)) this._view = EViews.TimeScheme;
     else this._view = EViews.TimePicker;
+  }
+
+  _toggleDisableAll(ev): void {
+    let checked = (ev.target as HTMLInputElement).checked;
+    this.schedules.forEach(schedule => {
+      this._hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: schedule.id });
+    });
   }
 }

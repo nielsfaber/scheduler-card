@@ -148,6 +148,19 @@ export interface Entry {
   options?: OptionConfig;
 }
 
+
+export interface ImportedEntry {
+  time: Time;
+  endTime?: Time;
+  days: Days;
+  actions: number[];
+  conditions?: {
+    type: EConditionType,
+    items: number[]
+  }
+  options?: number[];
+}
+
 export interface ScheduleEntry {
   id: string;
   enabled: boolean;
@@ -155,7 +168,6 @@ export interface ScheduleEntry {
   next_trigger: string | undefined;
   name?: string;
 }
-
 /* config */
 
 export interface UserConfig {
