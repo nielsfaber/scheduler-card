@@ -90,29 +90,29 @@
   "days": {
     "tomorrow": "domani",
     "daily": "giornaliero",
-    "daily_except_days": "tutti i giorni eccetto {giorni}",
+    "daily_except_days": "tutti i giorni eccetto {days}",
     "working_days": "giorni lavorativi",
     "weekend": "weekend",
-    "interval": "{giornoInizio} a {giornoFine}"
+    "interval": "{startDay} a {endDay}"
   },
   "time": {
-    "absolute": "alle {ora}",
-    "relative": "entro {ora}",
-    "interval": "dalle {oraInizio} alle {oraFine}",
-    "seconds": "{secondi} second1",
+    "absolute": "alle {time}",
+    "relative": "entro {time}",
+    "interval": "dalle {startTime} alle {endTime}",
+    "seconds": "{seconds} second1",
     "hour": "1 ora",
-    "hours": "{ore} ore",
+    "hours": "{hours} ore",
     "minute": "1 minuto",
-    "minutes": "{minuti} minuti",
+    "minutes": "{minutes} minuti",
     "now": "ora",
     "midnight": "mezzanotte",
     "noon": "noon",
-    "at_sun_event": "all' {eventoSole}",
+    "at_sun_event": "all' {sunEvent}",
     "sun_event_sunrise": "alba",
     "sun_event_sunset": "tramonto"
   },
   "misc": {
     "one_additional_task": "1 altro task",
-    "x_additional_tasks": "{contatore} altri task"
+    "x_additional_tasks": "{count} altri task"
   }
 }
