@@ -98,7 +98,7 @@
   "time": {
     "absolute": "v {time}",
     "relative": "v {time}",
-    "interval": "from {startTime} do {endTime}",
+    "interval": "od {startTime} do {endTime}",
     "seconds": "{seconds} sekund",
     "hour": "1 hodina",
     "hours": "{hours} hodin",
