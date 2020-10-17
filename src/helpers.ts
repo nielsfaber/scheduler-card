@@ -84,18 +84,6 @@ export function keyMap(arr: any[], func: Function) {
   return arr.reduce((obj, val) => Object.assign(obj, { [func(val)]: val }), {});
 }
 
-export function getDomainFromEntityId(entity_id: string): string {
-  if (entity_id.indexOf('.') === -1) return '';
-  const res = String(entity_id.split('.').shift());
-  return res;
-}
-
-export function removeDomainFromEntityId(entity_id: string): string {
-  if (entity_id.indexOf('.') === -1) return entity_id;
-  const res = String(entity_id.split('.').pop());
-  return res;
-}
-
 export function PrettyPrintTime(
   time: Time,
   options: { amPm: boolean; sunrise: number | null; sunset: number | null; endTime?: Time }
@@ -140,7 +128,8 @@ export function PrettyPrintName(input: string): string {
   return capitalize(input.replace(/_/g, ' '));
 }
 
-export function PrettyPrintIcon(input: string): string {
+export function PrettyPrintIcon(input?: string) {
+  if (!input) return;
   if (typeof input != typeof 'x') input = String(input);
   if (input.match(/^[a-z]+:[a-z0-9-]+$/i)) return input;
   return `hass:${input}`;
@@ -179,58 +168,6 @@ export function PrettyPrintAction(entry: Entry, actionCfg: ActionElement, option
   return action_string;
 }
 
-export function IsEqual(inA: any[] | Dictionary<any>, inB: any[] | Dictionary<any>) {
-  if (Array.isArray(inA) && Array.isArray(inB)) {
-    const objA = [...inA].sort();
-    const objB = [...inB].sort();
-    if (objA.length !== objA.length) return false;
-
-    for (let i = 0; i < objA.length; i++) {
-      if (objA[i] !== objB[i]) return false;
-    }
-
-    return true;
-  } else if (typeof inA == 'object' && typeof inB == 'object') {
-    const objA = { ...inA };
-    const objB = { ...inB };
-    const keysA = Object.keys(objA);
-    const keysB = Object.keys(objB);
-
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-
-    for (const key of keysA) {
-      const valA = objA[key];
-      const valB = objB[key];
-      const areObjects = typeof valA == 'object' && typeof valB == 'object' && valA !== null && valB !== null;
-      if ((areObjects && !IsEqual(valA, valB)) || (!areObjects && valA !== valB)) return false;
-    }
-
-    return true;
-  } else return false;
-}
-
-export function MatchPattern(pattern: string, entity_id: string) {
-  let res = false;
-  if (pattern.match(/^[a-z0-9_\.]+$/)) {
-    if (pattern.includes('.')) res = pattern == entity_id;
-    else res = pattern == getDomainFromEntityId(entity_id);
-  } else {
-    try {
-      if ((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {
-        if (!pattern.startsWith('/')) {
-          pattern = pattern.replace(/\./g, '.').replace(/\*/g, '.*');
-          pattern = `/^${pattern}$/`;
-        }
-        const regex = new RegExp(pattern.slice(1, -1));
-        res = regex.test(entity_id);
-      }
-    } catch (e) {}
-  }
-  return res;
-}
-
 export function calculateTimeline(entries: Entry[]): Entry[] {
   //TBD implementation for sun
   entries.sort((a, b) => (a.time.value > b.time.value ? 1 : -1));
@@ -250,7 +187,7 @@ export function calculateTimeline(entries: Entry[]): Entry[] {
             time: { value: startTime },
             endTime: { value: entry.time!.value },
           } as Entry,
-          pick(entry, ['entity', 'days'])
+          pick(entry, ['entity', 'days', 'conditions', 'options'])
         )
       );
     }
@@ -263,7 +200,7 @@ export function calculateTimeline(entries: Entry[]): Entry[] {
           time: { value: startTime },
           endTime: { value: MinutesPerDay },
         } as Entry,
-        pick(entries[0], ['entity', 'days'])
+        pick(entries[0], ['entity', 'days', 'conditions', 'options'])
       )
     );
   }

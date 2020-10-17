@@ -1,10 +1,11 @@
-import { LitElement, html, customElement, css, property, internalProperty } from 'lit-element';
-import { ImportedEntry } from '../types';
+import { LitElement, html, customElement, css, property, internalProperty, PropertyValues } from 'lit-element';
+import { ImportedEntry, Dictionary, EntityConfig } from '../types';
 import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime } from '../date-time';
-import { PrettyPrintName, capitalize } from '../helpers';
-import { HomeAssistant, computeEntity, fixedIcons, computeDomain, DEFAULT_DOMAIN_ICON } from 'custom-card-helpers';
+import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { importEntry } from '../interface';
 import { computeAction } from '../computeAction';
+import { DefaultEntityIcon } from '../const';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -13,14 +14,30 @@ import { computeAction } from '../computeAction';
   description: 'Show a schedule entity in entities card.',
 });
 
+type schedulerRowConfig = {
+  entity: string;
+  icon?: string;
+  name?: string;
+  config?: Dictionary<EntityConfig>;
+}
+
 @customElement('scheduler-entity-row')
 export class ScheduleEntityRow extends LitElement {
 
   @property() hass?: HomeAssistant;
-  @internalProperty() private _config?: any;
+  @internalProperty() private _config?: schedulerRowConfig;
 
-  setConfig(config: any) {
+  setConfig(config: schedulerRowConfig) {
     this._config = config;
+  }
+
+  protected shouldUpdate(changedProps: PropertyValues): boolean {
+    const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
+    if (oldHass && this._config) {
+      const entity = this._config.entity;
+      return oldHass.states[entity] !== this.hass!.states[entity];
+    }
+    return true;
   }
 
   render() {
@@ -39,10 +56,15 @@ export class ScheduleEntityRow extends LitElement {
 
     let action = nextEntry.actions.map(e => stateObj.attributes.actions[e])[0];
     let entity = this.hass.states[action.entity];
-    let entityName = entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : '<unknown entity>';
+    let entityName = this._config.name ? this._config.name : entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : '(unknown entity)';
 
     let service = action.service;
-    let icon = entity ? fixedIcons[computeDomain(entity.entity_id)] : DEFAULT_DOMAIN_ICON;
+    let icon = this._config.icon ? this._config.icon : DefaultEntityIcon;
+
+    if (this._config.config && action.entity in this._config.config) {
+      entityName = this._config.config[action.entity].name || entityName;
+      icon = PrettyPrintIcon(this._config.config[action.entity].icon) || icon;
+    }
 
     return html`
       <state-badge
@@ -52,9 +74,10 @@ export class ScheduleEntityRow extends LitElement {
       >
       </state-badge>
       <div class="info">
-        ${capitalize(PrettyPrintName(entityName))} - ${computeAction(this.hass, action)}
+        ${capitalize(PrettyPrintName(entityName))} - ${capitalize(computeAction(this.hass, action))}
         <div class="secondary">
-          ${capitalize(relativeTime(this.computeTimestamp(nextEntry)))}
+          ${capitalize(relativeTime(this.computeTimestamp(nextEntry)))}<br>
+          ${entries.length > 1 ? `${entries.length - 1} more actions` : ''}
         </div>
       </div>
       <ha-switch
@@ -99,7 +122,7 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   toggleDisabled(ev: Event) {
-    if (!this.hass) return;
+    if (!this.hass || !this._config) return;
     ev.stopPropagation();
     ev.preventDefault();
     (ev.target as HTMLElement).blur();
@@ -108,7 +131,6 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   static styles = css`
-
       :host {
         display: flex;
         align-items: center;
@@ -127,7 +149,7 @@ export class ScheduleEntityRow extends LitElement {
       .secondary {
         display: block;
         color: var(--secondary-text-color);
-      }      
+      }
       state-badge {
         flex: 0 0 40px;
       }

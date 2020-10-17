@@ -1,30 +1,68 @@
-import { localize, ServiceNameTranslations } from './localize/localize';
-import { DefaultActionIcon, DefaultLevelVariableConfig, DefaultListVariableConfig } from './const';
-
-import { extend, pick, getDomainFromEntityId, mapObject, omit, removeDomainFromEntityId } from './helpers';
+import { computeDomain, computeEntity } from 'custom-card-helpers';
 import {
   ActionConfig,
   ActionElement,
-  HassEntity,
-  LevelVariable,
+  Dictionary,
   LevelVariableConfig,
   ListVariableConfig,
-  Dictionary,
-  ListVariable,
-  HassAction,
-  EVariableType,
   ListVariableOption,
+  EntityElement,
+  HassAction,
+  HassEntity,
 } from './types';
+import { ServiceNameTranslations, localize } from './localize/localize';
+import { DefaultActionIcon, DefaultLevelVariableConfig, DefaultListVariableConfig } from './const';
+import { pick, mapObject, omit, extend } from './helpers';
 
-export function getActionId(action: ActionConfig | ActionElement) {
-  //if (action.hasOwnProperty('id')) return (action as ActionElement).id;
+function variableConfig(config: Partial<LevelVariableConfig | ListVariableConfig>, entity: HassEntity) {
+  if ('options' in config) {
+    const output = { ...DefaultListVariableConfig };
+    Object.assign(output, omit(config, ['options']));
+    let optionConfig = (config as ListVariableConfig).options as ListVariableOption[] | string;
+    if (typeof optionConfig == 'string') {
+      const res = optionConfig.match(/^attribute:(\w+)$/);
+      if (res && entity.attributes[res[1]]) {
+        optionConfig = entity.attributes[res[1]].map(e => Object({ value: e }));
+        Object.assign(output, { options: optionConfig });
+      }
+      return output;
+    } else {
+      let options: string[] = [];
+      optionConfig.forEach(e => {
+        const res = e.value.match(/^attribute:(\w+):?\w+$/);
+        if (res && entity.attributes[res[1]]) options = options.concat(entity.attributes[res[1]]);
+      });
+      options = options.filter((v, k, arr) => arr.indexOf(v) === k);
+
+      const newOptionConfig = options.map(e => {
+        const match = (optionConfig as ListVariableOption[]).find(k => {
+          const res = k.value.match(/^attribute:\w+:(\w+)$/);
+          return res && res[1] == e;
+        });
+        return match ? Object.assign({ ...match }, { value: e }) : { value: e };
+      });
+      Object.assign(output, { options: newOptionConfig });
+      return output;
+    }
+  } else {
+    const output = { ...DefaultLevelVariableConfig };
+    config = mapObject(config, v => {
+      const res = String(v).match(/^attribute:(\w+)$/);
+      return res && entity.attributes[res[1]] ? entity.attributes[res[1]] : v;
+    });
+    Object.assign(output, config);
+    return output;
+  }
+}
+
+export function uniqueId(input: Partial<ActionElement>) {
   const sortObject = e =>
     Object.entries(e)
       .sort((a, b) => (a[0] > b[0] ? 1 : -1))
       .map(([k, v]) => [k, typeof v === 'object' && v !== null ? sortObject(v) : v])
       .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
-  let obj = pick(action, ['service', 'service_data']);
+  let obj = pick(input, ['service', 'service_data']);
   obj = sortObject(obj);
 
   const res = Object.values(obj)
@@ -36,138 +74,56 @@ export function getActionId(action: ActionConfig | ActionElement) {
         .join('_')
     )
     .join('_');
+
   return res;
 }
 
-export function CreateAction(cfg: ActionConfig) {
-  let data: ActionElement = {
+export function actionConfig(config: ActionConfig, entity: HassEntity) {
+  const service = computeEntity(config.service == 'attribute:entity_id' ? entity.entity_id : config.service);
+
+  const data: ActionElement = {
     id: '',
-    name:
-      cfg.service in ServiceNameTranslations
-        ? localize(ServiceNameTranslations[cfg.service])
-        : removeDomainFromEntityId(cfg.service),
-    icon: DefaultActionIcon,
-    service: '',
+    name: config.name || (service in ServiceNameTranslations ? localize(ServiceNameTranslations[service]) : service),
+    icon: config.icon || DefaultActionIcon,
+    service: service,
     routine: false,
   };
 
-  data = extend(data, cfg) as ActionElement;
-  data = extend(data, { id: getActionId(data) }) as ActionElement;
+  if (config.service_data) Object.assign(data, { service_data: config.service_data });
+
+  if (config.supported_feature && entity) {
+    if ((Number(entity.attributes.supported_features) & config.supported_feature) == 0) return null;
+  }
+
+  if (
+    entity &&
+    config.variable &&
+    (!config.variable.supported_feature ||
+      Number(entity.attributes.supported_features) & config.variable.supported_feature)
+  ) {
+    Object.assign(data, { variable: variableConfig(config.variable, entity) });
+  }
+
+  Object.assign(data, { id: uniqueId(data) });
 
   return data;
 }
 
-function replaceAttributeTemplate(val: any, entity: HassEntity) {
-  if (typeof val != 'string') return val;
-  const res = String(val).match(/^attribute:(\w+):?(\w+)?$/);
-  if (res === null) return val;
-  if (res[1] == 'entity_id') return entity.entity_id;
-  if (!(res[1] in entity.attributes)) return null;
-  if (res[2] !== undefined) {
-    if (Array.isArray(entity.attributes[res[1]]) && entity.attributes[res[1]].includes(res[2])) return res[2];
-    return null;
-  } else return entity.attributes[res[1]];
-}
+export function importAction(config: Dictionary<any>): HassAction {
+  let entity = config.entity;
+  let service = config.service;
 
-function filterUnsupportedActions(cfg: ActionConfig, supported_features: number) {
-  if (cfg.supported_feature) {
-    if ((supported_features & cfg.supported_feature) == 0) return null;
-  }
-
-  if (cfg.variable?.supported_feature) {
-    if ((supported_features & cfg.variable.supported_feature) == 0) {
-      cfg = extend(cfg, { variable: null }, { compact: true }) as ActionConfig;
-    }
-  }
-  return cfg;
-}
-
-function extendActionVariables(cfg: ActionConfig, entity: HassEntity) {
-  let obj: ActionConfig = { ...cfg };
-  let variableCfg: Partial<ListVariableConfig | LevelVariableConfig> = cfg.variable!;
-
-  if (!variableCfg.name) variableCfg = extend(variableCfg, { name: variableCfg.field });
-
-  variableCfg = mapObject(variableCfg, val => replaceAttributeTemplate(val, entity));
-
-  if ('options' in variableCfg) {
-    let optionCfg = [...variableCfg.options!];
-    const hasValueTemplates = Object.values(optionCfg)
-      .map(e => (typeof e == 'object' ? e.value.match(/^attribute:(\w+):\w+$/) : null))
-      .find(e => e);
-    optionCfg = optionCfg
-      .map(e => {
-        if (typeof e != 'object') return { value: e } as ListVariableOption;
-        return extend(e, { value: replaceAttributeTemplate(e.value, entity) }) as ListVariableOption;
-      })
-      .filter(e => e.value);
-    if (hasValueTemplates) {
-      const discoveredOptions: ListVariableOption[] = entity.attributes[hasValueTemplates![1]]
-        .filter(e => Object.values(optionCfg).every(el => el.value != e))
-        .map(e => {
-          value: e;
-        });
-      optionCfg = optionCfg.concat(discoveredOptions);
-    }
-
-    optionCfg.sort((a, b) => {
-      const val_a = a.name ? a.name : a.value;
-      const val_b = b.name ? b.name : b.value;
-      return val_a > val_b ? 1 : -1;
-    });
-    variableCfg = extend(variableCfg, { options: optionCfg }, { overwrite: true });
-
-    const listCfg = extend(DefaultListVariableConfig, variableCfg) as ListVariableConfig;
-    obj = extend(obj, { variable: listCfg }, { overwrite: true }) as ActionConfig;
-  } else {
-    const levelCfg = extend(DefaultLevelVariableConfig, variableCfg) as LevelVariableConfig;
-    obj = extend(obj, { variable: levelCfg }) as ActionConfig;
-  }
-
-  return obj;
-}
-
-export function GetActionConfig(cfg: ActionConfig, entity: HassEntity) {
-  let obj: ActionConfig | null = { ...cfg };
-  const domain = getDomainFromEntityId(entity.entity_id);
-
-  if (getDomainFromEntityId(obj.service) == domain)
-    obj = extend(obj, { service: removeDomainFromEntityId(obj.service) }) as ActionConfig;
-
-  obj = mapObject(obj, val => replaceAttributeTemplate(val, entity)) as ActionConfig;
-
-  obj = filterUnsupportedActions(obj, entity.attributes.supported_features!);
-  if (obj?.variable) obj = extendActionVariables(obj, entity);
-  return obj;
-}
-
-export function exportVariableServiceData(
-  input: LevelVariable | ListVariable,
-  cfg: LevelVariableConfig | ListVariableConfig
-): Dictionary<string | number> {
-  if (input.type == EVariableType.Level) {
-    if ((input as LevelVariable).enabled) return { [cfg.field]: Number(input.value) };
-    else return {};
-  } else if (input.type == EVariableType.List) {
-    return { [cfg.field]: String(input.value) };
-  } else return {};
-}
-
-export function importHassAction(action: HassAction) {
-  let entity = action.entity;
-  let service = action.service;
-
-  const entity_domain = getDomainFromEntityId(entity);
-  const service_domain = getDomainFromEntityId(service);
+  const entity_domain = computeDomain(entity);
+  const service_domain = computeDomain(service);
 
   if (entity_domain && service_domain) {
-    if (entity_domain == service_domain) service = removeDomainFromEntityId(service);
+    if (entity_domain == service_domain) service = computeEntity(service);
   } else if (!entity_domain) {
     entity = service_domain + '.' + entity;
-    service = removeDomainFromEntityId(service);
+    service = computeEntity(service);
   }
 
-  const service_data = omit(action, ['service', 'entity', 'service_data']);
+  const service_data = omit(config, ['service', 'entity', 'service_data']);
 
   let output = extend(
     {},
@@ -179,27 +135,25 @@ export function importHassAction(action: HassAction) {
     { compact: true }
   ) as HassAction;
 
-  output = extend(output, pick(action, ['service_data'])) as HassAction;
+  output = extend(output, pick(config, ['service_data'])) as HassAction;
   return output;
 }
 
-export function reverseParseAction(hassAction: HassAction, actionConfig: ActionConfig[] | ActionElement[]) {
-  const action = importHassAction(hassAction);
+export function findAction(
+  entity: EntityElement,
+  actionCfg: { service: string; service_data?: Dictionary<any> },
+  hassEntity: HassEntity
+) {
+  const actions = entity.actions.map(e => actionConfig(e, hassEntity)).map(e => e) as ActionElement[];
+  const action_id = uniqueId(omit(actionCfg, ['entity']));
 
-  const match = actionConfig.find(cfg => {
-    const action_id = getActionId(cfg);
-    if (cfg.service != action.service) return false;
-    if (action_id == getActionId(action)) return true;
-    if (cfg.variable && action.service_data) {
-      if (Object.keys(action.service_data).includes(cfg.variable.field)) {
-        return (
-          action_id ==
-          getActionId(extend(action, { service_data: { [cfg.variable.field]: null } }, { compact: true }) as HassAction)
-        );
-      }
+  const match = actions.find(el => {
+    if (el.id == action_id) return true;
+    if (el.variable && actionCfg.service_data && Object.keys(actionCfg.service_data).includes(el.variable.field)) {
+      return el.id == uniqueId(extend(actionCfg, { service_data: { [el.variable.field]: null } }, { compact: true }));
     }
-    return action_id == getActionId(extend(action, { service_data: { entity_id: action.entity } }) as HassAction);
+    return false;
   });
   if (match) return match;
-  return null;
+  return actionConfig(omit(actionCfg, ['entity']) as HassAction, hassEntity) as ActionElement;
 }

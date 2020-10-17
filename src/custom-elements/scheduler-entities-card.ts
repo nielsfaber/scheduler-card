@@ -1,19 +1,22 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { IsSchedulerEntity } from '../entity';
 import { localize } from '../localize/localize';
 
 import './scheduler-entity-row';
+import { HassEntity, CardConfig, Dictionary, EntityElement } from '../types';
+import { commonStyle } from '../styles';
+import { entityFilter } from '../entity';
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends LitElement {
 
   @property() hass?: HomeAssistant;
+  @property() entities?: HassEntity[];
+  @property() config?: CardConfig;
+  @property() usedEntities?: Dictionary<EntityElement>;
 
   render() {
-    if (!this.hass) return html``;
-    let scheduleEntities = Object.entries(this.hass.states).filter(([e]) => IsSchedulerEntity(e)).map(([, v]) => v);
-
+    if (!this.hass || !this.config || !this.entities) return html``;
 
     // if (this._config.overview_options.sort) {
     //   items.sort((a, b) => {
@@ -34,26 +37,16 @@ export class SchedulerEntitiesCard extends LitElement {
       <ha-card>
         <div class="card-header">
           <div class="name">
-            ${localize('scheduler')}
+            ${this.config.title !== undefined ? (typeof this.config.title == "string" ? this.config.title : '') : localize('scheduler')}
           </div>
           <ha-switch
-            ?checked=${scheduleEntities.some(el => el.state == "on")}
+            ?checked=${this.entities.some(el => el.state == "on")}
             @change=${this.toggleDisableAll}
           >
           </ha-switch>
         </div>
         <div class="card-content">
-        ${!scheduleEntities.length ? localize('instructions.no_entries_defined') : ''}
-        ${scheduleEntities.map(e => {
-      return html`
-            <scheduler-entity-row
-              .hass=${this.hass}
-              ._config=${{ entity: e.entity_id }}
-              @click=${() => this.editItemClick(e.entity_id)}
-            >
-            </scheduler-entity-row>
-          `;
-    })}
+          ${this.getRows()}
         </div>
         ${this.hass.user.is_admin ?
         html`
@@ -68,12 +61,43 @@ export class SchedulerEntitiesCard extends LitElement {
       `;
   }
 
+  getRows() {
+    if (!this.config || !this.usedEntities) return html``;
+    if (!this.entities || !this.entities.length) return html`${localize('instructions.no_entries_defined')}`;
+    return this.entities.map(e => {
+      let discovered = !(e.attributes.actions!.map(e => e.entity) as string[]).every(e => entityFilter(e, this.config!));
+      if (discovered) {
+        return html`
+          <hui-warning>
+            <scheduler-entity-row
+              class="${e.state == 'waiting' || e.state == 'triggered' ? '' : 'disabled'}"
+              .hass=${this.hass}
+              ._config=${{ entity: e.entity_id, config: this.usedEntities }}
+              @click=${() => this.editItemClick(e.entity_id)}
+            >
+            </scheduler-entity-row>
+          </hui-warning>
+          `;
+      }
+      else {
+        return html`
+            <scheduler-entity-row
+              class="${e.state == 'waiting' || e.state == 'triggered' ? '' : 'disabled'}"
+              .hass=${this.hass}
+              ._config=${{ entity: e.entity_id, config: this.usedEntities }}
+              @click=${() => this.editItemClick(e.entity_id)}
+            >
+            </scheduler-entity-row>
+          `;
+      }
+    });
+  }
+
   toggleDisableAll(ev: Event) {
-    if (!this.hass) return;
+    if (!this.hass || !this.entities) return;
     let checked = (ev.target as HTMLInputElement).checked;
-    let scheduleEntities = Object.entries(this.hass.states).filter(([e]) => IsSchedulerEntity(e)).map(([, v]) => v);
-    scheduleEntities.forEach(schedule => {
-      this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: schedule.entity_id });
+    this.entities.forEach(el => {
+      this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
     });
   }
 
@@ -88,32 +112,17 @@ export class SchedulerEntitiesCard extends LitElement {
   }
 
   static styles = css`
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-    }
-    .card-header .name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-header ha-switch {
-      padding: 5px;
-    }
-    .card-content {
-      flex: 1;
-    }
+    ${commonStyle}
     .card-content > * {
-      margin: 20px 0;
-    }
-    .card-content > *:first-child {
-      margin-top: 0;
-    }
-    .card-content > *:last-child {
-      margin-bottom: 0;
+      margin: 20px 0px;
     }
     scheduler-entity-row {
       cursor: pointer;
+    }
+    scheduler-entity-row.disabled {
+      color: var(--disabled-text-color);
+      --secondary-text-color: var(--disabled-text-color);
+      --paper-item-icon-color: var(--disabled-text-color);
     }
   `;
 }

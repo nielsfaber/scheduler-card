@@ -1,11 +1,12 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor, fireEvent } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, computeEntity } from 'custom-card-helpers';
 import { CardConfig } from '../types';
 import { default as standardConfig } from '../standard-configuration.json';
-import { PrettyPrintIcon, getDomainFromEntityId, removeDomainFromEntityId } from '../helpers';
-import { IsSchedulerEntity } from '../entity';
+import { PrettyPrintIcon } from '../helpers';
 import { localize } from '../localize/localize';
-import { DefaultUserConfig } from '../const';
+import { IsSchedulerEntity } from '../entity';
+import { DefaultTimeStep } from '../const';
+import { commonStyle } from '../styles';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
@@ -23,76 +24,59 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       return html``;
     }
 
-    let titleCustom = this.titleOption == 'custom' ?
-      html`
-        <div>
-          <paper-input
-            label="Custom title"
-            .value=${this.getTitle()}
-            .configValue=${'name'}
-            @value-changed=${this.updateTitle}
-          ></paper-input>
-        </div>
-      `  : '';
-
     return html`
-      <div class="card-section first">
-        <div><b>Title of the card</b></div>
-        <div>
-          <button-group
-            .items=${['standard', 'hidden', 'custom']}
-            value=${this.getTitleOption()}
-            @change=${this.updateTitleOption}
-          >
-          </button-group>
-        </div>
-        ${titleCustom}
-      </div>
-      <div class="card-section">
-        <div><b>Show all schedules</b></div>
+      <div class="card-config">
+        <div class="header">Title of the card</div>
+        <button-group
+          .items=${['standard', 'hidden', 'custom']}
+          value=${this.getTitleOption()}
+          @change=${this.updateTitleOption}
+        >
+        </button-group>
+        ${this.titleOption == 'custom' ? html`
+        <paper-input
+          label="Custom title"
+          .value=${this.getTitle()}
+          .configValue=${'name'}
+          @value-changed=${this.updateTitle}
+        ></paper-input>
+      `  : ''}
+        
+        <div class="header">Show all schedules</div>
         <div class="text-field">This sets the 'discover existing' parameter.<br> Disable if you want to use multiple scheduler-cards.</div>
-        <div>
-          <button-group
-            .items=${[{ id: 'true', name: 'on' }, { id: 'false', name: 'off' }]}
-            value=${this.getDiscoveryOption()}
-            @change=${this.updateDiscoveryOption}
-          >
-          </button-group>
-        </div>
-      </div>
-      <div class="card-section">
-        <div><b>Time display</b></div>
-        <div>
-          <button-group
-            .items=${[{ id: 'false', name: '24 hours' }, { id: 'true', name: 'AM/PM' }]}
-            value=${this.getAmPmOption()}
-            @change=${this.updateAmPmOption}
-          >
-          </button-group>
-        </div>
-      </div>
-      <div class="card-section">
-        <div><b>Time step</b></div>
+        <button-group
+          .items=${[{ id: 'true', name: 'on' }, { id: 'false', name: 'off' }]}
+          value=${this.getDiscoveryOption()}
+          @change=${this.updateDiscoveryOption}
+        >
+        </button-group>
+        
+        <div class="header">Time display</div>
+        <button-group
+          .items=${[{ id: 'false', name: '24 hours' }, { id: 'true', name: 'AM/PM' }]}
+          value=${this.getAmPmOption()}
+          @change=${this.updateAmPmOption}
+        >
+        </button-group>
+        
+        <div class="header">Time step</div>
         <div class="text-field">Resolution (in minutes) for creating schedules</div>
-        <div>
-          <variable-slider
-            min=1
-            max=30
-            step=1
-            value=${this.getTimeStepOption()}      
-            unit=" min"
-            optional=false
-            disabled=false
-            @change=${this.updateTimeStepOption}
-          >
-          </variable-slider>
-        </div>
-      </div>
-      <div class="card-section">
-        <div><b>Included entities</b></div>
+        <variable-slider
+          min=1
+          max=30
+          step=1
+          value=${this.getTimeStepOption()}      
+          unit=" min"
+          ?optional=${false}
+          ?disabled=${false}
+          @change=${this.updateTimeStepOption}
+        >
+        </variable-slider>
+        
+        <div class="header">Included entities</div>
         <div class="text-field">Click on a group to open it.</div>
+        ${this.getDomainSwitches()}
       </div>
-      ${this.getDomainSwitches()}
     `;
   }
 
@@ -173,7 +157,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   getTimeStepOption() {
     if (!this._config || !this.hass) return;
-    let time_step = this._config.hasOwnProperty('time_step') ? this._config.time_step : DefaultUserConfig.time_step;
+    let time_step = this._config.hasOwnProperty('time_step') ? this._config.time_step : DefaultTimeStep;
     return Number(time_step);
   }
 
@@ -181,7 +165,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     let config = { ...this._config };
     let value = Number((e.target as HTMLInputElement).value);
-    if (value == DefaultUserConfig.time_step && config.hasOwnProperty('time_step')) delete config['time_step'];
+    if (value == DefaultTimeStep && config.hasOwnProperty('time_step')) delete config['time_step'];
     else Object.assign(config, { time_step: value });
     this._config = config;
     fireEvent(this, 'config-changed', { config: this._config });
@@ -192,24 +176,27 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     let includedDomains = this._config.include ? [...this._config.include] : [];
     return Object.entries(standardConfig).filter(([, v]) => v.hasOwnProperty('actions')).map(([domain, cfg]) => {
       let enabled = includedDomains.includes(domain);
-      let count = Object.keys(this.hass!.states).filter(e => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e)).length;
+      let count = Object.keys(this.hass!.states).filter(e => computeDomain(e) == domain && !IsSchedulerEntity(e)).length;
       if (!count) return ``;
       return html`
-          <div class="list-item" @click="${() => { this.toggleSelectDomain(domain) }}">
-            <div class="list-item-icon">
-              ${cfg.icon ? html`<ha-icon icon="${PrettyPrintIcon(cfg.icon)}"></ha-icon>` : ''}
-            </div>
-            <div class="list-item-name">
-              ${domain}
-            </div>
-            <div class="list-item-summary">
+        <div class="row" @click=${() => { this.toggleSelectDomain(domain) }}>
+          <ha-icon icon="${PrettyPrintIcon(cfg.icon)}">
+          </ha-icon>
+
+          <div class="info">
+            ${domain}
+            <div class="secondary">
               ${count} ${count == 1 ? 'entity' : 'entities'}
             </div>
-            <div class="list-item-switch">
-              ${this.selectedDomain == domain ? html`<ha-icon-button icon="mdi:chevron-down"></ha-icon-button>` : html`<ha-icon-button icon="mdi:chevron-right"></ha-icon-button>`}
-            </div>
           </div>
-          ${this.selectedDomain == domain ? this.getEntitySwitches(domain) : ''}
+          <ha-icon-button icon="${this.selectedDomain == domain ? 'mdi:chevron-down' : 'mdi:chevron-right'}">
+          </ha-icon-button>
+        </div>
+        ${this.selectedDomain == domain ? html`
+          <div class="divider"></div>
+          ${this.getEntitySwitches(domain)}
+          <div class="divider"></div>          
+        ` : ''}
       `;
     });
   }
@@ -217,25 +204,28 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   getEntitySwitches(domain: string) {
     if (!this._config || !this.hass) return;
     let includedEntities = this._config.include ? [...this._config.include] : [];
-    return Object.entries(this.hass.states).filter(([e,]) => getDomainFromEntityId(e) == domain && !IsSchedulerEntity(e)).map(([entity_id, cfg]) => {
-      let name = cfg.attributes.friendly_name || removeDomainFromEntityId(entity_id);
-      //let icon = cfg.attributes.icon || standardConfig[domain].icon || null;
+    return Object.entries(this.hass.states).filter(([e,]) => computeDomain(e) == domain && !IsSchedulerEntity(e)).map(([entity_id, cfg]) => {
+      let name = cfg.attributes.friendly_name || computeEntity(entity_id);
       let enabled = includedEntities.includes(entity_id);
       return html`
-          <div class="list-item" @click="${() => this.toggleSelectEntity(entity_id)}">
-            <div class="list-item-icon">
-              
-            </div>
-            <div class="list-item-name">
-              ${name}
-            </div>
-            <div class="list-item-summary">
+
+        <div class="row" @click=${() => this.toggleSelectEntity(entity_id)}>
+          <state-badge
+            .hass=${this.hass}
+            .stateObj=${this.hass!.states[entity_id]}
+          >
+          </state-badge>
+          <div class="info">
+            ${name}
+            <div class="secondary">
               ${entity_id}
             </div>
-            <div class="list-item-switch">
-              ${enabled ? html`<ha-switch checked="checked"></ha-switch>` : html`<ha-switch></ha-switch>`}
-            </div>
           </div>
+          <ha-switch 
+            ?checked=${enabled}
+          >
+          </ha-switch>
+        </div>
       `;
     })
   }
@@ -262,82 +252,41 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   static get styles(): CSSResult {
     return css`
-
-      div.card-section {
-        padding: 10px 10px;
-      }
-
-      div.card-section.first {
-        padding-top: 0px;
-      }
-      
-      div.card-section.last {
-        padding-bottom: 10px;
-      }
-
-      div.text-field {
-        color: var(--disabled-text-color);
-      }
-
-
-      div.list-item {
-        display: grid;
-        grid-template-columns: min-content 1fr min-content;
-        grid-template-rows: min-content min-content;
-        grid-template-areas: "icon name switch"
-                             "icon summary switch";
-        grid-gap: 2px 20px;
-        background: none;
+      ${commonStyle}
+      div.row {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
         cursor: pointer;
-        padding: 10px 20px;
-        position: relative;
-        z-index: 1;
+        margin: 10px 0px;
       }
-
-      div.list-item:before  {
-        content: " ";
-        background: var(--list-item-background-color);
-        opacity: 0.1;
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-       }
-
-      div.list-item:hover:before {
-          background: var(--primary-color);
-          border-radius: 4px;
+      div.divider {
+        height: 1px;
+        background: var(--divider-color);
       }
-
-      div.list-item-icon {
-        grid-area: icon;
-        color: var(--state-icon-color);
+      .info {
+        margin-left: 16px;
+        flex: 1 0 60px;
       }
-
-      div.list-item-icon ha-icon {
-        width: 24px;
-        height: 24px;
+      .info,
+      .info > * {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-
-      div.list-item-name {
-        grid-area: name;
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-
-      div.list-item-summary {
-        grid-area: summary;
+      .secondary {
+        display: block;
         color: var(--secondary-text-color);
       }
-
-      div.list-item-switch {
-        grid-area: switch;
+      div.row ha-icon {
+        padding: 8px;
+        color: var(--paper-item-icon-color);
       }
-
-      div.list-item-switch ha-switch {
-        margin-top: 3px;
+      div.row state-badge {
+        flex: 0 0 40px;
+      }
+      div.row ha-switch {
+        padding: 13px 5px;
       }
     `;
   }

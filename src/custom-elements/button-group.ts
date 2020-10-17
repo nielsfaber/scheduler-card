@@ -1,5 +1,6 @@
-import { LitElement, html, customElement, css, property } from 'lit-element';
+import { LitElement, html, customElement, property } from 'lit-element';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
+import { commonStyle } from '../styles';
 
 type ButtonItem = {
   id?: string | number,
@@ -68,26 +69,5 @@ export class VariableSlider extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
-  static styles = css`
-
-      div.text-field {
-        color: var(--disabled-text-color);
-      }
-
-      mwc-button {
-        margin: 2px 0px;
-      }
-
-      mwc-button.active {
-        background: var(--primary-color);
-        --mdc-theme-primary: var(--text-primary-color);
-        border-radius: 4px;
-      }
-      
-      mwc-button ha-icon {
-        margin-right: 11px;
-      }
-      
-
-  `;
+  static styles = commonStyle
 }

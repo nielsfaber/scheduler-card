@@ -1,17 +1,16 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { Condition, EConditionMatchType } from '../types';
+import { Condition, EConditionMatchType, CardConfig } from '../types';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
-import { localize } from '../localize/localize';
-import { Config } from '../config';
+import { HomeAssistant } from 'custom-card-helpers';
+import { entityConfig } from '../entity';
 
 @customElement('condition-entity-row')
 export class ConditionEntityRow extends LitElement {
 
-  @property()
-  item?: Condition;
+  @property() hass?: HomeAssistant;
+  @property() config?: CardConfig;
+  @property() item?: Condition;
 
-  @property()
-  Config?: Config;
 
   @property()
   selected: boolean = false;
@@ -22,8 +21,17 @@ export class ConditionEntityRow extends LitElement {
   editMode: boolean = false;
 
   render() {
-    let entity = this.Config?.FindEntity(this.item?.entity);
-    if (!this.item || !entity) return html``;
+    if (!this.item || !this.hass || !this.config) return html``;
+
+    const stateObj = this.hass.states[this.item.entity];
+    if (!stateObj) {
+      return html`
+        <hui-warning>
+          Entity not found '${this.item.entity}'
+        </hui-warning>
+      `;
+    }
+    let entity = entityConfig(stateObj.entity_id, this.config, this.hass);
 
     return html`
       <div class="list-item">
@@ -135,10 +143,11 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateButtonClick() {
+    if (!this.item || !this.config || !this.hass) return;
     this.selected = false;
-    if (!this.item || !this.Config) return;
-    let state = this.item?.state;
-    let states = this.Config.FindEntity(this.item.entity)!.states;
+    let entity = entityConfig(this.item.entity, this.config, this.hass);
+    let state = this.item.state;
+    let states = entity.states!;
     if (!states || !Array.isArray(states)) return;
     let i = 0;
     for (i = 0; i < states.length; i++) {
@@ -150,10 +159,11 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateDecrement(time: number | null = null) {
+    if (!this.item || !this.config || !this.hass) return;
     clearTimeout(this.timer);
-    if (!this.item || !this.Config) return;
+    let entity = entityConfig(this.item.entity, this.config, this.hass);
     let state = Number(this.item.state);
-    let cfg = this.Config.FindEntity(this.item.entity)!.states!;
+    let cfg = entity.states!;
     if (Array.isArray(cfg)) return;
     let step = cfg.step || 1;
     state = state - step;
@@ -169,10 +179,11 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateIncrement(time: number | null = null) {
+    if (!this.item || !this.config || !this.hass) return;
     clearTimeout(this.timer);
-    if (!this.item || !this.Config) return;
+    let entity = entityConfig(this.item.entity, this.config, this.hass);
     let state = Number(this.item.state);
-    let cfg = this.Config.FindEntity(this.item.entity)!.states!;
+    let cfg = entity.states!;
     if (Array.isArray(cfg)) return;
     let step = cfg.step || 1;
     state = state + step;
@@ -197,9 +208,10 @@ export class ConditionEntityRow extends LitElement {
   }
 
   getState() {
-    if (!this.item || !this.Config) return;
+    if (!this.item || !this.config || !this.hass) return;
+    let entity = entityConfig(this.item.entity, this.config, this.hass);
     let state = this.item.state;
-    let cfg = this.Config.FindEntity(this.item.entity)!.states!;
+    let cfg = entity.states!;
     if (!Array.isArray(cfg) && cfg.unit) return `${state}${cfg.unit}`;
     return state;
   }

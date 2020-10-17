@@ -10,7 +10,7 @@ declare global {
 export interface Dictionary<TValue> {
   [id: string]: TValue;
 }
-type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
 /* hass objects */
 
@@ -40,7 +40,7 @@ export interface GroupElement {
 
 export interface GroupConfig {
   name: string;
-  icon: string;
+  icon?: string;
   include: string[];
   exclude?: string[];
 }
@@ -51,7 +51,7 @@ export interface EntityElement extends EntityConfig {
   id: string;
   name: string;
   icon: string;
-  actions: ActionElement[];
+  actions: ActionConfig[];
   states?: string[] | { min: number; max: number; step?: number; unit?: string };
 }
 
@@ -92,12 +92,6 @@ export enum EVariableType {
   List = 'LIST',
 }
 
-// export interface IVariable {
-//   value: number | string | null,
-//   enabled?: boolean,
-//   type: EVariableType
-// }
-
 export interface LevelVariable {
   value: number | null;
   enabled: boolean;
@@ -112,7 +106,7 @@ export interface ListVariable {
 export interface LevelVariableConfig {
   field: string;
   unit: string;
-  name: string;
+  name?: string;
   min: number;
   max: number;
   step: number;
@@ -129,7 +123,7 @@ export interface ListVariableOption {
 
 export interface ListVariableConfig {
   field: string;
-  name: string;
+  name?: string;
   options: ListVariableOption[];
   supported_feature?: number;
   type: EVariableType;
@@ -148,37 +142,19 @@ export interface Entry {
   options?: OptionConfig;
 }
 
-
 export interface ImportedEntry {
   time: Time;
   endTime?: Time;
   days: Days;
   actions: number[];
   conditions?: {
-    type: EConditionType,
-    items: number[]
-  }
+    type: EConditionType;
+    items: number[];
+  };
   options?: number[];
 }
 
-export interface ScheduleEntry {
-  id: string;
-  enabled: boolean;
-  entries: Entry[];
-  next_trigger: string | undefined;
-  name?: string;
-}
 /* config */
-
-export interface UserConfig {
-  sunrise: number | null;
-  sunset: number | null;
-  title: boolean | string;
-  am_pm: boolean;
-  time_step: number;
-  temperature_unit: string;
-  is_admin: boolean;
-}
 
 export interface CardConfig extends LovelaceCardConfig {
   discover_existing?: boolean;
@@ -244,10 +220,4 @@ export interface ConditionConfig {
 
 export interface OptionConfig {
   run_once?: boolean;
-}
-
-export interface OptionPanelCfg {
-  conditions?: ConditionConfig;
-  friendly_name?: string;
-  options?: OptionConfig;
 }
