@@ -3,57 +3,14 @@ import {
   ActionConfig,
   ActionElement,
   Dictionary,
-  LevelVariableConfig,
-  ListVariableConfig,
-  ListVariableOption,
   EntityElement,
   HassAction,
-  HassEntity,
 } from './types';
 import { ServiceNameTranslations, localize } from './localize/localize';
-import { DefaultActionIcon, DefaultLevelVariableConfig, DefaultListVariableConfig } from './const';
-import { pick, mapObject, omit, extend } from './helpers';
+import { DefaultActionIcon } from './const';
+import { pick, omit, extend } from './helpers';
+import { HassEntity } from 'home-assistant-js-websocket';
 
-function variableConfig(config: Partial<LevelVariableConfig | ListVariableConfig>, entity: HassEntity) {
-  if ('options' in config) {
-    const output = { ...DefaultListVariableConfig };
-    Object.assign(output, omit(config, ['options']));
-    let optionConfig = (config as ListVariableConfig).options as ListVariableOption[] | string;
-    if (typeof optionConfig == 'string') {
-      const res = optionConfig.match(/^attribute:(\w+)$/);
-      if (res && entity.attributes[res[1]]) {
-        optionConfig = entity.attributes[res[1]].map(e => Object({ value: e }));
-        Object.assign(output, { options: optionConfig });
-      }
-      return output;
-    } else {
-      let options: string[] = [];
-      optionConfig.forEach(e => {
-        const res = e.value.match(/^attribute:(\w+):?\w+$/);
-        if (res && entity.attributes[res[1]]) options = options.concat(entity.attributes[res[1]]);
-      });
-      options = options.filter((v, k, arr) => arr.indexOf(v) === k);
-
-      const newOptionConfig = options.map(e => {
-        const match = (optionConfig as ListVariableOption[]).find(k => {
-          const res = k.value.match(/^attribute:\w+:(\w+)$/);
-          return res && res[1] == e;
-        });
-        return match ? Object.assign({ ...match }, { value: e }) : { value: e };
-      });
-      Object.assign(output, { options: newOptionConfig });
-      return output;
-    }
-  } else {
-    const output = { ...DefaultLevelVariableConfig };
-    config = mapObject(config, v => {
-      const res = String(v).match(/^attribute:(\w+)$/);
-      return res && entity.attributes[res[1]] ? entity.attributes[res[1]] : v;
-    });
-    Object.assign(output, config);
-    return output;
-  }
-}
 
 export function uniqueId(input: Partial<ActionElement>) {
   const sortObject = e =>
@@ -78,31 +35,17 @@ export function uniqueId(input: Partial<ActionElement>) {
   return res;
 }
 
-export function actionConfig(config: ActionConfig, entity: HassEntity) {
-  const service = computeEntity(config.service == 'attribute:entity_id' ? entity.entity_id : config.service);
+export function actionConfig(config: ActionConfig) {
+  const service = config.service;
 
   const data: ActionElement = {
     id: '',
     name: config.name || (service in ServiceNameTranslations ? localize(ServiceNameTranslations[service]) : service),
     icon: config.icon || DefaultActionIcon,
     service: service,
-    routine: false,
   };
-
   if (config.service_data) Object.assign(data, { service_data: config.service_data });
-
-  if (config.supported_feature && entity) {
-    if ((Number(entity.attributes.supported_features) & config.supported_feature) == 0) return null;
-  }
-
-  if (
-    entity &&
-    config.variable &&
-    (!config.variable.supported_feature ||
-      Number(entity.attributes.supported_features) & config.variable.supported_feature)
-  ) {
-    Object.assign(data, { variable: variableConfig(config.variable, entity) });
-  }
+  if (config.variable) Object.assign(data, { variable: config.variable });
 
   Object.assign(data, { id: uniqueId(data) });
 
@@ -141,10 +84,9 @@ export function importAction(config: Dictionary<any>): HassAction {
 
 export function findAction(
   entity: EntityElement,
-  actionCfg: { service: string; service_data?: Dictionary<any> },
-  hassEntity: HassEntity
+  actionCfg: { service: string; service_data?: Dictionary<any> }
 ) {
-  const actions = entity.actions.map(e => actionConfig(e, hassEntity)).map(e => e) as ActionElement[];
+  const actions = entity.actions.map(actionConfig).map(e => e) as ActionElement[];
   const action_id = uniqueId(omit(actionCfg, ['entity']));
 
   const match = actions.find(el => {
@@ -154,6 +96,7 @@ export function findAction(
     }
     return false;
   });
+
   if (match) return match;
-  return actionConfig(omit(actionCfg, ['entity']) as HassAction, hassEntity) as ActionElement;
+  return actionConfig(omit(actionCfg, ['entity']) as HassAction) as ActionElement;
 }

@@ -5,7 +5,7 @@ import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
 import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { importEntry } from '../interface';
 import { computeAction } from '../computeAction';
-import { DefaultEntityIcon } from '../const';
+import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName } from '../const';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -56,21 +56,21 @@ export class ScheduleEntityRow extends LitElement {
 
     let action = nextEntry.actions.map(e => stateObj.attributes.actions[e])[0];
     let entity = this.hass.states[action.entity];
-    let entityName = this._config.name ? this._config.name : entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : '(unknown entity)';
+    let entityName = this._config.name ? this._config.name : entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : DeadEntityName;
 
     let service = action.service;
-    let icon = this._config.icon ? this._config.icon : DefaultEntityIcon;
+    let icon = this._config.icon ? this._config.icon : entity ? DefaultEntityIcon : DeadEntityIcon;
 
-    if (this._config.config && action.entity in this._config.config) {
+    if (this._config.config && action.entity in this._config.config && this._config.config[action.entity]) {
       entityName = this._config.config[action.entity].name || entityName;
-      icon = PrettyPrintIcon(this._config.config[action.entity].icon) || icon;
+      icon = this._config.config[action.entity].icon || icon;
     }
 
     return html`
       <state-badge
         .hass=${this.hass}
         .stateObj=${stateObj}
-        .overrideIcon=${icon}
+        .overrideIcon=${PrettyPrintIcon(icon)}
       >
       </state-badge>
       <div class="info">
@@ -145,10 +145,13 @@ export class ScheduleEntityRow extends LitElement {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        color: var(--primary-text-color);
+        transition: color 0.3s ease-in-out, filter 0.3s ease-in-out;
       }
       .secondary {
         display: block;
         color: var(--secondary-text-color);
+        transition: color 0.3s ease-in-out, filter 0.3s ease-in-out;
       }
       state-badge {
         flex: 0 0 40px;

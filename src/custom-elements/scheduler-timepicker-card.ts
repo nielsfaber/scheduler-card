@@ -26,6 +26,7 @@ export class SchedulerTimepickerCard extends LitElement {
 
   firstUpdated() {
     if (!this.timeslots) this.activeEntry = 0;
+    console.log(this.actions);
   }
 
   render() {

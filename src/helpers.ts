@@ -7,6 +7,7 @@ import {
   LevelVariableConfig,
   ListVariableConfig,
   EVariableType,
+  AtLeast,
 } from './types';
 import { localize } from './localize/localize';
 import { formatTime, Time, ETimeEvent, MinutesPerDay } from './date-time';
@@ -116,7 +117,7 @@ export function PrettyPrintTime(
   if (Math.abs(time.value) == 0) return localize('time.at_sun_event', '{sunEvent}', event_string);
   return `${time_string} ${
     formatTime(time.value).signed ? localize('words.before') : localize('words.after')
-  } ${event_string}`;
+    } ${event_string}`;
 }
 
 export function capitalize(input: string) {
@@ -207,7 +208,6 @@ export function calculateTimeline(entries: Entry[]): Entry[] {
 
   return entries;
 }
-
 // export function PrettyPrintDays(days: Days): string {
 //   if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
 //   else if (days.type == EDayType.Workday) return `${localize('words.on')} ${localize('fields.day_type_workday')}`;

@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, computeDomain, computeEntity } from 'custom-card-helpers';
 
 import {
   EVariableType,
@@ -16,7 +16,7 @@ import {
   OptionConfig,
   Condition,
 } from './types';
-import { CARD_VERSION, EViews, CreateTimeScheme } from './const';
+import { CARD_VERSION, EViews, CreateTimeScheme, DeadEntityIcon, DeadEntityName } from './const';
 import { getLanguage } from './localize/localize';
 import { parseTimestamp, EDayType, MinutesPerDay, formatTime, timeEventToString } from './date-time';
 import { importEntry } from './interface';
@@ -28,7 +28,8 @@ import './custom-elements/scheduler-entitypicker-card';
 import './custom-elements/scheduler-timepicker-card';
 import './custom-elements/scheduler-options-card';
 import './custom-elements/scheduler-card-editor';
-import { pick, calculateTimeline } from './helpers';
+import { pick, calculateTimeline, omit } from './helpers';
+import { exportActionVariable } from './actionVariables';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -104,7 +105,7 @@ export class SchedulerCard extends LitElement {
         .map(([, v]) => v);
       if (this._config.discover_existing !== undefined && !this._config.discover_existing) {
         scheduleEntities = scheduleEntities.filter(el =>
-          (el.attributes.actions.map(e => e.entity) as string[]).every(e => entityFilter(e, this._config!))
+          (el.attributes.actions.map(e => e.entity) as string[]).every(e => entityFilter(this.hass.states[e], this._config!))
         );
       }
 
@@ -114,7 +115,7 @@ export class SchedulerCard extends LitElement {
       );
       usedEntities = usedEntities.filter((v, k, arr) => arr.indexOf(v) === k);
       const config = usedEntities
-        .map(e => [e, entityConfig(e, this._config!, this._hass!)])
+        .map(e => [e, entityConfig(this._hass!.states[e], this._config!)])
         .reduce((obj, [key, val]) => Object.assign(obj, { [String(key)]: val }), {});
 
       return html`
@@ -185,7 +186,7 @@ export class SchedulerCard extends LitElement {
   private _confirmItemClick(ev: CustomEvent): void {
     if (!this._hass || !this._config) return;
     const entity = ev.detail.entity;
-    this.entity = entityConfig(entity, this._config, this._hass);
+    this.entity = entityConfig(this._hass.states[entity], this._config)!;
     const action = ev.detail.action;
 
     if (action != CreateTimeScheme) {
@@ -199,7 +200,8 @@ export class SchedulerCard extends LitElement {
       ];
 
       this._view = EViews.TimePicker;
-      this.actions = [findAction(this.entity, { service: action }, this._hass!.states[entity])];
+
+      this.actions = [findAction(this.entity, { service: action })];
     } else {
       this.entries = [
         {
@@ -224,7 +226,7 @@ export class SchedulerCard extends LitElement {
           days: { type: EDayType.Daily },
         },
       ];
-      this.actions = this.entity!.actions.map(e => actionConfig(e, this._hass!.states[this.entity!.id])).filter(
+      this.actions = this.entity!.actions.map(actionConfig).filter(
         e => e
       ) as ActionElement[];
       this._view = EViews.TimeScheme;
@@ -242,32 +244,15 @@ export class SchedulerCard extends LitElement {
 
     this.entries.forEach(entry => {
       if (!entry.action || !entry.entity) return;
-      const entity = entityConfig(entry.entity, this._config!, this._hass!);
-      const action = findAction(entity, { service: entry.action }, this._hass!.states[entity.id]);
-
+      const entity = entityConfig(this._hass!.states[entry.entity], this._config!)!;
+      const action = findAction(entity, { service: entry.action });
+      const variableData = exportActionVariable(action, entry);
       const output: HassAction = {
         entity: entity.id,
         service: computeDomain(action.service) ? action.service : `${computeDomain(entity.id)}.${action.service}`,
-        service_data: action.service_data || {},
+        service_data: { ...action.service_data || {}, variableData }
       };
 
-      if (action.variable && entry.variable) {
-        if (action.variable.type == EVariableType.Level) {
-          if ((entry.variable as LevelVariable).enabled) {
-            Object.assign(output, {
-              service_data: Object.assign(output.service_data, {
-                [action.variable.field]: Number(entry.variable.value),
-              }),
-            });
-          }
-        } else {
-          Object.assign(output, {
-            service_data: Object.assign(output.service_data, {
-              [action.variable.field]: entry.variable.value,
-            }),
-          });
-        }
-      }
       let num = actions.findIndex(e => uniqueId(e) == uniqueId(output));
       if (num == -1) num = actions.push(output) - 1;
 
@@ -353,20 +338,42 @@ export class SchedulerCard extends LitElement {
     if (!this._hass || !this._config) return;
     const scheduleEntity = this._hass.states[ev.detail];
     if (!scheduleEntity) return;
-
     const entries: ImportedEntry[] = scheduleEntity.attributes.entries.map(importEntry);
     const entity_id = scheduleEntity.attributes.actions[0].entity;
-    this.entity = entityConfig(entity_id, this._config, this._hass);
+    this.entity = entityConfig(this._hass.states[entity_id], this._config);
+
+    if (!this.entity) {
+      const actions = scheduleEntity.attributes.actions
+        .map(e => importAction(e))
+        .map(e => actionConfig(omit(e, ['entity']) as HassAction));
+
+      const entity: EntityElement = {
+        id: entity_id,
+        name: DeadEntityName,
+        icon: DeadEntityIcon,
+        actions: actions
+      };
+      this.entity = entity;
+    }
     this.actions = this.entity.actions
-      .map(e => actionConfig(e, this._hass!.states[entity_id]))
+      .map(e => actionConfig(e))
       .filter(e => e) as ActionElement[];
 
     const conditions: Condition[] = scheduleEntity.attributes.conditions || [];
     const options: OptionConfig = scheduleEntity.attributes.options || {};
     this.entries = entries.map(el => {
-      const hassAction = el.actions.map(e => importAction(scheduleEntity.attributes.actions[e])).shift()!;
-      const action = findAction(this.entity!, hassAction, this._hass!.states[entity_id]);
 
+      const hassAction = el.actions
+        .filter(e => e < scheduleEntity.attributes.actions.length)
+        .map(e => importAction(scheduleEntity.attributes.actions[e]))
+        .shift()!;
+      const action = findAction(this.entity!, hassAction);
+
+      if (!this.actions.find(e => e.id == action.id)) {
+        let actions = [...this.actions];
+        actions.push(action);
+        this.actions = actions;
+      }
       const output: Entry = {
         time: el.time,
         endTime: el.endTime,

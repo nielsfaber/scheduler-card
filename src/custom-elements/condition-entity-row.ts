@@ -31,7 +31,7 @@ export class ConditionEntityRow extends LitElement {
         </hui-warning>
       `;
     }
-    let entity = entityConfig(stateObj.entity_id, this.config, this.hass);
+    let entity = entityConfig(stateObj, this.config)!;
 
     return html`
       <div class="list-item">
@@ -145,7 +145,7 @@ export class ConditionEntityRow extends LitElement {
   stateButtonClick() {
     if (!this.item || !this.config || !this.hass) return;
     this.selected = false;
-    let entity = entityConfig(this.item.entity, this.config, this.hass);
+    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = this.item.state;
     let states = entity.states!;
     if (!states || !Array.isArray(states)) return;
@@ -161,7 +161,7 @@ export class ConditionEntityRow extends LitElement {
   stateDecrement(time: number | null = null) {
     if (!this.item || !this.config || !this.hass) return;
     clearTimeout(this.timer);
-    let entity = entityConfig(this.item.entity, this.config, this.hass);
+    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = Number(this.item.state);
     let cfg = entity.states!;
     if (Array.isArray(cfg)) return;
@@ -170,7 +170,6 @@ export class ConditionEntityRow extends LitElement {
     if (state < cfg.min) state = cfg.min;
     state = Number((Math.round(state / step) * step).toPrecision(5));
     this.item = Object.assign({ ...this.item }, { state: state });
-
     let timeout = time !== null ? Number(time * 0.9) : 300;
     if (timeout < 50) timeout = 50;
     this.timer = setTimeout(() => {
@@ -181,7 +180,7 @@ export class ConditionEntityRow extends LitElement {
   stateIncrement(time: number | null = null) {
     if (!this.item || !this.config || !this.hass) return;
     clearTimeout(this.timer);
-    let entity = entityConfig(this.item.entity, this.config, this.hass);
+    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = Number(this.item.state);
     let cfg = entity.states!;
     if (Array.isArray(cfg)) return;
@@ -209,7 +208,7 @@ export class ConditionEntityRow extends LitElement {
 
   getState() {
     if (!this.item || !this.config || !this.hass) return;
-    let entity = entityConfig(this.item.entity, this.config, this.hass);
+    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = this.item.state;
     let cfg = entity.states!;
     if (!Array.isArray(cfg) && cfg.unit) return `${state}${cfg.unit}`;

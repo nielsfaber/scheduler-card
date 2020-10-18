@@ -1,4 +1,4 @@
-import { LevelVariableConfig, ListVariableConfig, EVariableType } from './types';
+import { LevelVariableConfig, ListVariableConfig, EVariableType, ActionConfig } from './types';
 import { EDayType } from './date-time';
 import { localize } from './localize/localize';
 
@@ -9,23 +9,8 @@ export const DefaultTimeStep = 10;
 export const DefaultGroupIcon = 'folder-outline';
 export const DefaultEntityIcon = 'folder-outline';
 export const DefaultActionIcon = 'flash';
-export const DiscoveredEntitiesGroup = 'discovered';
-
-export const DefaultLevelVariableConfig: LevelVariableConfig = {
-  type: EVariableType.Level,
-  field: '',
-  unit: '',
-  min: 0,
-  max: 255,
-  step: 1,
-  optional: false,
-};
-
-export const DefaultListVariableConfig: ListVariableConfig = {
-  type: EVariableType.List,
-  field: '',
-  options: [],
-};
+export const DeadEntityName = "(unknown entity)";
+export const DeadEntityIcon = "help-circle-outline";
 
 export const FieldTemperature = 'temperature';
 export const UnitPercent = '%';
@@ -54,4 +39,14 @@ export enum EViews {
   TimePicker = 'TIME_PICKER',
   TimeScheme = 'TIME_SCHEME',
   Options = 'OPTIONS',
+}
+
+export const TurnOnAction: ActionConfig = {
+  service: "turn_on",
+  icon: "power"
+}
+
+export const TurnOffAction: ActionConfig = {
+  service: "turn_off",
+  icon: "power-off"
 }

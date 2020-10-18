@@ -3,7 +3,10 @@ import { DefaultGroupIcon } from './const';
 import { entityFilter } from './entity';
 import { computeDomain } from 'custom-card-helpers';
 import { DomainNameTranslations, localize } from './localize/localize';
-import { default as standardConfig } from './standard-configuration.json';
+import { domainIcons } from './standard-configuration/standardIcon';
+import { applyFilters } from './filter';
+
+
 
 export function entityGroups(entities: string[], config: Partial<CardConfig>) {
   const groups: GroupElement[] = [];
@@ -15,7 +18,7 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>) {
         id: el.name,
         name: el.name,
         icon: el.icon || DefaultGroupIcon,
-        entities: entities.filter(e => entityFilter(e, el)),
+        entities: entities.filter(e => applyFilters(e, el)),
       };
 
       groups.push(group);
@@ -32,11 +35,10 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>) {
       name: domain in DomainNameTranslations ? localize(DomainNameTranslations[domain]) : domain,
       icon:
         (config.standard_configuration === undefined || config.standard_configuration) &&
-        domain in standardConfig &&
-        standardConfig[domain].icon
-          ? standardConfig[domain].icon
+          domain in domainIcons
+          ? domainIcons[domain]
           : DefaultGroupIcon,
-      entities: ungroupedEntities.filter(e => entityFilter(e, { include: [domain] })),
+      entities: ungroupedEntities.filter(e => applyFilters(e, { include: [domain] })),
     };
 
     groups.push(group);

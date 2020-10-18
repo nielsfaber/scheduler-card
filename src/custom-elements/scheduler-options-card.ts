@@ -105,13 +105,18 @@ export class SchedulerOptionsCard extends LitElement {
   renderAddCondition() {
     if (!this.addCondition || !this.hass || !this.config) return html``;
 
-    let hassEntities = Object.keys(this.hass.states).filter(e => entityFilter(e, this.config!, { states: true }));
+    let hassEntities = Object.values(this.hass.states)
+      .filter(e => entityFilter(e, this.config!, { states: true }))
+      .map(e => e.entity_id);
     let groups = entityGroups(hassEntities, this.config!);
+    groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
 
     let entities: EntityElement[] = [];
     if (this.selectedGroup) {
       entities = groups.find(e => e.id == this.selectedGroup)!.entities
-        .map(e => entityConfig(e, this.config!, this.hass!));
+        .map(e => entityConfig(this.hass!.states[e], this.config!))
+        .filter(e => e) as EntityElement[];
+      entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
     }
 
     return html`
@@ -193,10 +198,9 @@ export class SchedulerOptionsCard extends LitElement {
 
   confirmConditionClick() {
     if (!this.selectedEntity || !this.config || !this.hass) return;
-    entityConfig(this.selectedEntity, this.config, this.hass);
 
-    let states = entityConfig(this.selectedEntity, this.config, this.hass).states!;
-    let step = Array.isArray(states) ? 1 : states.step || 1;
+    const states = entityConfig(this.hass.states[this.selectedEntity], this.config)!.states!;
+    const step = Array.isArray(states) ? 1 : states.step || 1;
     let default_state = Array.isArray(states) ? states[0] : Number((Math.round((states.min + states.max) / 2 / step) * step).toPrecision(5));
     let condition: Condition = {
       entity: this.selectedEntity,
@@ -267,7 +271,6 @@ export class SchedulerOptionsCard extends LitElement {
   }
 
   saveClick() {
-    console.log(this.entries);
     let myEvent = new CustomEvent("saveClick", {
       detail: {
         entries: this.entries,

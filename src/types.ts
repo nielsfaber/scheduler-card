@@ -14,20 +14,20 @@ export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
 /* hass objects */
 
-export interface HassEntity {
-  entity_id: string;
-  state: any;
-  attributes: {
-    friendly_name?: string;
-    icon?: string;
-    supported_features?: number;
-    actions?: HassAction[];
-    entries?: string[];
-    next_trigger?: string;
-    conditions?: Condition[];
-    options?: OptionConfig;
-  };
-}
+// export interface HassEntity {
+//   entity_id: string;
+//   state: any;
+//   attributes: {
+//     friendly_name?: string;
+//     icon?: string;
+//     supported_features?: number;
+//     actions?: HassAction[];
+//     entries?: string[];
+//     next_trigger?: string;
+//     conditions?: Condition[];
+//     options?: OptionConfig;
+//   };
+// }
 
 /* groups */
 
@@ -50,16 +50,16 @@ export interface GroupConfig {
 export interface EntityElement extends EntityConfig {
   id: string;
   name: string;
-  icon: string;
+  icon?: string;
   actions: ActionConfig[];
-  states?: string[] | { min: number; max: number; step?: number; unit?: string };
+  states?: StatesConfig;
 }
 
 export interface EntityConfig {
   name?: string;
   icon?: string;
   actions?: ActionConfig[];
-  states?: string[] | { min: number; max: number; step?: number; unit?: string };
+  states?: StatesConfig;
 }
 
 /* actions */
@@ -71,7 +71,6 @@ export interface ActionConfig {
   icon?: string;
   variable?: AtLeast<LevelVariableConfig | ListVariableConfig, 'field'>;
   supported_feature?: number;
-  routine?: boolean;
 }
 
 export interface ActionElement extends ActionConfig {
@@ -81,7 +80,6 @@ export interface ActionElement extends ActionConfig {
   service_data?: Dictionary<any>;
   icon: string;
   variable?: LevelVariableConfig | ListVariableConfig;
-  routine: boolean;
   supported_feature?: number;
 }
 
@@ -111,7 +109,6 @@ export interface LevelVariableConfig {
   max: number;
   step: number;
   optional: boolean;
-  supported_feature?: number;
   type: EVariableType;
 }
 
@@ -218,6 +215,9 @@ export interface ConditionConfig {
   items: Condition[];
 }
 
+
 export interface OptionConfig {
   run_once?: boolean;
 }
+
+export type StatesConfig = string[] | { min: number; max: number; step?: number; unit?: string };

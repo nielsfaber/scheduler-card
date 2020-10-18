@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
-import { CardConfig, ActionElement } from '../types';
+import { CardConfig, EntityElement } from '../types';
 import { entityFilter, entityConfig } from '../entity';
 import { entityGroups } from '../group';
 import { actionConfig } from '../action';
@@ -22,23 +22,37 @@ export class SchedulerEditorCard extends LitElement {
 
   getGroups() {
     if (!this.hass || !this.config) return [];
-    let entities = Object.keys(this.hass.states).filter(e => entityFilter(e, this.config!, { actions: true }));
-    return entityGroups(entities, this.config!);
+
+    const entities = Object.values(this.hass.states)
+      .filter(e => entityFilter(e, this.config!, { actions: true }))
+      .map(e => e.entity_id);
+
+    let groups = entityGroups(entities, this.config!);
+    groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    return groups;
   }
 
   getEntitiesForGroup() {
     if (!this.selectedGroup || !this.hass) return [];
-    return this.getGroups()
+
+    let entities = this.getGroups()
       .find(e => e.id == this.selectedGroup)!.entities
-      .map(e => entityConfig(e, this.config!, this.hass!));
+      .map(e => entityConfig(this.hass!.states[e], this.config!))
+      .filter(e => e) as EntityElement[];
+
+    entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    return entities;
   }
 
   getActionsForEntity() {
     if (!this.selectedEntity) return [];
-    return this.getEntitiesForGroup()
+
+    let actions = this.getEntitiesForGroup()
       .find(e => e.id == this.selectedEntity)!
-      .actions.map(e => actionConfig(e, this.hass!.states[this.selectedEntity!]))
-      .filter(e => e) as ActionElement[];
+      .actions.map(actionConfig);
+
+    actions.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    return actions;
   }
 
   render() {

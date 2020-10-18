@@ -1,12 +1,12 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, computeEntity } from 'custom-card-helpers';
-import { CardConfig } from '../types';
-import { default as standardConfig } from '../standard-configuration.json';
+import { CardConfig, EntityElement } from '../types';
 import { PrettyPrintIcon } from '../helpers';
 import { localize } from '../localize/localize';
-import { IsSchedulerEntity } from '../entity';
+import { IsSchedulerEntity, entityConfig } from '../entity';
 import { DefaultTimeStep } from '../const';
 import { commonStyle } from '../styles';
+import { domainIcons } from '../standard-configuration/standardIcon';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
@@ -174,13 +174,22 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
     let includedDomains = this._config.include ? [...this._config.include] : [];
-    return Object.entries(standardConfig).filter(([, v]) => v.hasOwnProperty('actions')).map(([domain, cfg]) => {
+    const entityList = Object.values(this.hass.states)
+      .filter(e => IsSchedulerEntity(e.entity_id))
+      .map(e => entityConfig(e, { include: ["*"] }))
+      .filter(e => e && e.actions.length) as EntityElement[];
+
+    const domainList = entityList
+      .map(e => computeDomain(e.id))
+      .filter((v, k, arr) => arr.indexOf(v) === k);
+
+    return domainList.map(domain => {
       let enabled = includedDomains.includes(domain);
-      let count = Object.keys(this.hass!.states).filter(e => computeDomain(e) == domain && !IsSchedulerEntity(e)).length;
+      let count = entityList.filter(e => computeDomain(e.id) == domain).length;
       if (!count) return ``;
       return html`
         <div class="row" @click=${() => { this.toggleSelectDomain(domain) }}>
-          <ha-icon icon="${PrettyPrintIcon(cfg.icon)}">
+          <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}">
           </ha-icon>
 
           <div class="info">

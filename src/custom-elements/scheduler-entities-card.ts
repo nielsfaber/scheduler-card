@@ -2,10 +2,12 @@ import { LitElement, html, customElement, css, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
-import './scheduler-entity-row';
-import { HassEntity, CardConfig, Dictionary, EntityElement } from '../types';
+import { CardConfig, Dictionary, EntityElement } from '../types';
 import { commonStyle } from '../styles';
-import { entityFilter } from '../entity';
+import { HassEntity } from 'home-assistant-js-websocket';
+
+import './scheduler-entity-row';
+import { applyFilters } from '../filter';
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends LitElement {
@@ -65,7 +67,7 @@ export class SchedulerEntitiesCard extends LitElement {
     if (!this.config || !this.usedEntities) return html``;
     if (!this.entities || !this.entities.length) return html`${localize('instructions.no_entries_defined')}`;
     return this.entities.map(e => {
-      let discovered = !(e.attributes.actions!.map(e => e.entity) as string[]).every(e => entityFilter(e, this.config!));
+      let discovered = !(e.attributes.actions!.map(e => e.entity) as string[]).every(e => applyFilters(e, this.config!));
       if (discovered) {
         return html`
           <hui-warning>
@@ -120,9 +122,12 @@ export class SchedulerEntitiesCard extends LitElement {
       cursor: pointer;
     }
     scheduler-entity-row.disabled {
-      color: var(--disabled-text-color);
+      --primary-text-color: var(--disabled-text-color);
       --secondary-text-color: var(--disabled-text-color);
       --paper-item-icon-color: var(--disabled-text-color);
     }
+      hui-warning {
+        padding: 10px 0px;
+      }
   `;
 }
