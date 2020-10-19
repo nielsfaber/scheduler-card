@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "zapnout",
+    "turn_on_brightness": "zapnout {na brightness}",
     "turn_off": "vypnout",
     "close_cover": "zavřít",
     "open_cover": "otevřít",
-    "set_temperature": "nastavená teplota",
-    "set_to": "nastaven na",
-    "set_position": "nastavit polohu",
-    "set_hvac_mode": "nastavit režim",
-    "set_preset_mode": "nastavit předvolbu",
-    "set_value": "nastavená hodnota",
-    "select_option": "vyberte možnost",
-    "select_source": "vyberte zdroj",
-    "start": "start"
+    "set_temperature": "nastavená teplota {na temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "nastavit polohu {na position}",
+    "set_hvac_mode": "nastavit režim {na hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "vypnout",
+    "set_preset_mode": "nastavit předvolbu {na preset_mode}",
+    "set_value": "nastavená hodnota {na value}",
+    "select_option": "vyberte možnost {option}",
+    "select_source": "vyberte zdroj {source}",
+    "start": "start",
+    "run_script": "run"
   },
   "service_parameters": {
     "brightness": "jas",
     "temperature": "teplota",
     "position": "pozice",
     "hvac_mode": "režim",
-    "preset": "přednastavení"
+    "preset_mode": "přednastavení"
   },
   "domains": {
     "camera": "kamery",
