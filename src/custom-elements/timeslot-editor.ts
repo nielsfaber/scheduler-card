@@ -1,11 +1,10 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize } from '../localize/localize';
-
 import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariable, ListVariableConfig, HassAction } from '../types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
 import { pick, PrettyPrintName } from '../helpers';
 import { formatVariable } from '../formatAction';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, LocalizeFunc } from 'custom-card-helpers';
 
 function Duration(el: Entry) {
   return el.endTime!.value - el.time.value;
@@ -119,9 +118,7 @@ export class TimeslotEditor extends LitElement {
       return PrettyPrintName(String(entry.variable.value));
     }
     const service = action.service;
-    if (service == "turn_on") return this.hass.localize("state.on");
-    else if (service == "turn_off") return this.hass.localize("state.off");
-    return PrettyPrintName(localize(`services.${service}`) || action.name || service);
+    return PrettyPrintName(action.name || localize(`services.${service}`) || service);
   }
 
   private _handleSegmentClick(e: Event) {

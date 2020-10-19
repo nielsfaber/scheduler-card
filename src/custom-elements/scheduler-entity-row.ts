@@ -127,8 +127,16 @@ export class ScheduleEntityRow extends LitElement {
 
   computeNextEntry(entries: ImportedEntry[]) {
     let timestamps = entries.map(e => this.computeTimestamp(e));
-    let num = timestamps.reduce((im, e, i, arr) => e.valueOf() > arr[im].valueOf() ? i : im, 0);
-    return entries[num];
+
+    let minimum = -1;
+    let indexMinimum = -1;
+    timestamps.forEach((time, index) => {
+      if (minimum === -1 || time.valueOf() < minimum) {
+        minimum = time.valueOf();
+        indexMinimum = index;
+      }
+    });
+    return entries[indexMinimum];
   }
 
   toggleDisabled(ev: Event) {
