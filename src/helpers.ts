@@ -7,52 +7,11 @@ import {
   LevelVariableConfig,
   ListVariableConfig,
   EVariableType,
-  AtLeast,
 } from './types';
 import { localize } from './localize/localize';
 import { formatTime, Time, ETimeEvent, MinutesPerDay } from './date-time';
 import { UnitPercent, FieldTemperature } from './const';
 
-export function extend(
-  oldObj: Dictionary<any> | any[],
-  newObj: Dictionary<any> | any[],
-  options: Partial<{ compact: boolean; overwrite: boolean }> = {}
-) {
-  let mergedObj = Array.isArray(oldObj) ? [...oldObj] : { ...oldObj };
-  if (oldObj === null) mergedObj = Array.isArray(newObj) ? [] : {};
-  if (newObj === null || newObj === undefined) return oldObj;
-  const keys = Object.keys(newObj);
-  keys.forEach(key => {
-    let val = newObj[key];
-    if (val === undefined) return;
-    if (val === null && options.compact) {
-      if (mergedObj[key] !== undefined) delete mergedObj[key];
-      return;
-    }
-    if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite)
-      val = extend(mergedObj[key], val, options);
-    else if (typeof val == 'object' && val !== null && typeof mergedObj[key] == 'object' && !options.overwrite)
-      val = extend(mergedObj[key], val, options);
-    if (Array.isArray(newObj)) {
-      if (val !== null) {
-        if (options.overwrite) mergedObj = val;
-        else mergedObj.push(val);
-      }
-    } else {
-      if (
-        (Array.isArray(val) || typeof val == 'object') &&
-        val !== null &&
-        !Object.keys(val).length &&
-        options.compact
-      ) {
-        delete mergedObj[key];
-        return;
-      }
-      Object.assign(mergedObj, { [key]: val });
-    }
-  });
-  return mergedObj;
-}
 
 export function pick(obj: Dictionary<any> | null | undefined, keys: string[]): Dictionary<any> {
   if (!obj) return {};
@@ -66,23 +25,6 @@ export function omit(obj: Dictionary<any> | null | undefined, keys: string[]): D
   return Object.entries(obj)
     .filter(([key]) => !keys.includes(key))
     .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function mapObject(obj: Record<string, any>, func: Function) {
-  return Object.entries(obj)
-    .map(([key, val]) => [key, func(val, key)])
-    .filter(([, v]) => v !== null && v !== undefined)
-    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function filterObject(obj: Record<string, any>, func: Function) {
-  return Object.entries(obj)
-    .filter(([key, val]) => func(val, key))
-    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function keyMap(arr: any[], func: Function) {
-  return arr.reduce((obj, val) => Object.assign(obj, { [func(val)]: val }), {});
 }
 
 export function PrettyPrintTime(
@@ -136,38 +78,38 @@ export function PrettyPrintIcon(input?: string) {
   return `hass:${input}`;
 }
 
-export function PrettyPrintActionVariable(
-  input: LevelVariable | ListVariable,
-  cfg: LevelVariableConfig | ListVariableConfig,
-  options: { temperature_unit: string }
-): string {
-  if (input.type == EVariableType.Level) {
-    cfg = cfg as LevelVariableConfig;
-    let unit = 'unit' in cfg ? cfg.unit : '';
-    if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
-    let value = Number(input.value);
-    if (cfg.unit == UnitPercent) {
-      value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
-      if (value < cfg.min) value = cfg.min;
-      else if (value > cfg.max) value = cfg.max;
-    }
-    return `${value}${unit}`;
-  } else {
-    return PrettyPrintName(String(input.value));
-  }
-}
+// export function PrettyPrintActionVariable(
+//   input: LevelVariable | ListVariable,
+//   cfg: LevelVariableConfig | ListVariableConfig,
+//   options: { temperature_unit: string }
+// ): string {
+//   if (input.type == EVariableType.Level) {
+//     cfg = cfg as LevelVariableConfig;
+//     let unit = 'unit' in cfg ? cfg.unit : '';
+//     if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
+//     let value = Number(input.value);
+//     if (cfg.unit == UnitPercent) {
+//       value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
+//       if (value < cfg.min) value = cfg.min;
+//       else if (value > cfg.max) value = cfg.max;
+//     }
+//     return `${value}${unit}`;
+//   } else {
+//     return PrettyPrintName(String(input.value));
+//   }
+// }
 
-export function PrettyPrintAction(entry: Entry, actionCfg: ActionElement, options: { temperature_unit: string }) {
-  let action_string = PrettyPrintName(actionCfg.name);
+// export function PrettyPrintAction(entry: Entry, actionCfg: ActionElement, options: { temperature_unit: string }) {
+//   let action_string = PrettyPrintName(actionCfg.name);
 
-  if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
-    if (entry.variable.type == EVariableType.Level && !(entry.variable as LevelVariable).enabled)
-      return capitalize(action_string);
-    const value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
-    action_string = `${localize('services.set_to')} ${value}`;
-  }
-  return action_string;
-}
+//   if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
+//     if (entry.variable.type == EVariableType.Level && !(entry.variable as LevelVariable).enabled)
+//       return capitalize(action_string);
+//     const value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
+//     action_string = `${localize('services.set_to')} ${value}`;
+//   }
+//   return action_string;
+// }
 
 export function calculateTimeline(entries: Entry[]): Entry[] {
   //TBD implementation for sun

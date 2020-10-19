@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
-import { CardConfig, EntityElement } from '../types';
+import { CardConfig, EntityElement, GroupElement, ActionElement } from '../types';
 import { entityFilter, entityConfig } from '../entity';
 import { entityGroups } from '../group';
 import { actionConfig } from '../action';
@@ -10,6 +10,7 @@ import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 
 import './button-group';
 import { commonStyle } from '../styles';
+import { formatAction } from '../formatAction';
 
 @customElement('scheduler-editor-card')
 export class SchedulerEditorCard extends LitElement {
@@ -29,13 +30,14 @@ export class SchedulerEditorCard extends LitElement {
 
     let groups = entityGroups(entities, this.config!);
     groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+
     return groups;
   }
 
-  getEntitiesForGroup() {
+  getEntitiesForGroup(groupConfig: GroupElement[]) {
     if (!this.selectedGroup || !this.hass) return [];
 
-    let entities = this.getGroups()
+    let entities = groupConfig
       .find(e => e.id == this.selectedGroup)!.entities
       .map(e => entityConfig(this.hass!.states[e], this.config!))
       .filter(e => e) as EntityElement[];
@@ -44,19 +46,37 @@ export class SchedulerEditorCard extends LitElement {
     return entities;
   }
 
-  getActionsForEntity() {
+  getActionsForEntity(entityConfig: EntityElement[]) {
     if (!this.selectedEntity) return [];
 
-    let actions = this.getEntitiesForGroup()
+    let actions = entityConfig
       .find(e => e.id == this.selectedEntity)!
-      .actions.map(actionConfig);
+      .actions.map(actionConfig)
+      .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }));
 
-    actions.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    actions.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     return actions;
   }
 
+
+
+
+  // let translation = localize(`services.${data.id}`) || localize(`services.${data.service}`);
+  // if (translation && !config.name) {
+  //   translation = translation.replace(/\{([^}]+)\}/, "").trim();
+  //   Object.assign(data, { name: translation });
+  // }
   render() {
     if (!this.hass || !this.config) return html``;
+
+    const groups = this.getGroups();
+    if (groups.length == 1 && this.selectedGroup !== groups[0].id) this.selectGroup(groups[0].id);
+
+    const entities = this.getEntitiesForGroup(groups);
+    if (entities.length == 1 && this.selectedEntity !== entities[0].id) this.selectEntity(entities[0].id);
+
+    const actions = this.getActionsForEntity(entities);
+    //if (actions.length == 1 && this.selectedAction !== actions[0].id) this.selectAction(actions[0].id);
 
     return html`
       <ha-card>
@@ -70,20 +90,20 @@ export class SchedulerEditorCard extends LitElement {
         <div class="card-content">
 
           <div class="header">${localize('fields.group')}</div>
-          <button-group .items=${this.getGroups()} value=${this.selectedGroup} @change=${this.selectGroup}>
+          <button-group .items=${groups} value=${this.selectedGroup} @change=${this.selectGroup}>
             ${localize('instructions.no_groups_defined')}
           </button-group>
 
           <div class="header">${localize('fields.entity')}</div>
-          <button-group .items=${this.getEntitiesForGroup()} value=${this.selectedEntity} @change=${this.selectEntity}>
+          <button-group .items=${entities} value=${this.selectedEntity} @change=${this.selectEntity}>
             ${!this.selectedGroup ? localize('instructions.no_group_selected') : localize('instructions.no_entities_for_group')}
           </button-group>
 
           <div class="header">${localize('fields.action')}</div>
-          <button-group .items=${this.getActionsForEntity()} value=${this.selectedAction} @change=${this.selectAction}>
+          <button-group .items=${actions} value=${this.selectedAction} @change=${this.selectAction}>
             ${!this.selectedEntity ? localize('instructions.no_entity_selected') : localize('instructions.no_actions_for_entity')}
           </button-group>
-          ${this.makeSchemeButton()}
+          ${this.makeSchemeButton(actions)}
         </div>
         <div class="card-actions">
           <mwc-button @click=${this.nextClick} ?disabled=${!this.selectedAction}>${localize('actions.next')}</mwc-button>
@@ -92,8 +112,8 @@ export class SchedulerEditorCard extends LitElement {
       `;
   }
 
-  makeSchemeButton() {
-    if (!this.getActionsForEntity().length) return html``;
+  makeSchemeButton(actionConfig: ActionElement[]) {
+    if (!actionConfig.length) return html``;
     return html`
       <div class="header">or</div>
       <div class="option-list">
@@ -108,21 +128,21 @@ export class SchedulerEditorCard extends LitElement {
     `;
   }
 
-  selectGroup(ev: Event) {
-    let value = (ev.target as HTMLInputElement).value;
+  selectGroup(ev: Event | string) {
+    let value = typeof ev == "string" ? ev : (ev.target as HTMLInputElement).value;
     this.selectedGroup = value;
     this.selectedEntity = undefined;
     this.selectedAction = undefined;
   }
 
-  selectEntity(ev: Event) {
-    let value = (ev.target as HTMLInputElement).value;
+  selectEntity(ev: Event | string) {
+    let value = typeof ev == "string" ? ev : (ev.target as HTMLInputElement).value;
     this.selectedEntity = value;
     this.selectedAction = undefined;
   }
 
-  selectAction(ev: Event) {
-    let value = (ev.target as HTMLInputElement).value;
+  selectAction(ev: Event | string) {
+    let value = typeof ev == "string" ? ev : (ev.target as HTMLInputElement).value;
     this.selectedAction = value;
   }
 

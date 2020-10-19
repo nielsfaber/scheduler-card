@@ -1,11 +1,15 @@
 import { LitElement, html, customElement, css, property, internalProperty, PropertyValues } from 'lit-element';
-import { ImportedEntry, Dictionary, EntityConfig } from '../types';
+import { ImportedEntry, Dictionary, EntityConfig, EntityElement, HassAction, ActionElement } from '../types';
 import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime } from '../date-time';
 import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
-import { HomeAssistant, computeEntity } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity, ActionConfig } from 'custom-card-helpers';
 import { importEntry } from '../interface';
 import { computeAction } from '../computeAction';
 import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName } from '../const';
+import { formatAction } from '../formatAction';
+import { importAction, findActionIndex, findAction, actionConfig } from '../action';
+import { exportActionVariable } from '../actionVariables';
+import { localize } from '../localize/localize';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -18,7 +22,7 @@ type schedulerRowConfig = {
   entity: string;
   icon?: string;
   name?: string;
-  config?: Dictionary<EntityConfig>;
+  config?: Dictionary<EntityElement>;
 }
 
 @customElement('scheduler-entity-row')
@@ -54,17 +58,23 @@ export class ScheduleEntityRow extends LitElement {
     let entries: ImportedEntry[] = stateObj.attributes.entries.map(importEntry);
     let nextEntry = this.computeNextEntry(entries);
 
-    let action = nextEntry.actions.map(e => stateObj.attributes.actions[e])[0];
+    let action: HassAction | ActionElement = importAction(nextEntry.actions.map(e => stateObj.attributes.actions[e])[0]);
     let entity = this.hass.states[action.entity];
     let entityName = this._config.name ? this._config.name : entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : DeadEntityName;
 
-    let service = action.service;
     let icon = this._config.icon ? this._config.icon : entity ? DefaultEntityIcon : DeadEntityIcon;
-
     if (this._config.config && action.entity in this._config.config && this._config.config[action.entity]) {
       entityName = this._config.config[action.entity].name || entityName;
       icon = this._config.config[action.entity].icon || icon;
+      const matches = findActionIndex(this._config.config[action.entity], action);
+      if (matches.length) {
+        const match = this._config.config[action.entity].actions[matches[0]];
+        if (match.icon) icon = match.icon;
+        action = actionConfig({ ...match, service_data: { ...match.service_data || {}, ...action.service_data || {} } });
+      }
     }
+
+    let friendlyName = stateObj.attributes.friendly_name?.match(/^schedule\ #[0-9a-f]{6}$/i) ? '' : stateObj.attributes.friendly_name;
 
     return html`
       <state-badge
@@ -74,10 +84,10 @@ export class ScheduleEntityRow extends LitElement {
       >
       </state-badge>
       <div class="info">
-        ${capitalize(PrettyPrintName(entityName))} - ${capitalize(computeAction(this.hass, action))}
+        ${capitalize(PrettyPrintName(entityName))}: ${capitalize(formatAction(action, this.hass))}
         <div class="secondary">
           ${capitalize(relativeTime(this.computeTimestamp(nextEntry)))}<br>
-          ${entries.length > 1 ? `${entries.length - 1} more actions` : ''}
+          ${entries.length > 1 ? entries.length == 2 ? localize('misc.one_additional_task') : localize("misc.x_additional_tasks", "{count}", String(entries.length - 1)) : ''}
         </div>
       </div>
       <ha-switch
@@ -102,8 +112,8 @@ export class ScheduleEntityRow extends LitElement {
       value = ts_ref + entry.time.value;
     }
 
-    let hours = Math.floor(entry.time.value / MinutesPerHour);
-    let minutes = entry.time.value - hours * MinutesPerHour;
+    let hours = Math.floor(value / MinutesPerHour);
+    let minutes = value - hours * MinutesPerHour;
     ts.setHours(hours);
     ts.setMinutes(minutes);
 
@@ -124,8 +134,6 @@ export class ScheduleEntityRow extends LitElement {
   toggleDisabled(ev: Event) {
     if (!this.hass || !this._config) return;
     ev.stopPropagation();
-    ev.preventDefault();
-    (ev.target as HTMLElement).blur();
     let checked = !(ev.target as HTMLInputElement).checked;
     this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this._config.entity });
   }
@@ -146,12 +154,12 @@ export class ScheduleEntityRow extends LitElement {
         overflow: hidden;
         text-overflow: ellipsis;
         color: var(--primary-text-color);
-        transition: color 0.3s ease-in-out, filter 0.3s ease-in-out;
+        transition: color 0.2s ease-in-out;
       }
       .secondary {
         display: block;
         color: var(--secondary-text-color);
-        transition: color 0.3s ease-in-out, filter 0.3s ease-in-out;
+        transition: color 0.2s ease-in-out;
       }
       state-badge {
         flex: 0 0 40px;

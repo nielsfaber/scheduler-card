@@ -45,7 +45,7 @@ export function exportActionVariable(action: ActionElement, entry: Entry) {
     }
   }
   else {
-    return { [action.variable.field]: entry.variable.value };
+    return { [action.variable.field]: String(entry.variable.value) };
   };
 }
 

@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor, computeDomain, computeEntity } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
 
 import {
   EVariableType,
@@ -20,16 +20,17 @@ import { CARD_VERSION, EViews, CreateTimeScheme, DeadEntityIcon, DeadEntityName 
 import { getLanguage } from './localize/localize';
 import { parseTimestamp, EDayType, MinutesPerDay, formatTime, timeEventToString } from './date-time';
 import { importEntry } from './interface';
-import { entityConfig, IsSchedulerEntity, entityFilter } from './entity';
+import { entityConfig, IsSchedulerEntity } from './entity';
 import { findAction, importAction, actionConfig, uniqueId } from './action';
+import { pick, calculateTimeline, omit } from './helpers';
+import { exportActionVariable } from './actionVariables';
+import { ValidateConfig } from './config-validation';
 
 import './custom-elements/scheduler-entities-card';
 import './custom-elements/scheduler-entitypicker-card';
 import './custom-elements/scheduler-timepicker-card';
 import './custom-elements/scheduler-options-card';
 import './custom-elements/scheduler-card-editor';
-import { pick, calculateTimeline, omit } from './helpers';
-import { exportActionVariable } from './actionVariables';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -88,7 +89,7 @@ export class SchedulerCard extends LitElement {
   }
 
   setConfig(config: CardConfig) {
-    //ValidateConfig(config);
+    ValidateConfig(config);
     this._config = config;
   }
 
@@ -100,30 +101,11 @@ export class SchedulerCard extends LitElement {
   protected render() {
     if (!this._hass || !this._config) return html``;
     if (this._view == EViews.Overview) {
-      let scheduleEntities = Object.entries(this._hass.states)
-        .filter(([k]) => IsSchedulerEntity(k))
-        .map(([, v]) => v);
-      if (this._config.discover_existing !== undefined && !this._config.discover_existing) {
-        scheduleEntities = scheduleEntities.filter(el =>
-          (el.attributes.actions.map(e => e.entity) as string[]).every(e => entityFilter(this.hass.states[e], this._config!))
-        );
-      }
-
-      let usedEntities: string[] = [];
-      scheduleEntities.forEach(
-        el => (usedEntities = usedEntities.concat(el.attributes.actions.map(e => e.entity) as string[]))
-      );
-      usedEntities = usedEntities.filter((v, k, arr) => arr.indexOf(v) === k);
-      const config = usedEntities
-        .map(e => [e, entityConfig(this._hass!.states[e], this._config!)])
-        .reduce((obj, [key, val]) => Object.assign(obj, { [String(key)]: val }), {});
 
       return html`
         <scheduler-entities-card
           .hass=${this._hass}
           .config=${this._config}
-          .entities=${scheduleEntities}
-          .usedEntities=${config}
           @editClick=${this._editItemClick}
           @newClick=${this._addItemClick}
         >
@@ -250,7 +232,7 @@ export class SchedulerCard extends LitElement {
       const output: HassAction = {
         entity: entity.id,
         service: computeDomain(action.service) ? action.service : `${computeDomain(entity.id)}.${action.service}`,
-        service_data: { ...action.service_data || {}, variableData }
+        service_data: { ...action.service_data || {}, ...variableData }
       };
 
       let num = actions.findIndex(e => uniqueId(e) == uniqueId(output));

@@ -11,6 +11,7 @@ import './time-picker';
 import './timeslot-editor';
 import './variable-slider';
 import { commonStyle } from '../styles';
+import { formatAction } from '../formatAction';
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
@@ -25,8 +26,14 @@ export class SchedulerTimepickerCard extends LitElement {
   @property({ type: Boolean }) editItem = false;
 
   firstUpdated() {
+    if (!this.actions || !this.hass) return;
     if (!this.timeslots) this.activeEntry = 0;
-    console.log(this.actions);
+    else {
+      let actions = this.actions
+        .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }));
+      actions.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
+      this.actions = actions;
+    }
   }
 
   render() {
@@ -57,7 +64,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div class="summary-action">
               <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon)}">
               </ha-icon>
-              ${capitalize(PrettyPrintName(this.actions[0].name))}
+              ${capitalize(formatAction(this.actions[0], this.hass))}
             </div>
           </div>
 

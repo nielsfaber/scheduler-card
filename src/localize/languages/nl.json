@@ -48,7 +48,8 @@
   "words": {
     "and": "en",
     "before": "voor",
-    "after": "na"
+    "after": "na",
+    "to": "naar"
   },
   "services": {
     "turn_on": "aanzetten",

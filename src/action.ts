@@ -8,11 +8,10 @@ import {
 } from './types';
 import { ServiceNameTranslations, localize } from './localize/localize';
 import { DefaultActionIcon } from './const';
-import { pick, omit, extend } from './helpers';
-import { HassEntity } from 'home-assistant-js-websocket';
+import { pick, omit } from './helpers';
 
 
-export function uniqueId(input: Partial<ActionElement>) {
+export function uniqueId(input: ActionConfig) {
   const sortObject = e =>
     Object.entries(e)
       .sort((a, b) => (a[0] > b[0] ? 1 : -1))
@@ -21,6 +20,10 @@ export function uniqueId(input: Partial<ActionElement>) {
 
   let obj = pick(input, ['service', 'service_data']);
   obj = sortObject(obj);
+
+  // if ('service_data' in obj && Object.keys(obj.service_data).length == 1) {
+  //   Object.assign(obj, { service_data: Object.values(obj.service_data)[0] });
+  // }
 
   const res = Object.values(obj)
     .map(e =>
@@ -38,17 +41,16 @@ export function uniqueId(input: Partial<ActionElement>) {
 export function actionConfig(config: ActionConfig) {
   const service = config.service;
 
-  const data: ActionElement = {
+  let data: ActionElement = {
     id: '',
-    name: config.name || (service in ServiceNameTranslations ? localize(ServiceNameTranslations[service]) : service),
+    name: config.name,
     icon: config.icon || DefaultActionIcon,
     service: service,
   };
-  if (config.service_data) Object.assign(data, { service_data: config.service_data });
+  if (config.service_data && Object.keys(config.service_data).length) Object.assign(data, { service_data: config.service_data });
   if (config.variable) Object.assign(data, { variable: config.variable });
 
   Object.assign(data, { id: uniqueId(data) });
-
   return data;
 }
 
@@ -66,37 +68,44 @@ export function importAction(config: Dictionary<any>): HassAction {
     service = computeEntity(service);
   }
 
-  const service_data = omit(config, ['service', 'entity', 'service_data']);
+  let service_data = omit(config, ['service', 'entity', 'service_data']);
 
-  let output = extend(
-    {},
-    {
-      entity: entity,
-      service: service,
-      service_data: Object.keys(service_data).length ? service_data : null,
-    },
-    { compact: true }
-  ) as HassAction;
-
-  output = extend(output, pick(config, ['service_data'])) as HassAction;
+  let output: HassAction = {
+    entity: entity,
+    service: service,
+  };
+  service_data = { ...service_data, ...config.service_data };
+  if (Object.keys(service_data).length) output = { ...output, service_data: service_data };
   return output;
 }
 
-export function findAction(
+export function findActionIndex(
   entity: EntityElement,
-  actionCfg: { service: string; service_data?: Dictionary<any> }
+  actionCfg: ActionConfig
 ) {
-  const actions = entity.actions.map(actionConfig).map(e => e) as ActionElement[];
-  const action_id = uniqueId(omit(actionCfg, ['entity']));
+  const actions = entity.actions.map(actionConfig) as ActionElement[];
+  const action_id = uniqueId(omit(actionCfg, ['entity']) as ActionConfig);
 
-  const match = actions.find(el => {
+  const matches = actions.map(el => {
     if (el.id == action_id) return true;
     if (el.variable && actionCfg.service_data && Object.keys(actionCfg.service_data).includes(el.variable.field)) {
-      return el.id == uniqueId(extend(actionCfg, { service_data: { [el.variable.field]: null } }, { compact: true }));
+      let service_data = Object.entries(actionCfg.service_data)
+        .filter(([key]) => key != el.variable!.field)
+        .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
+      let modifiedActionCfg = Object.keys(service_data).length ? { ...actionCfg, service_data: service_data } : omit(actionCfg, ['service_data']) as ActionConfig;
+      return el.id == uniqueId(modifiedActionCfg);
     }
     return false;
-  });
+  })
+    .map((res, num) => res ? num : null)
+    .filter(e => e !== null) as number[];
 
-  if (match) return match;
-  return actionConfig(omit(actionCfg, ['entity']) as HassAction) as ActionElement;
+  return matches;
+}
+
+export function findAction(entity: EntityElement, actionCfg: { service: string; service_data?: Dictionary<any> }) {
+
+  const res = findActionIndex(entity, actionCfg);
+  if (res.length) return actionConfig(entity.actions[res[0]]);
+  else return actionConfig(omit(actionCfg, ['entity']) as HassAction);
 }

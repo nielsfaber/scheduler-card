@@ -75,7 +75,7 @@ export interface ActionConfig {
 
 export interface ActionElement extends ActionConfig {
   id: string;
-  name: string;
+  name?: string;
   service: string;
   service_data?: Dictionary<any>;
   icon: string;
@@ -159,10 +159,11 @@ export interface CardConfig extends LovelaceCardConfig {
   title?: boolean | string;
   am_pm?: boolean;
   time_step?: number;
+  show_header_toggle?: boolean;
   include?: string[];
   exclude?: string[];
   groups?: GroupConfig[];
-  customize?: Dictionary<EntityConfig>;
+  customize?: Dictionary<EntityConfig & { actions_hidden?: string[] }>;
 }
 
 /* interface */

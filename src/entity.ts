@@ -1,4 +1,4 @@
-import { computeDomain, HomeAssistant, computeEntity } from 'custom-card-helpers';
+import { computeEntity } from 'custom-card-helpers';
 import { Dictionary, EntityConfig, EntityElement, GroupConfig, CardConfig } from './types';
 import { DefaultEntityIcon } from './const';
 import { standardActions } from './standard-configuration/standardActions';
@@ -6,6 +6,8 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { matchPattern, applyFilters } from './filter';
 import { standardIcon } from './standard-configuration/standardIcon';
 import { standardStates } from './standard-configuration/standardStates';
+import { omit, PrettyPrintName } from './helpers';
+import { findActionIndex, actionConfig } from './action';
 
 
 export function IsSchedulerEntity(entity_id: string) {
@@ -29,13 +31,30 @@ export function entityConfig(entity: HassEntity | undefined, config: Partial<Car
   output = { ...output, icon: entity.attributes.icon || output.icon };
 
   if (config.customize) {
-    Object.entries(config.customize)
+    const customize = Object.entries(config.customize)
       .filter(([e]) => matchPattern(e, entity_id))
-      .map(([, v]) => v)
-      .forEach(el => {
-        Object.assign(output, el);
-      });
+      .map(([, v]) => v);
+    customize.forEach(el => {
+      output = { ...output, ...omit(el, ['actions', 'actions_hidden']) };
+      if (el.actions) {
+        el.actions.forEach(action => {
+          const indexes = findActionIndex(output, action);
+          let actions = output.actions;
+          if (indexes.length) actions = output.actions.map((e, i) => indexes.includes(i) ? Object.assign(e, action) : e);
+          else output.actions.push(action);
+          output = { ...output, actions: actions };
+        });
+      }
+      if (el.actions_hidden) {
+        let actions = output.actions;
+        el.actions_hidden.forEach(name => {
+          actions = actions.filter(e => actionConfig(e).id !== name);
+        });
+        output = { ...output, actions: actions };
+      }
+    });
   }
+
   return output;
 }
 
