@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "anschalten",
+    "turn_on_brightness": "anschalten {auf brightness}",
     "turn_off": "ausschalten",
     "close_cover": "schließen",
     "open_cover": "öffnen",
-    "set_temperature": "Temperatur einstellen",
-    "set_to": "setzen auf",
-    "set_position": "Position setzen",
-    "set_hvac_mode": "Modus setzen",
-    "set_preset_mode": "Voreinstellung setzen",
-    "set_value": "Wert setzen",
-    "select_option": "Option auswählen",
-    "select_source": "Quelle auswählen",
-    "start": "Start"
+    "set_temperature": "Temperatur einstellen {auf temperature}",
+    "set_temperature_hvac_mode_heat": "aufwärmen {auf temperature}",
+    "set_temperature_hvac_mode_cool": "kühlen {auf temperature}",
+    "set_cover_position": "Position setzen {nach position}",
+    "set_hvac_mode": "Modus setzen {zu hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "ausschalten",
+    "set_preset_mode": "Voreinstellung setzen {zu preset_mode}",
+    "set_value": "Wert setzen {zu value}",
+    "select_option": "Option {option} auswählen",
+    "select_source": "Quelle {source} auswählen",
+    "start": "start",
+    "run_script": "ausführen"
   },
   "service_parameters": {
     "brightness": "Helligkeit",
     "temperature": "Temperatur",
     "position": "Position",
     "hvac_mode": "Modus",
-    "preset": "Voreinstellung"
+    "preset_mode": "Voreinstellung"
   },
   "domains": {
     "camera": "Kameras",

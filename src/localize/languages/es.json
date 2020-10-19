@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "encender",
+    "turn_on_brightness": "encender {a brightness}",
     "turn_off": "apagar",
     "close_cover": "cerrar",
     "open_cover": "abrir",
-    "set_temperature": "establecer temperatura",
-    "set_to": "establecer a",
-    "set_position": "establecer posición",
-    "set_hvac_mode": "establecer modo de A/A",
-    "set_preset_mode": "establecer modo",
-    "set_value": "establecer valor",
-    "select_option": "seleccionar opción",
-    "select_source": "seleccionar fuente",
-    "start": "empezar"
+    "set_temperature": "establecer temperatura {a temperature}",
+    "set_temperature_hvac_mode_heat": "calentar {a temperature}",
+    "set_temperature_hvac_mode_cool": "enfriar {a temperature}",
+    "set_cover_position": "establecer posición {a position}",
+    "set_hvac_mode": "establecer modo {a hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "apagar",
+    "set_preset_mode": "establecer modo {a preset_mode}",
+    "set_value": "establecer valor {value}",
+    "select_option": "seleccionar opción {option}",
+    "select_source": "seleccionar fuente {source}",
+    "start": "empezar",
+    "run_script": "ejecutar"
   },
   "service_parameters": {
     "brightness": "brillo",
     "temperature": "temperatura",
     "position": "posición",
     "hvac_mode": "modo",
-    "preset": "pre-ajuste"
+    "preset_mode": "pre-ajuste"
   },
   "domains": {
     "camera": "cámaras",

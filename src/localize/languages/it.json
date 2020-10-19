@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "accendi",
+    "turn_on_brightness": "accendi {at brightness}",
     "turn_off": "spegni",
     "close_cover": "chiudi",
     "open_cover": "apri",
-    "set_temperature": "imposta temperatura",
-    "set_to": "imposta a",
-    "set_position": "imposta posizione",
-    "set_hvac_mode": "imposta modalità",
-    "set_preset_mode": "imposta programmazione",
-    "set_value": "imposta valore",
-    "select_option": "seleziona opzione",
-    "select_source": "seleziona sorgente",
-    "start": "start"
+    "set_temperature": "imposta temperatura {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "imposta posizione {to position}",
+    "set_hvac_mode": "imposta modalità {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "spegni",
+    "set_preset_mode": "imposta programmazione {to preset_mode}",
+    "set_value": "imposta valore {value}",
+    "select_option": "seleziona opzione {option}",
+    "select_source": "seleziona sorgente {source}",
+    "start": "start",
+    "run_script": "run"
   },
   "service_parameters": {
     "brightness": "luminosità",
     "temperature": "temperatura",
     "position": "posizione",
     "hvac_mode": "modalità",
-    "preset": "programmazione"
+    "preset_mode": "programmazione"
   },
   "domains": {
     "camera": "telecamere",
