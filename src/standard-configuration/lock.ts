@@ -10,3 +10,8 @@ export const lockActions: ActionConfig[] = [
     icon: "lock-outline"
   }
 ]
+
+export const lockStates = [
+  "locked",
+  "unlocked"
+]

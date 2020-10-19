@@ -16,10 +16,10 @@ export function lightActions(entity: HassEntity) {
 
   let actions: ActionConfig[] = [];
 
-  actions.push({ ...TurnOffAction, icon: "lightbulb-off-outline" });
+  actions.push({ ...TurnOffAction, icon: "lightbulb-off" });
 
-  if (supportedFeatures & 1) actions.push({ ...TurnOnAction, icon: "lightbulb-outline", variable: brightnessVariable });
-  else actions.push({ ...TurnOnAction, icon: "lightbulb-outline" });
+  if (supportedFeatures & 1) actions.push({ ...TurnOnAction, icon: "lightbulb", variable: brightnessVariable });
+  else actions.push({ ...TurnOnAction, icon: "lightbulb" });
 
   return actions;
 }

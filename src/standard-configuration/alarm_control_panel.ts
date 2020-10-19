@@ -31,3 +31,10 @@ export const alarmControlPanelActions = (entity: HassEntity) => {
 
   return actions;
 }
+
+export const alarmControlPanelStates = [
+  "disarmed",
+  "armed_away",
+  "armed_home",
+  "armed_night"
+]

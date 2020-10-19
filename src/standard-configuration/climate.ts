@@ -31,7 +31,6 @@ export function climateActions(entity: HassEntity) {
     actions.push({
       service: "set_hvac_mode",
       service_data: { hvac_mode: "off" },
-      name: "turn off",
       icon: "power"
     });
   }
@@ -44,7 +43,6 @@ export function climateActions(entity: HassEntity) {
       service: "set_temperature",
       service_data: { hvac_mode: "heat" },
       variable: tempVariable,
-      name: "heat",
       icon: modeIcons.heat
     });
   }
@@ -54,14 +52,12 @@ export function climateActions(entity: HassEntity) {
       service: "set_temperature",
       service_data: { hvac_mode: "cool" },
       variable: tempVariable,
-      name: "cool",
       icon: modeIcons.cool
     });
   }
 
   if (filteredHvacModes.length) actions.push({
     service: "set_hvac_mode",
-    service_data: { hvac_mode: "cool" },
     variable: listVariable({
       field: "hvac_mode",
       options: filteredHvacModes.map(e => listVariableOption(e, { icons: modeIcons }))

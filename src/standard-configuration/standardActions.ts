@@ -33,10 +33,9 @@ export function standardActions(entity: HassEntity): ActionConfig[] {
     case "humidifer":
       return humidifierActions(entity);
     case "input_boolean":
-    case "switch":
       return [
-        { ...TurnOnAction, icon: "toggle-switch-outline" },
-        { ...TurnOffAction, icon: "toggle-switch-off-outline" }
+        { ...TurnOnAction, icon: "flash" },
+        { ...TurnOffAction, icon: "flash-off" }
       ];
     case "input_number":
       return inputNumberActions(entity);
@@ -52,6 +51,11 @@ export function standardActions(entity: HassEntity): ActionConfig[] {
       return [{ ...TurnOnAction, icon: "play" }];
     case "script":
       return scriptActions(entity);
+    case "switch":
+      return [
+        { ...TurnOnAction, icon: "flash" },
+        { ...TurnOffAction, icon: "flash-off" }
+      ];
     case "vacuum":
       return vacuumActions(entity);
     case "water_heater":

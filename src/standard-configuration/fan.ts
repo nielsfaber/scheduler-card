@@ -26,7 +26,7 @@ export function fanActions(entity: HassEntity) {
       {
         service: "oscillate",
         variable: listVariable({
-          field: "speed",
+          field: "oscillating",
           options: [
             { "value": "True" },
             { "value": "False" }

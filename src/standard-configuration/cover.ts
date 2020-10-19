@@ -70,3 +70,8 @@ export const coverIconOpen = (state: HassEntity): string => {
       return "window-shutter-open";
   }
 }
+
+export const coverStates = [
+  "open",
+  "closed"
+]
