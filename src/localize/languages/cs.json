@@ -1,22 +1,22 @@
 {
   "scheduler": "Plánovač",
   "actions": {
-    "add": "přidat",
+    "add": "přidat plán",
     "cancel": "zrušit",
     "next": "další",
     "save": "uložit",
-    "delete": "vymazat"
+    "delete": "smazat"
   },
   "instructions": {
     "no_group_selected": "Vyberte skupinu",
     "no_entity_selected": "Vyberte entitu",
-    "no_groups_defined": "Nejsou definovány skupiny",
-    "no_entities_for_group": "V této skupině nejsou entity",
-    "no_actions_for_entity": "Pro tuto entitu neexistují akce",
-    "no_entries_defined": "Nejsou položky k zobrazení"
+    "no_groups_defined": "Nejsou definovány žádné skupiny",
+    "no_entities_for_group": "V této skupině nejsou žádné entity",
+    "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
+    "no_entries_defined": "Nejsou žádné položky k zobrazení"
   },
   "fields": {
-    "group": "Skupina",
+    "group": "Skupiny",
     "entity": "Entity",
     "action": "Akce",
     "days": "Dny",
@@ -25,7 +25,7 @@
     "day_type_daily": "denně",
     "day_type_workday": "pracovní dny",
     "day_type_weekend": "víkend",
-    "day_type_custom": "vlastní"
+    "day_type_custom": "možnosti"
   },
   "days_short": {
     "mon": "po",
@@ -59,8 +59,7 @@
     "set_temperature": "nastavená teplota {to temperature}",
     "set_temperature_hvac_mode_heat": "topení {to temperature}",
     "set_temperature_hvac_mode_cool": "chlazení {to temperature}",
-    "set_to": "nastaven na",
-    "set_cover_position": "nastavit polohu {to position}",
+    "set_cover_position": "nastavit pozici {to position}",
     "set_hvac_mode": "nastavit režim {to hvac_mode}",
     "set_hvac_mode_hvac_mode_off": "vypnout",
     "set_preset_mode": "předvolba {to preset_mode}",
@@ -80,14 +79,14 @@
   "domains": {
     "camera": "kamery",
     "climate": "klima",
-    "cover": "kryty",
+    "cover": "kryt",
     "fan": "ventilátory",
     "group": "skupiny",
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
     "light": "světla",
-    "media_player": "přehrávače médií",
+    "media_player": "media přehrávače",
     "scene": "scény",
     "switch": "spínače",
     "vacuum": "vysavače"
@@ -101,8 +100,8 @@
     "interval": "{startDay} do {endDay}"
   },
   "time": {
-    "absolute": "v {time}",
-    "relative": "v {time}",
+    "absolute": "o {time}",
+    "relative": "za {time}",
     "interval": "od {startTime} do {endTime}",
     "seconds": "{seconds} vteřin",
     "hour": "1 hodina",
@@ -112,9 +111,9 @@
     "now": "nyní",
     "midnight": "půlnoc",
     "noon": "poledne",
-    "at_sun_event": "na {sunEvent}",
+    "at_sun_event": "při {sunEvent}",
     "sun_event_sunrise": "svítání",
-    "sun_event_sunset": "západ slunce"
+    "sun_event_sunset": "západu slunce"
   },
   "misc": {
     "one_additional_task": "1 další úkol",
