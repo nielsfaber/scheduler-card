@@ -2,7 +2,6 @@
   "scheduler": "Plánovač",
   "actions": {
     "add": "přidat",
-    "add": "přidat položku",
     "cancel": "zrušit",
     "next": "další",
     "save": "uložit",
@@ -14,13 +13,7 @@
     "no_groups_defined": "Nejsou definovány skupiny",
     "no_entities_for_group": "V této skupině nejsou entity",
     "no_actions_for_entity": "Pro tuto entitu neexistují akce",
-    "no_entries_defined": "Nejsou položky k zobrazení",
-    "no_group_selected": "Nejprve vyberte skupinu",
-    "no_entity_selected": "Nejprve vyberte entitu",
-    "no_groups_defined": "Nejsou definovány žádné skupiny",
-    "no_entities_for_group": "V této skupině nejsou žádné entity",
-    "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
-    "no_entries_defined": "Nejsou žádné položky k zobrazení"
+    "no_entries_defined": "Nejsou položky k zobrazení"
   },
   "fields": {
     "group": "Skupina",
@@ -76,22 +69,6 @@
     "select_source": "vyberte zdroj {source}",
     "start": "start",
     "run_script": "běží"
-    "turn_on_brightness": "zapnout {na brightness}",
-    "turn_off": "vypnout",
-    "close_cover": "zavřít",
-    "open_cover": "otevřít",
-    "set_temperature": "nastavená teplota {na temperature}",
-    "set_temperature_hvac_mode_heat": "heat {to temperature}",
-    "set_temperature_hvac_mode_cool": "cool {to temperature}",
-    "set_cover_position": "nastavit polohu {na position}",
-    "set_hvac_mode": "nastavit režim {na hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "vypnout",
-    "set_preset_mode": "nastavit předvolbu {na preset_mode}",
-    "set_value": "nastavená hodnota {na value}",
-    "select_option": "vyberte možnost {option}",
-    "select_source": "vyberte zdroj {source}",
-    "start": "start",
-    "run_script": "run"
   },
   "service_parameters": {
     "brightness": "jas",
@@ -128,7 +105,6 @@
     "relative": "v {time}",
     "interval": "od {startTime} do {endTime}",
     "seconds": "{seconds} vteřin",
-    "seconds": "{seconds} sekund",
     "hour": "1 hodina",
     "hours": "{hours} hodin",
     "minute": "1 minuta",
