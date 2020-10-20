@@ -5,7 +5,7 @@
     "cancel": "annulla",
     "next": "avanti",
     "save": "salva",
-    "delete": "cancella"
+    "delete": "elimina"
   },
   "instructions": {
     "no_group_selected": "Seleziona prima un gruppo",
@@ -37,13 +37,13 @@
     "sun": "dom"
   },
   "days_long": {
-    "mon": "Lunedì",
-    "tue": "Martedì",
-    "wed": "Mercoledì",
-    "thu": "Giovedì",
-    "fri": "Venerdì",
-    "sat": "Sabato",
-    "sun": "Domenica"
+    "mon": "lunedì",
+    "tue": "martedì",
+    "wed": "mercoledì",
+    "thu": "giovedì",
+    "fri": "venerdì",
+    "sat": "sabato",
+    "sun": "domenica"
   },
   "words": {
     "and": "e",
@@ -89,7 +89,7 @@
     "media_player": "media player",
     "scene": "scene",
     "switch": "interruttori",
-    "vacuum": "aspirapolveri"
+    "vacuum": "aspirapolvere"
   },
   "days": {
     "tomorrow": "domani",
@@ -111,12 +111,12 @@
     "now": "ora",
     "midnight": "mezzanotte",
     "noon": "mezzogiorno",
-    "at_sun_event": "all' {sunEvent}",
-    "sun_event_sunrise": "alba",
+    "at_sun_event": "al {sunEvent}",
+    "sun_event_sunrise": "l' alba",
     "sun_event_sunset": "tramonto"
   },
   "misc": {
-    "one_additional_task": "1 altro task",
+    "one_additional_task": "un altro task",
     "x_additional_tasks": "{count} altri task"
   }
 }
