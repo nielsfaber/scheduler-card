@@ -49,10 +49,14 @@ export class SchedulerEditorCard extends LitElement {
   getActionsForEntity(entityConfig: EntityElement[]) {
     if (!this.selectedEntity) return [];
 
-    let actions = entityConfig
-      .find(e => e.id == this.selectedEntity)!
+    const entity = entityConfig
+      .find(e => e.id == this.selectedEntity)!;
+
+    let actions = entity
       .actions.map(actionConfig)
       .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }));
+
+    if (entity.exclude_actions) actions = actions.filter(e => !entity.exclude_actions?.includes(e.name!.trim().toLowerCase()));
 
     actions.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     return actions;

@@ -211,7 +211,7 @@
               }
             ]
           },
-          "actions_hidden": {
+          "exclude_actions": {
             "type": "array",
             "items": {
               "type": "string"

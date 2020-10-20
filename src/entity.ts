@@ -35,7 +35,7 @@ export function entityConfig(entity: HassEntity | undefined, config: Partial<Car
       .filter(([e]) => matchPattern(e, entity_id))
       .map(([, v]) => v);
     customize.forEach(el => {
-      output = { ...output, ...omit(el, ['actions', 'actions_hidden']) };
+      output = { ...output, ...omit(el, ['actions', 'exclude_actions']) };
       if (el.actions) {
         el.actions.forEach(action => {
           const indexes = findActionIndex(output, action);
@@ -45,12 +45,10 @@ export function entityConfig(entity: HassEntity | undefined, config: Partial<Car
           output = { ...output, actions: actions };
         });
       }
-      if (el.actions_hidden) {
-        let actions = output.actions;
-        el.actions_hidden.forEach(name => {
-          actions = actions.filter(e => actionConfig(e).id !== name);
-        });
-        output = { ...output, actions: actions };
+      if (el.exclude_actions) {
+        let list = el.exclude_actions.map(e => e.replace(/_/g, ' ').trim().toLowerCase());
+        if (output.exclude_actions) list = list.concat(output.exclude_actions).filter((v, k, arr) => arr.indexOf(v) === k);
+        output = { ...output, exclude_actions: list };
       }
     });
   }

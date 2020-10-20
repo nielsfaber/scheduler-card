@@ -52,6 +52,7 @@ export interface EntityElement extends EntityConfig {
   name: string;
   icon?: string;
   actions: ActionConfig[];
+  exclude_actions?: string[];
   states?: StatesConfig;
 }
 
@@ -163,7 +164,7 @@ export interface CardConfig extends LovelaceCardConfig {
   include?: string[];
   exclude?: string[];
   groups?: GroupConfig[];
-  customize?: Dictionary<EntityConfig & { actions_hidden?: string[] }>;
+  customize?: Dictionary<EntityConfig & { exclude_actions?: string[] }>;
 }
 
 /* interface */
