@@ -1,8 +1,8 @@
-import { LevelVariableConfig, ListVariableConfig, EVariableType, ActionConfig } from './types';
+import { ActionConfig } from './types';
 import { EDayType } from './date-time';
 import { localize } from './localize/localize';
 
-export const CARD_VERSION = '1.8.0';
+export const CARD_VERSION = '1.8.1';
 
 export const DefaultTimeStep = 10;
 
