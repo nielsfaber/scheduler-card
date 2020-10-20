@@ -1,7 +1,7 @@
 {
   "scheduler": "Schedulatore",
   "actions": {
-    "add": "aggiungi oggetto",
+    "add": "aggiungi",
     "cancel": "annulla",
     "next": "avanti",
     "save": "salva",
@@ -57,8 +57,8 @@
     "close_cover": "chiudi",
     "open_cover": "apri",
     "set_temperature": "imposta temperatura {to temperature}",
-    "set_temperature_hvac_mode_heat": "heat {to temperature}",
-    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_temperature_hvac_mode_heat": "riscaldamento {to temperature}",
+    "set_temperature_hvac_mode_cool": "raffreddamento {to temperature}",
     "set_cover_position": "imposta posizione {to position}",
     "set_hvac_mode": "imposta modalità {to hvac_mode}",
     "set_hvac_mode_hvac_mode_off": "spegni",
@@ -66,8 +66,8 @@
     "set_value": "imposta valore {value}",
     "select_option": "seleziona opzione {option}",
     "select_source": "seleziona sorgente {source}",
-    "start": "start",
-    "run_script": "run"
+    "start": "inizio",
+    "run_script": "esegui"
   },
   "service_parameters": {
     "brightness": "luminosità",
@@ -103,14 +103,14 @@
     "absolute": "alle {time}",
     "relative": "entro {time}",
     "interval": "dalle {startTime} alle {endTime}",
-    "seconds": "{seconds} second1",
+    "seconds": "{seconds} secondi",
     "hour": "1 ora",
     "hours": "{hours} ore",
     "minute": "1 minuto",
     "minutes": "{minutes} minuti",
     "now": "ora",
     "midnight": "mezzanotte",
-    "noon": "noon",
+    "noon": "mezzogiorno",
     "at_sun_event": "all' {sunEvent}",
     "sun_event_sunrise": "alba",
     "sun_event_sunset": "tramonto"
