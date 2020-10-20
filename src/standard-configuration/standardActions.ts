@@ -15,6 +15,7 @@ import { scriptActions } from "./script";
 import { vacuumActions } from "./vacuum";
 import { waterHeaterActions } from "./water_heater";
 import { TurnOnAction, TurnOffAction } from "../const";
+import { groupActions } from "./group";
 
 
 export function standardActions(entity: HassEntity): ActionConfig[] {
@@ -30,6 +31,8 @@ export function standardActions(entity: HassEntity): ActionConfig[] {
       return coverActions(entity);
     case "fan":
       return fanActions(entity);
+    case "group":
+      return groupActions(entity);
     case "humidifer":
       return humidifierActions(entity);
     case "input_boolean":
