@@ -24,11 +24,8 @@
     "options": "Опции",
     "day_type_daily": "ежедневно",
     "day_type_weekdays": "по будням",
-    "day_type_custom": "выбрать дни",
-    "shift_with_sun": "автоматически настраивать время на восход / закат",
-    "brightness": "Яркость",
-    "temperature": "Температура",
-    "position": "Позицию"
+    "day_type_weekend": "weekend",
+    "day_type_custom": "выбрать дни"
   },
   "days_short": {
     "mon": "пн",
@@ -49,29 +46,35 @@
     "sun": "воскресенье"
   },
   "words": {
-    "on": "по",
-    "every": "каждый",
     "and": "и",
-    "at": "в",
     "before": "до",
-    "after": "после",
-    "sunrise": "восхода",
-    "sunset": "заката"
+    "after": "после"
   },
   "services": {
     "turn_on": "включить",
+    "turn_on_brightness": "включить {brightness}",
     "turn_off": "выключить",
     "close_cover": "закрыть",
     "open_cover": "открыть",
-    "set_temperature": "задать температуру",
-    "set_to": "установить",
-    "set_position": "установить позицию",
-    "set_hvac_mode": "установить режим",
-    "set_preset_mode": "выбрать набор настроек",
-    "set_value": "установить значение",
-    "select_option": "выбрать вариант",
-    "select_source": "выбрать источник",
-    "start": "запуск"
+    "set_temperature": "задать температуру {temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "установить позицию {position}",
+    "set_hvac_mode": "установить режим {hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "выключить",
+    "set_preset_mode": "выбрать набор настроек {preset_mode}",
+    "set_value": "установить значение {value}",
+    "select_option": "выбрать вариант {option}",
+    "select_source": "выбрать источник {source}",
+    "start": "запуск",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "Яркость",
+    "temperature": "Температура",
+    "position": "Позицию",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "Камеры",
@@ -87,5 +90,33 @@
     "light": "Освещение",
     "switch": "Выключатели",
     "vacuum": "Пылесосы"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }

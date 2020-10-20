@@ -13,8 +13,7 @@
     "no_groups_defined": "Nu există grupuri definite",
     "no_entities_for_group": "Nu există entități definite în acest grup",
     "no_actions_for_entity": "Nu există acțiuni pentru această entitate",
-    "no_entries_defined": "Nu există elemente de afișat",
-    "no_timeslot_selected": "Prima dată selectați un interval orar"
+    "no_entries_defined": "Nu există elemente de afișat"
   },
   "fields": {
     "group": "Grup",
@@ -48,31 +47,34 @@
   },
   "words": {
     "and": "și",
-    "or": "sau",
     "before": "înainte",
     "after": "după"
   },
   "services": {
     "turn_on": "pornire",
+    "turn_on_brightness": "pornire {la brightness}",
     "turn_off": "oprire",
     "close_cover": "închidere",
     "open_cover": "deschidere",
-    "set_temperature": "setare temperatură",
-    "set_to": "setare la",
-    "set_position": "setare poziție",
-    "set_hvac_mode": "setare mod",
-    "set_preset_mode": "setare preset",
-    "set_value": "setare valoare",
-    "select_option": "selectare opțiune",
-    "select_source": "selectare sursă",
-    "start": "start"
+    "set_temperature": "setare temperatură {la temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "setare poziție",
+    "set_hvac_mode": "setare mod {hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "oprire",
+    "set_preset_mode": "setare preset {preset_mode}",
+    "set_value": "setare valoare {value}",
+    "select_option": "selectare opțiune {option}",
+    "select_source": "selectare sursă {source}",
+    "start": "start",
+    "run_script": "run"
   },
   "service_parameters": {
     "brightness": "intensitate luminoasă",
     "temperature": "temperatură",
     "position": "poziție",
     "hvac_mode": "mod",
-    "preset": "preset"
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "camere",

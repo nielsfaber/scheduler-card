@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "włącz",
+    "turn_on_brightness": "włącz {at brightness}",
     "turn_off": "wyłącz",
     "close_cover": "zamknij",
     "open_cover": "otwórz",
-    "set_temperature": "ustaw temperaturę",
-    "set_to": "ustaw na",
-    "set_position": "ustaw pozycję",
-    "set_hvac_mode": "ustaw tryb",
-    "set_preset_mode": "ustaw preset",
-    "set_value": "ustaw wartość",
-    "select_option": "wybierz opcję",
-    "select_source": "wybierz źródło",
-    "start": "start"
+    "set_temperature": "ustaw temperaturę {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "ustaw pozycję {to position}",
+    "set_hvac_mode": "ustaw tryb {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "wyłącz",
+    "set_preset_mode": "ustaw preset {preset_mode}",
+    "set_value": "ustaw wartość {value}",
+    "select_option": "wybierz opcję {option}",
+    "select_source": "wybierz źródło {source}",
+    "start": "start",
+    "run_script": "start"
   },
   "service_parameters": {
     "brightness": "jasność",
     "temperature": "temperatura",
     "position": "pozycja",
     "hvac_mode": "tryb",
-    "preset": "preset"
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "kamera",

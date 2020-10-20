@@ -12,46 +12,6 @@ import { localize } from './localize/localize';
 import { formatTime, Time, ETimeEvent, MinutesPerDay } from './date-time';
 import { UnitPercent, FieldTemperature } from './const';
 
-export function extend(
-  oldObj: Dictionary<any> | any[],
-  newObj: Dictionary<any> | any[],
-  options: Partial<{ compact: boolean; overwrite: boolean }> = {}
-) {
-  let mergedObj = Array.isArray(oldObj) ? [...oldObj] : { ...oldObj };
-  if (oldObj === null) mergedObj = Array.isArray(newObj) ? [] : {};
-  if (newObj === null || newObj === undefined) return oldObj;
-  const keys = Object.keys(newObj);
-  keys.forEach(key => {
-    let val = newObj[key];
-    if (val === undefined) return;
-    if (val === null && options.compact) {
-      if (mergedObj[key] !== undefined) delete mergedObj[key];
-      return;
-    }
-    if (Array.isArray(val) && Array.isArray(mergedObj[key]) && !options.overwrite)
-      val = extend(mergedObj[key], val, options);
-    else if (typeof val == 'object' && val !== null && typeof mergedObj[key] == 'object' && !options.overwrite)
-      val = extend(mergedObj[key], val, options);
-    if (Array.isArray(newObj)) {
-      if (val !== null) {
-        if (options.overwrite) mergedObj = val;
-        else mergedObj.push(val);
-      }
-    } else {
-      if (
-        (Array.isArray(val) || typeof val == 'object') &&
-        val !== null &&
-        !Object.keys(val).length &&
-        options.compact
-      ) {
-        delete mergedObj[key];
-        return;
-      }
-      Object.assign(mergedObj, { [key]: val });
-    }
-  });
-  return mergedObj;
-}
 
 export function pick(obj: Dictionary<any> | null | undefined, keys: string[]): Dictionary<any> {
   if (!obj) return {};
@@ -65,35 +25,6 @@ export function omit(obj: Dictionary<any> | null | undefined, keys: string[]): D
   return Object.entries(obj)
     .filter(([key]) => !keys.includes(key))
     .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function mapObject(obj: Record<string, any>, func: Function) {
-  return Object.entries(obj)
-    .map(([key, val]) => [key, func(val, key)])
-    .filter(([, v]) => v !== null && v !== undefined)
-    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function filterObject(obj: Record<string, any>, func: Function) {
-  return Object.entries(obj)
-    .filter(([key, val]) => func(val, key))
-    .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function keyMap(arr: any[], func: Function) {
-  return arr.reduce((obj, val) => Object.assign(obj, { [func(val)]: val }), {});
-}
-
-export function getDomainFromEntityId(entity_id: string): string {
-  if (entity_id.indexOf('.') === -1) return '';
-  const res = String(entity_id.split('.').shift());
-  return res;
-}
-
-export function removeDomainFromEntityId(entity_id: string): string {
-  if (entity_id.indexOf('.') === -1) return entity_id;
-  const res = String(entity_id.split('.').pop());
-  return res;
 }
 
 export function PrettyPrintTime(
@@ -128,7 +59,7 @@ export function PrettyPrintTime(
   if (Math.abs(time.value) == 0) return localize('time.at_sun_event', '{sunEvent}', event_string);
   return `${time_string} ${
     formatTime(time.value).signed ? localize('words.before') : localize('words.after')
-  } ${event_string}`;
+    } ${event_string}`;
 }
 
 export function capitalize(input: string) {
@@ -140,96 +71,45 @@ export function PrettyPrintName(input: string): string {
   return capitalize(input.replace(/_/g, ' '));
 }
 
-export function PrettyPrintIcon(input: string): string {
+export function PrettyPrintIcon(input?: string) {
+  if (!input) return;
   if (typeof input != typeof 'x') input = String(input);
   if (input.match(/^[a-z]+:[a-z0-9-]+$/i)) return input;
   return `hass:${input}`;
 }
 
-export function PrettyPrintActionVariable(
-  input: LevelVariable | ListVariable,
-  cfg: LevelVariableConfig | ListVariableConfig,
-  options: { temperature_unit: string }
-): string {
-  if (input.type == EVariableType.Level) {
-    cfg = cfg as LevelVariableConfig;
-    let unit = 'unit' in cfg ? cfg.unit : '';
-    if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
-    let value = Number(input.value);
-    if (cfg.unit == UnitPercent) {
-      value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
-      if (value < cfg.min) value = cfg.min;
-      else if (value > cfg.max) value = cfg.max;
-    }
-    return `${value}${unit}`;
-  } else {
-    return PrettyPrintName(String(input.value));
-  }
-}
+// export function PrettyPrintActionVariable(
+//   input: LevelVariable | ListVariable,
+//   cfg: LevelVariableConfig | ListVariableConfig,
+//   options: { temperature_unit: string }
+// ): string {
+//   if (input.type == EVariableType.Level) {
+//     cfg = cfg as LevelVariableConfig;
+//     let unit = 'unit' in cfg ? cfg.unit : '';
+//     if (!unit.length && cfg.field == FieldTemperature) unit = options.temperature_unit;
+//     let value = Number(input.value);
+//     if (cfg.unit == UnitPercent) {
+//       value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
+//       if (value < cfg.min) value = cfg.min;
+//       else if (value > cfg.max) value = cfg.max;
+//     }
+//     return `${value}${unit}`;
+//   } else {
+//     return PrettyPrintName(String(input.value));
+//   }
+// }
 
-export function PrettyPrintAction(entry: Entry, actionCfg: ActionElement, options: { temperature_unit: string }) {
-  let action_string = PrettyPrintName(actionCfg.name);
+// export function PrettyPrintAction(entry: Entry, actionCfg: ActionElement, options: { temperature_unit: string }) {
+//   let action_string = PrettyPrintName(actionCfg.name);
 
-  if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
-    if (entry.variable.type == EVariableType.Level && !(entry.variable as LevelVariable).enabled)
-      return capitalize(action_string);
-    const value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
-    action_string = `${localize('services.set_to')} ${value}`;
-  }
-  return action_string;
-}
-
-export function IsEqual(inA: any[] | Dictionary<any>, inB: any[] | Dictionary<any>) {
-  if (Array.isArray(inA) && Array.isArray(inB)) {
-    const objA = [...inA].sort();
-    const objB = [...inB].sort();
-    if (objA.length !== objA.length) return false;
-
-    for (let i = 0; i < objA.length; i++) {
-      if (objA[i] !== objB[i]) return false;
-    }
-
-    return true;
-  } else if (typeof inA == 'object' && typeof inB == 'object') {
-    const objA = { ...inA };
-    const objB = { ...inB };
-    const keysA = Object.keys(objA);
-    const keysB = Object.keys(objB);
-
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-
-    for (const key of keysA) {
-      const valA = objA[key];
-      const valB = objB[key];
-      const areObjects = typeof valA == 'object' && typeof valB == 'object' && valA !== null && valB !== null;
-      if ((areObjects && !IsEqual(valA, valB)) || (!areObjects && valA !== valB)) return false;
-    }
-
-    return true;
-  } else return false;
-}
-
-export function MatchPattern(pattern: string, entity_id: string) {
-  let res = false;
-  if (pattern.match(/^[a-z0-9_\.]+$/)) {
-    if (pattern.includes('.')) res = pattern == entity_id;
-    else res = pattern == getDomainFromEntityId(entity_id);
-  } else {
-    try {
-      if ((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {
-        if (!pattern.startsWith('/')) {
-          pattern = pattern.replace(/\./g, '.').replace(/\*/g, '.*');
-          pattern = `/^${pattern}$/`;
-        }
-        const regex = new RegExp(pattern.slice(1, -1));
-        res = regex.test(entity_id);
-      }
-    } catch (e) {}
-  }
-  return res;
-}
+//   if (entry.hasOwnProperty('variable') && entry.variable && actionCfg.variable) {
+//     if (entry.variable.type == EVariableType.Level && !(entry.variable as LevelVariable).enabled)
+//       return capitalize(action_string);
+//     const value = PrettyPrintActionVariable(entry.variable, actionCfg.variable, options);
+//     action_string = `${localize('services.set_to')} ${value}`;
+//   }
+//   return action_string;
+// }
 
 export function calculateTimeline(entries: Entry[]): Entry[] {
   //TBD implementation for sun
@@ -250,7 +130,7 @@ export function calculateTimeline(entries: Entry[]): Entry[] {
             time: { value: startTime },
             endTime: { value: entry.time!.value },
           } as Entry,
-          pick(entry, ['entity', 'days'])
+          pick(entry, ['entity', 'days', 'conditions', 'options'])
         )
       );
     }
@@ -263,14 +143,13 @@ export function calculateTimeline(entries: Entry[]): Entry[] {
           time: { value: startTime },
           endTime: { value: MinutesPerDay },
         } as Entry,
-        pick(entries[0], ['entity', 'days'])
+        pick(entries[0], ['entity', 'days', 'conditions', 'options'])
       )
     );
   }
 
   return entries;
 }
-
 // export function PrettyPrintDays(days: Days): string {
 //   if (days.type == EDayType.Daily) return localize('fields.day_type_daily');
 //   else if (days.type == EDayType.Workday) return `${localize('words.on')} ${localize('fields.day_type_workday')}`;

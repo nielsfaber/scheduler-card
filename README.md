@@ -145,11 +145,11 @@ __Workdays__
 perform action only on Monday thru Friday. 
 If you have the [workday integration](https://www.home-assistant.io/integrations/workday/) installed, you can use it to define your own set of workdays.
 The workday integration and its settings will be automatically detected if it is installed.
-Note that if you define holidays, they will be excluded from workdays.
+Note that if you define holDays, they will be excluded from workdays.
 
 __Weekend__
 perform action only on Saturday and Sunday. 
-If you have the workday integration installed, the weekend will be considered as the inverse as workdays. This means that holidays and your 'fixed day off' are included in the weekend setting.
+If you have the workday integration installed, the weekend will be considered as the inverse as workdays. This means that holDays and your 'fixed day off' are included in the weekend setting.
 
 
 __Custom__
@@ -520,21 +520,22 @@ The card is available in multiple languages. The card will automatically detect 
 
 Currently the following languages are supported:
 
-| Language    | Code(s)    | Available from | Status / Remarks                                                                       |
-| ----------- | ---------- | -------------- | -------------------------------------------------------------------------------------- |
-| Deutsch     | de         | v1.2.3         |                                                                                        |
-| **English** | en         | v1.0.0         | Default language.                                                                      |
-| Eesti       | et         | v1.4.0         |                                                                                        |
-| Español     | es, es_419 | v1.2.8         |                                                                                        |
-| Français    | fr         | v1.2.3         |                                                                                        |
-| Italiano    | it         | v1.7.5         |                                                                                        |
-| Magyar      | hu         | v1.3.0         |                                                                                        |
-| Polski      | pl         | v1.2.6         |                                                                                        |
-| Português   | pt, pt-br  | v1.3.0         | Translation is brazilian Portuguese, improvements may be needed for native Portuguese. |
-| Русский     | ru         | v1.2.8         |                                                                                        |
-| Română      | ro         | v1.7.3         |                                                                                        |
-| Nederlands  | nl         | v1.2.2         |                                                                                        |
-| Norsk       | no, nb, nn | v1.2.8         |                                                                                        |
+| Language    | Code(s)    | Available from | Status / Remarks  |
+| ----------- | ---------- | -------------- | ----------------- |
+| Čeština     | cs         | v1.8.0         |                   |
+| Deutsch     | de         | v1.2.3         |                   |
+| **English** | en         | v1.0.0         | Default language. |
+| Eesti       | et         | v1.4.0         |                   |
+| Español     | es, es_419 | v1.2.8         |                   |
+| Français    | fr         | v1.2.3         | Needs updating.   |
+| Italiano    | it         | v1.7.5         |                   |
+| Magyar      | hu         | v1.3.0         |                   |
+| Polski      | pl         | v1.2.6         |                   |
+| Português   | pt, pt-br  | v1.3.0         | Needs updating.   |
+| Русский     | ru         | v1.2.8         | Needs updating.   |
+| Română      | ro         | v1.7.3         |                   |
+| Nederlands  | nl         | v1.2.2         |                   |
+| Norsk       | no, nb, nn | v1.2.8         | Needs updating.   |
 
 
 

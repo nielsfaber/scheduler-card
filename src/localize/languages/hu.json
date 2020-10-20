@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "bekapcsolás",
+    "turn_on_brightness": "bekapcsolás {at brightness}",
     "turn_off": "kikapcsolás",
     "close_cover": "zárás",
     "open_cover": "nyitás",
-    "set_temperature": "hőmérséklet",
-    "set_to": "beállítva",
-    "set_position": "változtass pozíciót",
-    "set_hvac_mode": "mód beállítása",
-    "set_preset_mode": "preset beállítása",
-    "set_value": "érték beállítása",
-    "select_option": "opció kiválasztása",
-    "select_source": "forrás kiválasztása",
-    "start": "kezdés"
+    "set_temperature": "hőmérséklet {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "változtass pozíciót {to position}",
+    "set_hvac_mode": "mód beállítása {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "kikapcsolás",
+    "set_preset_mode": "preset beállítása {to preset_mode}",
+    "set_value": "érték beállítása {value}",
+    "select_option": "opció kiválasztása {option}",
+    "select_source": "forrás kiválasztása {source}",
+    "start": "kezdés",
+    "run_script": "kezdés"
   },
   "service_parameters": {
     "brightness": "világosság",
     "temperature": "hőmérséklet",
     "position": "pozíció",
     "hvac_mode": "mód",
-    "preset": "preset"
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "kamera",

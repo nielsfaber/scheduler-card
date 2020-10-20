@@ -1,5 +1,5 @@
 
-
+import * as cs from './languages/cs.json';
 import * as de from './languages/de.json';
 import * as en from './languages/en.json';
 import * as es from './languages/es.json';
@@ -19,6 +19,7 @@ type HassElement = {
 }
 
 var languages: any = {
+  cs: cs,
   de: de,
   en: en,
   es: es,

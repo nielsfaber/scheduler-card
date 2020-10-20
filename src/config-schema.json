@@ -20,6 +20,9 @@
     "am_pm": {
       "type": "boolean"
     },
+    "show_header_toggle": {
+      "type": "boolean"
+    },
     "time_step": {
       "type": "integer",
       "minimum": 1,
@@ -207,6 +210,12 @@
                 "additionalProperties": false
               }
             ]
+          },
+          "actions_hidden": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "additionalProperties": false

@@ -1,122 +1,77 @@
-import { Dictionary, EntityElement, EntityConfig, HassEntity, ActionElement, ActionConfig } from './types';
-import { getDomainFromEntityId, extend, omit, keyMap, removeDomainFromEntityId, MatchPattern } from './helpers';
+import { computeEntity } from 'custom-card-helpers';
+import { Dictionary, EntityConfig, EntityElement, GroupConfig, CardConfig } from './types';
 import { DefaultEntityIcon } from './const';
+import { standardActions } from './standard-configuration/standardActions';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { matchPattern, applyFilters } from './filter';
+import { standardIcon } from './standard-configuration/standardIcon';
+import { standardStates } from './standard-configuration/standardStates';
+import { omit, PrettyPrintName } from './helpers';
+import { findActionIndex, actionConfig } from './action';
 
-import { default as standardConfig } from './standard-configuration.json';
-import { getActionId } from './action';
 
 export function IsSchedulerEntity(entity_id: string) {
   return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
 }
 
-export class EntityList {
-  entities: EntityElement[] = [];
-  include: string[] = [];
-  exclude: string[] = [];
-  customize: Dictionary<EntityConfig> = {};
-  standard_configuration = true;
+export function entityConfig(entity: HassEntity | undefined, config: Partial<CardConfig>) {
+  if (!entity) return;
+  const entity_id = typeof entity == "string" ? entity : entity.entity_id;
 
-  SetConfig(cfg: {
-    include?: string[];
-    exclude?: string[];
-    customize?: Dictionary<EntityConfig>;
-    standard_configuration: boolean;
-  }) {
-    this.standard_configuration = cfg.standard_configuration;
-    this.include = cfg.include || [];
-    this.exclude = cfg.exclude || [];
-    this.customize = cfg.customize || {};
+  let output: EntityElement = {
+    id: entity_id,
+    name: entity.attributes.friendly_name || computeEntity(entity_id),
+    icon: DefaultEntityIcon,
+    actions: [],
+  };
+
+  if (config.standard_configuration === undefined || config.standard_configuration) {
+    output = { ...output, actions: [...standardActions(entity)], icon: standardIcon(entity), states: standardStates(entity) }
   }
+  output = { ...output, icon: entity.attributes.icon || output.icon };
 
-  InConfig(entity_id: string) {
-    if (IsSchedulerEntity(entity_id)) return false;
-    if (!this.include.find(e => MatchPattern(e, entity_id))) return false;
-    if (this.exclude.find(e => MatchPattern(e, entity_id))) return false;
-    return true;
-  }
-
-  Find(entity_id: string) {
-    return this.entities.find(el => el.id == entity_id);
-  }
-
-  Get(entities: string[] | string = []): EntityElement[] {
-    let output: EntityElement[] = [];
-    if (!entities || !entities.length) output = [...this.entities];
-    else {
-      const list = Array.isArray(entities) ? entities : [entities];
-      list.filter(e => this.Find(e) !== undefined).forEach(e => output.push({ ...this.entities[e] }));
-    }
-    output.sort((a, b) => (a.name > b.name ? 1 : -1));
-    return output;
-  }
-
-  Add(entity_id: string, cfg: EntityConfig) {
-    if (this.Find(entity_id)) return;
-    let data: EntityElement = {
-      id: entity_id,
-      name: removeDomainFromEntityId(entity_id),
-      icon: DefaultEntityIcon,
-      actions: [],
-    };
-    data = extend(data, omit(cfg, ['actions'])) as EntityElement;
-    this.entities.push(data);
-  }
-
-  Set(entity_id: string, cfg: Partial<EntityElement>) {
-    if (!this.Find(entity_id)) throw `Entity '${entity_id}' does not exist`;
-    for (let i = 0; i < this.entities.length; i++) {
-      if (this.entities[i].id == entity_id) {
-        const entity = this.entities[i];
-        Object.assign(entity, cfg);
-        this.entities[i] = entity;
-        return;
+  if (config.customize) {
+    const customize = Object.entries(config.customize)
+      .filter(([e]) => matchPattern(e, entity_id))
+      .map(([, v]) => v);
+    customize.forEach(el => {
+      output = { ...output, ...omit(el, ['actions', 'actions_hidden']) };
+      if (el.actions) {
+        el.actions.forEach(action => {
+          const indexes = findActionIndex(output, action);
+          let actions = output.actions;
+          if (indexes.length) actions = output.actions.map((e, i) => indexes.includes(i) ? Object.assign(e, action) : e);
+          else output.actions.push(action);
+          output = { ...output, actions: actions };
+        });
       }
-    }
-  }
-
-  GetConfig(entity: HassEntity) {
-    const entity_id = entity.entity_id;
-    const domain = getDomainFromEntityId(entity_id);
-
-    let cfg: EntityConfig = {
-      actions: [],
-    };
-    let actionCfg: Dictionary<ActionConfig> = {};
-    let customActionCfg: Dictionary<ActionConfig> = {};
-
-    if (standardConfig[domain] && this.standard_configuration) {
-      cfg = extend(cfg, omit(standardConfig[domain], ['actions']));
-      if (standardConfig[domain]?.actions)
-        actionCfg = extend(actionCfg, keyMap(standardConfig[domain].actions!, getActionId));
-    }
-
-    cfg = extend(cfg, {
-      name: entity.attributes.friendly_name,
-      icon: entity.attributes.icon,
+      if (el.actions_hidden) {
+        let actions = output.actions;
+        el.actions_hidden.forEach(name => {
+          actions = actions.filter(e => actionConfig(e).id !== name);
+        });
+        output = { ...output, actions: actions };
+      }
     });
-
-    Object.entries(this.customize).forEach(([pattern, customCfg]) => {
-      if (!MatchPattern(pattern, entity_id)) return;
-      cfg = extend(cfg, omit(customCfg, ['actions']));
-      if (customCfg.actions) customActionCfg = extend(customActionCfg, keyMap(customCfg.actions!, getActionId));
-    });
-    if (Object.keys(customActionCfg).length) {
-      //actionCfg = pick(actionCfg, Object.keys(customActionCfg));
-      actionCfg = extend(actionCfg, customActionCfg);
-    }
-
-    cfg = extend(cfg, { actions: Object.values(actionCfg) });
-    return cfg;
   }
 
-  AddAction(entity_id: string, action: ActionElement) {
-    const entity = this.Find(entity_id);
-    if (!entity) throw Error(`Entity '${entity_id}' must be created before actions can be assigned`);
+  return output;
+}
 
-    if (entity.actions.find(el => el.id == action.id)) return;
+export function entityFilter(
+  entity: HassEntity,
+  config: { include?: string[]; exclude?: string[]; customize?: Dictionary<EntityConfig>; groups?: GroupConfig[] },
+  options?: { states?: boolean; actions?: boolean }
+) {
+  const entity_id = entity.entity_id;
 
-    const actions = [...entity.actions];
-    actions.push(action);
-    this.Set(entity_id, { actions: actions });
+  if (IsSchedulerEntity(entity_id)) return false;
+  else if (!applyFilters(entity_id, config) && (!config.groups || !config.groups.some(e => applyFilters(entity_id, e)))) return false;
+  if (options) {
+    const entityCfg = entityConfig(entity, config);
+    if (!entityCfg) return false;
+    if (options.states && !entityCfg.states) return false;
+    if (options.actions && !entityCfg.actions.length) return false;
   }
+  return true;
 }

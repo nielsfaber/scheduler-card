@@ -24,11 +24,8 @@
     "options": "Valg",
     "day_type_daily": "hver dag",
     "day_type_weekdays": "ukedager",
-    "day_type_custom": "egendefinert",
-    "shift_with_sun": "automatisk juster tid for soloppgang/solnedgang",
-    "brightness": "Lysstyrke",
-    "temperature": "Temperatur",
-    "position": "Posisjon"
+    "day_type_weekend": "weekend",
+    "day_type_custom": "egendefinert"
   },
   "days_short": {
     "mon": "man",
@@ -49,29 +46,35 @@
     "sun": "søndag"
   },
   "words": {
-    "on": "den",
-    "every": "hver",
     "and": "og",
-    "at": "på",
     "before": "før",
-    "after": "etter",
-    "sunrise": "soloppgang",
-    "sunset": "solnedgang"
+    "after": "etter"
   },
   "services": {
     "turn_on": "slå på",
+    "turn_on_brightness": "slå på {at brightness}",
     "turn_off": "slå av",
     "close_cover": "lukk",
     "open_cover": "åpne",
-    "set_temperature": "sett temperatur",
-    "set_to": "sett til",
-    "set_position": "sett posisjon",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
-    "start": "start"
+    "set_temperature": "sett temperatur {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "sett posisjon {to position}",
+    "set_hvac_mode": "set mode {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "slå av",
+    "set_preset_mode": "set preset {to preset_mode}",
+    "set_value": "set value {to value}",
+    "select_option": "select option {option}",
+    "select_source": "select source {source}",
+    "start": "start",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "brightness",
+    "temperature": "temperature",
+    "position": "position",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "cameras",
@@ -87,5 +90,33 @@
     "light": "lys",
     "switch": "brytere",
     "vacuum": "støvsugere"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }

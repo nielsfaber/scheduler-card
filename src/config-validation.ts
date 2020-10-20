@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 import { default as ConfigSchema } from './config-schema.json';
-import { IsReservedGroupName } from './group';
+//import { IsReservedGroupName } from './group';
 
 export function ValidateConfig(config: any) {
   const result = ajv.validate(ConfigSchema, config);
@@ -24,13 +24,13 @@ export function ValidateConfig(config: any) {
     });
   }
 
-  if (config.groups && Array.isArray(config.groups)) {
-    config.groups.forEach(group => {
-      if (group.name && typeof group.name == 'string') {
-        if (IsReservedGroupName(group.name)) errors.push(`Group '${group.name}' is a reserved group.`);
-      }
-    });
-  }
+  // if (config.groups && Array.isArray(config.groups)) {
+  //   config.groups.forEach(group => {
+  //     if (group.name && typeof group.name == 'string') {
+  //       if (IsReservedGroupName(group.name)) errors.push(`Group '${group.name}' is a reserved group.`);
+  //     }
+  //   });
+  // }
 
   if (errors.length) {
     throw new Error(`Invalid configuration provided (${errors.length} error(s)). ${errors.join(` `)}`);

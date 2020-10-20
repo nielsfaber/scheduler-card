@@ -2,43 +2,21 @@ import { LitElement, html, customElement, css, property } from 'lit-element';
 
 import { loadHaForm } from '../load-ha-form';
 import { UnitPercent } from '../const';
-
-function Bool(val: string) {
-  if (val == "true") return true;
-  else if (val == "false") return false;
-  else if (val.length) return true;
-  else return false;
-}
+import { commonStyle } from '../styles';
 
 @customElement('variable-slider')
 export class VariableSlider extends LitElement {
 
-  @property({ type: Number })
-  min = 0;
-
-  @property({ type: Number })
-  max = 100;
-
-  @property({ type: Number })
-  step = 1;
-
-  @property({ type: Number })
-  value = 0;
-
-  @property({ type: String })
-  unit = '';
-
-  @property({ type: String })
-  optional = "false";
-
-  @property({ type: String })
-  disabled = "false";
+  @property({ type: Number }) min = 0;
+  @property({ type: Number }) max = 100;
+  @property({ type: Number }) step = 1;
+  @property({ type: Number }) value = 0;
+  @property({ type: String }) unit = '';
+  @property({ type: Boolean }) optional = false;
+  @property({ type: Boolean }) disabled = false;
 
   scaleGain = 1;
   scaleOffset = 0;
-
-  updated() {
-  }
 
   firstUpdated() {
     (async () => await loadHaForm())();
@@ -49,7 +27,7 @@ export class VariableSlider extends LitElement {
       this.min = 0;
       this.max = 100;
     }
-    if (Bool(this.disabled) && !Bool(this.optional)) this.disabled = "false";
+    if (this.disabled && !this.optional) this.disabled = false;
     if (isNaN(this.value)) this.value = this.min;
 
     this.requestUpdate();
@@ -58,16 +36,17 @@ export class VariableSlider extends LitElement {
 
   render() {
     return html`
-      <div class="container">
+      <div class="checkbox-container">
         <div class="checkbox">
         ${this.getCheckbox()}
         </div>
         <div class="slider">
         ${this.getSlider()}
         </div>
-        <div class="value${Bool(this.disabled) ? ' disabled' : ''}">
+        <div class="value${this.disabled ? ' disabled' : ''}">
         ${this.getScaledValue()}${this.unit}
         </div>
+      </div>
     `;
   }
 
@@ -81,7 +60,7 @@ export class VariableSlider extends LitElement {
   }
 
   getSlider() {
-    if (!Bool(this.disabled)) {
+    if (!this.disabled) {
       return html`
         <ha-slider
         pin
@@ -105,14 +84,18 @@ export class VariableSlider extends LitElement {
   }
 
   getCheckbox() {
-    if (!Bool(this.optional)) return html``;
-    if (Bool(this.disabled)) return html`<ha-checkbox @change="${this.toggleChecked}"></ha-checkbox>`;
-    else return html`<ha-checkbox @change="${this.toggleChecked}" checked></ha-checkbox>`;
+    if (!this.optional) return html``;
+    return html`
+      <ha-checkbox
+        @change="${this.toggleChecked}"
+        ?checked=${!this.disabled}
+      >
+      </ha-checkbox>`;
   }
 
   toggleChecked(e: Event) {
     let checked = (e.target as HTMLInputElement).checked;
-    this.disabled = checked ? "false" : "true";
+    this.disabled = !checked;
     let myEvent = new CustomEvent("change");
     this.dispatchEvent(myEvent);
   }
@@ -125,44 +108,13 @@ export class VariableSlider extends LitElement {
   }
 
   static styles = css`
-
+      ${commonStyle}
       :host {
         width: 100%;
       }
-
-      div.container {
-        display: grid;
-        grid-template-columns: min-content 1fr max-content;
-        grid-template-rows: min-content;
-        grid-template-areas: "checkbox slider value";
-      }
-
-      div.checkbox {
-        grid-area: checkbox;
-        display: flex;
-        align-items: center;
-      }
-
-      div.slider {
-        grid-area: slider;
-        display: flex;
-        align-items: center;
-      }
-
-      div.value {
-        grid-area: value;
-        min-width: 40px;
-        display: flex;
-        align-items: center;
-      }
-
       ha-slider {
         width: 100%;
         --paper-slider-pin-start-color: var(--primary-color);
-      }
-      
-       .disabled {
-        color: var(--disabled-text-color);
       }
   `;
 }

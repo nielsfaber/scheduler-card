@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "aanzetten",
+    "turn_on_brightness": "aanzetten {op brightness}",
     "turn_off": "uitzetten",
     "close_cover": "sluiten",
     "open_cover": "openen",
-    "set_temperature": "temperatuur instellen",
-    "set_to": "Zet op",
-    "set_position": "positie instellen",
-    "set_hvac_mode": "stand aanpassen",
-    "set_preset_mode": "voorinstelling kiezen",
-    "set_value": "waarde instellen",
-    "select_option": "optie selecteren",
-    "select_source": "ingang selecteren",
-    "start": "starten"
+    "set_temperature": "temperatuur instellen {naar temperature}",
+    "set_temperature_hvac_mode_heat": "verwarmen {naar temperature}",
+    "set_temperature_hvac_mode_cool": "koelen {naar temperature}",
+    "set_cover_position": "positie instellen {naar position}",
+    "set_hvac_mode": "stand aanpassen {naar hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "uitzetten",
+    "set_preset_mode": "kies voorinstelling {preset_mode}",
+    "set_value": "waarde {value} instellen",
+    "select_option": "optie {option} selecteren",
+    "select_source": "ingang {source} selecteren",
+    "start": "starten",
+    "run_script": "uitvoeren"
   },
   "service_parameters": {
     "brightness": "helderheid",
     "temperature": "temperatuur",
     "position": "positie",
     "hvac_mode": "stand",
-    "preset": "voorinstelling"
+    "preset_mode": "voorinstelling"
   },
   "domains": {
     "camera": "cameras",

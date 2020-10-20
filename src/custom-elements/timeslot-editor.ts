@@ -1,9 +1,10 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
-import { localize, ServiceNameTranslations } from '../localize/localize';
-
-import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariable, ListVariableConfig } from '../types'
+import { localize } from '../localize/localize';
+import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariable, ListVariableConfig, HassAction } from '../types'
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
-import { PrettyPrintActionVariable, pick, PrettyPrintName } from '../helpers';
+import { pick, PrettyPrintName } from '../helpers';
+import { formatVariable } from '../formatAction';
+import { HomeAssistant, LocalizeFunc } from 'custom-card-helpers';
 
 function Duration(el: Entry) {
   return el.endTime!.value - el.time.value;
@@ -12,6 +13,7 @@ function Duration(el: Entry) {
 @customElement('timeslot-editor')
 export class TimeslotEditor extends LitElement {
 
+  @property() hass?: HomeAssistant;
   @property({ type: Array })
   entries: Entry[] = []
   shadowRoot: any;
@@ -24,9 +26,6 @@ export class TimeslotEditor extends LitElement {
 
   @property({ type: Number })
   _activeEntry: number | null = null;
-
-  @property({ type: String })
-  temperatureUnit: string = "";
 
   @property({ type: Number })
   _activeThumb: number | null = null;
@@ -100,7 +99,6 @@ export class TimeslotEditor extends LitElement {
     return output;
   }
 
-
   updated() {
     this.shadowRoot.querySelectorAll(".slider-thumb-tooltip").forEach((el, i) => {
       let ts = this.entries[i].endTime!.value;
@@ -109,22 +107,18 @@ export class TimeslotEditor extends LitElement {
   }
 
   getEntryAction(entry: Entry) {
+    if (!this.hass) return;
     if (!entry.action) return '';
     let action = this.actions.find(e => { return e.id == entry.action })!;
-    if (entry.variable && entry.variable.type == EVariableType.Level) {
-      let variable = entry.variable as LevelVariable;
-      let cfg = action.variable as LevelVariableConfig;
-      if (variable.enabled) return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
+
+    if (entry.variable && entry.variable.type == EVariableType.Level && action.variable) {
+      if ((entry.variable as LevelVariable).enabled) return formatVariable(action.variable.field, Number(entry.variable.value), this.hass);
     }
     else if (entry.variable && entry.variable.type == EVariableType.List) {
-      let variable = entry.variable as ListVariable;
-      let cfg = action.variable as ListVariableConfig;
-      return PrettyPrintActionVariable(variable, cfg, { temperature_unit: this.temperatureUnit })
+      return PrettyPrintName(String(entry.variable.value));
     }
-    if (action.service == 'turn_on') return PrettyPrintName('on');
-    else if (action.service == 'turn_off') return PrettyPrintName('off');
-    else if (action.name in ServiceNameTranslations) return localize(ServiceNameTranslations[action.name]);
-    return PrettyPrintName(action.name);
+    const service = action.service;
+    return PrettyPrintName(action.name || localize(`services.${service}`) || service);
   }
 
   private _handleSegmentClick(e: Event) {

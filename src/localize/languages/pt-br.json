@@ -24,11 +24,8 @@
     "options": "Opções",
     "day_type_daily": "todos os dias",
     "day_type_weekdays": "dias da semana",
-    "day_type_custom": "personalizado",
-    "shift_with_sun": "automaticamente ajusta hora pelo nascer do sol/pôr do sol",
-    "brightness": "Brilho",
-    "temperature": "Temperatura",
-    "position": "Posição"
+    "day_type_weekend": "final da semana",
+    "day_type_custom": "personalizado"
   },
   "days_short": {
     "mon": "seg",
@@ -49,29 +46,35 @@
     "sun": "domingo"
   },
   "words": {
-    "on": "on",
-    "every": "cada",
     "and": "e",
-    "at": "às",
     "before": "antes",
-    "after": "depois",
-    "sunrise": "nascer do sol",
-    "sunset": "pôr do sol"
+    "after": "depois"
   },
   "services": {
     "turn_on": "ligar",
+    "turn_on_brightness": "ligar {a brightness}",
     "turn_off": "desligar",
     "close_cover": "fechar",
     "open_cover": "abrir",
-    "set_temperature": "ajustar temperatura",
-    "set_to": "ajustar para",
-    "set_position": "ajustar posição",
-    "set_hvac_mode": "set mode",
-    "set_preset_mode": "set preset",
-    "set_value": "set value",
-    "select_option": "select option",
-    "select_source": "select source",
-    "start": "start"
+    "set_temperature": "ajustar temperatura {a temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "ajustar posição {a position}",
+    "set_hvac_mode": "set mode {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "turn off",
+    "set_preset_mode": "set preset {to preset_mode}",
+    "set_value": "set value {to value}",
+    "select_option": "select option {option}",
+    "select_source": "select source {source}",
+    "start": "start",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "Brilho",
+    "temperature": "Temperatura",
+    "position": "Posição",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
   },
   "domains": {
     "camera": "cameras",
@@ -87,5 +90,33 @@
     "light": "luz",
     "switch": "interruptor",
     "vacuum": "aspirador"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }

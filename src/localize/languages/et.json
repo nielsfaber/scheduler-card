@@ -52,25 +52,29 @@
   },
   "services": {
     "turn_on": "lülita sisse",
+    "turn_on_brightness": "turn on {at brightness}",
     "turn_off": "lülita välja",
     "close_cover": "sulge",
     "open_cover": "ava",
-    "set_temperature": "määra temperatuur",
-    "set_to": "määra väärtus",
-    "set_position": "seadista asendisse",
-    "set_hvac_mode": "vali töörežiim",
-    "set_preset_mode": "eelseadistatud",
-    "set_value": "määra väärtus",
-    "select_option": "valikud",
-    "select_source": "vali allikas",
-    "start": "alusta"
+    "set_temperature": "määra temperatuur {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "seadista asendisse {to position}",
+    "set_hvac_mode": "vali töörežiim {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "turn off",
+    "set_preset_mode": "eelseadistatud {to preset_mode}",
+    "set_value": "määra väärtus {value}",
+    "select_option": "valikud {option}",
+    "select_source": "vali allikas {source}",
+    "start": "alusta",
+    "run_script": "alusta"
   },
   "service_parameters": {
     "brightness": "heledus",
     "temperature": "temperatuur",
     "position": "asend",
     "hvac_mode": "töörežiim",
-    "preset": "eelseadistus"
+    "preset_mode": "eelseadistus"
   },
   "domains": {
     "camera": "kaamerad",

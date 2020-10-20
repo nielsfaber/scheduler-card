@@ -10,24 +10,24 @@ declare global {
 export interface Dictionary<TValue> {
   [id: string]: TValue;
 }
-type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
 /* hass objects */
 
-export interface HassEntity {
-  entity_id: string;
-  state: any;
-  attributes: {
-    friendly_name?: string;
-    icon?: string;
-    supported_features?: number;
-    actions?: HassAction[];
-    entries?: string[];
-    next_trigger?: string;
-    conditions?: Condition[];
-    options?: OptionConfig;
-  };
-}
+// export interface HassEntity {
+//   entity_id: string;
+//   state: any;
+//   attributes: {
+//     friendly_name?: string;
+//     icon?: string;
+//     supported_features?: number;
+//     actions?: HassAction[];
+//     entries?: string[];
+//     next_trigger?: string;
+//     conditions?: Condition[];
+//     options?: OptionConfig;
+//   };
+// }
 
 /* groups */
 
@@ -40,7 +40,7 @@ export interface GroupElement {
 
 export interface GroupConfig {
   name: string;
-  icon: string;
+  icon?: string;
   include: string[];
   exclude?: string[];
 }
@@ -50,16 +50,16 @@ export interface GroupConfig {
 export interface EntityElement extends EntityConfig {
   id: string;
   name: string;
-  icon: string;
-  actions: ActionElement[];
-  states?: string[] | { min: number; max: number; step?: number; unit?: string };
+  icon?: string;
+  actions: ActionConfig[];
+  states?: StatesConfig;
 }
 
 export interface EntityConfig {
   name?: string;
   icon?: string;
   actions?: ActionConfig[];
-  states?: string[] | { min: number; max: number; step?: number; unit?: string };
+  states?: StatesConfig;
 }
 
 /* actions */
@@ -71,17 +71,15 @@ export interface ActionConfig {
   icon?: string;
   variable?: AtLeast<LevelVariableConfig | ListVariableConfig, 'field'>;
   supported_feature?: number;
-  routine?: boolean;
 }
 
 export interface ActionElement extends ActionConfig {
   id: string;
-  name: string;
+  name?: string;
   service: string;
   service_data?: Dictionary<any>;
   icon: string;
   variable?: LevelVariableConfig | ListVariableConfig;
-  routine: boolean;
   supported_feature?: number;
 }
 
@@ -91,12 +89,6 @@ export enum EVariableType {
   Level = 'LEVEL',
   List = 'LIST',
 }
-
-// export interface IVariable {
-//   value: number | string | null,
-//   enabled?: boolean,
-//   type: EVariableType
-// }
 
 export interface LevelVariable {
   value: number | null;
@@ -112,12 +104,11 @@ export interface ListVariable {
 export interface LevelVariableConfig {
   field: string;
   unit: string;
-  name: string;
+  name?: string;
   min: number;
   max: number;
   step: number;
   optional: boolean;
-  supported_feature?: number;
   type: EVariableType;
 }
 
@@ -129,7 +120,7 @@ export interface ListVariableOption {
 
 export interface ListVariableConfig {
   field: string;
-  name: string;
+  name?: string;
   options: ListVariableOption[];
   supported_feature?: number;
   type: EVariableType;
@@ -148,25 +139,19 @@ export interface Entry {
   options?: OptionConfig;
 }
 
-export interface ScheduleEntry {
-  id: string;
-  enabled: boolean;
-  entries: Entry[];
-  next_trigger: string | undefined;
-  name?: string;
+export interface ImportedEntry {
+  time: Time;
+  endTime?: Time;
+  days: Days;
+  actions: number[];
+  conditions?: {
+    type: EConditionType;
+    items: number[];
+  };
+  options?: number[];
 }
 
 /* config */
-
-export interface UserConfig {
-  sunrise: number | null;
-  sunset: number | null;
-  title: boolean | string;
-  am_pm: boolean;
-  time_step: number;
-  temperature_unit: string;
-  is_admin: boolean;
-}
 
 export interface CardConfig extends LovelaceCardConfig {
   discover_existing?: boolean;
@@ -174,10 +159,11 @@ export interface CardConfig extends LovelaceCardConfig {
   title?: boolean | string;
   am_pm?: boolean;
   time_step?: number;
+  show_header_toggle?: boolean;
   include?: string[];
   exclude?: string[];
   groups?: GroupConfig[];
-  customize?: Dictionary<EntityConfig>;
+  customize?: Dictionary<EntityConfig & { actions_hidden?: string[] }>;
 }
 
 /* interface */
@@ -230,12 +216,9 @@ export interface ConditionConfig {
   items: Condition[];
 }
 
+
 export interface OptionConfig {
   run_once?: boolean;
 }
 
-export interface OptionPanelCfg {
-  conditions?: ConditionConfig;
-  friendly_name?: string;
-  options?: OptionConfig;
-}
+export type StatesConfig = string[] | { min: number; max: number; step?: number; unit?: string };
