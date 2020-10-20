@@ -2,6 +2,7 @@ import { Dictionary, HassAction, ActionElement } from "./types";
 import { localize } from "./localize/localize";
 import { uniqueId } from "./action";
 import { HomeAssistant } from "custom-card-helpers";
+import { PrettyPrintName } from "./helpers";
 
 export function formatVariable(variable: string, value: string | number, hass: HomeAssistant) {
   switch (variable) {
@@ -54,5 +55,5 @@ export function formatAction(config: ActionElement | HassAction, hass: HomeAssis
     }
     translation = translation.replace(/\{([^}]+)\}/, replacement);
   }
-  return translation;
+  return PrettyPrintName(translation);
 }

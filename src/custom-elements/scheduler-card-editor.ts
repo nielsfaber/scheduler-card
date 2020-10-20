@@ -175,7 +175,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     let includedDomains = this._config.include ? [...this._config.include] : [];
     const entityList = Object.values(this.hass.states)
-      .filter(e => IsSchedulerEntity(e.entity_id))
+      .filter(e => !IsSchedulerEntity(e.entity_id))
       .map(e => entityConfig(e, { include: ["*"] }))
       .filter(e => e && e.actions.length) as EntityElement[];
 

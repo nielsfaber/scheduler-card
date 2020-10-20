@@ -78,7 +78,7 @@ export class SchedulerCard extends LitElement {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
-    if (oldHass) {
+    if (oldHass && changedProps.size == 1) {
       const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
       if (scheduleEntities.length !== this.scheduleEntities.length) return true;
       if (scheduleEntities.some((e, i) => e !== this.scheduleEntities[i])) return true;

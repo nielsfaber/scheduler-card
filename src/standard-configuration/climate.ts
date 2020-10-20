@@ -56,7 +56,15 @@ export function climateActions(entity: HassEntity) {
     });
   }
 
-  if (filteredHvacModes.length) actions.push({
+  if (!hvacModes.includes("heat") && !hvacModes.includes("cool") && supportedFeatures & 1) {
+    actions.push({
+      service: "set_temperature",
+      variable: tempVariable,
+      icon: "thermometer"
+    });
+  }
+
+  if (hvacModes.length > 1 && filteredHvacModes.length) actions.push({
     service: "set_hvac_mode",
     variable: listVariable({
       field: "hvac_mode",

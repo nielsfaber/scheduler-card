@@ -16,14 +16,8 @@ export class SchedulerEntitiesCard extends LitElement {
 
   @property() _hass?: HomeAssistant;
   @property() config?: CardConfig;
-
-
   schedules: HassEntity[] = [];
   scheduleEntities: string[] = [];
-
-  firstUpdated() {
-
-  }
 
   loadSchedules() {
     if (!this._hass || !this.config) return;
@@ -56,7 +50,7 @@ export class SchedulerEntitiesCard extends LitElement {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
-    if (oldHass) {
+    if (oldHass && changedProps.size == 1) {
       const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
       if (scheduleEntities.length !== this.scheduleEntities.length) {
 

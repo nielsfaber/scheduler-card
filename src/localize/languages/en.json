@@ -59,7 +59,6 @@
     "set_temperature": "set temperature {to temperature}",
     "set_temperature_hvac_mode_heat": "heat {to temperature}",
     "set_temperature_hvac_mode_cool": "cool {to temperature}",
-    "set_to": "set to",
     "set_cover_position": "set position {to position}",
     "set_hvac_mode": "set mode {to hvac_mode}",
     "set_hvac_mode_hvac_mode_off": "turn off",

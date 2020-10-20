@@ -37,7 +37,7 @@ export class ScheduleEntityRow extends LitElement {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
-    if (oldHass && this._config) {
+    if (oldHass && this._config && changedProps.size == 1) {
       const entity = this._config.entity;
       return oldHass.states[entity] !== this.hass!.states[entity];
     }

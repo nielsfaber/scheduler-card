@@ -1,8 +1,15 @@
-import { listVariable } from "../actionVariables";
+import { listVariable, listVariableOption } from "../actionVariables";
 import { ActionConfig } from "../types";
 import { HassEntity } from "home-assistant-js-websocket";
 import { TurnOnAction, TurnOffAction } from "../const";
 
+
+const speedIcons = {
+  off: "fan-off",
+  low: "fan-speed-1",
+  medium: "fan-speed-2",
+  high: "fan-speed-3"
+}
 
 export function fanActions(entity: HassEntity) {
   const supportedFeatures = entity.attributes.supported_features!;
@@ -17,8 +24,9 @@ export function fanActions(entity: HassEntity) {
         service: "set_speed",
         variable: listVariable({
           field: "speed",
-          options: speedModes
-        })
+          options: speedModes.map(e => listVariableOption(e, { icons: speedIcons }))
+        }),
+        icon: "weather-windy"
       });
 
   if (supportedFeatures & 2)
@@ -46,7 +54,7 @@ export function fanActions(entity: HassEntity) {
             { "value": "reverse" }
           ]
         }),
-        icon: "autorenew"
+        icon: "cog-clockwise"
       })
 
   return actions;
