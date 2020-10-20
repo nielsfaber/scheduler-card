@@ -59,6 +59,7 @@
     "set_temperature": "establecer temperatura {a temperature}",
     "set_temperature_hvac_mode_heat": "calentar {a temperature}",
     "set_temperature_hvac_mode_cool": "enfriar {a temperature}",
+    "set_to": "establecer a",
     "set_cover_position": "establecer posición {a position}",
     "set_hvac_mode": "establecer modo {a hvac_mode}",
     "set_hvac_mode_hvac_mode_off": "apagar",
