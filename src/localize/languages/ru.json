@@ -23,8 +23,8 @@
     "time": "Время",
     "options": "Опции",
     "day_type_daily": "ежедневно",
-    "day_type_weekdays": "по будням",
-    "day_type_weekend": "weekend",
+    "day_type_workday": "по будням",
+    "day_type_weekend": "по выходным",
     "day_type_custom": "выбрать дни"
   },
   "days_short": {
