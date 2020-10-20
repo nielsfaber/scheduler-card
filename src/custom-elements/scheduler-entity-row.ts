@@ -156,9 +156,6 @@ export class ScheduleEntityRow extends LitElement {
       }
       .info,
       .info > * {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         color: var(--primary-text-color);
         transition: color 0.2s ease-in-out;
       }
