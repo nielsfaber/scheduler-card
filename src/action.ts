@@ -5,10 +5,12 @@ import {
   Dictionary,
   EntityElement,
   HassAction,
+  ListVariableConfig,
+  LevelVariableConfig,
 } from './types';
-import { ServiceNameTranslations, localize } from './localize/localize';
 import { DefaultActionIcon } from './const';
 import { pick, omit } from './helpers';
+import { listVariable, levelVariable } from './actionVariables';
 
 
 export function uniqueId(input: ActionConfig) {
@@ -20,10 +22,6 @@ export function uniqueId(input: ActionConfig) {
 
   let obj = pick(input, ['service', 'service_data']);
   obj = sortObject(obj);
-
-  // if ('service_data' in obj && Object.keys(obj.service_data).length == 1) {
-  //   Object.assign(obj, { service_data: Object.values(obj.service_data)[0] });
-  // }
 
   const res = Object.values(obj)
     .map(e =>
@@ -48,7 +46,10 @@ export function actionConfig(config: ActionConfig) {
     service: service,
   };
   if (config.service_data && Object.keys(config.service_data).length) Object.assign(data, { service_data: config.service_data });
-  if (config.variable) Object.assign(data, { variable: config.variable });
+  if (config.variable) {
+    if ("options" in config.variable) Object.assign(data, { variable: listVariable(config.variable as ListVariableConfig) });
+    else Object.assign(data, { variable: levelVariable(config.variable as LevelVariableConfig) });
+  };
 
   Object.assign(data, { id: uniqueId(data) });
   return data;
