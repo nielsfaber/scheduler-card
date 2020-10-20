@@ -2,12 +2,11 @@ import { LitElement, html, customElement, css, property, PropertyValues } from '
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
-import { CardConfig, Dictionary, EntityElement } from '../types';
+import { CardConfig, Dictionary, EntityElement, ScheduleEntity } from '../types';
 import { commonStyle } from '../styles';
 import { HassEntity } from 'home-assistant-js-websocket';
 
 import './scheduler-entity-row';
-import { applyFilters } from '../filter';
 import { IsSchedulerEntity, entityFilter, entityConfig } from '../entity';
 
 
@@ -117,10 +116,10 @@ export class SchedulerEntitiesCard extends LitElement {
 
 
     if (!this.schedules.length) return html`${localize('instructions.no_entries_defined')}`;
-
     return this.schedules.map(e => e.entity_id).map(entity_id => {
-      const entity = this._hass!.states[entity_id];
-      let discovered = !(entity.attributes.actions!.map(e => e.entity) as string[]).every(e => applyFilters(e, this.config!));
+      const entity = this._hass!.states[entity_id] as ScheduleEntity;
+      let discovered = !(entity.attributes.actions!.every(e => entityFilter(e.entity, this.config!)));
+
       if (discovered) {
         return html`
           <hui-warning>

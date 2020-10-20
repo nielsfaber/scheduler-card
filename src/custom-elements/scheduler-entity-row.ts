@@ -1,14 +1,12 @@
 import { LitElement, html, customElement, css, property, internalProperty, PropertyValues } from 'lit-element';
-import { ImportedEntry, Dictionary, EntityConfig, EntityElement, HassAction, ActionElement } from '../types';
+import { ImportedEntry, Dictionary, EntityElement, HassAction, ActionElement } from '../types';
 import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime } from '../date-time';
 import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
-import { HomeAssistant, computeEntity, ActionConfig } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity, } from 'custom-card-helpers';
 import { importEntry } from '../interface';
-import { computeAction } from '../computeAction';
 import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName } from '../const';
 import { formatAction } from '../formatAction';
-import { importAction, findActionIndex, findAction, actionConfig } from '../action';
-import { exportActionVariable } from '../actionVariables';
+import { importAction, findActionIndex, actionConfig } from '../action';
 import { localize } from '../localize/localize';
 
 (window as any).customCards = (window as any).customCards || [];

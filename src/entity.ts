@@ -57,15 +57,15 @@ export function entityConfig(entity: HassEntity | undefined, config: Partial<Car
 }
 
 export function entityFilter(
-  entity: HassEntity,
+  entity: HassEntity | string,
   config: { include?: string[]; exclude?: string[]; customize?: Dictionary<EntityConfig>; groups?: GroupConfig[] },
   options?: { states?: boolean; actions?: boolean }
 ) {
-  const entity_id = entity.entity_id;
+  const entity_id = (typeof entity == "object") ? entity.entity_id : entity;
 
   if (IsSchedulerEntity(entity_id)) return false;
   else if (!applyFilters(entity_id, config) && (!config.groups || !config.groups.some(e => applyFilters(entity_id, e)))) return false;
-  if (options) {
+  if (options && typeof entity == "object") {
     const entityCfg = entityConfig(entity, config);
     if (!entityCfg) return false;
     if (options.states && !entityCfg.states) return false;

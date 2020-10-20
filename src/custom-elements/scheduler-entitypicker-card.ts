@@ -63,13 +63,6 @@ export class SchedulerEditorCard extends LitElement {
   }
 
 
-
-
-  // let translation = localize(`services.${data.id}`) || localize(`services.${data.service}`);
-  // if (translation && !config.name) {
-  //   translation = translation.replace(/\{([^}]+)\}/, "").trim();
-  //   Object.assign(data, { name: translation });
-  // }
   render() {
     if (!this.hass || !this.config) return html``;
 
