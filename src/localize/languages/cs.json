@@ -100,7 +100,7 @@
     "interval": "{startDay} do {endDay}"
   },
   "time": {
-    "absolute": "o {time}",
+    "absolute": "v {time}",
     "relative": "za {time}",
     "interval": "od {startTime} do {endTime}",
     "seconds": "{seconds} vteřin",
