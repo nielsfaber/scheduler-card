@@ -1,0 +1,226 @@
+{
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "style": {},
+    "discover_existing": {
+      "type": "boolean"
+    },
+    "standard_configuration": {
+      "type": "boolean"
+    },
+    "title": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "am_pm": {
+      "type": "boolean"
+    },
+    "show_header_toggle": {
+      "type": "boolean"
+    },
+    "time_step": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "include": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "customize": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "object"
+        ],
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "icon": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "service": {
+                  "type": "string"
+                },
+                "service_data": {
+                  "type": "object"
+                },
+                "variable": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "field": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "string"
+                        },
+                        "min": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "max": {
+                          "type": "number",
+                          "minimum": 1
+                        },
+                        "step": {
+                          "type": "number",
+                          "minimum": 0.1
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "field": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "icon": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "service"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "states": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "min": {
+                    "type": "number"
+                  },
+                  "max": {
+                    "type": "number"
+                  },
+                  "step": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "exclude_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

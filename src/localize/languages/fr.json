@@ -2,7 +2,7 @@
   "scheduler": "Planificateur",
   "actions": {
     "add": "ajouter un item",
-    "cancel": "canceller",
+    "cancel": "annuler",
     "next": "suivant",
     "save": "sauvegarder",
     "delete": "effacer"
@@ -19,15 +19,13 @@
     "group": "Groupe",
     "entity": "Entité",
     "action": "Action",
-    "days": "DJours",
+    "days": "Jours",
     "time": "Temps",
     "options": "Options",
     "day_type_daily": "chaque jour",
     "day_type_weekdays": "en semaine",
-    "day_type_custom": "sur mesure",
-    "shift_with_sun": "ajuster automatiquement l'heure au lever/coucher du soleil",
-    "brightness": "Luminosité",
-    "temperature": "Température"
+    "day_type_weekend": "weekend",
+    "day_type_custom": "sur mesure"
   },
   "days_short": {
     "mon": "lun",
@@ -48,29 +46,77 @@
     "sun": "dimanche"
   },
   "words": {
-    "on": "marche",
-    "every": "tout",
     "and": "et",
-    "at": "à",
     "before": "avant",
-    "after": "après",
-    "sunrise": "lever du soleil",
-    "sunset": "coucher du soleil"
+    "after": "après"
   },
   "services": {
     "turn_on": "allumer",
+    "turn_on_brightness": "allumer {à brightness}",
     "turn_off": "éteindre",
     "close_cover": "fermer",
     "open_cover": "ouvrir",
-    "set_temperature": "régler la température",
-    "set_to": "défini à"
+    "set_temperature": "régler la température {à temperature}",
+    "set_temperature_hvac_mode_heat": "heat {à temperature}",
+    "set_temperature_hvac_mode_cool": "cool {à temperature}",
+    "set_cover_position": "position définie {à position}",
+    "set_hvac_mode": "set mode {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "turn off",
+    "set_preset_mode": "set preset {to preset_mode}",
+    "set_value": "set value {to value}",
+    "select_option": "select option {option}",
+    "select_source": "select source {source}",
+    "start": "start",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "brightness",
+    "temperature": "temperature",
+    "position": "position",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "climat",
     "cover": "contrôleur",
     "fan": "ventilateur",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "lumière",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "interrupteurs",
     "vacuum": "aspirateur"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }

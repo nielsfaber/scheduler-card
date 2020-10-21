@@ -1,0 +1,123 @@
+{
+  "scheduler": "Programador",
+  "actions": {
+    "add": "Agregar",
+    "cancel": "cancelar",
+    "next": "siguiente",
+    "save": "guardar",
+    "delete": "borrar"
+  },
+  "instructions": {
+    "no_group_selected": "Selecciona un grupo primero",
+    "no_entity_selected": "Selecciona una entidad primero",
+    "no_groups_defined": "No hay grupos definidos",
+    "no_entities_for_group": "No hay entidades en este grupo",
+    "no_actions_for_entity": "No hay acciones para esta entidad",
+    "no_entries_defined": "No hay dispositivos definidos"
+  },
+  "fields": {
+    "group": "Grupo",
+    "entity": "Entidad",
+    "action": "Acción",
+    "days": "Días",
+    "time": "Hora",
+    "options": "Opciones",
+    "day_type_daily": "cada día",
+    "day_type_weekdays": "dias semanales",
+    "day_type_weekend": "fin de semana",
+    "day_type_custom": "personalizado"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mie",
+    "thu": "jue",
+    "fri": "vie",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "lunes",
+    "tue": "martes",
+    "wed": "miércoles",
+    "thu": "jueves",
+    "fri": "viernes",
+    "sat": "sábado",
+    "sun": "domingo"
+  },
+  "words": {
+    "and": "y",
+    "before": "antes",
+    "after": "después"
+  },
+  "services": {
+    "turn_on": "encender",
+    "turn_on_brightness": "encender {a brightness}",
+    "turn_off": "apagar",
+    "close_cover": "cerrar",
+    "open_cover": "abrir",
+    "set_temperature": "establecer temperatura {a temperature}",
+    "set_temperature_hvac_mode_heat": "calentar {a temperature}",
+    "set_temperature_hvac_mode_cool": "enfriar {a temperature}",
+    "set_to": "establecer a",
+    "set_cover_position": "establecer posición {a position}",
+    "set_hvac_mode": "establecer modo {a hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "apagar",
+    "set_preset_mode": "establecer modo {a preset_mode}",
+    "set_value": "establecer valor {value}",
+    "select_option": "seleccionar opción {option}",
+    "select_source": "seleccionar fuente {source}",
+    "start": "empezar",
+    "run_script": "ejecutar"
+  },
+  "service_parameters": {
+    "brightness": "brillo",
+    "temperature": "temperatura",
+    "position": "posición",
+    "hvac_mode": "modo",
+    "preset_mode": "pre-ajuste"
+  },
+  "domains": {
+    "camera": "cámaras",
+    "climate": "climatización",
+    "cover": "persiana",
+    "fan": "ventilador",
+    "group": "grupo",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "luces",
+    "media_player": "reproductor multimedia",
+    "scene": "escena",
+    "switch": "interruptor",
+    "vacuum": "aspirador"
+  },
+  "days": {
+    "tomorrow": "mañana",
+    "daily": "a diario",
+    "daily_except_days": "todos los dias excepto {days}",
+    "working_days": "días hábiles",
+    "weekend": "fin de semana",
+    "interval": "{startDay} a {endDay}"
+  },
+  "time": {
+    "absolute": "a las {time}",
+    "relative": "en {time}",
+    "interval": "desde las {startTime} a las {endTime}",
+    "seconds": "{seconds} segundos",
+    "hour": "1 hora",
+    "hours": "{hours} horas",
+    "minute": "1 minuto",
+    "minutes": "{minutes} minutos",
+    "now": "ahora",
+    "midnight": "medianoche",
+    "noon": "mediodía",
+    "at_sun_event": "al {sunEvent}",
+    "sun_event_sunrise": "amanecer",
+    "sun_event_sunset": "atardecer"
+  },
+  "misc": {
+    "one_additional_task": "1 tarea más",
+    "x_additional_tasks": "{count} tareas más"
+  }
+}

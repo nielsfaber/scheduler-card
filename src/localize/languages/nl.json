@@ -22,12 +22,10 @@
     "days": "Dagen",
     "time": "Tijdstip",
     "options": "Opties",
-    "day_type_daily": "Dagelijks",
-    "day_type_weekdays": "werkdagen",
-    "day_type_custom": "Anders",
-    "shift_with_sun": "Automatisch aanpassen aan zonsopgang/zonsondergang",
-    "brightness": "Helderheid",
-    "temperature": "Temperatuur"
+    "day_type_daily": "dagelijks",
+    "day_type_workday": "werkdagen",
+    "day_type_weekend": "weekend",
+    "day_type_custom": "anders"
   },
   "days_short": {
     "mon": "ma",
@@ -48,29 +46,77 @@
     "sun": "zondag"
   },
   "words": {
-    "on": "op",
-    "every": "elke",
     "and": "en",
-    "at": "om",
     "before": "voor",
-    "after": "na",
-    "sunrise": "zonsopgang",
-    "sunset": "zonsondergang"
+    "after": "na"
   },
   "services": {
     "turn_on": "aanzetten",
+    "turn_on_brightness": "aanzetten {op brightness}",
     "turn_off": "uitzetten",
     "close_cover": "sluiten",
     "open_cover": "openen",
-    "set_temperature": "temperatuur instellen",
-    "set_to": "Zet op"
+    "set_temperature": "temperatuur instellen {naar temperature}",
+    "set_temperature_hvac_mode_heat": "verwarmen {naar temperature}",
+    "set_temperature_hvac_mode_cool": "koelen {naar temperature}",
+    "set_cover_position": "positie instellen {naar position}",
+    "set_hvac_mode": "stand aanpassen {naar hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "uitzetten",
+    "set_preset_mode": "kies voorinstelling {preset_mode}",
+    "set_value": "waarde {value} instellen",
+    "select_option": "optie {option} selecteren",
+    "select_source": "ingang {source} selecteren",
+    "start": "starten",
+    "run_script": "uitvoeren"
+  },
+  "service_parameters": {
+    "brightness": "helderheid",
+    "temperature": "temperatuur",
+    "position": "positie",
+    "hvac_mode": "stand",
+    "preset_mode": "voorinstelling"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "verwarming",
     "cover": "zonwering",
     "fan": "ventilatie",
+    "group": "groepen",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "verlichting",
+    "media_player": "mediaspelers",
+    "scene": "scènes",
     "switch": "schakelaars",
-    "vacuum": "stofzuiger"
+    "vacuum": "stofzuigers"
+  },
+  "days": {
+    "tomorrow": "morgen",
+    "daily": "dagelijks",
+    "daily_except_days": "elke dag behalve {days}",
+    "working_days": "op werkdagen",
+    "weekend": "in het weekend",
+    "interval": "{startDay} t/m {endDay}"
+  },
+  "time": {
+    "absolute": "om {time}",
+    "relative": "over {time}",
+    "interval": "van {startTime} tot {endTime}",
+    "seconds": "{seconds} seconden",
+    "hour": "1 uur",
+    "hours": "{hours} uur",
+    "minute": "1 minuut",
+    "minutes": "{minutes} minuten",
+    "now": "nu",
+    "midnight": "middernacht",
+    "noon": "12 uur",
+    "at_sun_event": "bij {sunEvent}",
+    "sun_event_sunrise": "zonsopgang",
+    "sun_event_sunset": "zonsondergang"
+  },
+  "misc": {
+    "one_additional_task": "1 overige taak",
+    "x_additional_tasks": "{count} overige taken"
   }
 }

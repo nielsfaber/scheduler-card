@@ -11,6 +11,9 @@ module.exports = {
     experimentalDecorators: true,
   },
   rules: {
-    "@typescript-eslint/camelcase": 0
+    "@typescript-eslint/camelcase": 0,
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 };

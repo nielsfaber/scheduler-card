@@ -1,24 +1,36 @@
+import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
+import { HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
 
-import { LitElement, html, customElement, property, CSSResult, TemplateResult } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
-import { find, filter, pick, extend, pull } from "lodash-es";
+import {
+  EVariableType,
+  LevelVariable,
+  ListVariable,
+  CardConfig,
+  EntityElement,
+  ActionElement,
+  ImportedEntry,
+  Entry,
+  HassAction,
+  HassEntry,
+  HassData,
+  OptionConfig,
+  Condition,
+} from './types';
+import { CARD_VERSION, EViews, CreateTimeScheme, DeadEntityIcon, DeadEntityName } from './const';
+import { getLanguage } from './localize/localize';
+import { parseTimestamp, EDayType, MinutesPerDay, formatTime, timeEventToString } from './date-time';
+import { importEntry } from './interface';
+import { entityConfig, IsSchedulerEntity } from './entity';
+import { findAction, importAction, actionConfig, uniqueId } from './action';
+import { pick, calculateTimeline, omit } from './helpers';
+import { exportActionVariable } from './actionVariables';
+import { ValidateConfig } from './config-validation';
 
-
-import { Config } from './config-parser';
-import { IEntityElement, IGroupElement, IActionElement, IUserSelection, IActionVariable } from './types'
-import { DefaultUserSelection } from './default-config'
-import { ExportToHass, ImportFromHass, PrettyPrintDays, PrettyPrintTime, PrettyPrintName, PrettyPrintIcon, ComputeDaysType, IsSchedulerEntity } from './helpers'
-import { styles } from './styles';
-import { ValidateConfig } from './config-validation'
-import { CARD_VERSION } from './const'
-import { localize } from './localize/localize';
-
-console.info(
-  `%c  SCHEDULER-CARD  \n%c  Version ${CARD_VERSION}   `,
-  'color: orange; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray',
-);
-
+import './custom-elements/scheduler-entities-card';
+import './custom-elements/scheduler-entitypicker-card';
+import './custom-elements/scheduler-timepicker-card';
+import './custom-elements/scheduler-options-card';
+import './custom-elements/scheduler-card-editor';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -27,493 +39,390 @@ console.info(
   description: 'Card to manage schedule entities made with scheduler-component.',
 });
 
+console.info(
+  `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(
+    7,
+    ' '
+  )}`,
+  'color: orange; font-weight: bold; background: black',
+  'color: white; font-weight: bold; background: dimgray',
+  'color: white; font-weight: bold; background: dimgray'
+);
+
 @customElement('scheduler-card')
 export class SchedulerCard extends LitElement {
-
-  static get styles(): CSSResult {
-    return styles;
+  public static getConfigElement(): LovelaceCardEditor {
+    return document.createElement('scheduler-card-editor');
   }
 
+  _config?: CardConfig;
+
   @property()
-  Config: Config = new Config;
+  private _hass?: HomeAssistant;
 
-  entries: any[] = [];
+  @property()
+  _view: EViews = EViews.Overview;
 
-  selection: IUserSelection = { ...DefaultUserSelection };
+  @property() entries: Entry[] = [];
+  @property() entity?: EntityElement;
+  @property() actions: ActionElement[] = [];
+  @property() friendlyName?: string;
 
-  @property({ type: Number })
-  count = 0;
-  shadowRoot: any;
-  await_update: boolean = true;
-
-
-  @property() private _hass?: HomeAssistant;
+  editItem: string | null = null;
+  scheduleEntities: string[] = [];
 
   set hass(hass: HomeAssistant) {
-    if (!this.await_update) return;
-    if (!this.Config) return;
-
-    if (!this._hass) this.Config.LoadEntities(hass.states);
-    this.update_entries(hass);
+    this.scheduleEntities = Object.keys(hass.states).filter(el => IsSchedulerEntity(el));
     this._hass = hass;
   }
 
-  protected update_entries(hass) {
-    let entries = filter(hass.states, entity => IsSchedulerEntity(entity.entity_id))
-      .map(e => ImportFromHass(e, this.Config))
-      .filter(e => { return e.actions[0] !== undefined });
+  protected shouldUpdate(changedProps: PropertyValues): boolean {
+    const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
+    if (oldHass && changedProps.size == 1) {
+      const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
+      if (scheduleEntities.length !== this.scheduleEntities.length) return true;
+      if (scheduleEntities.some((e, i) => e !== this.scheduleEntities[i])) return true;
+      if (scheduleEntities.some(e => oldHass.states[e] !== this._hass!.states[e])) return true;
+      return false;
+    }
+    return true;
+  }
 
-    if (entries != this.entries) {
-      this.entries = entries;
-      this.await_update = false;
-      this.requestUpdate();
+  setConfig(config: CardConfig) {
+    ValidateConfig(config);
+    this._config = config;
+  }
+
+  public getCardSize() {
+    if (!this._hass || !this.scheduleEntities.length) return 6;
+    return 6 + this.scheduleEntities.length;
+  }
+
+  protected render() {
+    if (!this._hass || !this._config) return html``;
+    if (this._view == EViews.Overview) {
+
+      return html`
+        <scheduler-entities-card
+          .hass=${this._hass}
+          .config=${this._config}
+          @editClick=${this._editItemClick}
+          @newClick=${this._addItemClick}
+        >
+        </scheduler-entities-card>
+      `;
+    } else if (this._view == EViews.NewSchedule) {
+      return html`
+        <scheduler-editor-card
+          .hass=${this._hass}
+          .config=${this._config}
+          @nextClick=${this._confirmItemClick}
+          @cancelClick=${this._cancelEditClick}
+        >
+        </scheduler-editor-card>
+      `;
+    } else if (this._view == EViews.TimePicker || this._view == EViews.TimeScheme) {
+      return html`
+        <scheduler-timepicker-card
+          .hass=${this._hass}
+          .config=${this._config}
+          .entries=${this.entries}
+          .entity=${this.entity}
+          .actions=${this.actions}
+          ?timeslots=${this._view == EViews.TimeScheme}
+          ?editItem=${this.editItem !== null}
+          @cancelClick=${this._cancelEditClick}
+          @saveClick=${this._saveItemClick}
+          @optionsClick=${this._gotoOptionsClick}
+          @deleteClick=${this._deleteItemClick}
+        >
+        </scheduler-timepicker-card>
+      `;
+    } else if (this._view == EViews.Options) {
+      return html`
+      <scheduler-options-card
+        .hass=${this._hass}
+        .config=${this._config}
+        .entries=${this.entries}
+        .friendlyName=${this.friendlyName}
+        @cancelClick=${this._cancelEditClick}
+        @saveClick=${ev => this._optionsBackClick(ev, true)}
+        @backClick=${this._optionsBackClick}
+      >
+      </scheduler-timescheme-card>
+    `;
+    } else return html``; //shouldnt happen!
+  }
+
+  private _addItemClick(): void {
+    this._view = EViews.NewSchedule;
+    this.editItem = null;
+    this.friendlyName = undefined;
+  }
+
+  private _cancelEditClick(): void {
+    this._view = EViews.Overview;
+    this.editItem = null;
+  }
+
+  private _confirmItemClick(ev: CustomEvent): void {
+    if (!this._hass || !this._config) return;
+    const entity = ev.detail.entity;
+    this.entity = entityConfig(this._hass.states[entity], this._config)!;
+    const action = ev.detail.action;
+
+    if (action != CreateTimeScheme) {
+      this.entries = [
+        {
+          entity: ev.detail.entity,
+          action: action,
+          time: { value: parseTimestamp('12:00') },
+          days: { type: EDayType.Daily },
+        },
+      ];
+
+      this._view = EViews.TimePicker;
+
+      this.actions = [findAction(this.entity, { service: action })];
+    } else {
+      this.entries = [
+        {
+          entity: ev.detail.entity,
+          action: '',
+          time: { value: parseTimestamp('00:00') },
+          endTime: { value: parseTimestamp('08:00') },
+          days: { type: EDayType.Daily },
+        },
+        {
+          entity: ev.detail.entity,
+          action: '',
+          time: { value: parseTimestamp('08:00') },
+          endTime: { value: parseTimestamp('16:00') },
+          days: { type: EDayType.Daily },
+        },
+        {
+          entity: ev.detail.entity,
+          action: '',
+          time: { value: parseTimestamp('16:00') },
+          endTime: { value: MinutesPerDay },
+          days: { type: EDayType.Daily },
+        },
+      ];
+      this.actions = this.entity!.actions.map(actionConfig).filter(
+        e => e
+      ) as ActionElement[];
+      this._view = EViews.TimeScheme;
     }
   }
 
-  protected awaitUpdate() {
-    this.await_update = true;
-  }
+  _saveItemClick(ev?: CustomEvent): void {
+    if (!this._hass || !this._config) return;
 
-  protected render(): TemplateResult {
-    if (!this.selection.newItem && !this.selection.editItem) {
-      return html`
-      <ha-card>
-        <div class="card-header">${localize('scheduler')}</div>
-        <div class="card-section first">
-        ${this.getEntries()}
-        </div>
-        <div class="card-section last">
-          <mwc-button outlined @click="${() => { this.newItem() }}">${localize('actions.add')}</mwc-button>
-        </div>
-      </ha-card>
-      `;
+    if (ev) this.entries = ev.detail as Entry[];
+    const actions: HassAction[] = [];
+    const entries: HassEntry[] = [];
+    const conditions: Condition[] = [];
+    const options: OptionConfig = {};
 
-    } else if (this.selection.newItem && !this.selection.actionConfirmed) {
-      return html`
-        <ha-card>
-          <div class="card-header">${localize('scheduler')}</div>
-          <div class="card-section first">
-            <div class="header">${localize('fields.group')}</div>
-            <div class="option-list">
-            ${this.getGroups()}
-            </div>
-            <div class="header">${localize('fields.entity')}</div>
-            <div class="option-list">
-            ${this.getEntities()}
-            </div>
-            <div class="header">${localize('fields.action')}</div>
-            <div class="option-list">
-            ${this.getActions()}
-            </div>
-          </div>
-          <div class="card-section last">
-            <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
-            ${this.selection.action ? html`<mwc-button outlined @click="${() => this.newItemConfirm()}">${localize('actions.next')}</mwc-button>` : html`<mwc-button outlined disabled>${localize('actions.next')}</mwc-button>`}
-          </div>
-        </ha-card>
-      `;
-    }
-    else {
-      return html`
-      <ha-card>
-        <div class="card-header">${localize('scheduler')}</div>
-        ${this.showEditor()}
-      </ha-card>
-      `;
-    }
-  }
+    this.entries.forEach(entry => {
+      if (!entry.action || !entry.entity) return;
+      const entity = entityConfig(this._hass!.states[entry.entity], this._config!)!;
+      const action = findAction(entity, { service: entry.action });
+      const variableData = exportActionVariable(action, entry);
+      const output: HassAction = {
+        entity: entity.id,
+        service: computeDomain(action.service) ? action.service : `${computeDomain(entity.id)}.${action.service}`,
+        service_data: { ...action.service_data || {}, ...variableData }
+      };
 
-  private newItem() {
-    this.selection = extend({ ...DefaultUserSelection }, {
-      newItem: true,
-    });
-    this.requestUpdate();
-  }
+      let num = actions.findIndex(e => uniqueId(e) == uniqueId(output));
+      if (num == -1) num = actions.push(output) - 1;
 
-  private editItemCancel() {
-    this.selection = { ...DefaultUserSelection };
-    this.requestUpdate();
-  }
+      const hassEntry: HassEntry = {
+        actions: [num],
+      };
 
-  private newItemConfirm() {
-    this.selection = extend({ ...DefaultUserSelection }, {
-      newItem: true,
-      actionConfirmed: true,
-      entity: this.selection.entity,
-      action: this.selection.action
-    });
-    this.requestUpdate();
-  }
+      if (!entry.time.event) Object.assign(hassEntry, { time: formatTime(entry.time.value).time });
+      else if (entry.time.event)
+        Object.assign(hassEntry, {
+          time: { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time },
+        });
 
-  getEntries(): TemplateResult[] {
-    if (!this.entries || !this.entries.length) return [html`
-      <div class="text-field">
-        ${localize('instructions.no_entries_defined')}
-      </div>
-    `];
-    return this.entries.map(entry => {
-      if (!entry.actions[0]) return html``;
-      let entity = this.Config.FindEntity(entry.actions[0].entity);
-      let action = this.Config.FindAction(entry.actions[0].entity, entry.actions[0].action);
-      if (!entity || !action) return html``;
+      if (entry.endTime) {
+        if (!entry.time.event) Object.assign(hassEntry, { end_time: formatTime(entry.endTime.value).time });
+        else if (entry.time.event)
+          Object.assign(hassEntry, {
+            end_time: { event: timeEventToString(entry.endTime.event!), offset: formatTime(entry.endTime.value).time },
+          });
+      }
+      let dayType = 'daily';
+      if (entry.days.type == EDayType.Workday) dayType = 'workday';
+      else if (entry.days.type == EDayType.Weekend) dayType = 'weekend';
+      else if (entry.days.type == EDayType.Custom) dayType = 'custom';
 
-      let action_string = PrettyPrintName(action.name);
-      if (entry.actions[0].hasOwnProperty('level')) {
-        let cfg = action['variable'];
-        let value = entry.actions[0].level;
+      if (entry.days.type == EDayType.Custom)
+        Object.assign(hassEntry, { days: { type: dayType, list: entry.days.custom_days } });
+      else Object.assign(hassEntry, { days: { type: dayType } });
 
-        let unit = cfg.hasOwnProperty('unit') ? cfg.unit : "";
-
-        if (cfg.showPercentage) {
-          value = Math.round(((value - cfg.min) / (cfg.max - cfg.min)) * 100);
-          if (value < cfg.min) value = cfg.min;
-          else if (value > cfg.max) value = cfg.max;
-          unit = "%";
-        }
-
-        action_string = `${localize('services.set_to')} ${value}${unit}`;
+      if ('conditions' in entry) {
+        const conditionNums: number[] = [];
+        entry.conditions?.items.forEach(condition => {
+          let num = conditions.findIndex(e => e === condition);
+          if (num < 0) num = conditions.push(condition) - 1;
+          conditionNums.push(num);
+        });
+        Object.assign(hassEntry, { conditions: { list: conditionNums, type: entry.conditions!.type } } as HassEntry);
       }
 
-      return html`
-      <div class="list-item${entry['enabled'] ? '' : ' disabled'}" @click="${() => this.editItem(entry.id)}">
-        <div class="list-item-icon">
-          ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
-        </div>
-        <div class="list-item-name">
-          ${PrettyPrintName(entity.name)}
-        </div>
-        <div class="list-item-action">
-          ${action_string}
-        </div>
-        <div class="list-item-days">
-          ${PrettyPrintDays(entry.entries[0].days)}
-        </div>
-        <div class="list-item-time">
-          ${PrettyPrintTime(pick(entry.entries[0], ['time', 'event', 'offset']))}
-        </div>
-        <div class="list-item-switch">
-          ${entry['enabled'] ? html`<ha-switch checked="checked" @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>` : html`<ha-switch @click="${(e) => this.toggleDisable(entry.id, e)}"></ha-switch>`}
-        </div>
-      </div>
-      `;
-    });
-  }
+      if (entry.options) {
+        const optionNums: number[] = [];
+        Object.entries(entry.options).forEach(([key, val]) => {
+          let num = Object.entries(options).findIndex(([k, v]) => ({ [key]: val } === { [k]: v }));
+          if (num < 0) {
+            Object.assign(options, { [key]: val });
+            num = Object.keys(options).length - 1;
+          }
+          optionNums.push(num);
+        });
+        Object.assign(hassEntry, { options: optionNums } as HassEntry);
+      }
 
-  toggleDisable(entity_id, evt) {
-    evt.stopPropagation();
-    let enabled = !evt.target.checked;
-    if (enabled) {
-      this._hass!.callService('switch', 'turn_on', { entity_id: entity_id });
+      entries.push(hassEntry);
+    });
+
+    const data: HassData = {
+      entries: entries,
+      actions: actions,
+    };
+
+    if (conditions.length) Object.assign(data, { conditions: conditions });
+    if (this.friendlyName) Object.assign(data, { name: this.friendlyName });
+    if (Object.keys(options).length) Object.assign(data, { options: options });
+
+    if (this.editItem) {
+      this._hass!.callService('scheduler', 'edit', Object.assign(data, { entity_id: this.editItem }));
     } else {
-      this._hass!.callService('switch', 'turn_off', { entity_id: entity_id });
-    }
-    this.awaitUpdate();
-  }
-
-  editItem(entity_id) {
-    let data = find(this.entries, { id: entity_id });
-    this.selection = extend({ ...DefaultUserSelection }, {
-      editItem: entity_id,
-      entity: data['actions'][0].entity,
-      action: data['actions'][0].action,
-      timeHours: data['entries'][0].time.split(':').shift(),
-      timeMinutes: data['entries'][0].time.split(':').pop(),
-      days: data['entries'][0].days,
-      daysType: ComputeDaysType(data['entries'][0].days),
-      sun: (data['entries'][0].event !== undefined)
-    });
-    if (data['actions'][0].level !== undefined) {
-      Object.assign(this.selection, {
-        levelEnabled: true,
-        level: data['actions'][0].level
-      });
-    }
-    this.requestUpdate();
-  }
-
-  getGroups(): TemplateResult[] {
-    let groups = this.Config.GetGroups();
-    if (!groups.length) return [html`<div class="text-field">${localize('instructions.no_groups_defined')}</div>`];
-    return groups.map((el: IGroupElement) => {
-      return html`
-        <mwc-button class="${this.selection.group == el.id ? ' active' : ''}" @click="${() => { this.selectGroup(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    })
-  }
-
-  selectGroup(group: string): void {
-    Object.assign(this.selection, {
-      group: group,
-      entity: null,
-      action: null
-    });
-    this.requestUpdate();
-  }
-
-  getEntities(): TemplateResult[] {
-    if (!this.selection.group) return [html`<div class="text-field">${localize('instructions.no_group_selected')}</div>`];
-    let entities = this.Config.GetEntitiesForGroup(this.selection.group);
-    if (!entities.length) return [html`<div class="text-field">${localize('instructions.no_entities_for_group')}</div>`];
-    return entities.map((el: IEntityElement) => {
-      return html`
-        <mwc-button class="${this.selection.entity == el.id ? ' active' : ''}" @click="${() => { this.selectEntity(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    })
-  }
-
-  selectEntity(entity: string): void {
-    Object.assign(this.selection, {
-      entity: entity,
-      action: null
-    });
-    this.requestUpdate();
-  }
-
-  getActions(): TemplateResult[] {
-    if (!this.selection.entity) return [html`<div class="text-field">${localize('instructions.no_entity_selected')}</div>`];
-    let actions = this.Config.GetActionsForEntity(this.selection.entity);
-    if (!actions.length) return [html`<div class="text-field">${localize('instructions.no_actions_for_entity')}</div>`];
-    return actions.map((el: IActionElement) => {
-      return html`
-        <mwc-button class="${this.selection.action == el.id ? ' active' : ''}" @click="${() => { this.selectAction(el.id) }}">
-          ${el.icon ? html`<ha-icon icon="${PrettyPrintIcon(el.icon)}" class="padded-right"></ha-icon>` : ''}
-          ${PrettyPrintName(el.name)}
-        </mwc-button>
-      `;
-    })
-  }
-
-  selectAction(action: string): void {
-    Object.assign(this.selection, {
-      action: action
-    });
-    this.requestUpdate();
-  }
-
-  setConfig(config) {
-    ValidateConfig(config);
-    this.Config.setUserConfig(config);
-  }
-
-  showEditor(): TemplateResult {
-    let entity = this.Config.FindEntity(this.selection.entity);
-    let action = this.Config.FindAction(this.selection.entity, this.selection.action);
-    if (!entity || !action) return html``;
-
-    return html`
-    <div class="card-section first">
-      <div class="header">${localize('fields.action')}</div>
-      <div class="summary">
-        <div class="summary-entity">
-          <div class="summary-icon">
-            ${entity.icon ? html`<ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>` : ''}
-          </div>
-          <div class="summary-text">
-            ${PrettyPrintName(entity.name)}
-          </div>
-        </div>
-        <div class="summary-arrow">
-          <ha-icon icon="hass:arrow-right"></ha-icon>
-        </div>
-        <div class="summary-action">
-          <div class="summary-icon">
-            ${action.icon ? html`<ha-icon icon="${PrettyPrintIcon(action.icon)}"></ha-icon>` : ''}
-          </div>
-          <div class="summary-text">
-            ${PrettyPrintName(action.name)}
-          </div>
-        </div>
-      </div>
-     </div>
-     ${action.hasOwnProperty('variable') ? this.getLevelPanel(action['variable']) : ''}
-    <div class="card-section">
-      <div class="header">${localize('fields.days')}</div>
-      <div class="day-list">
-        <mwc-button class="day-item${this.selection.daysType == 'daily' ? ' active' : ''}" index="daily" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_daily')}</mwc-button>
-        <mwc-button class="day-item${this.selection.daysType == 'weekdays' ? ' active' : ''}" index="weekdays" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_weekdays')}</mwc-button>
-        <mwc-button class="day-item${this.selection.daysType == 'custom' ? ' active' : ''}" index="custom" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('fields.day_type_custom')}</mwc-button>
-      </div>
-      <div class="day-list${this.selection.daysType == 'custom' ? '' : ' closed'}" id="day-list-custom">
-        <mwc-button class="day-item${this.selection.days.includes(1) ? ' active' : ''}" index="1" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.mon')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(2) ? ' active' : ''}" index="2" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.tue')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(3) ? ' active' : ''}" index="3" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.wed')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(4) ? ' active' : ''}" index="4" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.thu')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(5) ? ' active' : ''}" index="5" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.fri')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(6) ? ' active' : ''}" index="6" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sat')}</mwc-button>
-        <mwc-button class="day-item${this.selection.days.includes(7) ? ' active' : ''}" index="7" @click="${(e) => this.updateDays(e.target.getAttribute('index'))}">${localize('days_short.sun')}</mwc-button>
-      </div>
-    </div>
-      
-    <div class="card-section">
-      <div class="header">${localize('fields.time')}</div>
-      <div class="time-picker">
-        <div class="time-picker-hours-up">
-          <mwc-button @click="${() => this.updateTime('time-hours-up')}">
-            <ha-icon icon="hass:chevron-up"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-hours" id="time-hours">
-        ${this.selection.timeHours}
-        </div>
-        <div class="time-picker-hours-down">
-          <mwc-button @click="${() => this.updateTime('time-hours-down')}">
-            <ha-icon icon="hass:chevron-down"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-separator">
-        :
-        </div>
-        <div class="time-picker-minutes-up">
-          <mwc-button @click="${() => this.updateTime('time-minutes-up')}">
-            <ha-icon icon="hass:chevron-up"></ha-icon>
-          </mwc-button>
-        </div>
-        <div class="time-picker-minutes" id="time-minutes">
-        ${this.selection.timeMinutes}
-        </div>
-        <div class="time-picker-minutes-down">
-          <mwc-button @click="${() => this.updateTime('time-minutes-down')}">
-            <ha-icon icon="hass:chevron-down"></ha-icon>
-          </mwc-button>
-        </div>
-      </div>
-    </div>
-    <div class="card-section">
-      <div class="header">${localize('fields.options')}</div>
-        <div class="option-item">
-          ${this.selection.sun ? html`<paper-checkbox checked name="option-item-sun" @change="${(e) => this.toggleSun(e.target.checked)}">${localize('fields.shift_with_sun')}</paper-checkbox>` : html`<paper-checkbox name="option-item-sun" @change="${(e) => this.toggleSun(e.target)}">${localize('fields.shift_with_sun')}</paper-checkbox>`}
-        </div>
-      </div>
-    </div>
-    <div class="card-section last">
-      <mwc-button outlined @click="${() => this.editItemCancel()}">${localize('actions.cancel')}</mwc-button>
-      ${this.selection.editItem === undefined ? '' : html`<mwc-button outlined @click="${() => this.editItemDelete()}">${localize('actions.delete')}</mwc-button>`}
-      <mwc-button outlined @click="${() => this.editItemSave()}">${localize('actions.save')}</mwc-button>
-    </div>
-    `;
-  }
-
-  getLevelPanel(cfg: IActionVariable): TemplateResult {
-    let min = cfg.min, max = cfg.max, step = cfg.step, unit = cfg.unit;
-    let value = this.selection.level;
-
-    if (cfg.showPercentage) {
-      value = Math.round(((value - min) / (max - min)) * 100);
-      step = 1;
-      min = 0;
-      max = 100;
-      if (value < min) value = min;
-      else if (value > max) value = max;
-      unit = '%'
-    }
-
-    if (!cfg['optional'] && !this.selection.levelEnabled) Object.assign(this.selection, { levelEnabled: true });
-
-    return html`
-    <div class="card-section">
-      <div class="header">${cfg['name']} ${unit ? `in ${unit}` : ''}</div>
-      <div class="option-item">
-        ${cfg['optional'] ? (this.selection.levelEnabled ? html`<paper-checkbox checked @change="${this._toggleEnableLevel}"></paper-checkbox>` : html`<paper-checkbox @change="${this._toggleEnableLevel}"></paper-checkbox>`) : ``}
-        ${this.selection.levelEnabled ? html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel}></ha-paper-slider>` : html`<ha-paper-slider id="level" pin min=${min} max=${max} step=${step} value=${value} @change=${this._updateLevel} disabled></ha-paper-slider>`}
-      </div>
-     </div>`;
-  }
-
-  private _toggleEnableLevel(e: Event) {
-    let checked = (e.target as HTMLInputElement).checked;
-    let target = this.shadowRoot.querySelector("#level") as HTMLInputElement;
-    target.disabled = !checked;
-    this.selection.levelEnabled = checked;
-  }
-
-  private _updateLevel(e: Event) {
-    let action = this.Config.FindAction(this.selection.entity, this.selection.action);
-    let cfg = action!['variable'];
-    if (!cfg) return;
-    let min = cfg.min, max = cfg.max, step = cfg.step;
-
-    let value = Number((e.target as HTMLInputElement).value);
-
-    if (cfg.showPercentage) {
-      value = Math.round((value / 100) * (max - min) + min);
-    }
-    if (value < min) value = min;
-    else if (value > max) value = max;
-    this.selection.level = value;
-  }
-
-  updateDays(action: string): void {
-    var daysTypes = Array('daily', 'weekdays', 'custom');
-    if (daysTypes.includes(action)) this.selection.daysType = action;
-    else {
-      if (!this.selection.days.includes(Number(action))) this.selection.days.push(Number(action));
-      else pull(this.selection.days, Number(action));
-      this.selection.daysType = 'custom';
-    }
-    this.shadowRoot.querySelectorAll(".day-item").forEach(el => {
-      let index = String(el.getAttribute('index'));
-      if (daysTypes.includes(index)) {
-        if (this.selection.daysType == index) el.classList.add("active");
-        else el.classList.remove("active");
-      } else if (this.selection.days.includes(Number(index))) el.classList.add("active");
-      else el.classList.remove("active");
-    });
-
-    if (this.selection.daysType == 'custom') this.shadowRoot.querySelector('#day-list-custom').classList.remove('closed');
-    else this.shadowRoot.querySelector('#day-list-custom').classList.add('closed');
-  }
-
-  updateTime(action: string): void {
-    let hours = Number(this.selection.timeHours);
-    let minutes = Number(this.selection.timeMinutes);
-
-    if (action == 'time-hours-up') hours++;
-    else if (action == 'time-hours-down') hours--;
-    else if (action == 'time-minutes-up') minutes += 10;
-    else if (action == 'time-minutes-down') minutes -= 10;
-
-    if (hours < 0) hours = 23;
-    else if (hours > 23) hours = 0;
-    else if (minutes < 0) minutes = 50;
-    else if (minutes > 50) minutes = 0;
-
-    let hours_string = String(hours).padStart(2, '0');
-    let minutes_string = String(minutes).padStart(2, '0');
-
-    this.shadowRoot.querySelector('#time-hours').innerHTML = hours_string;
-    this.shadowRoot.querySelector('#time-minutes').innerHTML = minutes_string;
-
-    this.selection.timeHours = hours_string;
-    this.selection.timeMinutes = minutes_string;
-  }
-
-  editItemSave(): void {
-    var data = ExportToHass(this.selection, this.Config);
-
-    if (this.selection.newItem) {
       this._hass!.callService('scheduler', 'add', data);
-    } else if (this.selection.editItem) {
-      this._hass!.callService('scheduler', 'edit', Object.assign(data, { entity_id: this.selection.editItem }));
     }
-    this.selection = { ...DefaultUserSelection };
-    this.awaitUpdate();
 
+    this.editItem = null;
+    this._view = EViews.Overview;
   }
 
-  editItemDelete(): void {
-    let entity_id = this.selection.editItem;
+  _deleteItemClick(): void {
+    const entity_id = this.editItem;
     this._hass!.callService('scheduler', 'remove', { entity_id: entity_id });
-    this.selection = { ...DefaultUserSelection };
-    this.awaitUpdate();
+    this.editItem = null;
+    this._view = EViews.Overview;
   }
 
-  toggleSun(selected: boolean): void {
-    this.selection.sun = selected;
+  _editItemClick(ev: CustomEvent): void {
+    if (!this._hass || !this._config) return;
+    const scheduleEntity = this._hass.states[ev.detail];
+    if (!scheduleEntity) return;
+    const entries: ImportedEntry[] = scheduleEntity.attributes.entries.map(importEntry);
+    const entity_id = scheduleEntity.attributes.actions[0].entity;
+    this.entity = entityConfig(this._hass.states[entity_id], this._config);
+
+    if (!this.entity) {
+      const actions = scheduleEntity.attributes.actions
+        .map(e => importAction(e))
+        .map(e => actionConfig(omit(e, ['entity']) as HassAction));
+
+      const entity: EntityElement = {
+        id: entity_id,
+        name: DeadEntityName,
+        icon: DeadEntityIcon,
+        actions: actions
+      };
+      this.entity = entity;
+    }
+    this.actions = this.entity.actions
+      .map(e => actionConfig(e))
+      .filter(e => e) as ActionElement[];
+
+    const conditions: Condition[] = scheduleEntity.attributes.conditions || [];
+    const options: OptionConfig = scheduleEntity.attributes.options || {};
+    this.entries = entries.map(el => {
+
+      const hassAction = el.actions
+        .filter(e => e < scheduleEntity.attributes.actions.length)
+        .map(e => importAction(scheduleEntity.attributes.actions[e]))
+        .shift()!;
+      const action = findAction(this.entity!, hassAction);
+
+      if (!this.actions.find(e => e.id == action.id)) {
+        let actions = [...this.actions];
+        actions.push(action);
+        this.actions = actions;
+      }
+      const output: Entry = {
+        time: el.time,
+        endTime: el.endTime,
+        days: el.days,
+        entity: this.entity!.id,
+        action: action.id,
+      };
+
+      if (action.variable && hassAction.service_data && action.variable.field in hassAction.service_data) {
+        if (action.variable.type == EVariableType.Level) {
+          const variableConfig: LevelVariable = {
+            type: EVariableType.Level,
+            value: Number(hassAction.service_data[action.variable.field]),
+            enabled: true,
+          };
+          Object.assign(output, { variable: variableConfig });
+        } else {
+          const variableConfig: ListVariable = {
+            type: EVariableType.List,
+            value: String(hassAction.service_data[action.variable.field]),
+          };
+          Object.assign(output, { variable: variableConfig });
+        }
+      }
+
+      if (el.conditions && el.conditions.items.length) {
+        Object.assign(output, {
+          conditions: {
+            type: el.conditions.type,
+            items: el.conditions.items.filter(e => conditions.length >= e - 1).map(e => conditions[e]),
+          },
+        });
+      }
+
+      if (el.options && Object.keys(el.options).length) {
+        Object.assign(output, {
+          options: el.options.reduce((obj, el) => Object.assign(obj, pick(options, [Object.keys(options)[el]])), {}),
+        });
+      }
+      return output;
+    });
+
+    this.editItem = scheduleEntity.entity_id;
+    this.friendlyName = scheduleEntity.attributes.friendly_name;
+
+    if (this.entries.every(e => e.endTime)) {
+      this._view = EViews.TimeScheme;
+      this.entries = calculateTimeline(this.entries);
+    } else {
+      this.actions = this.actions.filter(e => e.id == this.entries[0].action);
+      this._view = EViews.TimePicker;
+    }
+  }
+  _gotoOptionsClick(ev: CustomEvent): void {
+    this.entries = ev.detail as Entry[];
+    this._view = EViews.Options;
+  }
+
+  _optionsBackClick(ev: CustomEvent, saveAfter?: boolean): void {
+    this.entries = ev.detail.entries as Entry[];
+    this.friendlyName = ev.detail.friendlyName as string;
+
+    if (this.entries.every(e => e.endTime)) this._view = EViews.TimeScheme;
+    else this._view = EViews.TimePicker;
+
+    if (saveAfter) {
+      this._saveItemClick();
+    }
   }
 }

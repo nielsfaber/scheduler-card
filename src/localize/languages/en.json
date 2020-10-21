@@ -22,12 +22,10 @@
     "days": "Days",
     "time": "Time",
     "options": "Options",
-    "day_type_daily": "every day",
-    "day_type_weekdays": "weekdays",
-    "day_type_custom": "custom",
-    "shift_with_sun": "automatically adjust time to sunrise/sunset",
-    "brightness": "Brightness",
-    "temperature": "Temperature"
+    "day_type_daily": "daily",
+    "day_type_workday": "workdays",
+    "day_type_weekend": "weekend",
+    "day_type_custom": "custom"
   },
   "days_short": {
     "mon": "mon",
@@ -39,38 +37,86 @@
     "sun": "sun"
   },
   "days_long": {
-    "mon": "monday",
-    "tue": "tuesday",
-    "wed": "wednesday",
-    "thu": "thursday",
-    "fri": "friday",
-    "sat": "saturday",
-    "sun": "sunday"
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
   },
   "words": {
-    "on": "on",
-    "every": "every",
     "and": "and",
-    "at": "at",
     "before": "before",
-    "after": "after",
-    "sunrise": "sunrise",
-    "sunset": "sunset"
+    "after": "after"
   },
   "services": {
     "turn_on": "turn on",
+    "turn_on_brightness": "turn on {at brightness}",
     "turn_off": "turn off",
     "close_cover": "close",
     "open_cover": "open",
-    "set_temperature": "set temperature",
-    "set_to": "set to"
+    "set_temperature": "set temperature {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "set position {to position}",
+    "set_hvac_mode": "set mode {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "turn off",
+    "set_preset_mode": "set preset {to preset_mode}",
+    "set_value": "set value {to value}",
+    "select_option": "select option {option}",
+    "select_source": "select source {source}",
+    "start": "start",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "brightness",
+    "temperature": "temperature",
+    "position": "position",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
   },
   "domains": {
+    "camera": "cameras",
     "climate": "climate",
     "cover": "covers",
     "fan": "fans",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
     "light": "lights",
+    "media_player": "media players",
+    "scene": "scenes",
     "switch": "switches",
     "vacuum": "vacuum"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
   }
 }
