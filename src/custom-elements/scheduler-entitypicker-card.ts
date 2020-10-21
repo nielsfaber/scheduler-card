@@ -5,7 +5,7 @@ import { CardConfig, EntityElement, GroupElement, ActionElement } from '../types
 import { entityFilter, entityConfig } from '../entity';
 import { entityGroups } from '../group';
 import { actionConfig } from '../action';
-import { CreateTimeScheme } from '../const';
+import { CreateTimeScheme, DefaultActionIcon } from '../const';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 
 import './button-group';
@@ -54,7 +54,8 @@ export class SchedulerEditorCard extends LitElement {
 
     let actions = entity
       .actions.map(actionConfig)
-      .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }));
+      .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }))
+      .map(e => e.icon ? e : Object.assign(e, { icon: DefaultActionIcon }));
 
     if (entity.exclude_actions) actions = actions.filter(e => !entity.exclude_actions?.includes(e.name!.trim().toLowerCase()));
 

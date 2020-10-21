@@ -1,75 +1,56 @@
 import { LitElement, html, customElement, css, property, internalProperty, PropertyValues } from 'lit-element';
-import { ImportedEntry, Dictionary, EntityElement, HassAction, ActionElement } from '../types';
+import { ImportedEntry, Dictionary, EntityElement, HassAction, ActionElement, CardConfig, ScheduleEntity } from '../types';
 import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime } from '../date-time';
 import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
 import { HomeAssistant, computeEntity, } from 'custom-card-helpers';
 import { importEntry } from '../interface';
-import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName } from '../const';
+import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName, DefaultActionIcon } from '../const';
 import { formatAction } from '../formatAction';
-import { importAction, findActionIndex, actionConfig } from '../action';
+import { importAction, findActionIndex, actionConfig, findAction } from '../action';
 import { localize } from '../localize/localize';
-
-(window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
-  type: 'scheduler-entity-row',
-  name: 'scheduler-entity-row',
-  description: 'Show a schedule entity in entities card.',
-});
-
-type schedulerRowConfig = {
-  entity: string;
-  icon?: string;
-  name?: string;
-  config?: Dictionary<EntityElement>;
-}
+import { HassEntity } from 'home-assistant-js-websocket';
+import { entityConfig } from '../entity';
 
 @customElement('scheduler-entity-row')
 export class ScheduleEntityRow extends LitElement {
 
   @property() hass?: HomeAssistant;
-  @internalProperty() private _config?: schedulerRowConfig;
-
-  setConfig(config: schedulerRowConfig) {
-    this._config = config;
-  }
+  @property() schedule_entity?: string;
+  @property() config?: CardConfig
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
-    if (oldHass && this._config && changedProps.size == 1) {
-      const entity = this._config.entity;
-      return oldHass.states[entity] !== this.hass!.states[entity];
+    if (oldHass && changedProps.size == 1 && this.schedule_entity) {
+      return oldHass.states[this.schedule_entity] !== this.hass!.states[this.schedule_entity];
     }
     return true;
   }
 
   render() {
-    if (!this._config || !this.hass) return html``;
+    if (!this.config || !this.hass || !this.schedule_entity) return html``;
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.hass.states[this.schedule_entity] as ScheduleEntity;
     if (!stateObj) {
       return html`
         <hui-warning>
-          Entity not found '${this._config.entity}'
+          Entity not found '${this.schedule_entity}'
         </hui-warning>
       `;
     }
-    let entries: ImportedEntry[] = stateObj.attributes.entries.map(importEntry);
-    let nextEntry = this.computeNextEntry(entries);
 
-    let action: HassAction | ActionElement = importAction(nextEntry.actions.map(e => stateObj.attributes.actions[e])[0]);
-    let entity = this.hass.states[action.entity];
-    let entityName = this._config.name ? this._config.name : entity ? entity.attributes.friendly_name || computeEntity(entity.entity_id) : DeadEntityName;
+    const entries: ImportedEntry[] = stateObj.attributes.entries.map(importEntry);
+    const nextEntry = this.computeNextEntry(entries);
+    const action: HassAction = importAction(nextEntry.actions.map(e => stateObj.attributes.actions[e])[0]);
+    const entity = this.hass.states[action.entity];
 
-    let icon = this._config.icon ? this._config.icon : entity ? DefaultEntityIcon : DeadEntityIcon;
-    if (this._config.config && action.entity in this._config.config && this._config.config[action.entity]) {
-      entityName = this._config.config[action.entity].name || entityName;
-      icon = this._config.config[action.entity].icon || icon;
-      const matches = findActionIndex(this._config.config[action.entity], action);
-      if (matches.length) {
-        const match = this._config.config[action.entity].actions[matches[0]];
-        if (match.icon) icon = match.icon;
-        action = actionConfig({ ...match, service_data: { ...match.service_data || {}, ...action.service_data || {} } });
-      }
+    let entityName = DeadEntityName;
+    let icon = DeadEntityIcon;
+    let entityCfg = entityConfig(entity, this.config);
+
+    if (entityCfg) { //entity exists in HASS
+      let actionCfg = findAction(entityCfg, action);
+      icon = actionCfg.icon || entityCfg.icon || entity.attributes.icon || DefaultActionIcon;
+      entityName = entityCfg.name;
     }
 
     let friendlyName = stateObj.attributes.friendly_name?.match(/^schedule\ #[0-9a-f]{6}$/i) ? '' : stateObj.attributes.friendly_name;
@@ -89,7 +70,7 @@ export class ScheduleEntityRow extends LitElement {
         </div>
       </div>
       <ha-switch
-        ?checked=${stateObj.state == "waiting"}
+        ?checked=${stateObj.state == 'waiting' || stateObj.state == 'triggered'}
         @click=${this.toggleDisabled}
       >
       </ha-switch>
@@ -138,10 +119,10 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   toggleDisabled(ev: Event) {
-    if (!this.hass || !this._config) return;
+    if (!this.hass || !this.schedule_entity) return;
     ev.stopPropagation();
     let checked = !(ev.target as HTMLInputElement).checked;
-    this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this._config.entity });
+    this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this.schedule_entity });
   }
 
   static styles = css`

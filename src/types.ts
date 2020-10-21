@@ -1,6 +1,6 @@
 import { Time, Days } from './date-time';
 import { LovelaceCardEditor, LovelaceCardConfig } from 'custom-card-helpers';
-import { HassEntity } from 'home-assistant-js-websocket';
+import { HassEntity, HassEntityAttributeBase } from 'home-assistant-js-websocket';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -31,7 +31,7 @@ export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 // }
 
 export interface ScheduleEntity extends HassEntity {
-  attributes: {
+  attributes: HassEntityAttributeBase & {
     actions: HassAction[];
     entries: string[];
     next_trigger?: string;
@@ -90,7 +90,7 @@ export interface ActionElement extends ActionConfig {
   name?: string;
   service: string;
   service_data?: Dictionary<any>;
-  icon: string;
+  icon?: string;
   variable?: LevelVariableConfig | ListVariableConfig;
   supported_feature?: number;
 }
@@ -171,6 +171,7 @@ export interface CardConfig extends LovelaceCardConfig {
   title?: boolean | string;
   am_pm?: boolean;
   time_step?: number;
+  first_weekday?: string;
   show_header_toggle?: boolean;
   include?: string[];
   exclude?: string[];

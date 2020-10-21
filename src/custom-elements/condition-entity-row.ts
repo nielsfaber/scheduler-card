@@ -1,8 +1,9 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { Condition, EConditionMatchType, CardConfig } from '../types';
+import { Condition, EConditionMatchType, CardConfig, EntityElement } from '../types';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 import { HomeAssistant } from 'custom-card-helpers';
 import { entityConfig } from '../entity';
+import { DefaultEntityIcon } from '../const';
 
 @customElement('condition-entity-row')
 export class ConditionEntityRow extends LitElement {
@@ -10,34 +11,35 @@ export class ConditionEntityRow extends LitElement {
   @property() hass?: HomeAssistant;
   @property() config?: CardConfig;
   @property() item?: Condition;
-
-
-  @property()
-  selected: boolean = false;
+  @property() selected: boolean = false;
+  @property() entity?: EntityElement;
 
   timer: any;
 
   @property()
   editMode: boolean = false;
 
+  firstUpdated() {
+    if (!this.hass || !this.config || !this.item) return;
+    this.entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
+  }
+
   render() {
     if (!this.item || !this.hass || !this.config) return html``;
 
-    const stateObj = this.hass.states[this.item.entity];
-    if (!stateObj) {
+    if (!this.entity) {
       return html`
         <hui-warning>
           Entity not found '${this.item.entity}'
         </hui-warning>
       `;
     }
-    let entity = entityConfig(stateObj, this.config)!;
 
     return html`
       <div class="list-item">
         <mwc-button @click="${this.entityButtonClick}" class="${this.selected ? 'active' : ''}">
-          <ha-icon icon="${PrettyPrintIcon(entity.icon)}"></ha-icon>
-          ${PrettyPrintName(entity.name)}
+          <ha-icon icon="${PrettyPrintIcon(this.entity.icon || DefaultEntityIcon)}"></ha-icon>
+          ${PrettyPrintName(this.entity.name)}
         </mwc-button>
           ${this.getMatchTypeButton()}
           ${this.getStateButton()}
@@ -143,11 +145,10 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateButtonClick() {
-    if (!this.item || !this.config || !this.hass) return;
+    if (!this.item || !this.entity) return;
     this.selected = false;
-    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = this.item.state;
-    let states = entity.states!;
+    const states = this.entity.states;
     if (!states || !Array.isArray(states)) return;
     let i = 0;
     for (i = 0; i < states.length; i++) {
@@ -159,12 +160,11 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateDecrement(time: number | null = null) {
-    if (!this.item || !this.config || !this.hass) return;
+    if (!this.item || !this.entity) return;
     clearTimeout(this.timer);
-    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = Number(this.item.state);
-    let cfg = entity.states!;
-    if (Array.isArray(cfg)) return;
+    const cfg = this.entity.states;
+    if (!cfg || Array.isArray(cfg)) return;
     let step = cfg.step || 1;
     state = state - step;
     if (state < cfg.min) state = cfg.min;
@@ -178,12 +178,11 @@ export class ConditionEntityRow extends LitElement {
   }
 
   stateIncrement(time: number | null = null) {
-    if (!this.item || !this.config || !this.hass) return;
+    if (!this.item || !this.entity) return;
     clearTimeout(this.timer);
-    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
     let state = Number(this.item.state);
-    let cfg = entity.states!;
-    if (Array.isArray(cfg)) return;
+    const cfg = this.entity.states;
+    if (!cfg || Array.isArray(cfg)) return;
     let step = cfg.step || 1;
     state = state + step;
     if (state > cfg.max) state = cfg.max;
@@ -207,10 +206,9 @@ export class ConditionEntityRow extends LitElement {
   }
 
   getState() {
-    if (!this.item || !this.config || !this.hass) return;
-    let entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
+    if (!this.item || !this.entity) return;
     let state = this.item.state;
-    let cfg = entity.states!;
+    let cfg = this.entity.states!;
     if (!Array.isArray(cfg) && cfg.unit) return `${state}${cfg.unit}`;
     return state;
   }
