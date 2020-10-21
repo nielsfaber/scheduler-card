@@ -154,6 +154,14 @@ export function weekday(ts: Date) {
   return day;
 }
 
+export function sortDaylist(dayList: { id: number, name: string }[], first_weekday?: string) {
+  let days_of_the_week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  if (!first_weekday || !days_of_the_week.includes(first_weekday)) return dayList;
+  const shiftCount = days_of_the_week.length - days_of_the_week.findIndex(e => e == first_weekday);
+  dayList = [...dayList.slice(-shiftCount), ...dayList.slice(0, -shiftCount)];
+  return dayList;
+}
+
 export function relativeTime(ts: Date, options?: { amPm: boolean }) {
   const now = new Date();
   const secondsRemaining = Math.round((ts.valueOf() - now.valueOf()) / 1000);

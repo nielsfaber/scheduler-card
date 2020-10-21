@@ -2,7 +2,7 @@ import { GroupElement, CardConfig } from './types';
 import { DefaultGroupIcon } from './const';
 import { entityFilter } from './entity';
 import { computeDomain } from 'custom-card-helpers';
-import { DomainNameTranslations, localize } from './localize/localize';
+import { localize } from './localize/localize';
 import { domainIcons } from './standard-configuration/standardIcon';
 import { applyFilters } from './filter';
 
@@ -32,7 +32,7 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>) {
   domains.forEach(domain => {
     const group: GroupElement = {
       id: domain,
-      name: domain in DomainNameTranslations ? localize(DomainNameTranslations[domain]) : domain,
+      name: localize(`domains.${domain}`) || domain,
       icon:
         (config.standard_configuration === undefined || config.standard_configuration) &&
           domain in domainIcons

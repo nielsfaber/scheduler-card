@@ -1,4 +1,4 @@
-import { computeEntity } from 'custom-card-helpers';
+import { computeEntity, computeDomain } from 'custom-card-helpers';
 import { Dictionary, EntityConfig, EntityElement, GroupConfig, CardConfig } from './types';
 import { DefaultEntityIcon } from './const';
 import { standardActions } from './standard-configuration/standardActions';
@@ -38,6 +38,7 @@ export function entityConfig(entity: HassEntity | undefined, config: Partial<Car
       output = { ...output, ...omit(el, ['actions', 'exclude_actions']) };
       if (el.actions) {
         el.actions.forEach(action => {
+          if (computeDomain(action.service) == computeDomain(entity_id)) action = { ...action, service: computeEntity(action.service) }
           const indexes = findActionIndex(output, action);
           let actions = output.actions;
           if (indexes.length) actions = output.actions.map((e, i) => indexes.includes(i) ? Object.assign(e, action) : e);

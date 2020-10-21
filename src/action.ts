@@ -42,7 +42,7 @@ export function actionConfig(config: ActionConfig) {
   let data: ActionElement = {
     id: '',
     name: config.name,
-    icon: config.icon || DefaultActionIcon,
+    icon: config.icon,
     service: service,
   };
   if (config.service_data && Object.keys(config.service_data).length) Object.assign(data, { service_data: config.service_data });
