@@ -168,7 +168,7 @@ export class SchedulerCard extends LitElement {
   private _confirmItemClick(ev: CustomEvent): void {
     if (!this._hass || !this._config) return;
     const entity = ev.detail.entity;
-    this.entity = entityConfig(this._hass.states[entity], this._config)!;
+    this.entity = entityConfig(entity, this._hass, this._config)!;
     const action = ev.detail.action;
 
     if (action != CreateTimeScheme) {
@@ -226,7 +226,7 @@ export class SchedulerCard extends LitElement {
 
     this.entries.forEach(entry => {
       if (!entry.action || !entry.entity) return;
-      const entity = entityConfig(this._hass!.states[entry.entity], this._config!)!;
+      const entity = entityConfig(entry.entity, this._hass!, this._config!)!;
       const action = findAction(entity, { service: entry.action });
       const variableData = exportActionVariable(action, entry);
       const output: HassAction = {
@@ -322,11 +322,11 @@ export class SchedulerCard extends LitElement {
     if (!scheduleEntity) return;
     const entries: ImportedEntry[] = scheduleEntity.attributes.entries.map(importEntry);
     const entity_id = importAction(scheduleEntity.attributes.actions[0]).entity;
-    this.entity = entityConfig(this._hass.states[entity_id], this._config);
+    this.entity = entityConfig(entity_id, this._hass, this._config);
 
     if (!this.entity) {
       const actions = scheduleEntity.attributes.actions
-        .map(e => importAction(e))
+        .map(importAction)
         .map(e => actionConfig(omit(e, ['entity']) as HassAction));
 
       const entity: EntityElement = {

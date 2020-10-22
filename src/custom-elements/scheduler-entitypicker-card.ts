@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, GroupElement, ActionElement } from '../types';
 import { entityFilter, entityConfig } from '../entity';
@@ -24,9 +24,8 @@ export class SchedulerEditorCard extends LitElement {
   getGroups() {
     if (!this.hass || !this.config) return [];
 
-    const entities = Object.values(this.hass.states)
-      .filter(e => entityFilter(e, this.config!, { actions: true }))
-      .map(e => e.entity_id);
+    const entities = Object.keys(this.hass.states)
+      .filter(e => entityFilter(e, this.hass!, this.config!, { actions: true }));
 
     let groups = entityGroups(entities, this.config!);
     groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
@@ -39,10 +38,11 @@ export class SchedulerEditorCard extends LitElement {
 
     let entities = groupConfig
       .find(e => e.id == this.selectedGroup)!.entities
-      .map(e => entityConfig(this.hass!.states[e], this.config!))
-      .filter(e => e) as EntityElement[];
+      .map(e => entityConfig(e, this.hass!, this.config!))
+      .filter(e => e)
+      .map(e => e!.name ? e : Object.assign(e, { name: this.hass!.states[e!.id].attributes.friendly_name || computeEntity(e!.id) })) as EntityElement[];
 
-    entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    entities.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     return entities;
   }
 

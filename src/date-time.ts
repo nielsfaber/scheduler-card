@@ -1,4 +1,5 @@
 import { localize } from './localize/localize';
+import { HassEntity } from 'home-assistant-js-websocket';
 
 export const MinutesPerHour = 60;
 export const HoursPerDay = 24;
@@ -109,12 +110,22 @@ export function parseTimestamp(input: string | Date): number {
   return value;
 }
 
-export function daysToArray(dayCfg: Days) {
-  if (dayCfg.type == EDayType.Daily) return [1, 2, 3, 4, 5, 6, 7];
-  else if (dayCfg.type == EDayType.Workday) return [1, 2, 3, 4, 5];
-  else if (dayCfg.type == EDayType.Weekend) return [6, 7];
-  else if (dayCfg.type == EDayType.Custom) return dayCfg.custom_days as number[];
-  else return [];
+export function daysToArray(dayCfg: Days, workday_sensor?: HassEntity) {
+  if (!workday_sensor) {
+    if (dayCfg.type == EDayType.Daily) return [1, 2, 3, 4, 5, 6, 7];
+    else if (dayCfg.type == EDayType.Workday) return [1, 2, 3, 4, 5];
+    else if (dayCfg.type == EDayType.Weekend) return [6, 7];
+    else if (dayCfg.type == EDayType.Custom) return dayCfg.custom_days as number[];
+    else return [];
+  }
+  else {
+    if (dayCfg.type == EDayType.Daily) return [1, 2, 3, 4, 5, 6, 7];
+    else if (dayCfg.type == EDayType.Custom) return dayCfg.custom_days as number[];
+    const days_of_the_week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    if (dayCfg.type == EDayType.Workday) return (workday_sensor.attributes.workdays.map(day => days_of_the_week.findIndex(e => e == day) + 1));
+    else if (dayCfg.type == EDayType.Weekend) return days_of_the_week.map((e, index) => workday_sensor.attributes.workdays.includes(e) ? null : index + 1).filter(e => e);
+    else return [];
+  }
 }
 
 export function stringToTimeEvent(input: string): ETimeEvent {

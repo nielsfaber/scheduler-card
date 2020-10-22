@@ -1,7 +1,7 @@
 import { Dictionary, HassAction, ActionElement } from "./types";
 import { localize } from "./localize/localize";
 import { uniqueId } from "./action";
-import { HomeAssistant } from "custom-card-helpers";
+import { HomeAssistant, computeEntity } from "custom-card-helpers";
 import { PrettyPrintName } from "./helpers";
 
 export function formatVariable(variable: string, value: string | number, hass: HomeAssistant) {
@@ -21,7 +21,7 @@ export function formatVariable(variable: string, value: string | number, hass: H
 
 export function formatAction(config: ActionElement | HassAction, hass: HomeAssistant) {
   if ("name" in config && config.name) return String(config.name);
-  const service = config.service;
+  const service = computeEntity(config.service);
   let service_data: Dictionary<any> = { ...config.service_data };
 
   let translation: string | undefined;

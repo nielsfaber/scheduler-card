@@ -1,5 +1,5 @@
 import { HassEntity } from "home-assistant-js-websocket";
-import { computeDomain } from "custom-card-helpers";
+import { computeDomain, HomeAssistant } from "custom-card-helpers";
 import { alarmControlPanelActions } from "./alarm_control_panel";
 import { ActionConfig } from "../types";
 import { climateActions } from "./climate";
@@ -18,51 +18,54 @@ import { TurnOnAction, TurnOffAction } from "../const";
 import { groupActions } from "./group";
 
 
-export function standardActions(entity: HassEntity): ActionConfig[] {
-  const domain = computeDomain(entity.entity_id);
-  const supportedFeatures = entity.attributes.supported_features;
+export function standardActions(entity_id: string, hass: HomeAssistant): ActionConfig[] {
+  const domain = computeDomain(entity_id);
+  const stateObj = hass.states[entity_id];
+  if (!stateObj) return []; //entity does not exist
 
   switch (domain) {
     case "alarm_control_panel":
-      return alarmControlPanelActions(entity);
+      return alarmControlPanelActions(stateObj);
     case "climate":
-      return climateActions(entity);
+      return climateActions(entity_id, hass);
     case "cover":
-      return coverActions(entity);
+      return coverActions(stateObj);
     case "fan":
-      return fanActions(entity);
+      return fanActions(stateObj);
     case "group":
-      return groupActions(entity);
+      const entities: string[] = stateObj.attributes.entity_id! || [];
+      const configs = entities.map(e => standardActions(e, hass));
+      return groupActions(stateObj, configs);
     case "humidifer":
-      return humidifierActions(entity);
+      return humidifierActions(stateObj);
     case "input_boolean":
       return [
         { ...TurnOnAction, icon: "flash" },
         { ...TurnOffAction, icon: "flash-off" }
       ];
     case "input_number":
-      return inputNumberActions(entity);
+      return inputNumberActions(stateObj);
     case "input_select":
-      return inputSelectActions(entity);
+      return inputSelectActions(stateObj);
     case "light":
-      return lightActions(entity);
+      return lightActions(stateObj);
     case "lock":
       return lockActions;
     case "media_player":
-      return mediaPlayerActions(entity);
+      return mediaPlayerActions(stateObj);
     case "scene":
       return [{ ...TurnOnAction, icon: "play" }];
     case "script":
-      return scriptActions(entity);
+      return scriptActions(stateObj);
     case "switch":
       return [
         { ...TurnOnAction, icon: "flash" },
         { ...TurnOffAction, icon: "flash-off" }
       ];
     case "vacuum":
-      return vacuumActions(entity);
+      return vacuumActions(stateObj);
     case "water_heater":
-      return waterHeaterActions(entity);
+      return waterHeaterActions(stateObj);
 
     default:
       return []

@@ -2,6 +2,7 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { levelVariable, listVariable, listVariableOption } from "../actionVariables";
 import { ActionConfig } from "../types";
 import { TurnOffAction } from "../const";
+import { HomeAssistant } from "custom-card-helpers";
 
 const modeIcons = {
   heat: "fire",
@@ -12,17 +13,19 @@ const modeIcons = {
   fan_only: "fan"
 }
 
-export function climateActions(entity: HassEntity) {
-  const supportedFeatures = entity.attributes.supported_features!;
-  const presetModes = entity.attributes.preset_modes;
-  const hvacModes = entity.attributes.hvac_modes;
+export function climateActions(entity_id: string, hass: HomeAssistant) {
+  const stateObj = hass.states[entity_id];
+  const supportedFeatures = stateObj.attributes.supported_features!;
+  const presetModes = stateObj.attributes.preset_modes;
+  const hvacModes = stateObj.attributes.hvac_modes;
   const filteredHvacModes = hvacModes.filter(e => !['off', 'heat', 'cool', 'heat_cool'].includes(e))
 
   const tempVariable = levelVariable({
     field: "temperature",
-    min: entity.attributes.min_temp,
-    max: entity.attributes.max_temp,
-    step: 0.5,
+    min: stateObj.attributes.min_temp,
+    max: stateObj.attributes.max_temp,
+    unit: hass.config.unit_system.temperature,
+    step: hass.config.unit_system.temperature.includes('C') ? 0.5 : 1,
   });
 
   let actions: ActionConfig[] = [];

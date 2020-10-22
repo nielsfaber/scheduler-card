@@ -1,10 +1,10 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, ActionElement, EntityElement, EVariableType, LevelVariableConfig, LevelVariable, ListVariable, Entry, ListVariableConfig } from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize } from '../helpers';
 import { EDayType, daysToArray, ETimeEvent, sortDaylist } from '../date-time';
-import { DayTypeOptions, DayOptions, CreateTimeScheme, DefaultTimeStep, FieldTemperature, DefaultActionIcon } from '../const';
+import { DayTypeOptions, DayOptions, CreateTimeScheme, DefaultTimeStep, FieldTemperature, DefaultActionIcon, WorkdaySensor } from '../const';
 
 
 import './time-picker';
@@ -55,7 +55,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div class="summary-entity">
               <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
               </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+              ${capitalize(PrettyPrintName(this.entity.name || this.hass!.states[this.entity.id].attributes.friendly_name || computeEntity(this.entity.id)))}
             </div>
             <div class="summary-arrow">
               <ha-icon icon="hass:arrow-right">
@@ -114,7 +114,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div class="summary-entity">
               <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
               </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+              ${capitalize(PrettyPrintName(this.entity.name || this.hass!.states[this.entity.id].attributes.friendly_name || computeEntity(this.entity.id)))}
             </div>
             <div class="summary-arrow">
               <ha-icon icon="hass:arrow-right">
@@ -210,7 +210,6 @@ export class SchedulerTimepickerCard extends LitElement {
     if (!actionConfig.variable) return html``;
     if (actionConfig.variable.type == EVariableType.Level) {
       let config = actionConfig.variable as LevelVariableConfig;
-      if (!config.unit && config.field == FieldTemperature) Object.assign(config, { unit: this.hass.config.unit_system.temperature });
 
       if (!this.entries[this.activeEntry].variable)
         this.updateActiveEntry({ variable: { type: EVariableType.Level, value: config.min, enabled: !config.optional } });
@@ -280,7 +279,7 @@ export class SchedulerTimepickerCard extends LitElement {
     const input = (ev.target as HTMLInputElement).value;
     if (Object.values(EDayType).includes(input as EDayType)) {
       if (input == EDayType.Custom && !daysCfg.custom_days)
-        Object.assign(daysCfg, { custom_days: daysToArray(daysCfg) });
+        Object.assign(daysCfg, { custom_days: daysToArray(daysCfg, this.hass!.states[WorkdaySensor]) });
       Object.assign(daysCfg, { type: input });
     } else {
       Object.assign(daysCfg, { custom_days: [...input] });

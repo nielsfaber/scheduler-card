@@ -29,7 +29,7 @@ export class SchedulerEntitiesCard extends LitElement {
 
     if (this.config.discover_existing !== undefined && !this.config.discover_existing) {
       schedules = schedules.filter(el =>
-        (el.attributes.actions.map(e => e.entity) as string[]).every(e => this._hass!.states[e] && entityFilter(this._hass!.states[e], this.config!))
+        (el.attributes.actions.map(importAction).map(e => e.entity) as string[]).every(e => this._hass!.states[e] && entityFilter(e, this._hass!, this.config!))
       );
     }
 
@@ -109,7 +109,7 @@ export class SchedulerEntitiesCard extends LitElement {
     if (!this.schedules.length) return html`${localize('instructions.no_entries_defined')}`;
     return this.schedules.map(e => e.entity_id).map(entity_id => {
       const entity = this._hass!.states[entity_id] as ScheduleEntity;
-      let discovered = !(entity.attributes.actions!.map(importAction).every(e => entityFilter(e.entity, this.config!)));
+      let discovered = !(entity.attributes.actions!.map(importAction).every(e => entityFilter(e.entity, this._hass!, this.config!)));
 
       if (discovered) {
         return html`

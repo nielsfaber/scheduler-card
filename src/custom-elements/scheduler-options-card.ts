@@ -4,7 +4,7 @@ import { localize } from '../localize/localize';
 import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType } from '../types';
 
 import './condition-entity-row';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { entityGroups } from '../group';
 import { entityConfig, entityFilter } from '../entity';
 import { commonStyle } from '../styles';
@@ -105,18 +105,18 @@ export class SchedulerOptionsCard extends LitElement {
   renderAddCondition() {
     if (!this.addCondition || !this.hass || !this.config) return html``;
 
-    let hassEntities = Object.values(this.hass.states)
-      .filter(e => entityFilter(e, this.config!, { states: true }))
-      .map(e => e.entity_id);
+    let hassEntities = Object.keys(this.hass.states)
+      .filter(e => entityFilter(e, this.hass!, this.config!, { states: true }));
     let groups = entityGroups(hassEntities, this.config!);
     groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
 
     let entities: EntityElement[] = [];
     if (this.selectedGroup) {
       entities = groups.find(e => e.id == this.selectedGroup)!.entities
-        .map(e => entityConfig(this.hass!.states[e], this.config!))
-        .filter(e => e) as EntityElement[];
-      entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+        .map(e => entityConfig(e, this.hass!, this.config!))
+        .filter(e => e)
+        .map(e => e!.name ? e : Object.assign(e, { name: this.hass!.states[e!.id].attributes.friendly_name || computeEntity(e!.id) })) as EntityElement[];
+      entities.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     }
 
     return html`
@@ -199,7 +199,7 @@ export class SchedulerOptionsCard extends LitElement {
   confirmConditionClick() {
     if (!this.selectedEntity || !this.config || !this.hass) return;
 
-    const states = entityConfig(this.hass.states[this.selectedEntity], this.config)!.states!;
+    const states = entityConfig(this.selectedEntity, this.hass, this.config)!.states!;
     const step = Array.isArray(states) ? 1 : states.step || 1;
     let default_state = Array.isArray(states) ? states[0] : Number((Math.round((states.min + states.max) / 2 / step) * step).toPrecision(5));
     let condition: Condition = {

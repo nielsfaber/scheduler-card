@@ -60,7 +60,7 @@ export interface GroupConfig {
 
 export interface EntityElement extends EntityConfig {
   id: string;
-  name: string;
+  name?: string;
   icon?: string;
   actions: ActionConfig[];
   exclude_actions?: string[];
