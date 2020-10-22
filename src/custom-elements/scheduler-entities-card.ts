@@ -8,6 +8,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 
 import './scheduler-entity-row';
 import { IsSchedulerEntity, entityFilter, entityConfig } from '../entity';
+import { importAction } from '../action';
 
 
 @customElement('scheduler-entities-card')
@@ -15,6 +16,7 @@ export class SchedulerEntitiesCard extends LitElement {
 
   @property() _hass?: HomeAssistant;
   @property() config?: CardConfig;
+
   schedules: HassEntity[] = [];
   scheduleEntities: string[] = [];
 
@@ -52,7 +54,6 @@ export class SchedulerEntitiesCard extends LitElement {
     if (oldHass && changedProps.size == 1) {
       const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
       if (scheduleEntities.length !== this.scheduleEntities.length) {
-
         this.loadSchedules();
         return true;
       }
@@ -81,7 +82,7 @@ export class SchedulerEntitiesCard extends LitElement {
           </div>
           ${this.schedules.length && this.config.show_header_toggle ? html`
           <ha-switch
-            ?checked=${this.schedules.some(el => el.state == "on")}
+            ?checked=${this.schedules.some(el => el.state == "waiting" || el.state == "triggered")}
             @change=${this.toggleDisableAll}
           >
           </ha-switch>`: ''}
@@ -105,20 +106,10 @@ export class SchedulerEntitiesCard extends LitElement {
   getRows() {
     if (!this.config || !this._hass || !this.schedules) return html``;
 
-    let usedEntities: string[] = [];
-    this.schedules.forEach(
-      el => (usedEntities = usedEntities.concat(el.attributes.actions.map(e => e.entity) as string[]))
-    );
-    usedEntities = usedEntities.filter((v, k, arr) => arr.indexOf(v) === k);
-    const entities: Dictionary<EntityElement> = usedEntities
-      .map(e => [e, entityConfig(this._hass!.states[e], this.config!)])
-      .reduce((obj, [key, val]) => Object.assign(obj, { [String(key)]: val }), {});
-
-
     if (!this.schedules.length) return html`${localize('instructions.no_entries_defined')}`;
     return this.schedules.map(e => e.entity_id).map(entity_id => {
       const entity = this._hass!.states[entity_id] as ScheduleEntity;
-      let discovered = !(entity.attributes.actions!.every(e => entityFilter(e.entity, this.config!)));
+      let discovered = !(entity.attributes.actions!.map(importAction).every(e => entityFilter(e.entity, this.config!)));
 
       if (discovered) {
         return html`
@@ -126,7 +117,8 @@ export class SchedulerEntitiesCard extends LitElement {
             <scheduler-entity-row
               class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
               .hass=${this._hass}
-              ._config=${{ entity: entity_id, config: entities }}
+              .schedule_entity=${entity.entity_id}
+              .config=${this.config}
               @click=${() => this.editItemClick(entity_id)}
             >
             </scheduler-entity-row>
@@ -141,7 +133,8 @@ export class SchedulerEntitiesCard extends LitElement {
             <scheduler-entity-row
               class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
               .hass=${this._hass}
-              ._config=${{ entity: entity_id, config: entities }}
+              .schedule_entity=${entity.entity_id}
+              .config=${this.config}
               @click=${() => this.editItemClick(entity_id)}
             >
             </scheduler-entity-row>

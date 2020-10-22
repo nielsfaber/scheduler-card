@@ -57,8 +57,8 @@
     "close_cover": "închidere",
     "open_cover": "deschidere",
     "set_temperature": "setare temperatură {la temperature}",
-    "set_temperature_hvac_mode_heat": "heat {to temperature}",
-    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_temperature_hvac_mode_heat": "încălzire {la temperature}",
+    "set_temperature_hvac_mode_cool": "răcire {la temperature}",
     "set_cover_position": "setare poziție",
     "set_hvac_mode": "setare mod {hvac_mode}",
     "set_hvac_mode_hvac_mode_off": "oprire",
@@ -67,7 +67,7 @@
     "select_option": "selectare opțiune {option}",
     "select_source": "selectare sursă {source}",
     "start": "start",
-    "run_script": "run"
+    "run_script": "rulare"
   },
   "service_parameters": {
     "brightness": "intensitate luminoasă",

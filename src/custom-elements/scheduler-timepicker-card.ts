@@ -1,10 +1,10 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { localize, ServiceParamTranslations } from '../localize/localize';
+import { localize } from '../localize/localize';
 import { CardConfig, ActionElement, EntityElement, EVariableType, LevelVariableConfig, LevelVariable, ListVariable, Entry, ListVariableConfig } from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize } from '../helpers';
-import { EDayType, daysToArray, ETimeEvent } from '../date-time';
-import { DayTypeOptions, DayOptions, CreateTimeScheme, DefaultTimeStep, FieldTemperature } from '../const';
+import { EDayType, daysToArray, ETimeEvent, sortDaylist } from '../date-time';
+import { DayTypeOptions, DayOptions, CreateTimeScheme, DefaultTimeStep, FieldTemperature, DefaultActionIcon } from '../const';
 
 
 import './time-picker';
@@ -62,7 +62,7 @@ export class SchedulerTimepickerCard extends LitElement {
               </ha-icon>
             </div>
             <div class="summary-action">
-              <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon)}">
+              <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon || DefaultActionIcon)}">
               </ha-icon>
               ${capitalize(formatAction(this.actions[0], this.hass))}
             </div>
@@ -75,7 +75,7 @@ export class SchedulerTimepickerCard extends LitElement {
           </button-group>
           ${this.entries[0].days.type == EDayType.Custom ? html`
             <div>
-              <button-group .items=${DayOptions} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
+              <button-group .items=${sortDaylist(DayOptions, this.config.first_weekday)} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
               </button-group>
             </div>
           ` : ''}
@@ -132,7 +132,7 @@ export class SchedulerTimepickerCard extends LitElement {
           </button-group>
           ${this.entries[0].days.type == EDayType.Custom ? html`
             <div>
-              <button-group .items=${DayOptions} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
+              <button-group .items=${sortDaylist(DayOptions, this.config.first_weekday)} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
               </button-group>
             </div>
           ` : ''}
@@ -148,7 +148,7 @@ export class SchedulerTimepickerCard extends LitElement {
           
           <div class="header">${localize('fields.action')}</div>
           <button-group
-            .items=${this.activeEntry !== null ? this.actions : []}
+            .items=${this.activeEntry !== null ? this.actions.map(e => e.icon ? e : Object.assign(e, { icon: DefaultActionIcon })) : []}
             value=${this.activeEntry !== null ? this.entries[this.activeEntry].action : ''}
             optional="true"
             @change=${this.selectAction}
@@ -217,7 +217,7 @@ export class SchedulerTimepickerCard extends LitElement {
       let val = this.entries[this.activeEntry].variable as LevelVariable;
       return html`
           <div class="header">
-            ${config.name || (config.field in ServiceParamTranslations ? localize(ServiceParamTranslations[config.field]) : PrettyPrintName(config.field))}
+            ${config.name || localize(`service_parameters.${config.field}`) || PrettyPrintName(config.field)}
           </div>
           <variable-slider
             min=${config.min}
@@ -241,7 +241,7 @@ export class SchedulerTimepickerCard extends LitElement {
 
       return html`
         <div class="header">
-          ${config.name || (config.field in ServiceParamTranslations ? localize(ServiceParamTranslations[config.field]) : PrettyPrintName(config.field))}
+          ${config.name || localize(`service_parameters.${config.field}`) || PrettyPrintName(config.field)}
         </div>
         <button-group
           .items=${config.options.map(e => Object.assign(e, { name: e.value }))}
