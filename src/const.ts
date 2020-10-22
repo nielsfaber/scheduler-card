@@ -15,6 +15,7 @@ export const DeadEntityIcon = "help-circle-outline";
 export const FieldTemperature = 'temperature';
 export const UnitPercent = '%';
 export const CreateTimeScheme = 'make_scheme';
+export const WorkdaySensor = 'binary_sensor.workday_sensor';
 
 export const DayOptions = [
   { id: 1, name: localize('days_short.mon') },

@@ -326,7 +326,7 @@ export class SchedulerCard extends LitElement {
 
     if (!this.entity) {
       const actions = scheduleEntity.attributes.actions
-        .map(e => importAction(e))
+        .map(importAction)
         .map(e => actionConfig(omit(e, ['entity']) as HassAction));
 
       const entity: EntityElement = {

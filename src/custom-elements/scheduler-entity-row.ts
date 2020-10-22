@@ -1,10 +1,10 @@
 import { LitElement, html, customElement, css, property, internalProperty, PropertyValues } from 'lit-element';
 import { ImportedEntry, Dictionary, EntityElement, HassAction, ActionElement, CardConfig, ScheduleEntity } from '../types';
-import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime } from '../date-time';
+import { parseTimestamp, weekday, MinutesPerHour, daysToArray, ETimeEvent, relativeTime, EDayType } from '../date-time';
 import { PrettyPrintName, capitalize, PrettyPrintIcon } from '../helpers';
 import { HomeAssistant, computeEntity, } from 'custom-card-helpers';
 import { importEntry } from '../interface';
-import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName, DefaultActionIcon } from '../const';
+import { DefaultEntityIcon, DeadEntityIcon, DeadEntityName, DefaultActionIcon, WorkdaySensor } from '../const';
 import { formatAction } from '../formatAction';
 import { importAction, findActionIndex, actionConfig, findAction } from '../action';
 import { localize } from '../localize/localize';
@@ -96,9 +96,21 @@ export class ScheduleEntityRow extends LitElement {
     ts.setHours(hours);
     ts.setMinutes(minutes);
 
-    let days = daysToArray(entry.days);
-    //TBD adjust days for weekday integration!
-    while (ts.valueOf() <= now.valueOf() || !days.includes(weekday(ts))) {
+    const workdayEntity = this.hass!.states[WorkdaySensor];
+
+    function blockByWorkdayEntity(ts: Date) {
+      if (!workdayEntity) return false;
+      const start_of_day = new Date();
+      start_of_day.setHours(0, 0, 0, 0);
+      let days_diff = Math.floor((ts.valueOf() - start_of_day.valueOf()) / (24 * 3600 * 1000));
+      if (days_diff != 0) return false;
+      if (entry.days.type == EDayType.Workday) return workdayEntity.state != "on";
+      else if (entry.days.type == EDayType.Weekend) return workdayEntity.state == "on";
+      return false;
+    }
+
+    let days = daysToArray(entry.days, workdayEntity);
+    while (ts.valueOf() <= now.valueOf() || !days.includes(weekday(ts)) || blockByWorkdayEntity(ts)) {
       ts.setDate(ts.getDate() + 1);
     }
     return ts;
