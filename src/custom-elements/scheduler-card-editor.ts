@@ -174,9 +174,9 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
     let includedDomains = this._config.include ? [...this._config.include] : [];
-    const entityList = Object.values(this.hass.states)
-      .filter(e => !IsSchedulerEntity(e.entity_id))
-      .map(e => entityConfig(e, { include: ["*"] }))
+    const entityList = Object.keys(this.hass.states)
+      .filter(e => !IsSchedulerEntity(e))
+      .map(e => entityConfig(e, this.hass!, { include: ["*"] }))
       .filter(e => e && e.actions.length) as EntityElement[];
 
     const domainList = entityList

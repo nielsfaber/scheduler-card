@@ -210,7 +210,6 @@ export class SchedulerTimepickerCard extends LitElement {
     if (!actionConfig.variable) return html``;
     if (actionConfig.variable.type == EVariableType.Level) {
       let config = actionConfig.variable as LevelVariableConfig;
-      if (!config.unit && config.field == FieldTemperature) Object.assign(config, { unit: this.hass.config.unit_system.temperature });
 
       if (!this.entries[this.activeEntry].variable)
         this.updateActiveEntry({ variable: { type: EVariableType.Level, value: config.min, enabled: !config.optional } });

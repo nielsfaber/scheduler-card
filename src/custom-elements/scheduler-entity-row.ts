@@ -41,15 +41,14 @@ export class ScheduleEntityRow extends LitElement {
     const entries: ImportedEntry[] = stateObj.attributes.entries.map(importEntry);
     const nextEntry = this.computeNextEntry(entries);
     const action: HassAction = importAction(nextEntry.actions.map(e => stateObj.attributes.actions[e])[0]);
-    const entity = this.hass.states[action.entity];
 
     let entityName = DeadEntityName;
     let icon = DeadEntityIcon;
-    let entityCfg = entityConfig(entity, this.config);
+    let entityCfg = entityConfig(action.entity, this.hass, this.config);
 
     if (entityCfg) { //entity exists in HASS
       let actionCfg = findAction(entityCfg, action);
-      icon = actionCfg.icon || entityCfg.icon || entity.attributes.icon || DefaultActionIcon;
+      icon = actionCfg.icon || entityCfg.icon || DefaultActionIcon;
       entityName = entityCfg.name;
     }
 

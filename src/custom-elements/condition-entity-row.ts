@@ -21,7 +21,7 @@ export class ConditionEntityRow extends LitElement {
 
   firstUpdated() {
     if (!this.hass || !this.config || !this.item) return;
-    this.entity = entityConfig(this.hass.states[this.item.entity], this.config)!;
+    this.entity = entityConfig(this.item.entity, this.hass, this.config)!;
   }
 
   render() {

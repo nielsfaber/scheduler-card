@@ -24,9 +24,8 @@ export class SchedulerEditorCard extends LitElement {
   getGroups() {
     if (!this.hass || !this.config) return [];
 
-    const entities = Object.values(this.hass.states)
-      .filter(e => entityFilter(e, this.config!, { actions: true }))
-      .map(e => e.entity_id);
+    const entities = Object.keys(this.hass.states)
+      .filter(e => entityFilter(e, this.hass!, this.config!, { actions: true }));
 
     let groups = entityGroups(entities, this.config!);
     groups.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
@@ -39,7 +38,7 @@ export class SchedulerEditorCard extends LitElement {
 
     let entities = groupConfig
       .find(e => e.id == this.selectedGroup)!.entities
-      .map(e => entityConfig(this.hass!.states[e], this.config!))
+      .map(e => entityConfig(e, this.hass!, this.config!))
       .filter(e => e) as EntityElement[];
 
     entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
