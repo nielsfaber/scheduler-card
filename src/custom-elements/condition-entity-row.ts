@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
 import { Condition, EConditionMatchType, CardConfig, EntityElement } from '../types';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { entityConfig } from '../entity';
 import { DefaultEntityIcon } from '../const';
 
@@ -26,8 +26,9 @@ export class ConditionEntityRow extends LitElement {
 
   render() {
     if (!this.item || !this.hass || !this.config) return html``;
+    const stateObj = this.hass.states[this.item.entity];
 
-    if (!this.entity) {
+    if (!this.entity || !stateObj) {
       return html`
         <hui-warning>
           Entity not found '${this.item.entity}'
@@ -39,7 +40,7 @@ export class ConditionEntityRow extends LitElement {
       <div class="list-item">
         <mwc-button @click="${this.entityButtonClick}" class="${this.selected ? 'active' : ''}">
           <ha-icon icon="${PrettyPrintIcon(this.entity.icon || DefaultEntityIcon)}"></ha-icon>
-          ${PrettyPrintName(this.entity.name)}
+          ${PrettyPrintName(this.entity.name || stateObj.attributes.friendly_name || computeEntity(stateObj.entity_id))}
         </mwc-button>
           ${this.getMatchTypeButton()}
           ${this.getStateButton()}

@@ -4,7 +4,7 @@ import { localize } from '../localize/localize';
 import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType } from '../types';
 
 import './condition-entity-row';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { entityGroups } from '../group';
 import { entityConfig, entityFilter } from '../entity';
 import { commonStyle } from '../styles';
@@ -114,8 +114,9 @@ export class SchedulerOptionsCard extends LitElement {
     if (this.selectedGroup) {
       entities = groups.find(e => e.id == this.selectedGroup)!.entities
         .map(e => entityConfig(e, this.hass!, this.config!))
-        .filter(e => e) as EntityElement[];
-      entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+        .filter(e => e)
+        .map(e => e!.name ? e : Object.assign(e, { name: this.hass!.states[e!.id].attributes.friendly_name || computeEntity(e!.id) })) as EntityElement[];
+      entities.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     }
 
     return html`

@@ -49,7 +49,7 @@ export class ScheduleEntityRow extends LitElement {
     if (entityCfg) { //entity exists in HASS
       let actionCfg = findAction(entityCfg, action);
       icon = actionCfg.icon || entityCfg.icon || DefaultActionIcon;
-      entityName = entityCfg.name;
+      entityName = entityCfg.name !== undefined ? entityCfg.name : this.hass.states[action.entity].attributes.friendly_name || computeEntity(action.entity);
     }
 
     let friendlyName = stateObj.attributes.friendly_name?.match(/^schedule\ #[0-9a-f]{6}$/i) ? '' : stateObj.attributes.friendly_name;
@@ -62,7 +62,8 @@ export class ScheduleEntityRow extends LitElement {
       >
       </state-badge>
       <div class="info">
-        ${capitalize(PrettyPrintName(entityName))}: ${capitalize(formatAction(action, this.hass))}
+        ${entityName.length ? `${capitalize(PrettyPrintName(entityName))}: ` : ''} 
+        ${capitalize(formatAction(action, this.hass))}
         <div class="secondary">
           ${capitalize(relativeTime(this.computeTimestamp(nextEntry)))}<br>
           ${entries.length > 1 ? entries.length == 2 ? localize('misc.one_additional_task') : localize("misc.x_additional_tasks", "{count}", String(entries.length - 1)) : ''}

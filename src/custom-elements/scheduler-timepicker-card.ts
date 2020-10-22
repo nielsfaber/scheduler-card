@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, ActionElement, EntityElement, EVariableType, LevelVariableConfig, LevelVariable, ListVariable, Entry, ListVariableConfig } from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize } from '../helpers';
@@ -55,7 +55,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div class="summary-entity">
               <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
               </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+              ${capitalize(PrettyPrintName(this.entity.name || this.hass!.states[this.entity.id].attributes.friendly_name || computeEntity(this.entity.id)))}
             </div>
             <div class="summary-arrow">
               <ha-icon icon="hass:arrow-right">
@@ -114,7 +114,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div class="summary-entity">
               <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
               </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+              ${capitalize(PrettyPrintName(this.entity.name || this.hass!.states[this.entity.id].attributes.friendly_name || computeEntity(this.entity.id)))}
             </div>
             <div class="summary-arrow">
               <ha-icon icon="hass:arrow-right">

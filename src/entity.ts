@@ -20,7 +20,6 @@ export function entityConfig(entity_id: string, hass: HomeAssistant, config: Par
 
   let output: EntityElement = {
     id: entity_id,
-    name: stateObj.attributes.friendly_name || computeEntity(entity_id),
     icon: DefaultEntityIcon,
     actions: [],
   };

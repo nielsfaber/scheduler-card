@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, GroupElement, ActionElement } from '../types';
 import { entityFilter, entityConfig } from '../entity';
@@ -39,9 +39,10 @@ export class SchedulerEditorCard extends LitElement {
     let entities = groupConfig
       .find(e => e.id == this.selectedGroup)!.entities
       .map(e => entityConfig(e, this.hass!, this.config!))
-      .filter(e => e) as EntityElement[];
+      .filter(e => e)
+      .map(e => e!.name ? e : Object.assign(e, { name: this.hass!.states[e!.id].attributes.friendly_name || computeEntity(e!.id) })) as EntityElement[];
 
-    entities.sort((a, b) => a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1);
+    entities.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
     return entities;
   }
 

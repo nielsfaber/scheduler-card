@@ -29,7 +29,7 @@ export class SchedulerEntitiesCard extends LitElement {
 
     if (this.config.discover_existing !== undefined && !this.config.discover_existing) {
       schedules = schedules.filter(el =>
-        (el.attributes.actions.map(e => e.entity) as string[]).every(e => this._hass!.states[e] && entityFilter(e, this._hass!, this.config!))
+        (el.attributes.actions.map(importAction).map(e => e.entity) as string[]).every(e => this._hass!.states[e] && entityFilter(e, this._hass!, this.config!))
       );
     }
 
