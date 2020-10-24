@@ -78,4 +78,10 @@ export const commonStyle = css`
       display: flex;
       align-items: center;
     }
+    a {
+      color: var(--primary-color);
+    }
+    a:visited {
+      color: var(--accent-color);
+    }
   `;
