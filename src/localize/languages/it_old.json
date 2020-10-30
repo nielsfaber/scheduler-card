@@ -1,0 +1,122 @@
+{
+  "scheduler": "Schedulatore",
+  "actions": {
+    "add": "aggiungi oggetto",
+    "cancel": "annulla",
+    "next": "avanti",
+    "save": "salva",
+    "delete": "elimina"
+  },
+  "instructions": {
+    "no_group_selected": "Seleziona prima un gruppo",
+    "no_entity_selected": "Seleziona prima un'entità",
+    "no_groups_defined": "Non ci sono gruppi definiti",
+    "no_entities_for_group": "Non ci sono entità in questo gruppo",
+    "no_actions_for_entity": "Non ci sono azioni per questa entità",
+    "no_entries_defined": "Non ci sono oggetti da visualizzare"
+  },
+  "fields": {
+    "group": "Gruppo",
+    "entity": "Entità",
+    "action": "Azione",
+    "days": "Giorni",
+    "time": "Ora",
+    "options": "Opzioni",
+    "day_type_daily": "giornaliero",
+    "day_type_workday": "giorni lavorativi",
+    "day_type_weekend": "weekend",
+    "day_type_custom": "personalizzato"
+  },
+  "days_short": {
+    "mon": "lun",
+    "tue": "mar",
+    "wed": "mer",
+    "thu": "gio",
+    "fri": "ven",
+    "sat": "sab",
+    "sun": "dom"
+  },
+  "days_long": {
+    "mon": "lunedì",
+    "tue": "martedì",
+    "wed": "mercoledì",
+    "thu": "giovedì",
+    "fri": "venerdì",
+    "sat": "sabato",
+    "sun": "domenica"
+  },
+  "words": {
+    "and": "e",
+    "before": "prima",
+    "after": "dopo"
+  },
+  "services": {
+    "turn_on": "accendi",
+    "turn_on_brightness": "accendi {at brightness}",
+    "turn_off": "spegni",
+    "close_cover": "chiudi",
+    "open_cover": "apri",
+    "set_temperature": "imposta temperatura {to temperature}",
+    "set_temperature_hvac_mode_heat": "riscaldamento a {to temperature}",
+    "set_temperature_hvac_mode_cool": "raffreddamento a {to temperature}",
+    "set_cover_position": "imposta posizione {to position}",
+    "set_hvac_mode": "imposta modalità {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "spegni",
+    "set_preset_mode": "imposta programmazione {to preset_mode}",
+    "set_value": "imposta valore {value}",
+    "select_option": "seleziona opzione {option}",
+    "select_source": "seleziona sorgente {source}",
+    "start": "avvia",
+    "run_script": "esegui"
+  },
+  "service_parameters": {
+    "brightness": "luminosità",
+    "temperature": "temperatura",
+    "position": "posizione",
+    "hvac_mode": "modalità",
+    "preset_mode": "programmazione"
+  },
+  "domains": {
+    "camera": "telecamere",
+    "climate": "clima",
+    "cover": "cover",
+    "fan": "ventole",
+    "group": "gruppi",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "luci",
+    "media_player": "media player",
+    "scene": "scene",
+    "switch": "interruttori",
+    "vacuum": "aspirapolvere"
+  },
+  "days": {
+    "tomorrow": "domani",
+    "daily": "giornaliero",
+    "daily_except_days": "tutti i giorni eccetto {days}",
+    "working_days": "giorni lavorativi",
+    "weekend": "weekend",
+    "interval": "{startDay} a {endDay}"
+  },
+  "time": {
+    "absolute": "alle {time}",
+    "relative": "entro {time}",
+    "interval": "dalle {startTime} alle {endTime}",
+    "seconds": "{seconds} secondi",
+    "hour": "1 ora",
+    "hours": "{hours} ore",
+    "minute": "1 minuto",
+    "minutes": "{minutes} minuti",
+    "now": "ora",
+    "midnight": "mezzanotte",
+    "noon": "mezzogiorno",
+    "at_sun_event": "al {sunEvent}",
+    "sun_event_sunrise": "l' alba",
+    "sun_event_sunset": "tramonto"
+  },
+  "misc": {
+    "one_additional_task": "un altro task",
+    "x_additional_tasks": "{count} altri task"
+  }
+}

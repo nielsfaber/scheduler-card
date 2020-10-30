@@ -1,0 +1,122 @@
+{
+  "scheduler": "Plánovač",
+  "actions": {
+    "add": "přidat plán",
+    "cancel": "zrušit",
+    "next": "další",
+    "save": "uložit",
+    "delete": "smazat"
+  },
+  "instructions": {
+    "no_group_selected": "Vyberte skupinu",
+    "no_entity_selected": "Vyberte entitu",
+    "no_groups_defined": "Nejsou definovány žádné skupiny",
+    "no_entities_for_group": "V této skupině nejsou žádné entity",
+    "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
+    "no_entries_defined": "Nejsou žádné položky k zobrazení"
+  },
+  "fields": {
+    "group": "Skupiny",
+    "entity": "Entity",
+    "action": "Akce",
+    "days": "Dny",
+    "time": "Čas",
+    "options": "Možnosti",
+    "day_type_daily": "denně",
+    "day_type_workday": "pracovní dny",
+    "day_type_weekend": "víkend",
+    "day_type_custom": "možnosti"
+  },
+  "days_short": {
+    "mon": "po",
+    "tue": "út",
+    "wed": "st",
+    "thu": "čt",
+    "fri": "pá",
+    "sat": "so",
+    "sun": "ne"
+  },
+  "days_long": {
+    "mon": "Pondělí",
+    "tue": "Úterý",
+    "wed": "Středa",
+    "thu": "Čtvrtek",
+    "fri": "Pátek",
+    "sat": "Sobota",
+    "sun": "Neděle"
+  },
+  "words": {
+    "and": "a",
+    "before": "před",
+    "after": "po"
+  },
+  "services": {
+    "turn_on": "zapnout",
+    "turn_on_brightness": "zapnout {at brightness}",
+    "turn_off": "vypnout",
+    "close_cover": "zavřít",
+    "open_cover": "otevřít",
+    "set_temperature": "nastavená teplota {to temperature}",
+    "set_temperature_hvac_mode_heat": "topení {to temperature}",
+    "set_temperature_hvac_mode_cool": "chlazení {to temperature}",
+    "set_cover_position": "nastavit pozici {to position}",
+    "set_hvac_mode": "nastavit režim {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "vypnout",
+    "set_preset_mode": "předvolba {to preset_mode}",
+    "set_value": "nastavená hodnota {to value}",
+    "select_option": "vyberte možnost {option}",
+    "select_source": "vyberte zdroj {source}",
+    "start": "start",
+    "run_script": "běží"
+  },
+  "service_parameters": {
+    "brightness": "jas",
+    "temperature": "teplota",
+    "position": "pozice",
+    "hvac_mode": "režim",
+    "preset_mode": "přednastavení"
+  },
+  "domains": {
+    "camera": "kamery",
+    "climate": "klima",
+    "cover": "kryty",
+    "fan": "ventilátory",
+    "group": "skupiny",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "light": "světla",
+    "media_player": "media přehrávače",
+    "scene": "scény",
+    "switch": "spínače",
+    "vacuum": "vysavače"
+  },
+  "days": {
+    "tomorrow": "zítra",
+    "daily": "denně",
+    "daily_except_days": "každý den kromě {days}",
+    "working_days": "pracovní dny",
+    "weekend": "víkend",
+    "interval": "{startDay} do {endDay}"
+  },
+  "time": {
+    "absolute": "v {time}",
+    "relative": "za {time}",
+    "interval": "od {startTime} do {endTime}",
+    "seconds": "{seconds} vteřin",
+    "hour": "1 hodina",
+    "hours": "{hours} hodin",
+    "minute": "1 minuta",
+    "minutes": "{minutes} minut",
+    "now": "nyní",
+    "midnight": "půlnoc",
+    "noon": "poledne",
+    "at_sun_event": "při {sunEvent}",
+    "sun_event_sunrise": "svítání",
+    "sun_event_sunset": "západu slunce"
+  },
+  "misc": {
+    "one_additional_task": "1 další úkol",
+    "x_additional_tasks": "{count} úkolů"
+  }
+}

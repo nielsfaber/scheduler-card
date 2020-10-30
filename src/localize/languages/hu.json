@@ -1,122 +1,128 @@
 {
-  "scheduler": "Időzítések",
-  "actions": {
-    "add": "új időzítés",
-    "cancel": "mégse",
-    "next": "tovább",
-    "save": "mentés",
-    "delete": "törlés"
-  },
-  "instructions": {
-    "no_group_selected": "Előbb egy csoportot szükséges választani",
-    "no_entity_selected": "Előbb egy entitást szükséges választani",
-    "no_groups_defined": "Nincsenek deffiniált csoportok",
-    "no_entities_for_group": "Ebben a csoportban nem találhatók entitások",
-    "no_actions_for_entity": "Ehhez az entitáshoz nem tartoznak műveletek",
-    "no_entries_defined": "Nincs megjeleníthető elem"
-  },
-  "fields": {
-    "group": "Csoport",
-    "entity": "Entitás",
-    "action": "Művelet",
-    "days": "Napokon",
-    "time": "Időpontban",
-    "options": "Opciók",
-    "day_type_daily": "minden nap",
-    "day_type_workday": "munkanapokon",
-    "day_type_weekend": "hétvégén",
-    "day_type_custom": "egyedi"
-  },
-  "days_short": {
-    "mon": "hét",
-    "tue": "ked",
-    "wed": "sze",
-    "thu": "csü",
-    "fri": "pén",
-    "sat": "szo",
-    "sun": "vas"
-  },
-  "days_long": {
-    "mon": "hétfő",
-    "tue": "kedd",
-    "wed": "szerda",
-    "thu": "csütörtök",
-    "fri": "péntek",
-    "sat": "szombat",
-    "sun": "vasárnap"
-  },
-  "words": {
-    "and": "és",
-    "before": "előtt",
-    "after": "után"
-  },
   "services": {
-    "turn_on": "bekapcsolás",
-    "turn_on_brightness": "bekapcsolás {at brightness}",
-    "turn_off": "kikapcsolás",
-    "close_cover": "zárás",
-    "open_cover": "nyitás",
-    "set_temperature": "hőmérséklet {to temperature}",
-    "set_temperature_hvac_mode_heat": "heat {to temperature}",
-    "set_temperature_hvac_mode_cool": "cool {to temperature}",
-    "set_cover_position": "változtass pozíciót {to position}",
-    "set_hvac_mode": "mód beállítása {to hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "kikapcsolás",
-    "set_preset_mode": "preset beállítása {to preset_mode}",
-    "set_value": "érték beállítása {value}",
-    "select_option": "opció kiválasztása {option}",
-    "select_source": "forrás kiválasztása {source}",
-    "start": "kezdés",
-    "run_script": "kezdés"
-  },
-  "service_parameters": {
-    "brightness": "világosság",
-    "temperature": "hőmérséklet",
-    "position": "pozíció",
-    "hvac_mode": "mód",
-    "preset_mode": "preset"
+    "generic": {
+      "parameter_to_value": "{parameter} to {value}",
+      "action_with_parameter": "{action} with {parameter}"
+    },
+    "climate": {
+      "set_temperature": "set temperature[ to {temperature}]",
+      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
+      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
+      "set_hvac_mode": "set mode[ to {hvac_mode}]",
+      "set_preset_mode": "set preset[ {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "close",
+      "open_cover": "open",
+      "set_cover_position": "set position[ to {position}]"
+    },
+    "fan": {
+      "set_speed": "set speed[ to {speed}]",
+      "set_direction": "set direction[ to {direction}]",
+      "oscillate": "set oscillation[ to {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "set humidity[ to {humidity}]"
+    },
+    "input_number": {
+      "set_value": "set value[ to {value}]"
+    },
+    "input_select": {
+      "select_option": "select option[ {option}]"
+    },
+    "light": {
+      "turn_on": "turn on[ with {brightness} brightness]"
+    },
+    "media_player": {
+      "select_source": "select source[ {source}]"
+    },
+    "script": {
+      "script": "execute"
+    },
+    "vacuum": {
+      "start_pause": "start / pause"
+    },
+    "water_heater": {
+      "set_away_mode": "set away mode"
+    }
   },
   "domains": {
-    "camera": "kamera",
-    "climate": "termosztát",
-    "cover": "redőny",
-    "fan": "ventilátor",
-    "group": "csoportok",
-    "input_boolean": "logikai bemenet",
-    "input_number": "szám bemenet",
-    "input_select": "legördülő bemenet",
-    "light": "lámpa",
-    "media_player": "lejátszó",
-    "scene": "jelenetek",
-    "switch": "kapcsoló",
-    "vacuum": "pórszívó"
+    "alarm_control_panel": "alarm control panel",
+    "climate": "climate",
+    "cover": "covers",
+    "fan": "fans",
+    "group": "groups",
+    "humidifier": "humifiers",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
+    "light": "lights",
+    "lock": "locks",
+    "media_player": "media players",
+    "scene": "scenes",
+    "script": "scripts",
+    "switch": "switches",
+    "vacuum": "vacuums",
+    "water_heater": "water heaters"
   },
-  "days": {
-    "tomorrow": "holnap",
-    "daily": "minden nap",
-    "daily_except_days": "minden nap, kivéve {days}",
-    "working_days": "munkanapokon",
-    "weekend": "hétvégén",
-    "interval": "{startDay} - {endDay}"
-  },
-  "time": {
-    "absolute": "{time}-kor",
-    "relative": "{time} múlva",
-    "interval": "{startTime} - {endTime}",
-    "seconds": "{seconds} másodperc",
-    "hour": "1 óra",
-    "hours": "{hours} óra",
-    "minute": "1 perc",
-    "minutes": "{minutes} perc",
-    "now": "most",
-    "midnight": "éjfél",
-    "noon": "dél",
-    "at_sun_event": "{sunEvent}kor",
-    "sun_event_sunrise": "napfelkelte",
-    "sun_event_sunset": "napnyugta"
-  },
-  "misc": {
-    "one_additional_task": "még egy feladat",
-    "x_additional_tasks": "még {count} feladat"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "daily",
+          "workdays": "workdays",
+          "weekend": "weekend"
+        },
+        "day_types_long": {
+          "daily": "every day",
+          "workdays": "on workdays",
+          "weekend": "in the weekend"
+        },
+        "days": "days",
+        "tomorrow": "tomorrow",
+        "repeated_days": "every {days}",
+        "repeated_days_except": "every day except {excludedDays}",
+        "days_range": "from {startDay} to {endDay}"
+      },
+      "time": {
+        "absolute": "at {time}",
+        "interval": "from {startTime} to {endTime}",
+        "midnight": "midnight",
+        "noon": "noon",
+        "at_sun_event": "at {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Scheduler"
+      },
+      "overview": {
+        "no_entries": "There are no items to show",
+        "excluded_items": "{number} excluded {if number is 1} item {else} items",
+        "hide_excluded": "hide excluded items",
+        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+      },
+      "entity_picker": {
+        "no_groups_defined": "There are no groups defined",
+        "no_group_selected": "Select a group first",
+        "no_entities_for_group": "There are no entities in this group",
+        "no_entity_selected": "Select an entity first",
+        "no_actions_for_entity": "There are no actions for this entity",
+        "make_scheme": "make scheme"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Select a timeslot first"
+      },
+      "conditions": {
+        "equal_to": "is",
+        "unequal_to": "is not",
+        "all": "all",
+        "any": "any",
+        "no_conditions_defined": "There are no conditions defined"
+      },
+      "options": {
+        "repeat_type": "behaviour after triggering"
+      }
+    }
   }
 }
