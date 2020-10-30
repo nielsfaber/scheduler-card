@@ -1,0 +1,36 @@
+name: Fixed in comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: khan/pull-request-comment-trigger@master
+        id: check_1
+        with:
+          trigger: 'fixed in'
+      - uses: khan/pull-request-comment-trigger@master
+        id: check_2
+        with:
+          trigger: 'Fixed in'
+      - uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            Update your scheduler-card, reload, and please consider closing this issue.
+            If once updated, you get a different kind of unrelated issue, open a new one.
+            Thanks! 🧡
+        if: steps.check_1.outputs.triggered == 'true'
+      - uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            Update your scheduler-card, reload, and please consider closing this issue.
+            If once updated, you get a different kind of unrelated issue, open a new one.
+            Thanks! 🧡
+        if: steps.check_2.outputs.triggered == 'true'
