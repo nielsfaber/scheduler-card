@@ -79,10 +79,10 @@
           "weekend": "in het weekend"
         },
         "days": "dagen",
+        "tomorrow": "morgen",
         "repeated_days": "elke {days}",
         "repeated_days_except": "elke dag behalve {excludedDays}",
-        "days_range": "van {startDay} tot {endDay}",
-        "tomorrow": "morgen"
+        "days_range": "van {startDay} tot {endDay}"
       },
       "time": {
         "absolute": "om {time}",

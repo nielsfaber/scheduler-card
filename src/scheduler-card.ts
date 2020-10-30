@@ -275,7 +275,7 @@ export class SchedulerCard extends LitElement {
         Object.assign(hassEntry, { days: { type: dayType, list: entry.days.custom_days } });
       else Object.assign(hassEntry, { days: { type: dayType } });
 
-      if ('conditions' in entry) {
+      if ('conditions' in entry && entry.conditions?.items.length) {
         const conditionNums: number[] = [];
         entry.conditions?.items.forEach(condition => {
           let num = conditions.findIndex(e => e === condition);
@@ -285,7 +285,7 @@ export class SchedulerCard extends LitElement {
         Object.assign(hassEntry, { conditions: { list: conditionNums, type: entry.conditions!.type } } as HassEntry);
       }
 
-      if (entry.options) {
+      if (entry.options && Object.keys(entry.options).length) {
         const optionNums: number[] = [];
         Object.entries(entry.options).forEach(([key, val]) => {
           let num = Object.entries(options).findIndex(([k, v]) => ({ [key]: val } === { [k]: v }));
@@ -393,6 +393,7 @@ export class SchedulerCard extends LitElement {
           options: el.options.reduce((obj, el) => Object.assign(obj, pick(options, [Object.keys(options)[el]])), {}),
         });
       }
+
       return output;
     });
 

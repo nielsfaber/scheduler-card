@@ -40,9 +40,9 @@ export class SchedulerOptionsCard extends LitElement {
         icon: 'refresh',
       },
       {
-        name: this.hass.localize('ui.card.media_player.turn_off'),
+        name: this.hass.localize('ui.dialogs.more_info_control.vacuum.stop'),
         id: 'run_once',
-        icon: 'pause',
+        icon: 'stop',
       },
     ];
 
@@ -51,23 +51,23 @@ export class SchedulerOptionsCard extends LitElement {
         <div class="card-header">
           <div class="name">
             ${this.config.title !== undefined
-              ? typeof this.config.title == 'string'
-                ? this.config.title
-                : ''
-              : localize('ui.panel.common.title', this.hass.language)}
+        ? typeof this.config.title == 'string'
+          ? this.config.title
+          : ''
+        : localize('ui.panel.common.title', this.hass.language)}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
           ${!this.addCondition
-            ? html`
+        ? html`
           <div class="header">${this.hass.localize(
-            'ui.panel.config.automation.editor.actions.type.choose.conditions'
-          )}</div>
+          'ui.panel.config.automation.editor.actions.type.choose.conditions'
+        )}</div>
           ${
-            !this.entries[0].conditions || this.entries[0].conditions.items.length < 2
-              ? ''
-              : html`
+          !this.entries[0].conditions || this.entries[0].conditions.items.length < 2
+            ? ''
+            : html`
                   <div style="float: right; margin-top: -1em">
                     ${localize('ui.panel.conditions.any', this.hass.language)}
                     <ha-switch
@@ -104,27 +104,27 @@ export class SchedulerOptionsCard extends LitElement {
           <button-group
             .items=${repeatTypes}
             value="${
-              this.entries[0].options && 'run_once' in this.entries[0].options && this.entries[0].options['run_once']
-                ? 'run_once'
-                : 'repeat'
-            }"
+          this.entries[0].options && 'run_once' in this.entries[0].options && this.entries[0].options['run_once']
+            ? 'run_once'
+            : 'repeat'
+          }"
             @change=${this.updateRepeatType}>
           </button-group>
           
         `
-            : html`
+        : html`
                 ${this.renderAddCondition()}
               `}
         </div>
         <div class="card-actions">
           ${!this.addCondition
-            ? html`
+        ? html`
                 <mwc-button @click=${this.saveClick}>${this.hass.localize('ui.common.save')}</mwc-button>
                 <mwc-button @click=${this.backClick} style="float: right"
                   >${this.hass.localize('ui.common.back')}</mwc-button
                 >
               `
-            : html`
+        : html`
                 <mwc-button @click=${this.confirmConditionClick} ?disabled=${!this.selectedEntity}
                   >${this.hass.localize('ui.common.continue')}</mwc-button
                 >
@@ -162,8 +162,8 @@ export class SchedulerOptionsCard extends LitElement {
       <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
       <button-group .items=${entities} value=${this.selectedEntity} @change=${this.selectEntity}>
         ${!this.selectedGroup
-          ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
-          : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
+        ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
+        : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
       </button-group>
     `;
   }

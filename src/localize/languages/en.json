@@ -82,8 +82,7 @@
         "tomorrow": "tomorrow",
         "repeated_days": "every {days}",
         "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}",
-        "interval": "{startDay} to {endDay}"
+        "days_range": "from {startDay} to {endDay}"
       },
       "time": {
         "absolute": "at {time}",

@@ -85,9 +85,7 @@ export class MyRelativeTime extends LitElement {
       delta /= tests[i];
       roundedDelta = Math.round(delta);
     }
-
-    const output = this.hass.localize(`ui.components.relative_time.duration.${unit}`, 'count', roundedDelta);
-    return this.hass.localize(`ui.components.relative_time.${tense}`, 'time', output);
+    return this.hass.localize(`ui.components.relative_time.${tense}_duration.${unit}`, 'count', roundedDelta);
   }
 
   render() {
