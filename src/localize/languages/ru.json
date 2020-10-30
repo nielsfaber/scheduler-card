@@ -1,8 +1,8 @@
 {
   "services": {
     "generic": {
-      "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "parameter_to_value": "{parameter} к {value}",
+      "action_with_parameter": "{action} с {parameter}"
     },
     "climate": {
       "set_temperature": "установить температуру[ {temperature}]",
@@ -14,7 +14,7 @@
     "cover": {
       "close_cover": "закрыть",
       "open_cover": "открыть",
-      "set_cover_position": "установить позицию[ to {position}]"
+      "set_cover_position": "установить позицию[ {position}]"
     },
     "fan": {
       "set_speed": "установить скорость[ {speed}]",
