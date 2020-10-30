@@ -1,122 +1,128 @@
 {
-  "scheduler": "Plánovač",
-  "actions": {
-    "add": "přidat plán",
-    "cancel": "zrušit",
-    "next": "další",
-    "save": "uložit",
-    "delete": "smazat"
-  },
-  "instructions": {
-    "no_group_selected": "Vyberte skupinu",
-    "no_entity_selected": "Vyberte entitu",
-    "no_groups_defined": "Nejsou definovány žádné skupiny",
-    "no_entities_for_group": "V této skupině nejsou žádné entity",
-    "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
-    "no_entries_defined": "Nejsou žádné položky k zobrazení"
-  },
-  "fields": {
-    "group": "Skupiny",
-    "entity": "Entity",
-    "action": "Akce",
-    "days": "Dny",
-    "time": "Čas",
-    "options": "Možnosti",
-    "day_type_daily": "denně",
-    "day_type_workday": "pracovní dny",
-    "day_type_weekend": "víkend",
-    "day_type_custom": "možnosti"
-  },
-  "days_short": {
-    "mon": "po",
-    "tue": "út",
-    "wed": "st",
-    "thu": "čt",
-    "fri": "pá",
-    "sat": "so",
-    "sun": "ne"
-  },
-  "days_long": {
-    "mon": "Pondělí",
-    "tue": "Úterý",
-    "wed": "Středa",
-    "thu": "Čtvrtek",
-    "fri": "Pátek",
-    "sat": "Sobota",
-    "sun": "Neděle"
-  },
-  "words": {
-    "and": "a",
-    "before": "před",
-    "after": "po"
-  },
   "services": {
-    "turn_on": "zapnout",
-    "turn_on_brightness": "zapnout {at brightness}",
-    "turn_off": "vypnout",
-    "close_cover": "zavřít",
-    "open_cover": "otevřít",
-    "set_temperature": "nastavená teplota {to temperature}",
-    "set_temperature_hvac_mode_heat": "topení {to temperature}",
-    "set_temperature_hvac_mode_cool": "chlazení {to temperature}",
-    "set_cover_position": "nastavit pozici {to position}",
-    "set_hvac_mode": "nastavit režim {to hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "vypnout",
-    "set_preset_mode": "předvolba {to preset_mode}",
-    "set_value": "nastavená hodnota {to value}",
-    "select_option": "vyberte možnost {option}",
-    "select_source": "vyberte zdroj {source}",
-    "start": "start",
-    "run_script": "běží"
-  },
-  "service_parameters": {
-    "brightness": "jas",
-    "temperature": "teplota",
-    "position": "pozice",
-    "hvac_mode": "režim",
-    "preset_mode": "přednastavení"
+    "generic": {
+      "parameter_to_value": "{parameter} na {value}",
+      "action_with_parameter": "{action} s {parameter}"
+    },
+    "climate": {
+      "set_temperature": "nastavit teplotu[ na {temperature}]",
+      "set_temperature_hvac_mode_heat": "topení[ na {temperature}]",
+      "set_temperature_hvac_mode_cool": "chlazení[ na {temperature}]",
+      "set_hvac_mode": "nastavit režim[ na {hvac_mode}]",
+      "set_preset_mode": "nastavit předvolbu[ {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "zavřít",
+      "open_cover": "otevřít",
+      "set_cover_position": "nastavit polohu[ na {position}]"
+    },
+    "fan": {
+      "set_speed": "nastavit rychlost[ na {speed}]",
+      "set_direction": "nastavit směr[ na {direction}]",
+      "oscillate": "nastavit oscilaci[ na {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "nastavit vlhkost[ na {humidity}]"
+    },
+    "input_number": {
+      "set_value": "nastavit hodnotu[ na {value}]"
+    },
+    "input_select": {
+      "select_option": "vybrat možnost[ {option}]"
+    },
+    "light": {
+      "turn_on": "zapnout[ na {brightness} jas]"
+    },
+    "media_player": {
+      "select_source": "vybrat zdroj[ {source}]"
+    },
+    "script": {
+      "script": "spustit"
+    },
+    "vacuum": {
+      "start_pause": "start / pauza"
+    },
+    "water_heater": {
+      "set_away_mode": "vypnout režim"
+    }
   },
   "domains": {
-    "camera": "kamery",
+    "alarm_control_panel": "poplašný ovládací panel",
     "climate": "klima",
-    "cover": "kryty",
+    "cover": "rolety",
     "fan": "ventilátory",
     "group": "skupiny",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
+    "humidifier": "zvlhčovače",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
     "light": "světla",
-    "media_player": "media přehrávače",
+    "lock": "zámky",
+    "media_player": "média přehrávače",
     "scene": "scény",
+    "script": "skripty",
     "switch": "spínače",
-    "vacuum": "vysavače"
+    "vacuum": "vysavače",
+    "water_heater": "ohřívače vody"
   },
-  "days": {
-    "tomorrow": "zítra",
-    "daily": "denně",
-    "daily_except_days": "každý den kromě {days}",
-    "working_days": "pracovní dny",
-    "weekend": "víkend",
-    "interval": "{startDay} do {endDay}"
-  },
-  "time": {
-    "absolute": "v {time}",
-    "relative": "za {time}",
-    "interval": "od {startTime} do {endTime}",
-    "seconds": "{seconds} vteřin",
-    "hour": "1 hodina",
-    "hours": "{hours} hodin",
-    "minute": "1 minuta",
-    "minutes": "{minutes} minut",
-    "now": "nyní",
-    "midnight": "půlnoc",
-    "noon": "poledne",
-    "at_sun_event": "při {sunEvent}",
-    "sun_event_sunrise": "svítání",
-    "sun_event_sunset": "západu slunce"
-  },
-  "misc": {
-    "one_additional_task": "1 další úkol",
-    "x_additional_tasks": "{count} úkolů"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "denně",
+          "workdays": "pracovní dny",
+          "weekend": "víkendy"
+        },
+        "day_types_long": {
+          "daily": "každý den",
+          "workdays": "v pracovní dny",
+          "weekend": "o víkendu"
+        },
+        "days": "dnů",
+        "tomorrow": "zítra",
+        "repeated_days": "každý {days}",
+        "repeated_days_except": "každý den kromě {excludedDays}",
+        "days_range": "od {startDay} do {endDay}"
+      },
+      "time": {
+        "absolute": "od {time}",
+        "interval": "od {startTime} do {endTime}",
+        "midnight": "půlnoc",
+        "noon": "poledne",
+        "at_sun_event": "na {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Plánovač"
+      },
+      "overview": {
+        "no_entries": "Nejsou žádné položky k zobrazení",
+        "excluded_items": "{number} vyloučeno {if number is 1} položka {else} položek",
+        "hide_excluded": "skrýt vyloučené položky",
+        "additional_tasks": "{number} a více {if number is 1} úkol {else} úkolů"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Nejsou definovány žádné skupiny",
+        "no_group_selected": "Nejprve vyberte skupinu",
+        "no_entities_for_group": "V této skupině nejsou žádné entity",
+        "no_entity_selected": "Nejprve vyberte entitu",
+        "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
+        "make_scheme": "vytvořit schéma"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Nejprve vyberte časový úsek"
+      },
+      "conditions": {
+        "equal_to": "je",
+        "unequal_to": "není",
+        "all": "vše",
+        "any": "žádný",
+        "no_conditions_defined": "Nejsou definovány žádné podmínky"
+      },
+      "options": {
+        "repeat_type": "chování po spuštění"
+      }
+    }
   }
 }
