@@ -25,11 +25,13 @@
     - [Exclude](#exclude)
   - [Groups](#groups)
   - [Schedule discovery](#schedule-discovery)
-  - [Customization](#customization)
+  - [Customize](#customize)
+    - [Options](#options)
     - [Actions](#actions)
     - [Numeric action variable](#numeric-action-variable)
     - [List action variable](#list-action-variable)
     - [Conditions](#conditions)
+  - [Display options](#display-options)
 - [Translations](#translations)
 - [FAQ](#faq)
   - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
@@ -292,17 +294,18 @@ The standard configuration consists of the following:
 | Name                     | Type           | Default      | Available from | Description                                                                                                                                                                                                                                |
 | ------------------------ | -------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `type`                   | string         | **Required** | -              | `custom:scheduler-card`                                                                                                                                                                                                                    |
-| `standard_configuration` | boolean        | *true*       | v1.2.0         | Use the [standard configuration](#about-the-standard-configuration) as a base configuration.                                                                                                                                               |
+| `standard_configuration` | boolean        | *true*       | v1.2.0         | Use the [standard configuration](#standard-configuration) as a base configuration.                                                                                                                                                         |
 | `discover_existing`      | boolean        | *true*       | v1.2.0         | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info. |
 | `include`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                            |
 | `exclude`                | list           | none         | v1.6.0         | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                    |
 | `groups`                 | list           | none         | v1.0.0         | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                       |
-| `customize`              | dictionary     | none         | v1.6.0         | Customize the available actions or visualization of entities.   <br>See [customize](#customization) for more info.                                                                                                                         |
+| `customize`              | dictionary     | none         | v1.6.0         | Customize the available actions or visualization of entities.   <br>See [customize](#customize) for more info.                                                                                                                             |
 | `title`                  | boolean/string | *true*       | v1.2.8         | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                     |
-| `am_pm`                  | boolean        | *false*      | v1.3.0         | Use AM/PM time notation (instead of 24 hours notation)                                                                                                                                                                                     |
+| ~~`am_pm`~~              | ~~boolean~~    | ~~*false*~~  | ~~v1.3.0~~     | Option is removed in v1.9.0. This setting is now automatically determined from the browser.                                                                                                                                                |
 | `time_step`              | number         | 10           | v1.3.0         | Set the time step (in minutes) for the time picker                                                                                                                                                                                         |
-| `first_weekday`          | string         | none         | v1.8.3         | Change the display of first day of the week.<br>Accepts a day in the range *mon* - *sun*<br>Defaults to *mon*.                                                                                                                             |
+| ~~`first_weekday`~~      | ~~string~~     | ~~none~~     | ~~v1.8.3~~     | Option is removed in v1.9.0. This setting is now automatically determined from the browser.                                                                                                                                                |
 | `show_header_toggle`     | boolean        | *false*      | v1.8.0         | Show a switch at the top of the card that can be used to enable/disable the complete list.                                                                                                                                                 |
+| `display_options`        | dictionary     | none         | v1.9.0         | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info. list.                                                                                                                  |
 ### Standard configuration
 
 The card includes a _standard configuration_.
@@ -404,11 +407,12 @@ For your protection, it is enabled by default.
 :warning: **Tip**: You should set `discover_existing:false` if you want to use multiple cards. Else you will see each created schedule in every card.
 
 
-### Customization
+### Customize
 With the `customize` configuration you can specify configuration for specific HA entities.
 
 :warning: **Tip**: You can use entities `configuration` in combination with the standard configuration. The configurations will be merged.
 
+#### Options
 | Name            | Type        | Default               | Description                                                                                                                                                                                                       |
 | --------------- | ----------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | entity          | key         | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities.                                                                                                       |
@@ -573,6 +577,39 @@ customize:
   sensor.my_other_condition_entity:
     states: {min: 0, max: 100, step: 1, unit: '%'}
 ```
+
+
+### Display options
+From v1.9.0, it is possible to configure what is displayed in the overview list.
+By default, the card will display the entity + action on the first line, and on the second line the remaining time until the schedule will be triggered. For timeslots, there will be a display of the extra actions.
+
+:warning: **Note**: This is a YAML-only feature currently, Not available in the UI editor.
+
+Supported options for `display_options`:
+| Name             | Type           | Default                                          | Description                                                            |
+| ---------------- | -------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
+| `primary_info`   | string or list | `- "{entity}: {action}"`<br>`- additional-tasks` | Displayed text on the first line.<br>Choose from the properties below. |
+| `secondary_info` | string or list | `relative-time`                                  | Displayed text on the second line<br>Choose from the properties below. |
+| `icon`           | string         | "action"                                         | Choose which icon is diplayed (`action` or `entity`)                   |
+
+For creating multiple lines, enter a list of multiple properties. Empty items will be automatically skipped.
+
+For combining multiple properties in a single line, use wildcards (with property in brackets). Make sure to wrap your text in quotes.
+
+:warning: **Pro-tip**: You can use HTML for formatting the lines. So for example: `<b>{entity}</b>` will print the name in bold text.
+
+
+The following properties are available:
+| Name               | Description                                                                                                                                        |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`             | Friendly name of the schedule (as configured in the 'options' panel)<br>Only if a custom name is defined (the generated ID will not be displayed). |
+| `entity`           | Friendly name of the entity which is involved in the action.                                                                                       |
+| `action`           | Description of the action that will be executed when the timer is expired.<sup>1</sup>                                                             |
+| `relative-time`    | Duration until the schedule is triggered (if the schedule is enabled).<sup>1</sup>                                                                 |
+| `time`             | Configured time for the schedule.<sup>1</sup>                                                                                                      |
+| `days`             | Configured days for the schedule.                                                                                                                  |
+| `additional-tasks` | The amount of remaining tasks/actions (other than the displayed one).<br>Only for time schemes, otherwise this property is skipped.                |
+<sup>1</sup> For *time schemes*, the displayed value corresponds to the closest timeslot.
 
 
 ## Translations
