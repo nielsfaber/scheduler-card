@@ -6,7 +6,7 @@
     },
     "climate": {
       "set_temperature": "Temperatur einstellen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat": "aufwärmen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
       "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
       "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
       "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]"
@@ -14,15 +14,15 @@
     "cover": {
       "close_cover": "schließen",
       "open_cover": "öffnen",
-      "set_cover_position": "Position setzen[ nach {position}]"
+      "set_cover_position": "Position setzen[ auf {position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "Geschwindigkeit speed[ auf {speed}]",
+      "set_direction": "Richtung setzen[ auf {direction}]",
+      "oscillate": "Oszillation setzen[ auf {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "Luftfeuchtigkeit setzen[ auf {humidity}]"
     },
     "input_number": {
       "set_value": "Wert setzen[ auf {value}]"
@@ -31,7 +31,7 @@
       "select_option": "Option[ {option}] auswählen"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "anschalten[ mit {brightness} Helligkeit]"
     },
     "media_player": {
       "select_source": "Quelle[ {source}] auswählen"
@@ -40,30 +40,30 @@
       "script": "ausführen"
     },
     "vacuum": {
-      "start_pause": "start / pause"
+      "start_pause": "Start / Pause"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_away_mode": "Abwesenheitsmodus setzen"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
+    "alarm_control_panel": "Alarmzentrale",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
     "group": "Gruppen",
-    "humidifier": "humifiers",
+    "humidifier": "Befeuchter",
     "input_boolean": "input boolean",
     "input_number": "input number",
     "input_select": "input select",
     "light": "Licht",
-    "lock": "locks",
-    "media_player": "Media Player",
+    "lock": "Schlösser",
+    "media_player": "Medienplayer",
     "scene": "Szene",
-    "script": "scripts",
+    "script": "Skripte",
     "switch": "Schalter",
     "vacuum": "Staubsauger",
-    "water_heater": "water heaters"
+    "water_heater": "Boiler"
   },
   "ui": {
     "components": {
@@ -75,12 +75,12 @@
         },
         "day_types_long": {
           "daily": "Jeden Tag",
-          "workdays": "am Werktagen",
-          "weekend": "Am wochenende"
+          "workdays": "An Werktagen",
+          "weekend": "Am Wochenende"
         },
-        "days": "Tagen",
+        "days": "Tage",
         "tomorrow": "morgen",
-        "repeated_days": "jedes {days}",
+        "repeated_days": "jeden {days}",
         "repeated_days_except": "täglich außer {excludedDays}",
         "days_range": "von {startDay} bis {endDay}"
       },
@@ -89,7 +89,7 @@
         "interval": "von {startTime} bis {endTime}",
         "midnight": "Mitternacht",
         "noon": "Mittag",
-        "at_sun_event": "am {sunEvent}"
+        "at_sun_event": "beim {sunEvent}"
       }
     },
     "panel": {
@@ -97,9 +97,9 @@
         "title": "Zeitplaner"
       },
       "overview": {
-        "no_entries": "There are no items to show",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
+        "no_entries": "Es gibt keine Einträge, die angezeigt werden können",
+        "excluded_items": "{number}{if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
+        "hide_excluded": "Verstecke ausgeschlossene Einträge",
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
       "entity_picker": {
@@ -108,20 +108,20 @@
         "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
         "no_entity_selected": "Wähle zuerst eine Entity aus",
         "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
-        "make_scheme": "make scheme"
+        "make_scheme": "Erstelle Zeitplan"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "Wähle zuerst ein Zeitfenster aus"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "equal_to": "ist",
+        "unequal_to": "ist nicht",
+        "all": "alle",
+        "any": "keine",
+        "no_conditions_defined": "Es sind keine Bedingungen definiert"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "Verhalten im Anschluß"
       }
     }
   }
