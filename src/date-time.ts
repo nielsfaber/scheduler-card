@@ -4,7 +4,7 @@ export const MinutesPerHour = 60;
 export const HoursPerDay = 24;
 export const MinutesPerDay = HoursPerDay * MinutesPerHour;
 
-export function roundTime(value: number, stepSize: number) {
+export function roundTime(value: number, stepSize: number, wrapAround: boolean = true) {
   let hours = value >= 0 ? Math.floor(value / MinutesPerHour) : Math.ceil(value / MinutesPerHour);
   let minutes = value - hours * MinutesPerHour;
 
@@ -14,7 +14,7 @@ export function roundTime(value: number, stepSize: number) {
     hours++;
     minutes -= MinutesPerHour;
   }
-  if (hours >= HoursPerDay) hours -= HoursPerDay;
+  if (hours >= HoursPerDay && wrapAround) hours -= HoursPerDay;
 
   return hours * MinutesPerHour + minutes;
 }
@@ -31,7 +31,8 @@ export function formatTime(value: number, options: { amPm?: boolean; absolute?: 
   let am_pm = '';
   if (amPmFormat) {
     am_pm = hours >= 12 ? 'PM' : 'AM';
-    if (hours > 12 || (hours == 12 && minutes > 0)) hours -= 12;
+    if (hours > 12) hours -= 12;
+    else if (hours == 0) hours += 12;
   }
 
   const hours_string = String(Math.abs(hours)).padStart(2, '0');
@@ -76,7 +77,7 @@ export function parseTimestamp(input: string | Date): number {
   } else if ((res = /^([0-9]{2}):([0-9]{2})\ (AM|PM)$/.exec(input)) !== null) {
     [hours, minutes] = [Number(res[1]), Number(res[2])];
     if (hours == 12 && res[3] == 'AM') hours -= 12;
-    else if (res[3] == 'PM' && (hours != 12 || minutes != 0)) hours += 12;
+    else if (res[3] == 'PM' && hours != 12) hours += 12;
   } else if ((res = /^([0-9]{2})([0-9]{2})$/.exec(input)) !== null) {
     [hours, minutes] = [Number(res[1]), Number(res[2])];
   } else if (
