@@ -609,6 +609,7 @@ The following properties are available:
 | `time`             | Configured time for the schedule.<sup>1</sup>                                                                                                      |
 | `days`             | Configured days for the schedule.                                                                                                                  |
 | `additional-tasks` | The amount of remaining tasks/actions (other than the displayed one).<br>Only for time schemes, otherwise this property is skipped.                |
+
 <sup>1</sup> For *time schemes*, the displayed value corresponds to the closest timeslot.
 
 
