@@ -1,28 +1,34 @@
-import { listVariable, listVariableOption } from "../actionVariables";
-import { ActionConfig } from "../types";
-import { HassEntity } from "home-assistant-js-websocket";
-import { TurnOnAction, TurnOffAction } from "../const";
-import { HomeAssistant, computeDomain } from "custom-card-helpers";
-import { standardActions } from "./standardActions";
-import { uniqueId } from "../action";
-
+import { ActionConfig } from '../types';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { computeDomain, computeEntity } from 'custom-card-helpers';
+import { uniqueId } from '../data/compute_action_id';
 
 export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]) {
-  const entities = entity.attributes.entity_id;
-
-  //prepend the entity domain to the services
-  entityActions = entityActions.map((actionList, index) => {
-    const domain = computeDomain(entities[index]);
-    return actionList.map(e => {
-      return computeDomain(e.service) == domain ? e : { ...e, service: `${domain}.${e.service}` };
-    });
-  });
-
+  const entities: string[] =
+    entity && entity.attributes.entity_id && Array.isArray(entity.attributes.entity_id)
+      ? entity.attributes.entity_id
+      : [];
   //find matches
-  let actions = entityActions[0].filter(action => {
+  const mixedDomains = entities.map(e => computeDomain(e)).filter((v, k, arr) => arr.indexOf(v) === k).length > 1;
+
+  if (mixedDomains) {
+    entityActions = entityActions.map(actionList => {
+      return actionList.map(action => {
+        if (computeEntity(action.service) == 'turn_on' || computeEntity(action.service) == 'turn_off') {
+          return {
+            ...action,
+            service: 'homeassistant' + '.' + computeEntity(action.service),
+            icon: computeEntity(action.service) == 'turn_on' ? 'flash' : 'flash-off',
+          };
+        }
+        return action;
+      });
+    });
+  }
+
+  const actions = entityActions[0].filter(action => {
     return entityActions.every(e => {
-      return e.map(uniqueId)
-        .includes(uniqueId(action));
+      return e.map(el => uniqueId(el)).includes(uniqueId(action));
     });
   });
   return actions;

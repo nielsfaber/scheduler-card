@@ -1,40 +1,37 @@
-import { ActionConfig } from "../types";
-import { HassEntity } from "home-assistant-js-websocket";
+import { ActionConfig } from '../types';
+import { HomeAssistant } from 'custom-card-helpers';
+import { HassEntity } from 'home-assistant-js-websocket';
 
-export const alarmControlPanelActions = (entity: HassEntity) => {
-  const supportedFeatures = entity.attributes.supported_features!;
+export const alarmControlPanelActions = (hass: HomeAssistant, _stateObj: HassEntity): ActionConfig[] => [
+  {
+    service: 'alarm_control_panel.alarm_disarm',
+    icon: 'hass:lock-open-variant-outline',
+    name: hass.localize('ui.card.alarm_control_panel.disarm'),
+  },
+  {
+    service: 'alarm_control_panel.alarm_arm_home',
+    icon: 'hass:home-outline',
+    name: hass.localize('ui.card.alarm_control_panel.arm_home'),
+    supported_feature: 1,
+  },
+  {
+    service: 'alarm_control_panel.alarm_arm_away',
+    icon: 'hass:exit-run',
+    name: hass.localize('ui.card.alarm_control_panel.arm_away'),
+    supported_feature: 2,
+  },
+  {
+    service: 'alarm_control_panel.alarm_arm_night',
+    icon: 'hass:power-sleep',
+    name: hass.localize('ui.card.alarm_control_panel.arm_night'),
+    supported_feature: 4,
+  },
+  {
+    service: 'alarm_control_panel.alarm_arm_custom_bypass',
+    icon: 'hass:shield-lock-outline',
+    name: hass.localize('ui.card.alarm_control_panel.arm_custom_bypass'),
+    supported_feature: 16,
+  },
+];
 
-  let actions: ActionConfig[] = [{
-    service: "alarm_disarm",
-    icon: "lock-open-variant-outline"
-  }];
-
-  if (supportedFeatures & 1) actions.push({
-    service: "alarm_arm_home",
-    icon: "home-outline"
-  });
-
-  if (supportedFeatures & 2) actions.push({
-    service: "alarm_arm_away",
-    icon: "exit-run"
-  });
-
-  if (supportedFeatures & 4) actions.push({
-    service: "alarm_arm_night",
-    icon: "power-sleep"
-  });
-
-  if (supportedFeatures & 16) actions.push({
-    service: "alarm_arm_custom_bypass",
-    icon: "shield-lock-outline"
-  });
-
-  return actions;
-}
-
-export const alarmControlPanelStates = [
-  "disarmed",
-  "armed_away",
-  "armed_home",
-  "armed_night"
-]
+export const alarmControlPanelStates = ['disarmed', 'armed_away', 'armed_home', 'armed_night'];

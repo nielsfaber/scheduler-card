@@ -1,22 +1,25 @@
-import { ActionConfig } from "../types";
-import { TurnOnAction } from "../const";
-import { HassEntity } from "home-assistant-js-websocket";
+import { ActionConfig } from '../types';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { HomeAssistant } from 'custom-card-helpers';
+import { localize } from '../localize/localize';
 
-export const vacuumActions = function (entity: HassEntity) {
-  const supportedFeatures = entity.attributes.supported_features!;
-  let actions: ActionConfig[] = [];
-
-  if (supportedFeatures & 1) actions.push(TurnOnAction);
-
-  if (supportedFeatures & 8192) actions.push({
-    service: "start",
-    icon: "play-circle-outline"
-  });
-
-  if (supportedFeatures & 4) actions.push({
-    service: "start_pause",
-    icon: "play-circle-outline"
-  });
-
-  return actions;
-}
+export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): ActionConfig[] => [
+  {
+    service: 'vacuum.turn_on',
+    icon: 'hass:power',
+    name: hass.localize('ui.card.media_player.turn_on'),
+    supported_feature: 1,
+  },
+  {
+    service: 'vacuum.start',
+    icon: 'hass:play-circle-outline',
+    name: hass.localize('ui.card.vacuum.start_cleaning'),
+    supported_feature: 8192,
+  },
+  {
+    service: 'vacuum.start_pause',
+    icon: 'hass:play-circle-outline',
+    name: localize('services.vacuum.start_pause', hass.language),
+    supported_feature: 4,
+  },
+];

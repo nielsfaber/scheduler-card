@@ -1,5 +1,5 @@
-import { EConditionType, ImportedEntry } from './types';
-import { parseTimestamp, ETimeEvent, EDayType } from './date-time';
+import { EConditionType, ImportedEntry, EDayType, ETimeEvent } from '../types';
+import { parseTimestamp } from '../date-time';
 
 const EntryPattern = /^([0-9]+)?D([0-7]+)?T([0-9SRDUW]+)T?([0-9SRDUW]+)?(A[A0-9]+)+(C([C0-9]+))?(F([F0-9]+))?$/;
 const SunTimePattern = /^([0-9]{4})?([SRDUW]{2})([0-9]{4})?$/;
