@@ -5,123 +5,123 @@
       "action_with_parameter": "{action} with {parameter}"
     },
     "climate": {
-      "set_temperature": "set temperature[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
-      "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ {preset_mode}]"
+      "set_temperature": "установить температуру[ {temperature}]",
+      "set_temperature_hvac_mode_heat": "обогрев[ {temperature}]",
+      "set_temperature_hvac_mode_cool": "охлаждение[ {temperature}]",
+      "set_hvac_mode": "установить режим[ {hvac_mode}]",
+      "set_preset_mode": "выбрать набор настроек[ {preset_mode}]"
     },
     "cover": {
-      "close_cover": "close",
-      "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "close_cover": "закрыть",
+      "open_cover": "открыть",
+      "set_cover_position": "установить позицию[ to {position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "установить скорость[ {speed}]",
+      "set_direction": "установить направление[ {direction}]",
+      "oscillate": "установить колебание[ {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "установить влажность[ {humidity}]"
     },
     "input_number": {
-      "set_value": "set value[ to {value}]"
+      "set_value": "установить значение[ в {value}]"
     },
     "input_select": {
-      "select_option": "select option[ {option}]"
+      "select_option": "установить опцию[ {option}]"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "включить[ с {brightness} яркостью]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "выбрать источник[ {source}]"
     },
     "script": {
-      "script": "execute"
+      "script": "запустить"
     },
     "vacuum": {
-      "start_pause": "start / pause"
+      "start_pause": "старт / пауза"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_away_mode": "установить режим вне дома"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "climate": "climate",
-    "cover": "covers",
-    "fan": "fans",
-    "group": "groups",
-    "humidifier": "humifiers",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "light": "lights",
-    "lock": "locks",
-    "media_player": "media players",
-    "scene": "scenes",
-    "script": "scripts",
-    "switch": "switches",
-    "vacuum": "vacuums",
-    "water_heater": "water heaters"
+    "alarm_control_panel": "панель управления сигнализацией",
+    "climate": "климат",
+    "cover": "жалюзи",
+    "fan": "вентиляторы",
+    "group": "группы",
+    "humidifier": "увлажнители",
+    "input_boolean": "логические",
+    "input_number": "числовые",
+    "input_select": "списки",
+    "light": "освещение",
+    "lock": "замки",
+    "media_player": "медиа-плееры",
+    "scene": "сцены",
+    "script": "скрипты",
+    "switch": "часы",
+    "vacuum": "пылесосы",
+    "water_heater": "подогреватели воды"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "daily",
-          "workdays": "workdays",
-          "weekend": "weekend"
+          "daily": "ежедневно",
+          "workdays": "рабочие дни",
+          "weekend": "выходные"
         },
         "day_types_long": {
-          "daily": "every day",
-          "workdays": "on workdays",
-          "weekend": "in the weekend"
+          "daily": "каждый день",
+          "workdays": "по рабочим дням",
+          "weekend": "в выходные"
         },
-        "days": "days",
-        "tomorrow": "tomorrow",
-        "repeated_days": "every {days}",
-        "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "days": "дни",
+        "tomorrow": "завтра",
+        "repeated_days": "каждый {days}",
+        "repeated_days_except": "каждый день кроме {excludedDays}",
+        "days_range": "с {startDay} до {endDay}"
       },
       "time": {
-        "absolute": "at {time}",
-        "interval": "from {startTime} to {endTime}",
-        "midnight": "midnight",
-        "noon": "noon",
-        "at_sun_event": "at {sunEvent}"
+        "absolute": "d {time}",
+        "interval": "с {startTime} до {endTime}",
+        "midnight": "полночь",
+        "noon": "полдень",
+        "at_sun_event": "в {sunEvent}"
       }
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Планировщик"
       },
       "overview": {
-        "no_entries": "There are no items to show",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "no_entries": "Отсутствуют элементы",
+        "excluded_items": "{number} исключено {if number is 1} элемент {else} элементов",
+        "hide_excluded": "скрыть исключенные элементы",
+        "additional_tasks": "{number} больше {if number is 1} задача {else} задач"
       },
       "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
-        "make_scheme": "make scheme"
+        "no_groups_defined": "Не определены группы",
+        "no_group_selected": "Выберите группу",
+        "no_entities_for_group": "Отсутствуют элементы в группе",
+        "no_entity_selected": "Выберите элемент",
+        "no_actions_for_entity": "Нет действий для этого элемента",
+        "make_scheme": "создать схему"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "Выберите временной слот"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "equal_to": "равно",
+        "unequal_to": "не равно",
+        "all": "все",
+        "any": "любое",
+        "no_conditions_defined": "Не определены условия"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "поведение после срабатывания"
       }
     }
   }
