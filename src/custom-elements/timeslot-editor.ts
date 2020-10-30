@@ -39,7 +39,7 @@ export class TimeslotEditor extends LitElement {
         </div>
         <div class="slider-legend">
           ${this.formatAmPm
-            ? html`
+        ? html`
                 <div class="slider-legend-item wide empty"></div>
                 <div class="slider-legend-item wide">04:00 AM</div>
                 <div class="slider-legend-item wide">08:00 AM</div>
@@ -48,7 +48,7 @@ export class TimeslotEditor extends LitElement {
                 <div class="slider-legend-item wide">08:00 PM</div>
                 <div class="slider-legend-item wide empty"></div>
               `
-            : html`
+        : html`
                 <div class="slider-legend-item empty"></div>
                 <div class="slider-legend-item">03:00</div>
                 <div class="slider-legend-item">06:00</div>
@@ -190,7 +190,7 @@ export class TimeslotEditor extends LitElement {
       secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;
 
       let time = (x / trackWidth) * MinutesPerDay;
-      time = time >= MinutesPerDay ? (time = MinutesPerDay) : roundTime(time, this.stepSize);
+      time = Math.round(time) >= MinutesPerDay ? MinutesPerDay : roundTime(time, this.stepSize, false);
 
       toolTip.dispatchEvent(new CustomEvent('update', { detail: { time: time } }));
     };
@@ -285,7 +285,7 @@ export class TimeslotEditor extends LitElement {
       cursor: pointer;
       color: var(--text-primary-color);
       justify-content: center;
-      align-items: cent er;
+      align-items: center;
       background: none;
       cursor: pointer;
       position: relative;
