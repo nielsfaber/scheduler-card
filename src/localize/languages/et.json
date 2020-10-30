@@ -1,127 +1,127 @@
 {
   "services": {
     "generic": {
-      "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "parameter_to_value": "{parameter} {value} jaoks",
+      "action_with_parameter": "{action} väärtusega {parameter}"
     },
     "climate": {
-      "set_temperature": "set temperature[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
-      "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ {preset_mode}]"
+      "set_temperature": "vali temperatuur [{temperature}]",
+      "set_temperature_hvac_mode_heat": "küte[ @ {temperature}]",
+      "set_temperature_hvac_mode_cool": "jahutus [ @ {temperature}]",
+      "set_hvac_mode": "vali režiim [{hvac_mode}]",
+      "set_preset_mode": "eelseade[ {preset_mode}]"
     },
     "cover": {
-      "close_cover": "close",
-      "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "close_cover": "sulge",
+      "open_cover": "ava",
+      "set_cover_position": "sea asendisse[{position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "vali kiirus[ @ {speed}]",
+      "set_direction": "vali suund[ @ {direction}]",
+      "oscillate": "vali hajutus[ @ {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "sea niiskus[ {humidity}]"
     },
     "input_number": {
-      "set_value": "set value[ to {value}]"
+      "set_value": "vali väärtus[ {value}]"
     },
     "input_select": {
-      "select_option": "select option[ {option}]"
+      "select_option": "valik[ {option}]"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "lülita sisse[ heledusega {brightness}]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "vali sisend[ {source}]"
     },
     "script": {
-      "script": "execute"
+      "script": "käivitae"
     },
     "vacuum": {
-      "start_pause": "start / pause"
+      "start_pause": "alusta/ootele"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_away_mode": "kodust ära"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "climate": "climate",
-    "cover": "covers",
-    "fan": "fans",
-    "group": "groups",
-    "humidifier": "humifiers",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "light": "lights",
-    "lock": "locks",
-    "media_player": "media players",
-    "scene": "scenes",
-    "script": "scripts",
-    "switch": "switches",
-    "vacuum": "vacuums",
-    "water_heater": "water heaters"
+    "alarm_control_panel": "valvepaneel",
+    "climate": "kliimaseade",
+    "cover": "aknakatted",
+    "fan": "ventilaatorid",
+    "group": "grupid",
+    "humidifier": "niisutajad",
+    "input_boolean": "tõeväärtus",
+    "input_number": "numbriline valik",
+    "input_select": "valikmenüü",
+    "light": "valgustid",
+    "lock": "lukud",
+    "media_player": "meediamängijad",
+    "scene": "stseenid",
+    "script": "skriptud",
+    "switch": "lülitid",
+    "vacuum": "tolmuimejad",
+    "water_heater": "veeboilerid"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "daily",
-          "workdays": "workdays",
-          "weekend": "weekend"
+          "daily": "iga päev",
+          "workdays": "tööpäevadel",
+          "weekend": "nädalavahetusel"
         },
         "day_types_long": {
-          "daily": "every day",
-          "workdays": "on workdays",
-          "weekend": "in the weekend"
+          "daily": "iga päev",
+          "workdays": "tööpäevadel",
+          "weekend": "nädalavahetusel"
         },
-        "days": "days",
-        "tomorrow": "tomorrow",
-        "repeated_days": "every {days}",
-        "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "days": "päeva",
+        "tomorrow": "homme",
+        "repeated_days": "iga {days} järel",
+        "repeated_days_except": "iga päev aga mitte {excludedDays}",
+        "days_range": "{startDay} kuni {endDay}"
       },
       "time": {
-        "absolute": "at {time}",
-        "interval": "from {startTime} to {endTime}",
-        "midnight": "midnight",
-        "noon": "noon",
-        "at_sun_event": "at {sunEvent}"
+        "absolute": "{time}",
+        "interval": "{startTime} kuni {endTime}",
+        "midnight": "keskööl",
+        "noon": "keskpäeval",
+        "at_sun_event": "{sunEvent}"
       }
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Ajastaja"
       },
       "overview": {
-        "no_entries": "There are no items to show",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "no_entries": "Ajastused puuduvad",
+        "excluded_items": "välja on jäetud {number}  {if number is 1} ajastus {else} ajastust",
+        "hide_excluded": "peida välja jäetud ajastused",
+        "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust"
       },
       "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
-        "make_scheme": "make scheme"
+        "no_groups_defined": "Gruppe pole valitud",
+        "no_group_selected": "Vali alustuseks grupid",
+        "no_entities_for_group": "Selles grupis puuduvad olemid",
+        "no_entity_selected": "Vali alustuseks olem",
+        "no_actions_for_entity": "Selle olemi jaoks pole tegevusi",
+        "make_scheme": "loo skeem"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "Alustuseks vali ajavahemik"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "equal_to": "võrdub",
+        "unequal_to": "ei võrdu",
+        "all": "kõik",
+        "any": "iga",
+        "no_conditions_defined": "Tingimusi pole määratud"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "toiming peale käivitumist"
       }
     }
   }
