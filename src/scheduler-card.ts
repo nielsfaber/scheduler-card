@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import {
   EVariableType,
@@ -15,14 +15,12 @@ import {
   HassData,
   OptionConfig,
   Condition,
+  EDayType,
 } from './types';
-import { CARD_VERSION, EViews, CreateTimeScheme, DeadEntityIcon, DeadEntityName } from './const';
-import { getLanguage } from './localize/localize';
-import { parseTimestamp, EDayType, MinutesPerDay, formatTime, timeEventToString } from './date-time';
-import { importEntry } from './interface';
-import { entityConfig, IsSchedulerEntity } from './entity';
-import { findAction, importAction, actionConfig, uniqueId } from './action';
-import { pick, calculateTimeline, omit } from './helpers';
+import { CARD_VERSION, EViews, CreateTimeScheme } from './const';
+import { parseTimestamp, MinutesPerDay, formatTime, timeEventToString } from './date-time';
+import { importEntry } from './data/import_entry';
+import { pick, calculateTimeline } from './helpers';
 import { exportActionVariable } from './actionVariables';
 import { ValidateConfig } from './config-validation';
 
@@ -31,6 +29,12 @@ import './custom-elements/scheduler-entitypicker-card';
 import './custom-elements/scheduler-timepicker-card';
 import './custom-elements/scheduler-options-card';
 import './custom-elements/scheduler-card-editor';
+import { importAction } from './data/import_action';
+import { parseAction } from './data/parse_action';
+import { parseEntity } from './data/parse_entity';
+import { computeEntityActions } from './data/compute_entity_actions';
+import { uniqueId, equalAction } from './data/compute_action_id';
+import { IsSchedulerEntity } from './data/filter_entity';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -40,12 +44,8 @@ import './custom-elements/scheduler-card-editor';
 });
 
 console.info(
-  `%c   SCHEDULER-CARD   \n%c   Version: ${CARD_VERSION.padEnd(8, ' ')}\n%c   Language: ${getLanguage().padEnd(
-    7,
-    ' '
-  )}`,
+  `%c  SCHEDULER-CARD  \n%c  Version: ${CARD_VERSION.padEnd(7, ' ')}`,
   'color: orange; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray',
   'color: white; font-weight: bold; background: dimgray'
 );
 
@@ -68,6 +68,7 @@ export class SchedulerCard extends LitElement {
   @property() actions: ActionElement[] = [];
   @property() friendlyName?: string;
 
+  translationsLoaded = false;
   editItem: string | null = null;
   scheduleEntities: string[] = [];
 
@@ -76,9 +77,21 @@ export class SchedulerCard extends LitElement {
     this._hass = hass;
   }
 
+  firstUpdated() {
+    const hass = this._hass!;
+    const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
+    el._loadFragmentTranslations(hass.language, 'config').then(() => {
+      this._hass!.localize;
+    });
+  }
+
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
     if (oldHass && changedProps.size == 1) {
+      if (!oldHass.localize('ui.panel.config.automation.editor.actions.name')) {
+        this.translationsLoaded = true;
+        return true;
+      }
       const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
       if (scheduleEntities.length !== this.scheduleEntities.length) return true;
       if (scheduleEntities.some((e, i) => e !== this.scheduleEntities[i])) return true;
@@ -99,9 +112,8 @@ export class SchedulerCard extends LitElement {
   }
 
   protected render() {
-    if (!this._hass || !this._config) return html``;
+    if (!this._hass || !this._config || !this.translationsLoaded) return html``;
     if (this._view == EViews.Overview) {
-
       return html`
         <scheduler-entities-card
           .hass=${this._hass}
@@ -167,9 +179,9 @@ export class SchedulerCard extends LitElement {
 
   private _confirmItemClick(ev: CustomEvent): void {
     if (!this._hass || !this._config) return;
-    const entity = ev.detail.entity;
-    this.entity = entityConfig(entity, this._hass, this._config)!;
-    const action = ev.detail.action;
+    const entity = String(ev.detail.entity);
+    this.entity = parseEntity(entity, this._hass, this._config)!;
+    const action = String(ev.detail.action);
 
     if (action != CreateTimeScheme) {
       this.entries = [
@@ -183,7 +195,7 @@ export class SchedulerCard extends LitElement {
 
       this._view = EViews.TimePicker;
 
-      this.actions = [findAction(this.entity, { service: action })];
+      this.actions = [computeEntityActions(entity, this._hass, this._config).find(e => e.id == action)!];
     } else {
       this.entries = [
         {
@@ -208,9 +220,7 @@ export class SchedulerCard extends LitElement {
           days: { type: EDayType.Daily },
         },
       ];
-      this.actions = this.entity!.actions.map(actionConfig).filter(
-        e => e
-      ) as ActionElement[];
+      this.actions = computeEntityActions(entity, this._hass, this._config);
       this._view = EViews.TimeScheme;
     }
   }
@@ -226,13 +236,14 @@ export class SchedulerCard extends LitElement {
 
     this.entries.forEach(entry => {
       if (!entry.action || !entry.entity) return;
-      const entity = entityConfig(entry.entity, this._hass!, this._config!)!;
-      const action = findAction(entity, { service: entry.action });
+
+      const action = this.actions.find(e => e.id == entry.action)!;
       const variableData = exportActionVariable(action, entry);
+
       const output: HassAction = {
-        entity: entity.id,
-        service: computeDomain(action.service) ? action.service : `${computeDomain(entity.id)}.${action.service}`,
-        service_data: { ...action.service_data || {}, ...variableData }
+        entity: entry.entity,
+        service: action.service,
+        service_data: { ...(action.service_data || {}), ...variableData },
       };
 
       let num = actions.findIndex(e => uniqueId(e) == uniqueId(output));
@@ -318,50 +329,37 @@ export class SchedulerCard extends LitElement {
 
   _editItemClick(ev: CustomEvent): void {
     if (!this._hass || !this._config) return;
-    const scheduleEntity = this._hass.states[ev.detail];
-    if (!scheduleEntity) return;
+    const scheduleEntity = this._hass.states[ev.detail]!;
+
     const entries: ImportedEntry[] = scheduleEntity.attributes.entries.map(importEntry);
-    const entity_id = importAction(scheduleEntity.attributes.actions[0]).entity;
-    this.entity = entityConfig(entity_id, this._hass, this._config);
+    const action = importAction(scheduleEntity.attributes.actions[0]);
 
-    if (!this.entity) {
-      const actions = scheduleEntity.attributes.actions
-        .map(importAction)
-        .map(e => actionConfig(omit(e, ['entity']) as HassAction));
+    const entityConfig = parseEntity(action.entity, this._hass, this._config);
+    this.entity = entityConfig;
 
-      const entity: EntityElement = {
-        id: entity_id,
-        name: DeadEntityName,
-        icon: DeadEntityIcon,
-        actions: actions
-      };
-      this.entity = entity;
-    }
-    this.actions = this.entity.actions
-      .map(e => actionConfig(e))
-      .filter(e => e) as ActionElement[];
+    this.actions = computeEntityActions(action.entity, this._hass, this._config);
 
     const conditions: Condition[] = scheduleEntity.attributes.conditions || [];
     const options: OptionConfig = scheduleEntity.attributes.options || {};
     this.entries = entries.map(el => {
-
       const hassAction = el.actions
         .filter(e => e < scheduleEntity.attributes.actions.length)
         .map(e => importAction(scheduleEntity.attributes.actions[e]))
         .shift()!;
-      const action = findAction(this.entity!, hassAction);
+      const action = parseAction(hassAction, this._hass!, this._config!);
 
-      if (!this.actions.find(e => e.id == action.id)) {
-        let actions = [...this.actions];
+      const res = this.actions.find(e => equalAction(e, action));
+      if (!res) {
+        const actions = [...this.actions];
         actions.push(action);
         this.actions = actions;
       }
-      const output: Entry = {
+      let output: Entry = {
         time: el.time,
         endTime: el.endTime,
         days: el.days,
         entity: this.entity!.id,
-        action: action.id,
+        action: res ? res.id : action.id,
       };
 
       if (action.variable && hassAction.service_data && action.variable.field in hassAction.service_data) {
@@ -371,13 +369,13 @@ export class SchedulerCard extends LitElement {
             value: Number(hassAction.service_data[action.variable.field]),
             enabled: true,
           };
-          Object.assign(output, { variable: variableConfig });
+          output = { ...output, variable: variableConfig };
         } else {
           const variableConfig: ListVariable = {
             type: EVariableType.List,
             value: String(hassAction.service_data[action.variable.field]),
           };
-          Object.assign(output, { variable: variableConfig });
+          output = { ...output, variable: variableConfig };
         }
       }
 

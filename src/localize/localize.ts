@@ -1,4 +1,3 @@
-
 import * as cs from './languages/cs.json';
 import * as de from './languages/de.json';
 import * as en from './languages/en.json';
@@ -14,11 +13,7 @@ import * as pt_br from './languages/pt-br.json';
 import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 
-type HassElement = {
-  hass?: any
-}
-
-var languages: any = {
+const languages: any = {
   cs: cs,
   de: de,
   en: en,
@@ -39,38 +34,41 @@ var languages: any = {
   ru: ru,
 };
 
-export function localize(string: string, search: string | string[] = '', replace: string | string[] = '') {
-
-  const lang = getLanguage();
-
-  var translated: string;
-
+export function localize(
+  string: string,
+  lang: string,
+  search: string | string[] | number = '',
+  replace: string | string[] | number = ''
+) {
+  let translated: string;
   try {
     if (lang == 'test') return 'TRANSLATED';
     translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
+    if (!translated) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   } catch (e) {
-    translated = string.split('.').reduce((o, i) => o[i], languages['en']);
-  }
-
-  if (translated === undefined) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
-
-  if (search !== '' && replace !== '') {
-    if (Array.isArray(search) || Array.isArray(replace)) {
-      for (var i = 0; i < search.length; i++)  translated = translated.replace(search[i], replace[i]);
-    } else {
-      translated = translated.replace(search, replace);
+    try {
+      translated = string.split('.').reduce((o, i) => o[i], languages['en']);
+    } catch (e) {
+      translated = '';
     }
   }
+
+  if (search !== '' && replace !== '' && translated) {
+    if (Array.isArray(search) || Array.isArray(replace)) {
+      for (let i = 0; i < (search as string[]).length; i++) translated = translated.replace(search[i], replace[i]);
+    } else {
+      const res = translated.match(/\{if ([a-z]+) is ([^\}]+)\}\ ?([^\{]+)\ ?\{else\}\ ?([^\{]+)/i);
+      if (res && String(search).replace(/[\{\}']+/g, '') == res[1]) {
+        const is_match = String(replace) == res[2];
+        if (is_match) translated = translated.replace(res[0], res[3]);
+        else translated = translated.replace(res[0], res[4]);
+      }
+      translated = translated.replace(String(search), String(replace));
+    }
+  }
+
+  // if (!translated) {
+  //   console.log(`missing translation for ${string}`);
+  // }
   return translated;
 }
-
-export function getLanguage(): string {
-  let lang = localStorage.getItem('selectedLanguage')?.replace(/['"]+/g, '').replace('-', '_');
-  if (!lang || lang == 'null') {
-    const hass = (document.querySelector("home-assistant") as HassElement).hass;
-    lang = hass.selectedLanguage || hass.language || "en"
-  }
-  return String(lang);
-}
-
-

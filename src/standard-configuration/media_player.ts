@@ -1,28 +1,41 @@
-import { HassEntity } from "home-assistant-js-websocket";
-import { listVariable } from "../actionVariables";
-import { ActionConfig } from "../types";
-import { TurnOnAction, TurnOffAction } from "../const";
+import { HassEntity } from 'home-assistant-js-websocket';
+import { listVariable } from '../actionVariables';
+import { ActionConfig } from '../types';
+import { localize } from '../localize/localize';
+import { HomeAssistant } from 'custom-card-helpers';
+import { LocalizeFunc } from 'custom-card-helpers/dist/translations/localize';
 
-export function mediaPlayerActions(entity: HassEntity) {
-  const sourceListOptions: string[] = Array(entity.attributes.source_list);
-  const supportedFeatures = entity.attributes.supported_features!;
-
-
-  let actions: ActionConfig[] = []
-
-  if (supportedFeatures & 128) actions.push(TurnOnAction);
-  if (supportedFeatures & 256) actions.push(TurnOffAction);
-  if (supportedFeatures & 2048 && sourceListOptions.length > 1) {
-    actions.push({
-      service: "select_source",
-      variable: listVariable({
-        field: "source",
-        options: sourceListOptions.map(e => ({ value: e }))
-      }),
-      icon: "music-box-multiple-outline"
-    })
+export const mediaPlayerSources = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
+  if (stateObj && stateObj.attributes.source_list && Array.isArray(stateObj.attributes.source_list)) {
+    return Array(stateObj.attributes.source_list).map(val => {
+      return { value: String(val) };
+    });
   }
+  return [];
+};
 
-
-  return actions;
-}
+export const mediaPlayerActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+  {
+    service: 'media_player.turn_on',
+    icon: 'hass:power',
+    name: hass.localize('ui.card.media_player.turn_on'),
+    supported_feature: 128,
+  },
+  {
+    service: 'media_player.turn_off',
+    icon: 'hass:power-off',
+    name: hass.localize('ui.card.media_player.turn_off'),
+    supported_feature: 256,
+  },
+  {
+    service: 'media_player.select_source',
+    variable: listVariable({
+      field: 'source',
+      name: hass.localize('ui.card.media_player.source'),
+      options: mediaPlayerSources(hass.localize, stateObj),
+    }),
+    icon: 'hass:music-box-multiple-outline',
+    name: localize('services.media_player.select_source', hass.language),
+    supported_feature: 2048,
+  },
+];

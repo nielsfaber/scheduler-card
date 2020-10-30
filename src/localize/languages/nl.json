@@ -1,122 +1,128 @@
 {
-  "scheduler": "Tijdplanner",
-  "actions": {
-    "add": "Nieuw item",
-    "cancel": "annuleren",
-    "next": "verder",
-    "save": "opslaan",
-    "delete": "verwijder"
-  },
-  "instructions": {
-    "no_group_selected": "Selecteer eerst een groep",
-    "no_entity_selected": "Selecteer eerst een entiteit",
-    "no_groups_defined": "Er zijn geen groepen gedefinieerd",
-    "no_entities_for_group": "Deze groep heeft geen entiteiten",
-    "no_actions_for_entity": "Deze entiteit heeft geen acties",
-    "no_entries_defined": "Er zijn geen items aangemaakt"
-  },
-  "fields": {
-    "group": "Groep",
-    "entity": "Entiteit",
-    "action": "Actie",
-    "days": "Dagen",
-    "time": "Tijdstip",
-    "options": "Opties",
-    "day_type_daily": "dagelijks",
-    "day_type_workday": "werkdagen",
-    "day_type_weekend": "weekend",
-    "day_type_custom": "anders"
-  },
-  "days_short": {
-    "mon": "ma",
-    "tue": "di",
-    "wed": "wo",
-    "thu": "do",
-    "fri": "vr",
-    "sat": "za",
-    "sun": "zo"
-  },
-  "days_long": {
-    "mon": "maandag",
-    "tue": "dinsdag",
-    "wed": "woensdag",
-    "thu": "donderdag",
-    "fri": "vrijdag",
-    "sat": "zaterdag",
-    "sun": "zondag"
-  },
-  "words": {
-    "and": "en",
-    "before": "voor",
-    "after": "na"
-  },
   "services": {
-    "turn_on": "aanzetten",
-    "turn_on_brightness": "aanzetten {op brightness}",
-    "turn_off": "uitzetten",
-    "close_cover": "sluiten",
-    "open_cover": "openen",
-    "set_temperature": "temperatuur instellen {naar temperature}",
-    "set_temperature_hvac_mode_heat": "verwarmen {naar temperature}",
-    "set_temperature_hvac_mode_cool": "koelen {naar temperature}",
-    "set_cover_position": "positie instellen {naar position}",
-    "set_hvac_mode": "stand aanpassen {naar hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "uitzetten",
-    "set_preset_mode": "kies voorinstelling {preset_mode}",
-    "set_value": "waarde {value} instellen",
-    "select_option": "optie {option} selecteren",
-    "select_source": "ingang {source} selecteren",
-    "start": "starten",
-    "run_script": "uitvoeren"
-  },
-  "service_parameters": {
-    "brightness": "helderheid",
-    "temperature": "temperatuur",
-    "position": "positie",
-    "hvac_mode": "stand",
-    "preset_mode": "voorinstelling"
+    "generic": {
+      "parameter_to_value": "{parameter} naar {value}",
+      "action_with_parameter": "{action} met {parameter}"
+    },
+    "climate": {
+      "set_temperature": "temperatuur instellen[ naar {temperature}]",
+      "set_temperature_hvac_mode_heat": "verwarmen[ naar {temperature}]",
+      "set_temperature_hvac_mode_cool": "koelen[ naar {temperature}]",
+      "set_hvac_mode": "modus aanpassen[ naar {hvac_mode}]",
+      "set_preset_mode": "programma[ {preset_mode}] instellen"
+    },
+    "cover": {
+      "close_cover": "sluiten",
+      "open_cover": "openen",
+      "set_cover_position": "positie instellen[ naar {position}]"
+    },
+    "fan": {
+      "set_speed": "snelheid instellen[ op {speed}]",
+      "set_direction": "richting instellen[ naar {direction}]",
+      "oscillate": "zet oscillatie[ naar {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "luchtvochtigheid instellen [ op {humidity}]"
+    },
+    "input_number": {
+      "set_value": "waarde aanpassen[ naar {value}]"
+    },
+    "input_select": {
+      "select_option": "selecteer optie[ {option}]"
+    },
+    "light": {
+      "turn_on": "inschakelen[ met {brightness} helderheid]"
+    },
+    "media_player": {
+      "select_source": "kies ingang[ {source}]"
+    },
+    "script": {
+      "script": "uitvoeren"
+    },
+    "vacuum": {
+      "start_pause": "start / pauzeer"
+    },
+    "water_heater": {
+      "set_away_mode": "stel afwezigheidsmode in"
+    }
   },
   "domains": {
-    "camera": "cameras",
+    "alarm_control_panel": "alarmsystemen",
     "climate": "verwarming",
     "cover": "zonwering",
     "fan": "ventilatie",
     "group": "groepen",
+    "humidifier": "luchtbevochtigers",
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
     "light": "verlichting",
+    "lock": "sloten",
     "media_player": "mediaspelers",
     "scene": "scènes",
+    "script": "scripts",
     "switch": "schakelaars",
-    "vacuum": "stofzuigers"
+    "vacuum": "stofzuigers",
+    "water_heater": "waterverwarming"
   },
-  "days": {
-    "tomorrow": "morgen",
-    "daily": "dagelijks",
-    "daily_except_days": "elke dag behalve {days}",
-    "working_days": "op werkdagen",
-    "weekend": "in het weekend",
-    "interval": "{startDay} t/m {endDay}"
-  },
-  "time": {
-    "absolute": "om {time}",
-    "relative": "over {time}",
-    "interval": "van {startTime} tot {endTime}",
-    "seconds": "{seconds} seconden",
-    "hour": "1 uur",
-    "hours": "{hours} uur",
-    "minute": "1 minuut",
-    "minutes": "{minutes} minuten",
-    "now": "nu",
-    "midnight": "middernacht",
-    "noon": "12 uur",
-    "at_sun_event": "bij {sunEvent}",
-    "sun_event_sunrise": "zonsopgang",
-    "sun_event_sunset": "zonsondergang"
-  },
-  "misc": {
-    "one_additional_task": "1 overige taak",
-    "x_additional_tasks": "{count} overige taken"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "dagelijks",
+          "workdays": "werkdagen",
+          "weekend": "weekend"
+        },
+        "day_types_long": {
+          "daily": "iedere dag",
+          "workdays": "doordeweeks",
+          "weekend": "in het weekend"
+        },
+        "days": "dagen",
+        "repeated_days": "elke {days}",
+        "repeated_days_except": "elke dag behalve {excludedDays}",
+        "days_range": "van {startDay} tot {endDay}",
+        "tomorrow": "morgen"
+      },
+      "time": {
+        "absolute": "om {time}",
+        "interval": "van {startTime} tot {endTime}",
+        "midnight": "middernacht",
+        "noon": "12:00",
+        "at_sun_event": "bij {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Tijdplanner"
+      },
+      "overview": {
+        "no_entries": "Er zijn geen items aangemaakt",
+        "excluded_items": "{number} uitgesloten {if number is 1} item {else} items",
+        "hide_excluded": "verberg uitgesloten items",
+        "additional_tasks": "{number} overige {if number is 1} taak {else} taken"
+      },
+      "entity_picker": {
+        "no_group_selected": "Selecteer eerst een groep",
+        "no_entity_selected": "Selecteer eerst een entiteit",
+        "no_groups_defined": "Er zijn geen groepen gedefinieerd",
+        "no_entities_for_group": "Deze groep heeft geen entiteiten",
+        "no_actions_for_entity": "Deze entiteit heeft geen acties",
+        "make_scheme": "maak schema"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Kies eerst een tijdsslot"
+      },
+      "conditions": {
+        "equal_to": "is",
+        "unequal_to": "is niet",
+        "all": "en",
+        "any": "of",
+        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd"
+      },
+      "options": {
+        "repeat_type": "gedrag na activeren"
+      }
+    }
   }
 }
