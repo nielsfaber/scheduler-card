@@ -9,7 +9,7 @@
       "set_temperature_hvac_mode_heat": "chauffe[ à {temperature}]",
       "set_temperature_hvac_mode_cool": "refroidi[ à {temperature}]",
       "set_hvac_mode": "ajuster le mode[ à {hvac_mode}]",
-      "set_preset_mode": "ajuster le pré-réglage[ {preset_mode}]"
+      "set_preset_mode": "choisir le pré-réglage[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "fermer",
@@ -43,19 +43,19 @@
       "start_pause": "démarrer / pause"
     },
     "water_heater": {
-      "set_away_mode": "ajuster mode absent"
+      "set_away_mode": "ajuster au mode absent"
     }
   },
   "domains": {
-    "alarm_control_panel": "panneau de contrôle alarme",
+    "alarm_control_panel": "panneau de contrôle de l'alarme",
     "climate": "climat",
-    "cover": "covers",
+    "cover": "connecteurs",
     "fan": "ventilateurs",
     "group": "groupes",
     "humidifier": "humidificateurs",
-    "input_boolean": "entrée booléens",
+    "input_boolean": "entrée booléenne",
     "input_number": "entrée numérique",
-    "input_select": "entrée selection",
+    "input_select": "entrée de sélection",
     "light": "lumière",
     "lock": "serrure",
     "media_player": "lecteurs multimédias",
@@ -89,7 +89,7 @@
         "interval": "de {startTime} à {endTime}",
         "midnight": "minuit",
         "noon": "midi",
-        "at_sun_event": "à {sunEvent}"
+        "at_sun_event": "au {sunEvent}"
       }
     },
     "panel": {
@@ -98,7 +98,7 @@
       },
       "overview": {
         "no_entries": "il n'y a pas d'item a montrer",
-        "excluded_items": "{number} exclus {if number is 1} item {else} items",
+        "excluded_items": "{number} exclu(s) {if number is 1} item {else} items",
         "hide_excluded": "cacher les items exclus",
         "additional_tasks": "{number} de plus {if number is 1} tâche {else} tâches"
       },
@@ -114,8 +114,8 @@
         "no_timeslot_selected": "Choisir une plage horaire en premier"
       },
       "conditions": {
-        "equal_to": "est",
-        "unequal_to": "n'est pas",
+        "equal_to": "égal à",
+        "unequal_to": "inégal à",
         "all": "tous",
         "any": "tout",
         "no_conditions_defined": "Il n'y a pas de condition définie"
