@@ -1,0 +1,122 @@
+{
+  "scheduler": "Tidsplan",
+  "actions": {
+    "add": "legg til",
+    "cancel": "avbryt",
+    "next": "neste",
+    "save": "lagre",
+    "delete": "slett"
+  },
+  "instructions": {
+    "no_group_selected": "Velg en gruppe først",
+    "no_entity_selected": "Velg en entitet først",
+    "no_groups_defined": "Ingen grupper definert",
+    "no_entities_for_group": "Det finnes ingen entiteter i denne gruppen",
+    "no_actions_for_entity": "Det finnes ingen handlinger for denne entiteten",
+    "no_entries_defined": "Det er ingen definerte tidsplaner å vise"
+  },
+  "fields": {
+    "group": "Gruppe",
+    "entity": "Entitet",
+    "action": "Handling",
+    "days": "Dager",
+    "time": "Tid",
+    "options": "Valg",
+    "day_type_daily": "hver dag",
+    "day_type_weekdays": "ukedager",
+    "day_type_weekend": "weekend",
+    "day_type_custom": "egendefinert"
+  },
+  "days_short": {
+    "mon": "man",
+    "tue": "tir",
+    "wed": "ons",
+    "thu": "tor",
+    "fri": "fre",
+    "sat": "lør",
+    "sun": "søn"
+  },
+  "days_long": {
+    "mon": "mandag",
+    "tue": "tirsdag",
+    "wed": "onsdag",
+    "thu": "torsdag",
+    "fri": "fredag",
+    "sat": "lørdag",
+    "sun": "søndag"
+  },
+  "words": {
+    "and": "og",
+    "before": "før",
+    "after": "etter"
+  },
+  "services": {
+    "turn_on": "slå på",
+    "turn_on_brightness": "slå på {at brightness}",
+    "turn_off": "slå av",
+    "close_cover": "lukk",
+    "open_cover": "åpne",
+    "set_temperature": "sett temperatur {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "sett posisjon {to position}",
+    "set_hvac_mode": "set mode {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "slå av",
+    "set_preset_mode": "set preset {to preset_mode}",
+    "set_value": "set value {to value}",
+    "select_option": "select option {option}",
+    "select_source": "select source {source}",
+    "start": "start",
+    "run_script": "run"
+  },
+  "service_parameters": {
+    "brightness": "brightness",
+    "temperature": "temperature",
+    "position": "position",
+    "hvac_mode": "mode",
+    "preset_mode": "preset"
+  },
+  "domains": {
+    "camera": "cameras",
+    "climate": "klima",
+    "cover": "cover",
+    "fan": "vifter",
+    "group": "groups",
+    "input_boolean": "input_boolean",
+    "input_number": "input_number",
+    "input_select": "input_select",
+    "media_player": "media players",
+    "scene": "scenes",
+    "light": "lys",
+    "switch": "brytere",
+    "vacuum": "støvsugere"
+  },
+  "days": {
+    "tomorrow": "tomorrow",
+    "daily": "daily",
+    "daily_except_days": "every day except {days}",
+    "working_days": "working days",
+    "weekend": "weekend",
+    "interval": "{startDay} to {endDay}"
+  },
+  "time": {
+    "absolute": "at {time}",
+    "relative": "in {time}",
+    "interval": "from {startTime} to {endTime}",
+    "seconds": "{seconds} seconds",
+    "hour": "1 hour",
+    "hours": "{hours} hours",
+    "minute": "1 minute",
+    "minutes": "{minutes} minutes",
+    "now": "now",
+    "midnight": "midnight",
+    "noon": "noon",
+    "at_sun_event": "at {sunEvent}",
+    "sun_event_sunrise": "sunrise",
+    "sun_event_sunset": "sunset"
+  },
+  "misc": {
+    "one_additional_task": "1 more task",
+    "x_additional_tasks": "{count} more tasks"
+  }
+}

@@ -1,77 +1,70 @@
-import { ActionConfig } from "../types";
-import { levelVariable } from "../actionVariables";
-import { HassEntity } from "home-assistant-js-websocket";
+import { ActionConfig } from '../types';
+import { levelVariable } from '../actionVariables';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { HomeAssistant } from 'custom-card-helpers';
+import { localize } from '../localize/localize';
 
+export const coverIcon = (stateObj?: HassEntity): string => {
+  const deviceClass = stateObj && stateObj.attributes.device_class ? stateObj.attributes.device_class : null;
+  switch (deviceClass) {
+    case 'garage':
+      return 'hass:garage';
+    case 'door':
+      return 'hass:door-closed';
+    case 'shutter':
+      return 'hass:window-shutter';
+    case 'blind':
+      return 'hass:blinds';
+    case 'window':
+      return 'hass:window-closed';
+    default:
+      return 'hass:window-shutter';
+  }
+};
 
+export const coverIconOpen = (stateObj?: HassEntity): string => {
+  const deviceClass = stateObj && stateObj.attributes.device_class ? stateObj.attributes.device_class : null;
+  switch (deviceClass) {
+    case 'garage':
+      return 'hass:garage-open';
+    case 'door':
+      return 'hass:door-open';
+    case 'shutter':
+      return 'hass:window-shutter-open';
+    case 'blind':
+      return 'hass:blinds-open';
+    case 'window':
+      return 'hass:window-open';
+    default:
+      return 'hass:window-shutter-open';
+  }
+};
 
-export function coverActions(entity: HassEntity) {
-  const supportedFeatures = entity.attributes.supported_features!;
-
-  let actions: ActionConfig[] = [{
-    service: "open_cover",
-    icon: coverIconOpen(entity)
+export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+  {
+    service: 'cover.open_cover',
+    icon: coverIconOpen(stateObj),
+    name: localize('services.cover.open_cover', hass.language),
   },
   {
-    service: "close_cover",
-    icon: coverIcon(entity)
-  }
-  ];
+    service: 'cover.close_cover',
+    icon: coverIcon(stateObj),
+    name: localize('services.cover.close_cover', hass.language),
+  },
+  {
+    service: 'cover.set_cover_position',
+    variable: levelVariable({
+      field: 'position',
+      name: hass.localize('ui.card.cover.position', hass.language),
+      min: 0,
+      max: 100,
+      step: 1,
+      unit: '%',
+    }),
+    supported_feature: 4,
+    icon: 'hass:ray-vertex',
+    name: localize('services.cover.set_cover_position', hass.language),
+  },
+];
 
-  if (supportedFeatures & 4) {
-    actions.push(
-      {
-        supported_feature: 4,
-        service: "set_cover_position",
-        variable: levelVariable({
-          field: "position",
-          min: 0,
-          max: 100,
-          unit: "%"
-        }),
-        icon: "ray-vertex"
-      })
-  }
-  return actions;
-}
-
-
-export const coverIcon = (state: HassEntity): string => {
-  const deviceClass = state.attributes.device_class!;
-  switch (deviceClass) {
-    case "garage":
-      return "garage";
-    case "door":
-      return "door-closed";
-    case "shutter":
-      return "window-shutter";
-    case "blind":
-      return "blinds";
-    case "window":
-      return "window-closed";
-    default:
-      return "window-shutter";
-  }
-}
-
-export const coverIconOpen = (state: HassEntity): string => {
-  const deviceClass = state.attributes.device_class!;
-  switch (deviceClass) {
-    case "garage":
-      return "garage-open";
-    case "door":
-      return "door-open";
-    case "shutter":
-      return "window-shutter-open";
-    case "blind":
-      return "blinds-open";
-    case "window":
-      return "window-open";
-    default:
-      return "window-shutter-open";
-  }
-}
-
-export const coverStates = [
-  "open",
-  "closed"
-]
+export const coverStates = ['open', 'closed'];

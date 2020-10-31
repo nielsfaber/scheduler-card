@@ -1,17 +1,29 @@
-import { HassEntity } from "home-assistant-js-websocket";
-import { ActionConfig } from "../types";
-import { TurnOnAction, TurnOffAction } from "../const";
-import { computeEntity } from "custom-card-helpers";
-import { localize } from "../localize/localize";
+import { HassEntity } from 'home-assistant-js-websocket';
+import { ActionConfig } from '../types';
+import { computeEntity, HomeAssistant } from 'custom-card-helpers';
+import { localize } from '../localize/localize';
 
-export function scriptActions(entity: HassEntity) {
+export const scriptActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => {
+  const actions: ActionConfig[] = [
+    {
+      service: 'script.turn_on',
+      icon: 'hass:flash',
+      name: hass.localize('ui.card.media_player.turn_on'),
+    },
+    {
+      service: 'script.turn_off',
+      icon: 'hass:flash-off',
+      name: hass.localize('ui.card.media_player.turn_off'),
+    },
+  ];
 
-  let actions: ActionConfig[] = [TurnOnAction, TurnOffAction]
-  actions.push({
-    service: computeEntity(entity.entity_id),
-    icon: "play",
-    name: localize("services.run_script")
-  });
+  if (stateObj) {
+    actions.push({
+      service: 'script' + '.' + computeEntity(stateObj.entity_id),
+      icon: 'hass:play',
+      name: localize('services.script.script', hass.language),
+    });
+  }
 
   return actions;
-}
+};

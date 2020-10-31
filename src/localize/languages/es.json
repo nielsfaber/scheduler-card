@@ -1,123 +1,128 @@
 {
-  "scheduler": "Programador",
-  "actions": {
-    "add": "Agregar",
-    "cancel": "cancelar",
-    "next": "siguiente",
-    "save": "guardar",
-    "delete": "borrar"
-  },
-  "instructions": {
-    "no_group_selected": "Selecciona un grupo primero",
-    "no_entity_selected": "Selecciona una entidad primero",
-    "no_groups_defined": "No hay grupos definidos",
-    "no_entities_for_group": "No hay entidades en este grupo",
-    "no_actions_for_entity": "No hay acciones para esta entidad",
-    "no_entries_defined": "No hay dispositivos definidos"
-  },
-  "fields": {
-    "group": "Grupo",
-    "entity": "Entidad",
-    "action": "Acción",
-    "days": "Días",
-    "time": "Hora",
-    "options": "Opciones",
-    "day_type_daily": "cada día",
-    "day_type_weekdays": "dias semanales",
-    "day_type_weekend": "fin de semana",
-    "day_type_custom": "personalizado"
-  },
-  "days_short": {
-    "mon": "lun",
-    "tue": "mar",
-    "wed": "mie",
-    "thu": "jue",
-    "fri": "vie",
-    "sat": "sab",
-    "sun": "dom"
-  },
-  "days_long": {
-    "mon": "lunes",
-    "tue": "martes",
-    "wed": "miércoles",
-    "thu": "jueves",
-    "fri": "viernes",
-    "sat": "sábado",
-    "sun": "domingo"
-  },
-  "words": {
-    "and": "y",
-    "before": "antes",
-    "after": "después"
-  },
   "services": {
-    "turn_on": "encender",
-    "turn_on_brightness": "encender {a brightness}",
-    "turn_off": "apagar",
-    "close_cover": "cerrar",
-    "open_cover": "abrir",
-    "set_temperature": "establecer temperatura {a temperature}",
-    "set_temperature_hvac_mode_heat": "calentar {a temperature}",
-    "set_temperature_hvac_mode_cool": "enfriar {a temperature}",
-    "set_to": "establecer a",
-    "set_cover_position": "establecer posición {a position}",
-    "set_hvac_mode": "establecer modo {a hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "apagar",
-    "set_preset_mode": "establecer modo {a preset_mode}",
-    "set_value": "establecer valor {value}",
-    "select_option": "seleccionar opción {option}",
-    "select_source": "seleccionar fuente {source}",
-    "start": "empezar",
-    "run_script": "ejecutar"
-  },
-  "service_parameters": {
-    "brightness": "brillo",
-    "temperature": "temperatura",
-    "position": "posición",
-    "hvac_mode": "modo",
-    "preset_mode": "pre-ajuste"
+    "generic": {
+      "parameter_to_value": "{parameter} to {value}",
+      "action_with_parameter": "{action} with {parameter}"
+    },
+    "climate": {
+      "set_temperature": "set temperature[ to {temperature}]",
+      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
+      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
+      "set_hvac_mode": "set mode[ to {hvac_mode}]",
+      "set_preset_mode": "set preset[ {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "close",
+      "open_cover": "open",
+      "set_cover_position": "set position[ to {position}]"
+    },
+    "fan": {
+      "set_speed": "set speed[ to {speed}]",
+      "set_direction": "set direction[ to {direction}]",
+      "oscillate": "set oscillation[ to {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "set humidity[ to {humidity}]"
+    },
+    "input_number": {
+      "set_value": "set value[ to {value}]"
+    },
+    "input_select": {
+      "select_option": "select option[ {option}]"
+    },
+    "light": {
+      "turn_on": "turn on[ with {brightness} brightness]"
+    },
+    "media_player": {
+      "select_source": "select source[ {source}]"
+    },
+    "script": {
+      "script": "execute"
+    },
+    "vacuum": {
+      "start_pause": "start / pause"
+    },
+    "water_heater": {
+      "set_away_mode": "set away mode"
+    }
   },
   "domains": {
-    "camera": "cámaras",
-    "climate": "climatización",
-    "cover": "persiana",
-    "fan": "ventilador",
-    "group": "grupo",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
-    "light": "luces",
-    "media_player": "reproductor multimedia",
-    "scene": "escena",
-    "switch": "interruptor",
-    "vacuum": "aspirador"
+    "alarm_control_panel": "alarm control panel",
+    "climate": "climate",
+    "cover": "covers",
+    "fan": "fans",
+    "group": "groups",
+    "humidifier": "humifiers",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
+    "light": "lights",
+    "lock": "locks",
+    "media_player": "media players",
+    "scene": "scenes",
+    "script": "scripts",
+    "switch": "switches",
+    "vacuum": "vacuums",
+    "water_heater": "water heaters"
   },
-  "days": {
-    "tomorrow": "mañana",
-    "daily": "a diario",
-    "daily_except_days": "todos los dias excepto {days}",
-    "working_days": "días hábiles",
-    "weekend": "fin de semana",
-    "interval": "{startDay} a {endDay}"
-  },
-  "time": {
-    "absolute": "a las {time}",
-    "relative": "en {time}",
-    "interval": "desde las {startTime} a las {endTime}",
-    "seconds": "{seconds} segundos",
-    "hour": "1 hora",
-    "hours": "{hours} horas",
-    "minute": "1 minuto",
-    "minutes": "{minutes} minutos",
-    "now": "ahora",
-    "midnight": "medianoche",
-    "noon": "mediodía",
-    "at_sun_event": "al {sunEvent}",
-    "sun_event_sunrise": "amanecer",
-    "sun_event_sunset": "atardecer"
-  },
-  "misc": {
-    "one_additional_task": "1 tarea más",
-    "x_additional_tasks": "{count} tareas más"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "daily",
+          "workdays": "workdays",
+          "weekend": "weekend"
+        },
+        "day_types_long": {
+          "daily": "every day",
+          "workdays": "on workdays",
+          "weekend": "in the weekend"
+        },
+        "days": "days",
+        "tomorrow": "tomorrow",
+        "repeated_days": "every {days}",
+        "repeated_days_except": "every day except {excludedDays}",
+        "days_range": "from {startDay} to {endDay}"
+      },
+      "time": {
+        "absolute": "at {time}",
+        "interval": "from {startTime} to {endTime}",
+        "midnight": "midnight",
+        "noon": "noon",
+        "at_sun_event": "at {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Scheduler"
+      },
+      "overview": {
+        "no_entries": "There are no items to show",
+        "excluded_items": "{number} excluded {if number is 1} item {else} items",
+        "hide_excluded": "hide excluded items",
+        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+      },
+      "entity_picker": {
+        "no_groups_defined": "There are no groups defined",
+        "no_group_selected": "Select a group first",
+        "no_entities_for_group": "There are no entities in this group",
+        "no_entity_selected": "Select an entity first",
+        "no_actions_for_entity": "There are no actions for this entity",
+        "make_scheme": "make scheme"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Select a timeslot first"
+      },
+      "conditions": {
+        "equal_to": "is",
+        "unequal_to": "is not",
+        "all": "all",
+        "any": "any",
+        "no_conditions_defined": "There are no conditions defined"
+      },
+      "options": {
+        "repeat_type": "behaviour after triggering"
+      }
+    }
   }
 }

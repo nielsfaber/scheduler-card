@@ -6,7 +6,6 @@ import { commonStyle } from '../styles';
 
 @customElement('variable-slider')
 export class VariableSlider extends LitElement {
-
   @property({ type: Number }) min = 0;
   @property({ type: Number }) max = 100;
   @property({ type: Number }) step = 1;
@@ -33,25 +32,24 @@ export class VariableSlider extends LitElement {
     this.requestUpdate();
   }
 
-
   render() {
     return html`
       <div class="checkbox-container">
         <div class="checkbox">
-        ${this.getCheckbox()}
+          ${this.getCheckbox()}
         </div>
         <div class="slider">
-        ${this.getSlider()}
+          ${this.getSlider()}
         </div>
         <div class="value${this.disabled ? ' disabled' : ''}">
-        ${this.getScaledValue()}${this.unit}
+          ${this.getScaledValue()}${this.unit}
         </div>
       </div>
     `;
   }
 
   getScaledValue() {
-    let value = this.value;
+    const value = this.value;
     let scaledValue = (value - this.scaleOffset) / this.scaleGain;
     scaledValue = Math.round(scaledValue / this.step) * this.step;
     if (scaledValue < this.min) scaledValue = this.min;
@@ -63,58 +61,56 @@ export class VariableSlider extends LitElement {
     if (!this.disabled) {
       return html`
         <ha-slider
-        pin
-        min=${this.min}
-        max=${this.max}
-        step=${this.step}
-        value=${this.getScaledValue()}
-        @change=${this.updateValue}
-        ></ha-slider>`;
+          pin
+          min=${this.min}
+          max=${this.max}
+          step=${this.step}
+          value=${this.getScaledValue()}
+          @change=${this.updateValue}
+        ></ha-slider>
+      `;
     } else {
       return html`
         <ha-slider
-        pin
-        min=${this.min}
-        max=${this.max}
-        step=${this.step}
-        value=${this.getScaledValue()}
-        disabled
-        ></ha-slider>`;
+          pin
+          min=${this.min}
+          max=${this.max}
+          step=${this.step}
+          value=${this.getScaledValue()}
+          disabled
+        ></ha-slider>
+      `;
     }
   }
 
   getCheckbox() {
     if (!this.optional) return html``;
     return html`
-      <ha-checkbox
-        @change="${this.toggleChecked}"
-        ?checked=${!this.disabled}
-      >
-      </ha-checkbox>`;
+      <ha-checkbox @change="${this.toggleChecked}" ?checked=${!this.disabled}> </ha-checkbox>
+    `;
   }
 
   toggleChecked(e: Event) {
-    let checked = (e.target as HTMLInputElement).checked;
+    const checked = (e.target as HTMLInputElement).checked;
     this.disabled = !checked;
-    let myEvent = new CustomEvent("change");
+    const myEvent = new CustomEvent('change');
     this.dispatchEvent(myEvent);
   }
 
   updateValue(e: Event) {
-    let value = Number((e.target as HTMLInputElement).value);
+    const value = Number((e.target as HTMLInputElement).value);
     let unscaledValue = value * this.scaleGain + this.scaleOffset;
     unscaledValue = Math.round(unscaledValue / this.step) * this.step;
     this.value = unscaledValue;
   }
 
   static styles = css`
-      ${commonStyle}
-      :host {
-        width: 100%;
-      }
-      ha-slider {
-        width: 100%;
-        --paper-slider-pin-start-color: var(--primary-color);
-      }
+    ${commonStyle} :host {
+      width: 100%;
+    }
+    ha-slider {
+      width: 100%;
+      --paper-slider-pin-start-color: var(--primary-color);
+    }
   `;
 }

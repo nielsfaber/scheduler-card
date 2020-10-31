@@ -1,14 +1,11 @@
-import { GroupElement, CardConfig } from './types';
-import { DefaultGroupIcon } from './const';
-import { entityFilter } from './entity';
-import { computeDomain } from 'custom-card-helpers';
-import { localize } from './localize/localize';
-import { domainIcons } from './standard-configuration/standardIcon';
-import { applyFilters } from './filter';
+import { GroupElement, CardConfig } from '../types';
+import { DefaultGroupIcon } from '../const';
+import { computeDomain, HomeAssistant } from 'custom-card-helpers';
+import { localize } from '../localize/localize';
+import { domainIcons } from '../standard-configuration/standardIcon';
+import { applyFilters } from './filter_entity';
 
-
-
-export function entityGroups(entities: string[], config: Partial<CardConfig>) {
+export function entityGroups(entities: string[], config: Partial<CardConfig>, hass: HomeAssistant) {
   const groups: GroupElement[] = [];
 
   //create groups from user config
@@ -32,10 +29,9 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>) {
   domains.forEach(domain => {
     const group: GroupElement = {
       id: domain,
-      name: localize(`domains.${domain}`) || domain,
+      name: localize(`domains.${domain}`, hass.language) || domain,
       icon:
-        (config.standard_configuration === undefined || config.standard_configuration) &&
-          domain in domainIcons
+        (config.standard_configuration === undefined || config.standard_configuration) && domain in domainIcons
           ? domainIcons[domain]
           : DefaultGroupIcon,
       entities: ungroupedEntities.filter(e => applyFilters(e, { include: [domain] })),

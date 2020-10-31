@@ -1,4 +1,3 @@
-import { Time, Days } from './date-time';
 import { LovelaceCardEditor, LovelaceCardConfig } from 'custom-card-helpers';
 import { HassEntity, HassEntityAttributeBase } from 'home-assistant-js-websocket';
 
@@ -13,23 +12,6 @@ export interface Dictionary<TValue> {
 }
 export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
-/* hass objects */
-
-// export interface HassEntity {
-//   entity_id: string;
-//   state: any;
-//   attributes: {
-//     friendly_name?: string;
-//     icon?: string;
-//     supported_features?: number;
-//     actions?: HassAction[];
-//     entries?: string[];
-//     next_trigger?: string;
-//     conditions?: Condition[];
-//     options?: OptionConfig;
-//   };
-// }
-
 export interface ScheduleEntity extends HassEntity {
   attributes: HassEntityAttributeBase & {
     actions: HassAction[];
@@ -37,7 +19,7 @@ export interface ScheduleEntity extends HassEntity {
     next_trigger?: string;
     conditions?: Condition[];
     options?: OptionConfig;
-  }
+  };
 }
 
 /* groups */
@@ -58,13 +40,11 @@ export interface GroupConfig {
 
 /* entities */
 
-export interface EntityElement extends EntityConfig {
+export interface EntityElement {
   id: string;
   name: string;
   icon?: string;
-  actions: ActionConfig[];
   exclude_actions?: string[];
-  states?: StatesConfig;
 }
 
 export interface EntityConfig {
@@ -72,10 +52,12 @@ export interface EntityConfig {
   icon?: string;
   actions?: ActionConfig[];
   states?: StatesConfig;
+  exclude_actions?: string[]
 }
 
 /* actions */
 
+//user configured action
 export interface ActionConfig {
   name?: string;
   service: string;
@@ -116,7 +98,7 @@ export interface ListVariable {
 export interface LevelVariableConfig {
   field: string;
   unit: string;
-  name?: string;
+  name: string;
   min: number;
   max: number;
   step: number;
@@ -132,7 +114,7 @@ export interface ListVariableOption {
 
 export interface ListVariableConfig {
   field: string;
-  name?: string;
+  name: string;
   options: ListVariableOption[];
   supported_feature?: number;
   type: EVariableType;
@@ -169,14 +151,19 @@ export interface CardConfig extends LovelaceCardConfig {
   discover_existing?: boolean;
   standard_configuration?: boolean;
   title?: boolean | string;
-  am_pm?: boolean;
   time_step?: number;
-  first_weekday?: string;
   show_header_toggle?: boolean;
+  display_options?: {
+    primary_info?: string[] | string;
+    secondary_info?: string[] | string;
+    icon?: string;
+  };
+  primary_info?: string;
+  secondary_info?: string;
   include?: string[];
   exclude?: string[];
   groups?: GroupConfig[];
-  customize?: Dictionary<EntityConfig & { exclude_actions?: string[] }>;
+  customize?: Dictionary<EntityConfig>;
 }
 
 /* interface */
@@ -229,9 +216,30 @@ export interface ConditionConfig {
   items: Condition[];
 }
 
-
 export interface OptionConfig {
   run_once?: boolean;
 }
 
 export type StatesConfig = string[] | { min: number; max: number; step?: number; unit?: string };
+
+export enum ETimeEvent {
+  Sunrise = 'SUNRISE',
+  Sunset = 'SUNSET',
+}
+
+export interface Time {
+  value: number;
+  event?: ETimeEvent;
+}
+
+export enum EDayType {
+  Daily = 'DAILY',
+  Workday = 'WORKDAY',
+  Weekend = 'WEEKEND',
+  Custom = 'CUSTOM',
+}
+
+export interface Days {
+  type: EDayType;
+  custom_days?: number[];
+}

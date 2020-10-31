@@ -1,0 +1,122 @@
+{
+  "scheduler": "Ajastaja",
+  "actions": {
+    "add": "lisa",
+    "cancel": "loobu",
+    "next": "edasi",
+    "save": "salvesta",
+    "delete": "kustuta"
+  },
+  "instructions": {
+    "no_group_selected": "Vali grupp",
+    "no_entity_selected": "Vali olem",
+    "no_groups_defined": "Gruppe pole määratud",
+    "no_entities_for_group": "Antud grupis puuduvad olemid",
+    "no_actions_for_entity": "Selles olemis puuduvad tegevused",
+    "no_entries_defined": "Pole midagi kuvada"
+  },
+  "fields": {
+    "group": "Grupp",
+    "entity": "Olem",
+    "action": "Tegevus",
+    "days": "Päevad",
+    "time": "Aeg",
+    "options": "Suvandid",
+    "day_type_daily": "iga päev",
+    "day_type_weekdays": "tööpäevadel",
+    "day_type_weekend": "nädalavahetus",
+    "day_type_custom": "valikuline"
+  },
+  "days_short": {
+    "mon": "E",
+    "tue": "T",
+    "wed": "K",
+    "thu": "N",
+    "fri": "R",
+    "sat": "L",
+    "sun": "P"
+  },
+  "days_long": {
+    "mon": "Esmaspäev",
+    "tue": "Teisipäev",
+    "wed": "Kolmapäev",
+    "thu": "Neljapäev",
+    "fri": "Reede",
+    "sat": "Laupäev",
+    "sun": "Pühapäev"
+  },
+  "words": {
+    "and": "ja",
+    "before": "enne",
+    "after": "pärast"
+  },
+  "services": {
+    "turn_on": "lülita sisse",
+    "turn_on_brightness": "turn on {at brightness}",
+    "turn_off": "lülita välja",
+    "close_cover": "sulge",
+    "open_cover": "ava",
+    "set_temperature": "määra temperatuur {to temperature}",
+    "set_temperature_hvac_mode_heat": "heat {to temperature}",
+    "set_temperature_hvac_mode_cool": "cool {to temperature}",
+    "set_cover_position": "seadista asendisse {to position}",
+    "set_hvac_mode": "vali töörežiim {to hvac_mode}",
+    "set_hvac_mode_hvac_mode_off": "turn off",
+    "set_preset_mode": "eelseadistatud {to preset_mode}",
+    "set_value": "määra väärtus {value}",
+    "select_option": "valikud {option}",
+    "select_source": "vali allikas {source}",
+    "start": "alusta",
+    "run_script": "alusta"
+  },
+  "service_parameters": {
+    "brightness": "heledus",
+    "temperature": "temperatuur",
+    "position": "asend",
+    "hvac_mode": "töörežiim",
+    "preset_mode": "eelseadistus"
+  },
+  "domains": {
+    "camera": "kaamerad",
+    "climate": "kliimaseade",
+    "cover": "(akna)katted",
+    "fan": "ventilaatorid",
+    "group": "grupid",
+    "input_boolean": "binaarsisestus",
+    "input_number": "arvsisestus",
+    "input_select": "sisendivalik",
+    "light": "valgustid",
+    "media_player": "media players",
+    "scene": "stseenid",
+    "switch": "lülitid",
+    "vacuum": "tolmuimejad"
+  },
+  "days": {
+    "tomorrow": "homme",
+    "daily": "iga päev",
+    "daily_except_days": "iga päev välja arvatud {days}",
+    "working_days": "tööpäevadel",
+    "weekend": "nädalavahetusel",
+    "interval": "{startDay} kuni {endDay}"
+  },
+  "time": {
+    "absolute": "kell {time}",
+    "relative": "{time} pärast",
+    "interval": "alates {startTime} kuni {endTime}",
+    "seconds": "{seconds} sekundi",
+    "hour": "1 tunni",
+    "hours": "{hours} tunni",
+    "minute": "1 minuti",
+    "minutes": "{minutes} minuti",
+    "now": "kohe",
+    "midnight": "keskööl",
+    "noon": "keskpäeval",
+    "at_sun_event": "{sunEvent}",
+    "sun_event_sunrise": "päikesetõusu",
+    "sun_event_sunset": "loojangut"
+  },
+  "misc": {
+    "one_additional_task": "veel 1 ajastus",
+    "x_additional_tasks": "{count} ajastust"
+  }
+}

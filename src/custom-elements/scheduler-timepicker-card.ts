@@ -1,21 +1,32 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
-import { CardConfig, ActionElement, EntityElement, EVariableType, LevelVariableConfig, LevelVariable, ListVariable, Entry, ListVariableConfig } from '../types';
+import {
+  CardConfig,
+  ActionElement,
+  EntityElement,
+  EVariableType,
+  LevelVariableConfig,
+  LevelVariable,
+  ListVariable,
+  Entry,
+  ListVariableConfig,
+  EDayType,
+  ETimeEvent,
+} from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize } from '../helpers';
-import { EDayType, daysToArray, ETimeEvent, sortDaylist } from '../date-time';
-import { DayTypeOptions, DayOptions, CreateTimeScheme, DefaultTimeStep, FieldTemperature, DefaultActionIcon } from '../const';
-
+import { DefaultTimeStep, DefaultActionIcon } from '../const';
 
 import './time-picker';
 import './timeslot-editor';
 import './variable-slider';
 import { commonStyle } from '../styles';
-import { formatAction } from '../formatAction';
+import { computeActionDisplay } from '../data/compute_action_display';
+import { startOfWeek } from '../data/date-time/start_of_week';
+import { weekdayArray, formatWeekday } from '../data/date-time/format_weekday';
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
-
   @property() hass?: HomeAssistant;
   @property() config?: CardConfig;
   @property() entries: Entry[] = [];
@@ -28,148 +39,205 @@ export class SchedulerTimepickerCard extends LitElement {
   firstUpdated() {
     if (!this.actions || !this.hass) return;
     if (!this.timeslots) this.activeEntry = 0;
-    else {
-      let actions = this.actions
-        .map(e => e.name ? e : Object.assign(e, { name: formatAction(e, this.hass!) }));
-      actions.sort((a, b) => a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1);
-      this.actions = actions;
-    }
+
+    const actions = this.actions.map(e => Object.assign(e, { name: computeActionDisplay(e) }));
+    actions.sort((a, b) => (a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1));
+    this.actions = actions;
   }
 
   render() {
     if (!this.hass || !this.config || !this.entries || !this.entity || !this.actions) return html``;
 
+    let weekdays = Array.from(Array(7).keys());
+    const firstWeekday = startOfWeek(this.hass.language);
+    const shiftCount = weekdays.length - weekdayArray.findIndex(e => e.substr(0, 3) == firstWeekday);
+    weekdays = [...weekdays.slice(-shiftCount), ...weekdays.slice(0, -shiftCount)];
+    const DayOptions = weekdays.map(e =>
+      Object({ id: ((e + 6) % 7) + 1, name: formatWeekday(e, this.hass!.language, true) })
+    );
+
+    const DayTypeOptions = [
+      { id: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
+      { id: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
+      { id: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
+      { id: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
+    ];
+
     if (!this.timeslots) {
       return html`
-      <ha-card>
-        <div class="card-header">
-          <div class="name">
-            ${this.config.title !== undefined ? (typeof this.config.title == "string" ? this.config.title : '') : localize('scheduler')}
+        <ha-card>
+          <div class="card-header">
+            <div class="name">
+              ${this.config.title !== undefined
+                ? typeof this.config.title == 'string'
+                  ? this.config.title
+                  : ''
+                : localize('ui.panel.common.title', this.hass.language)}
+            </div>
+            <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
           </div>
-          <ha-icon-button icon="hass:close" @click=${this.cancelClick}>
-          </ha-icon-button>
-        </div>
-        <div class="card-content">
-          <div class="header">${localize('fields.action')}</div>
-          <div class="summary">
-            <div class="summary-entity">
-              <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
-              </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+          <div class="card-content">
+            <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+            <div class="summary">
+              <div class="summary-entity">
+                <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
+                ${capitalize(
+                  PrettyPrintName(
+                    this.entity.name ||
+                      this.hass!.states[this.entity.id].attributes.friendly_name ||
+                      computeEntity(this.entity.id)
+                  )
+                )}
+              </div>
+              <div class="summary-arrow">
+                <ha-icon icon="hass:arrow-right"> </ha-icon>
+              </div>
+              <div class="summary-action">
+                <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon || DefaultActionIcon)}"> </ha-icon>
+                ${capitalize(this.actions[0].name || computeEntity(this.actions[0].service))}
+              </div>
             </div>
-            <div class="summary-arrow">
-              <ha-icon icon="hass:arrow-right">
-              </ha-icon>
-            </div>
-            <div class="summary-action">
-              <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon || DefaultActionIcon)}">
-              </ha-icon>
-              ${capitalize(formatAction(this.actions[0], this.hass))}
-            </div>
+
+            ${this.getVariableEditor()}
+
+            <div class="header">${localize('ui.components.date.days', this.hass.language)}</div>
+            <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
+            </button-group>
+            ${this.entries[0].days.type == EDayType.Custom
+              ? html`
+                  <div>
+                    <button-group
+                      .items=${DayOptions}
+                      .value=${this.entries[0].days.custom_days}
+                      min="1"
+                      @change=${this.selectDays}
+                    >
+                    </button-group>
+                  </div>
+                `
+              : ''}
+
+            <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
+            <time-picker
+              .hass=${this.hass}
+              .value=${this.entries[0].time.value}
+              .event=${this.entries[0].time.event}
+              stepSize=${this.config.time_step || DefaultTimeStep}
+              @change=${this.updateTime}
+            >
+            </time-picker>
           </div>
-
-          ${this.getVariableEditor()}
-
-          <div class="header">${localize('fields.days')}</div>
-          <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
-          </button-group>
-          ${this.entries[0].days.type == EDayType.Custom ? html`
-            <div>
-              <button-group .items=${sortDaylist(DayOptions, this.config.first_weekday)} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
-              </button-group>
-            </div>
-          ` : ''}
-
-          <div class="header">${localize('fields.time')}</div>
-          <time-picker
-            .hass=${this.hass}
-            .value=${this.entries[0].time.value}
-            .event=${this.entries[0].time.event}
-            stepSize=${this.config.time_step || DefaultTimeStep}
-            ?formatAmPm=${this.config.am_pm}
-            @change=${this.updateTime}
-          >
-          </time-picker>
-        </div>
-        <div class="card-actions">
-          <mwc-button @click="${this.saveClick}">${localize('actions.save')}</mwc-button>
-          ${this.hass.user.is_admin && this.editItem ? html`<mwc-button class="warning" @click=${this.deleteClick}>${localize('actions.delete')}</mwc-button>` : ''}
-          <mwc-button @click="${this.optionsClick}" style="float: right">options</mwc-button>
-        </div>
-      </ha-card>`;
-    }
-    else {
+          <div class="card-actions">
+            <mwc-button @click="${this.saveClick}">${this.hass.localize('ui.common.save')}</mwc-button>
+            ${this.hass.user.is_admin && this.editItem
+              ? html`
+                  <mwc-button class="warning" @click=${this.deleteClick}
+                    >${this.hass.localize('ui.common.delete')}</mwc-button
+                  >
+                `
+              : ''}
+            <mwc-button @click="${this.optionsClick}" style="float: right"
+              >${this.hass.localize('ui.dialogs.helper_settings.input_select.options')}</mwc-button
+            >
+          </div>
+        </ha-card>
+      `;
+    } else {
       return html`
-      <ha-card>
-        <div class="card-header">
-          <div class="name">
-            ${this.config.title !== undefined ? (typeof this.config.title == "string" ? this.config.title : '') : localize('scheduler')}
+        <ha-card>
+          <div class="card-header">
+            <div class="name">
+              ${this.config.title !== undefined
+                ? typeof this.config.title == 'string'
+                  ? this.config.title
+                  : ''
+                : localize('ui.panel.common.title', this.hass.language)}
+            </div>
+            <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
           </div>
-          <ha-icon-button icon="hass:close" @click=${this.cancelClick}>
-          </ha-icon-button>
-        </div>
-        <div class="card-content">
-          <div class="header">${localize('fields.action')}</div>
-          <div class="summary">
-            <div class="summary-entity">
-              <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}">
-              </ha-icon>
-              ${capitalize(PrettyPrintName(this.entity.name))}
+          <div class="card-content">
+            <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+            <div class="summary">
+              <div class="summary-entity">
+                <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
+                ${capitalize(
+                  PrettyPrintName(
+                    this.entity.name ||
+                      this.hass!.states[this.entity.id].attributes.friendly_name ||
+                      computeEntity(this.entity.id)
+                  )
+                )}
+              </div>
+              <div class="summary-arrow">
+                <ha-icon icon="hass:arrow-right"> </ha-icon>
+              </div>
+              <div class="summary-action">
+                <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"> </ha-icon>
+                ${capitalize(localize('ui.panel.entity_picker.make_scheme', this.hass.language))}
+              </div>
             </div>
-            <div class="summary-arrow">
-              <ha-icon icon="hass:arrow-right">
-              </ha-icon>
-            </div>
-            <div class="summary-action">
-              <ha-icon icon="${PrettyPrintIcon('chart-timeline')}">
-              </ha-icon>
-              ${capitalize(PrettyPrintName(CreateTimeScheme))}
-            </div>
+
+            <div class="header">${localize('ui.components.date.days', this.hass.language)}</div>
+            <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
+            </button-group>
+            ${this.entries[0].days.type == EDayType.Custom
+              ? html`
+                  <div>
+                    <button-group
+                      .items=${DayOptions}
+                      .value=${this.entries[0].days.custom_days}
+                      min="1"
+                      @change=${this.selectDays}
+                    >
+                    </button-group>
+                  </div>
+                `
+              : ''}
+
+            <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
+            <timeslot-editor
+              .hass=${this.hass}
+              .actions=${this.actions}
+              .entries=${this.entries}
+              @update=${this.handlePlannerUpdate}
+            >
+            </timeslot-editor>
+
+            <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+            <button-group
+              .items=${this.activeEntry !== null ? this.actions : []}
+              value=${this.activeEntry !== null ? this.entries[this.activeEntry].action : ''}
+              optional="true"
+              @change=${this.selectAction}
+            >
+              ${localize('ui.panel.time_picker.no_timeslot_selected', this.hass.language)}
+            </button-group>
+
+            ${this.getVariableEditor()}
           </div>
-
-          <div class="header">${localize('fields.days')}</div>
-          <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
-          </button-group>
-          ${this.entries[0].days.type == EDayType.Custom ? html`
-            <div>
-              <button-group .items=${sortDaylist(DayOptions, this.config.first_weekday)} .value=${this.entries[0].days.custom_days} min="1" @change=${this.selectDays}>
-              </button-group>
-            </div>
-          ` : ''}
-
-          <div class="header">${localize('fields.time')}</div>
-          <timeslot-editor
-            .hass=${this.hass}
-            .actions=${this.actions}
-            .entries=${this.entries}
-            @update=${this.handlePlannerUpdate}
-          >
-          </timeslot-editor>
-          
-          <div class="header">${localize('fields.action')}</div>
-          <button-group
-            .items=${this.activeEntry !== null ? this.actions.map(e => e.icon ? e : Object.assign(e, { icon: DefaultActionIcon })) : []}
-            value=${this.activeEntry !== null ? this.entries[this.activeEntry].action : ''}
-            optional="true"
-            @change=${this.selectAction}
-          >
-            Select a timeslot first
-          </button-group>
-
-          ${this.getVariableEditor()}
-        </div>
-        <div class="card-actions">
-          <mwc-button @click=${this.saveClick} ?disabled=${!this.entries.some(e => e.action)}>${localize('actions.save')}</mwc-button>
-          ${this.hass.user.is_admin && this.editItem ? html`<mwc-button class="warning" @click=${this.deleteClick}>${localize('actions.delete')}</mwc-button>` : ''}
-          <mwc-button @click=${this.optionsClick} style="float: right">options</mwc-button>
-        </div>
-      </ha-card>`;
+          <div class="card-actions">
+            <mwc-button @click=${this.saveClick} ?disabled=${!this.entries.some(e => e.action)}
+              >${this.hass.localize('ui.common.save')}</mwc-button
+            >
+            ${this.hass.user.is_admin && this.editItem
+              ? html`
+                  <mwc-button class="warning" @click=${this.deleteClick}
+                    >${this.hass.localize('ui.common.delete')}</mwc-button
+                  >
+                `
+              : ''}
+            <mwc-button @click=${this.optionsClick} style="float: right"
+              >${this.hass.localize('ui.dialogs.helper_settings.input_select.options')}</mwc-button
+            >
+          </div>
+        </ha-card>
+      `;
     }
   }
 
   updateActiveEntry(data: Partial<Entry>) {
     if (this.activeEntry === null) return;
-    let entries = [...this.entries];
+    const entries = [...this.entries];
     Object.assign(entries[this.activeEntry], data);
     this.entries = entries;
   }
@@ -200,59 +268,57 @@ export class SchedulerTimepickerCard extends LitElement {
 
   selectAction(ev: Event) {
     if (!this.actions || !this.entries || this.activeEntry === null) return;
-    let value = (ev.target as HTMLInputElement).value;
+    const value = (ev.target as HTMLInputElement).value;
     this.updateActiveEntry({ action: value, variable: undefined });
   }
 
   getVariableEditor() {
-    if (!this.hass || !this.actions || this.activeEntry === null || !this.entries[this.activeEntry].action) return html``;
-    let actionConfig = this.actions.find(e => e.id == this.entries[this.activeEntry!].action)!;
+    if (!this.hass || !this.actions || this.activeEntry === null || !this.entries[this.activeEntry].action)
+      return html``;
+    const actionConfig = this.actions.find(e => e.id == this.entries[this.activeEntry!].action)!;
     if (!actionConfig.variable) return html``;
     if (actionConfig.variable.type == EVariableType.Level) {
-      let config = actionConfig.variable as LevelVariableConfig;
-      if (!config.unit && config.field == FieldTemperature) Object.assign(config, { unit: this.hass.config.unit_system.temperature });
+      const config = actionConfig.variable as LevelVariableConfig;
 
       if (!this.entries[this.activeEntry].variable)
-        this.updateActiveEntry({ variable: { type: EVariableType.Level, value: config.min, enabled: !config.optional } });
-      let val = this.entries[this.activeEntry].variable as LevelVariable;
+        this.updateActiveEntry({
+          variable: { type: EVariableType.Level, value: config.min, enabled: !config.optional },
+        });
+      const val = this.entries[this.activeEntry].variable as LevelVariable;
       return html`
-          <div class="header">
-            ${config.name || localize(`service_parameters.${config.field}`) || PrettyPrintName(config.field)}
-          </div>
-          <variable-slider
-            min=${config.min}
-            max=${config.max}
-            step=${config.step}
-            value=${val.value}
-            unit=${config.unit}
-            ?optional=${config.optional}
-            ?disabled=${!val.enabled}
-            @change=${this.updateLevelValue}
-          >
-          </variable-slider>
+        <div class="header">
+          ${config.name || PrettyPrintName(config.field)}
+        </div>
+        <variable-slider
+          min=${config.min}
+          max=${config.max}
+          step=${config.step}
+          value=${val.value}
+          unit=${config.unit}
+          ?optional=${config.optional}
+          ?disabled=${!val.enabled}
+          @change=${this.updateLevelValue}
+        >
+        </variable-slider>
       `;
-    }
-    else if (actionConfig.variable.type == EVariableType.List) {
-      let config = actionConfig.variable as ListVariableConfig;
+    } else if (actionConfig.variable.type == EVariableType.List) {
+      const config = actionConfig.variable as ListVariableConfig;
       if (!this.entries[this.activeEntry].variable)
         this.updateActiveEntry({ variable: { type: EVariableType.List, value: config.options[0].value } });
 
-      let val = this.entries[this.activeEntry].variable as ListVariable;
+      const val = this.entries[this.activeEntry].variable as ListVariable;
+
+      if (config.options.length <= 1) return html``;
 
       return html`
         <div class="header">
-          ${config.name || localize(`service_parameters.${config.field}`) || PrettyPrintName(config.field)}
+          ${config.name || PrettyPrintName(config.field)}
         </div>
-        <button-group
-          .items=${config.options.map(e => Object.assign(e, { name: e.value }))}
-          value=${val.value}
-          @change=${this.updateListValue}
-        >
-          ${localize('instructions.no_entries_defined')}
+        <button-group .items=${config.options} value=${val.value} @change=${this.updateListValue}>
+          ${this.hass.localize('ui.dialogs.helper_settings.input_select.no_options')}
         </button-group>
-    `;
-    }
-    else return html``;
+      `;
+    } else return html``;
   }
 
   updateLevelValue(ev: Event) {
@@ -263,7 +329,7 @@ export class SchedulerTimepickerCard extends LitElement {
         type: EVariableType.Level,
         value: Number(el.value),
         enabled: String(el.disabled) == 'false',
-      }
+      },
     });
   }
 
@@ -271,16 +337,15 @@ export class SchedulerTimepickerCard extends LitElement {
     if (this.activeEntry === null) return;
     const value = (ev.target as HTMLInputElement).value;
     this.updateActiveEntry({
-      variable: { type: EVariableType.List, value: value }
+      variable: { type: EVariableType.List, value: value },
     });
   }
 
   selectDays(ev: Event) {
-    let daysCfg = { ...this.entries[0].days };
+    const daysCfg = { ...this.entries[0].days };
     const input = (ev.target as HTMLInputElement).value;
     if (Object.values(EDayType).includes(input as EDayType)) {
-      if (input == EDayType.Custom && !daysCfg.custom_days)
-        Object.assign(daysCfg, { custom_days: daysToArray(daysCfg) });
+      if (input == EDayType.Custom && !daysCfg.custom_days) Object.assign(daysCfg, { custom_days: [] });
       Object.assign(daysCfg, { type: input });
     } else {
       Object.assign(daysCfg, { custom_days: [...input] });
@@ -289,25 +354,24 @@ export class SchedulerTimepickerCard extends LitElement {
   }
 
   cancelClick() {
-    let myEvent = new CustomEvent("cancelClick");
+    const myEvent = new CustomEvent('cancelClick');
     this.dispatchEvent(myEvent);
   }
 
   saveClick() {
-    let myEvent = new CustomEvent("saveClick", { detail: this.entries });
+    const myEvent = new CustomEvent('saveClick', { detail: this.entries });
     this.dispatchEvent(myEvent);
   }
 
   optionsClick() {
-    let myEvent = new CustomEvent("optionsClick", { detail: this.entries });
+    const myEvent = new CustomEvent('optionsClick', { detail: this.entries });
     this.dispatchEvent(myEvent);
   }
 
   deleteClick() {
-    let myEvent = new CustomEvent("deleteClick");
+    const myEvent = new CustomEvent('deleteClick');
     this.dispatchEvent(myEvent);
   }
-
 
   static styles = css`
     ${commonStyle}
@@ -363,7 +427,5 @@ export class SchedulerTimepickerCard extends LitElement {
       height: 100%;
       z-index: 1;
     }
-
-    
   `;
 }

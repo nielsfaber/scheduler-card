@@ -1,122 +1,128 @@
 {
-  "scheduler": "Zeitplaner",
-  "actions": {
-    "add": "hinzufügen",
-    "cancel": "abbrechen",
-    "next": "weiter",
-    "save": "speichern",
-    "delete": "löschen"
-  },
-  "instructions": {
-    "no_group_selected": "Wähle zuerst eine Gruppe aus",
-    "no_entity_selected": "Wähle zuerst eine Entity aus",
-    "no_groups_defined": "Es gibt keine Gruppe",
-    "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
-    "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
-    "no_entries_defined": "Es gibt keine Einträge"
-  },
-  "fields": {
-    "group": "Gruppe",
-    "entity": "Entity",
-    "action": "Aktion",
-    "days": "Tage",
-    "time": "Zeit",
-    "options": "Optionen",
-    "day_type_daily": "jeden Tag",
-    "day_type_workday": "Werktags",
-    "day_type_weekend": "Wochenende",
-    "day_type_custom": "benutzerdefiniert"
-  },
-  "days_short": {
-    "mon": "Mo",
-    "tue": "Di",
-    "wed": "Mi",
-    "thu": "Do",
-    "fri": "Fr",
-    "sat": "Sa",
-    "sun": "So"
-  },
-  "days_long": {
-    "mon": "Montag",
-    "tue": "Dienstag",
-    "wed": "Mittwoch",
-    "thu": "Donnerstag",
-    "fri": "Freitag",
-    "sat": "Samstag",
-    "sun": "Sonntag"
-  },
-  "words": {
-    "and": "und",
-    "before": "vor",
-    "after": "nach"
-  },
   "services": {
-    "turn_on": "anschalten",
-    "turn_on_brightness": "anschalten {auf brightness}",
-    "turn_off": "ausschalten",
-    "close_cover": "schließen",
-    "open_cover": "öffnen",
-    "set_temperature": "Temperatur einstellen {auf temperature}",
-    "set_temperature_hvac_mode_heat": "aufwärmen {auf temperature}",
-    "set_temperature_hvac_mode_cool": "kühlen {auf temperature}",
-    "set_cover_position": "Position setzen {nach position}",
-    "set_hvac_mode": "Modus setzen {zu hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "ausschalten",
-    "set_preset_mode": "Voreinstellung setzen {zu preset_mode}",
-    "set_value": "Wert setzen {zu value}",
-    "select_option": "Option {option} auswählen",
-    "select_source": "Quelle {source} auswählen",
-    "start": "start",
-    "run_script": "ausführen"
-  },
-  "service_parameters": {
-    "brightness": "Helligkeit",
-    "temperature": "Temperatur",
-    "position": "Position",
-    "hvac_mode": "Modus",
-    "preset_mode": "Voreinstellung"
+    "generic": {
+      "parameter_to_value": "{parameter} auf {value}",
+      "action_with_parameter": "{action} mit {parameter}"
+    },
+    "climate": {
+      "set_temperature": "Temperatur einstellen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
+      "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
+      "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
+      "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "schließen",
+      "open_cover": "öffnen",
+      "set_cover_position": "Position setzen[ auf {position}]"
+    },
+    "fan": {
+      "set_speed": "Geschwindigkeit speed[ auf {speed}]",
+      "set_direction": "Richtung setzen[ auf {direction}]",
+      "oscillate": "Oszillation setzen[ auf {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "Luftfeuchtigkeit setzen[ auf {humidity}]"
+    },
+    "input_number": {
+      "set_value": "Wert setzen[ auf {value}]"
+    },
+    "input_select": {
+      "select_option": "Option[ {option}] auswählen"
+    },
+    "light": {
+      "turn_on": "anschalten[ mit {brightness} Helligkeit]"
+    },
+    "media_player": {
+      "select_source": "Quelle[ {source}] auswählen"
+    },
+    "script": {
+      "script": "ausführen"
+    },
+    "vacuum": {
+      "start_pause": "Start / Pause"
+    },
+    "water_heater": {
+      "set_away_mode": "Abwesenheitsmodus setzen"
+    }
   },
   "domains": {
-    "camera": "Kameras",
+    "alarm_control_panel": "Alarmzentrale",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
     "group": "Gruppen",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
+    "humidifier": "Befeuchter",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
     "light": "Licht",
-    "media_player": "Media Player",
+    "lock": "Schlösser",
+    "media_player": "Medienplayer",
     "scene": "Szene",
+    "script": "Skripte",
     "switch": "Schalter",
-    "vacuum": "Staubsauger"
+    "vacuum": "Staubsauger",
+    "water_heater": "Boiler"
   },
-  "days": {
-    "tomorrow": "morgen",
-    "daily": "täglich",
-    "daily_except_days": "täglich außer {days}",
-    "working_days": "Werktags",
-    "weekend": "Wochenende",
-    "interval": "{startDay} bis {endDay}"
-  },
-  "time": {
-    "absolute": "um {time}",
-    "relative": "in {time}",
-    "interval": "von {startTime} bis {endTime}",
-    "seconds": "{seconds} Sekunden",
-    "hour": "1 Stunde",
-    "hours": "{hours} Stunden",
-    "minute": "1 Minute",
-    "minutes": "{minutes} Minuten",
-    "now": "jetzt",
-    "midnight": "Mitternacht",
-    "noon": "Mittag",
-    "at_sun_event": "am {sunEvent}",
-    "sun_event_sunrise": "Sonnenaufgang",
-    "sun_event_sunset": "Sonnenuntergang"
-  },
-  "misc": {
-    "one_additional_task": "1 weitere Aufgabe",
-    "x_additional_tasks": "{count} weitere Aufgaben"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "täglich",
+          "workdays": "Werktags",
+          "weekend": "Wochenende"
+        },
+        "day_types_long": {
+          "daily": "Jeden Tag",
+          "workdays": "An Werktagen",
+          "weekend": "Am Wochenende"
+        },
+        "days": "Tage",
+        "tomorrow": "morgen",
+        "repeated_days": "jeden {days}",
+        "repeated_days_except": "täglich außer {excludedDays}",
+        "days_range": "von {startDay} bis {endDay}"
+      },
+      "time": {
+        "absolute": "um {time}",
+        "interval": "von {startTime} bis {endTime}",
+        "midnight": "Mitternacht",
+        "noon": "Mittag",
+        "at_sun_event": "beim {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Zeitplaner"
+      },
+      "overview": {
+        "no_entries": "Es gibt keine Einträge, die angezeigt werden können",
+        "excluded_items": "{number}{if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
+        "hide_excluded": "Verstecke ausgeschlossene Einträge",
+        "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Es gibt keine Gruppe",
+        "no_group_selected": "Wähle zuerst eine Gruppe aus",
+        "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
+        "no_entity_selected": "Wähle zuerst eine Entity aus",
+        "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
+        "make_scheme": "Erstelle Zeitplan"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Wähle zuerst ein Zeitfenster aus"
+      },
+      "conditions": {
+        "equal_to": "ist",
+        "unequal_to": "ist nicht",
+        "all": "alle",
+        "any": "keine",
+        "no_conditions_defined": "Es sind keine Bedingungen definiert"
+      },
+      "options": {
+        "repeat_type": "Verhalten im Anschluß"
+      }
+    }
   }
 }

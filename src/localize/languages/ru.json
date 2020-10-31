@@ -1,122 +1,128 @@
 {
-  "scheduler": "Планирование",
-  "actions": {
-    "add": "добавить",
-    "cancel": "отменить",
-    "next": "далее",
-    "save": "сохранить",
-    "delete": "удалить"
-  },
-  "instructions": {
-    "no_group_selected": "Необходимо выбрать группу",
-    "no_entity_selected": "Необходимо выбрать объект",
-    "no_groups_defined": "Ни одной группы не создано",
-    "no_entities_for_group": "В этой группе нет объектов",
-    "no_actions_for_entity": "Для этого объекта нет действий",
-    "no_entries_defined": "Объекты отсутствуют"
-  },
-  "fields": {
-    "group": "Группа",
-    "entity": "Объект",
-    "action": "Действие",
-    "days": "Дни",
-    "time": "Время",
-    "options": "Опции",
-    "day_type_daily": "ежедневно",
-    "day_type_workday": "по будням",
-    "day_type_weekend": "по выходным",
-    "day_type_custom": "выбрать дни"
-  },
-  "days_short": {
-    "mon": "пн",
-    "tue": "вт",
-    "wed": "ср",
-    "thu": "чт",
-    "fri": "пт",
-    "sat": "сб",
-    "sun": "вс"
-  },
-  "days_long": {
-    "mon": "понедельник",
-    "tue": "вторник",
-    "wed": "среда",
-    "thu": "четверг",
-    "fri": "пятница",
-    "sat": "суббота",
-    "sun": "воскресенье"
-  },
-  "words": {
-    "and": "и",
-    "before": "до",
-    "after": "после"
-  },
   "services": {
-    "turn_on": "включить",
-    "turn_on_brightness": "включить {на brightness}",
-    "turn_off": "выключить",
-    "close_cover": "закрыть",
-    "open_cover": "открыть",
-    "set_temperature": "задать температуру {к temperature}",
-    "set_temperature_hvac_mode_heat": "обогрев {к temperature}",
-    "set_temperature_hvac_mode_cool": "охлаждение {к temperature}",
-    "set_cover_position": "установить позицию {position}",
-    "set_hvac_mode": "установить режим {hvac_mode}",
-    "set_hvac_mode_hvac_mode_off": "выключить",
-    "set_preset_mode": "выбрать набор настроек {preset_mode}",
-    "set_value": "установить значение {value}",
-    "select_option": "выбрать вариант {option}",
-    "select_source": "выбрать источник {source}",
-    "start": "запуск",
-    "run_script": "запустить"
-  },
-  "service_parameters": {
-    "brightness": "Яркость",
-    "temperature": "Температура",
-    "position": "Позицию",
-    "hvac_mode": "режим",
-    "preset_mode": "предуставновлено"
+    "generic": {
+      "parameter_to_value": "{parameter} к {value}",
+      "action_with_parameter": "{action} с {parameter}"
+    },
+    "climate": {
+      "set_temperature": "установить температуру[ {temperature}]",
+      "set_temperature_hvac_mode_heat": "обогрев[ {temperature}]",
+      "set_temperature_hvac_mode_cool": "охлаждение[ {temperature}]",
+      "set_hvac_mode": "установить режим[ {hvac_mode}]",
+      "set_preset_mode": "выбрать набор настроек[ {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "закрыть",
+      "open_cover": "открыть",
+      "set_cover_position": "установить позицию[ {position}]"
+    },
+    "fan": {
+      "set_speed": "установить скорость[ {speed}]",
+      "set_direction": "установить направление[ {direction}]",
+      "oscillate": "установить колебание[ {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "установить влажность[ {humidity}]"
+    },
+    "input_number": {
+      "set_value": "установить значение[ в {value}]"
+    },
+    "input_select": {
+      "select_option": "установить опцию[ {option}]"
+    },
+    "light": {
+      "turn_on": "включить[ с {brightness} яркостью]"
+    },
+    "media_player": {
+      "select_source": "выбрать источник[ {source}]"
+    },
+    "script": {
+      "script": "запустить"
+    },
+    "vacuum": {
+      "start_pause": "старт / пауза"
+    },
+    "water_heater": {
+      "set_away_mode": "установить режим вне дома"
+    }
   },
   "domains": {
-    "camera": "Камеры",
-    "climate": "Климат",
-    "cover": "Жалюзи",
-    "fan": "Вентиляторы",
-    "group": "Группы",
-    "input_boolean": "Переключатели",
-    "input_number": "Числа",
-    "input_select": "Списки",
-    "media_player": "Медиаплееры",
-    "scene": "Сцены",
-    "light": "Освещение",
-    "switch": "Выключатели",
-    "vacuum": "Пылесосы"
+    "alarm_control_panel": "панель управления сигнализацией",
+    "climate": "климат",
+    "cover": "жалюзи",
+    "fan": "вентиляторы",
+    "group": "группы",
+    "humidifier": "увлажнители",
+    "input_boolean": "логические",
+    "input_number": "числовые",
+    "input_select": "списки",
+    "light": "освещение",
+    "lock": "замки",
+    "media_player": "медиа-плееры",
+    "scene": "сцены",
+    "script": "скрипты",
+    "switch": "часы",
+    "vacuum": "пылесосы",
+    "water_heater": "подогреватели воды"
   },
-  "days": {
-    "tomorrow": "завтра",
-    "daily": "ежедневно",
-    "daily_except_days": "каждый день исключая {days}",
-    "working_days": "рабочие дни",
-    "weekend": "выходные",
-    "interval": "{startDay} до {endDay}"
-  },
-  "time": {
-    "absolute": "в {time}",
-    "relative": "через {time}",
-    "interval": "с {startTime} до {endTime}",
-    "seconds": "{seconds} секунд",
-    "hour": "1 час",
-    "hours": "{hours} часа",
-    "minute": "1 минуту",
-    "minutes": "{minutes} минут",
-    "now": "сейчас",
-    "midnight": "полночь",
-    "noon": "полдень",
-    "at_sun_event": "на {sunEvent}",
-    "sun_event_sunrise": "восходе",
-    "sun_event_sunset": "закате"
-  },
-  "misc": {
-    "one_additional_task": "1 задача",
-    "x_additional_tasks": "{count} задач"
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "ежедневно",
+          "workdays": "рабочие дни",
+          "weekend": "выходные"
+        },
+        "day_types_long": {
+          "daily": "каждый день",
+          "workdays": "по рабочим дням",
+          "weekend": "в выходные"
+        },
+        "days": "дни",
+        "tomorrow": "завтра",
+        "repeated_days": "каждый {days}",
+        "repeated_days_except": "каждый день кроме {excludedDays}",
+        "days_range": "с {startDay} до {endDay}"
+      },
+      "time": {
+        "absolute": "d {time}",
+        "interval": "с {startTime} до {endTime}",
+        "midnight": "полночь",
+        "noon": "полдень",
+        "at_sun_event": "в {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Планировщик"
+      },
+      "overview": {
+        "no_entries": "Отсутствуют элементы",
+        "excluded_items": "{number} исключено {if number is 1} элемент {else} элементов",
+        "hide_excluded": "скрыть исключенные элементы",
+        "additional_tasks": "{number} больше {if number is 1} задача {else} задач"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Не определены группы",
+        "no_group_selected": "Выберите группу",
+        "no_entities_for_group": "Отсутствуют элементы в группе",
+        "no_entity_selected": "Выберите элемент",
+        "no_actions_for_entity": "Нет действий для этого элемента",
+        "make_scheme": "создать схему"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Выберите временной слот"
+      },
+      "conditions": {
+        "equal_to": "равно",
+        "unequal_to": "не равно",
+        "all": "все",
+        "any": "любое",
+        "no_conditions_defined": "Не определены условия"
+      },
+      "options": {
+        "repeat_type": "поведение после срабатывания"
+      }
+    }
   }
 }

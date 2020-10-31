@@ -1,11 +1,21 @@
-import { LevelVariableConfig, AtLeast, EVariableType, ListVariableConfig, ListVariableOption, Dictionary, Entry, ActionElement, LevelVariable } from "./types";
-
-
+import {
+  LevelVariableConfig,
+  AtLeast,
+  EVariableType,
+  ListVariableConfig,
+  ListVariableOption,
+  Dictionary,
+  Entry,
+  ActionElement,
+  LevelVariable,
+} from './types';
+import { PrettyPrintName } from './helpers';
 
 export function levelVariable(config: AtLeast<LevelVariableConfig, 'field'>) {
-  let output: LevelVariableConfig = {
+  const output: LevelVariableConfig = {
     type: EVariableType.Level,
     field: config.field,
+    name: config.name || config.field,
     min: config.min || 0,
     max: config.max || 255,
     step: config.step || 1,
@@ -16,18 +26,21 @@ export function levelVariable(config: AtLeast<LevelVariableConfig, 'field'>) {
 }
 
 export function listVariable(config: AtLeast<ListVariableConfig, 'field' | 'options'>) {
-  let output: ListVariableConfig = {
+  const options: ListVariableOption[] = [];
+  config.options.forEach(e => options.push({ ...e }));
+  const output: ListVariableConfig = {
     type: EVariableType.List,
     field: config.field,
-    options: config.options
+    name: config.name || config.field,
+    options: options.map(e => (e.name ? e : Object.assign(e, { name: PrettyPrintName(e.value) }))),
   };
   return output;
 }
 
-export function listVariableOption(value: any, config: { icons?: Dictionary<string>, name?: string } = {}) {
+export function listVariableOption(value: any, config: { icons?: Dictionary<string>; name?: string } = {}) {
   let output: ListVariableOption = {
     value: String(value),
-  }
+  };
   if (config.icons && value in config.icons) output = { ...output, icon: config.icons[value] };
   if (config.name) output = { ...output, name: config.name };
   return output;
@@ -36,32 +49,30 @@ export function listVariableOption(value: any, config: { icons?: Dictionary<stri
 export function exportActionVariable(action: ActionElement, entry: Entry) {
   if (!entry.variable || !action.variable) return {};
   if (entry.variable.type == EVariableType.Level && action.variable.type == EVariableType.Level) {
-
     if ((entry.variable as LevelVariable).enabled) {
       return { [action.variable.field]: Number(entry.variable.value) };
-    }
-    else {
+    } else {
       return {};
     }
-  }
-  else {
+  } else {
     return { [action.variable.field]: String(entry.variable.value) };
-  };
+  }
 }
 
+export function computeLevelVariableDisplay(value: number, config: LevelVariableConfig) {
+  if (config.unit == '%') {
+    const min = config.min;
+    const max = config.max;
+    const step = config.step;
+    const scaleOffset = config.min;
+    const scaleGain = (config.max - config.min) / 100;
 
-// export const DefaultLevelVariableConfig: LevelVariableConfig = {
-//   type: EVariableType.Level,
-//   field: '',
-//   unit: '',
-//   min: 0,
-//   max: 255,
-//   step: 1,
-//   optional: false,
-// };
+    let scaledValue = (value - scaleOffset) / scaleGain;
+    scaledValue = Math.round(scaledValue / step) * step;
+    if (scaledValue < min) scaledValue = min;
+    else if (scaledValue > max) scaledValue = max;
 
-// export const DefaultListVariableConfig: ListVariableConfig = {
-//   type: EVariableType.List,
-//   field: '',
-//   options: [],
-// };
+    return `${scaledValue}${config.unit}`;
+  }
+  return `${value}${config.unit}`;
+}
