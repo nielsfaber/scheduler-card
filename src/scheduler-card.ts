@@ -68,7 +68,7 @@ export class SchedulerCard extends LitElement {
   @property() actions: ActionElement[] = [];
   @property() friendlyName?: string;
 
-  translationsLoaded = false;
+  @property() translationsLoaded = false;
   editItem: string | null = null;
   scheduleEntities: string[] = [];
 
@@ -79,10 +79,13 @@ export class SchedulerCard extends LitElement {
 
   firstUpdated() {
     const hass = this._hass!;
-    const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
-    el._loadFragmentTranslations(hass.language, 'config').then(() => {
-      this._hass!.localize;
-    });
+    if (hass.localize('ui.panel.config.automation.editor.actions.name')) this.translationsLoaded = true;
+    else {
+      const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
+      el._loadFragmentTranslations(hass.language, 'config').then(() => {
+        this._hass!.localize;
+      });
+    }
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
