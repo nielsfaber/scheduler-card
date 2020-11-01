@@ -82,7 +82,7 @@
         "tomorrow": "tomorrow",
         "repeated_days": "ogni {days}",
         "repeated_days_except": "ogni giorno tranne {excludedDays}",
-        "days_range": "dal {startDay} al {endDay}"
+        "days_range": "{if startDay is domenica} dalla domenica {else} dal {startDay} {if endDay is domenica} alla domenica {else} al {endDay}"
       },
       "time": {
         "absolute": "alle {time}",

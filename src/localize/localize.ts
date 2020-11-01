@@ -37,8 +37,8 @@ const languages: any = {
 export function localize(
   string: string,
   lang: string,
-  search: string | string[] | number = '',
-  replace: string | string[] | number = ''
+  search: string | (string | number)[] | number = '',
+  replace: string | (string | number)[] | number = ''
 ) {
   let translated: string;
   try {
@@ -54,16 +54,16 @@ export function localize(
   }
 
   if (search !== '' && replace !== '' && translated) {
-    if (Array.isArray(search) || Array.isArray(replace)) {
-      for (let i = 0; i < (search as string[]).length; i++) translated = translated.replace(search[i], replace[i]);
-    } else {
+    if (!Array.isArray(search)) search = [search];
+    if (!Array.isArray(replace)) replace = [replace];
+    for (let i = 0; i < (search as string[]).length; i++) {
+      translated = translated.replace(String(search[i]), String(replace[i]));
       const res = translated.match(/\{if ([a-z]+) is ([^\}]+)\}\ ?([^\{]+)\ ?\{else\}\ ?([^\{]+)/i);
-      if (res && String(search).replace(/[\{\}']+/g, '') == res[1]) {
-        const is_match = String(replace) == res[2];
+      if (res && String(search[i]).replace(/[\{\}']+/g, '') == res[1]) {
+        const is_match = String(replace[i]) == res[2];
         if (is_match) translated = translated.replace(res[0], res[3]);
         else translated = translated.replace(res[0], res[4]);
       }
-      translated = translated.replace(String(search), String(replace));
     }
   }
 
