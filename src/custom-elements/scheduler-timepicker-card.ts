@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { HomeAssistant, computeEntity } from 'custom-card-helpers';
+import { HomeAssistant, computeEntity, fireEvent } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import {
   CardConfig,
@@ -20,6 +20,7 @@ import { DefaultTimeStep, DefaultActionIcon } from '../const';
 import './time-picker';
 import './timeslot-editor';
 import './variable-slider';
+import './dialog-confirm-delete';
 import { commonStyle } from '../styles';
 import { computeActionDisplay } from '../data/compute_action_display';
 import { startOfWeek } from '../data/date-time/start_of_week';
@@ -69,10 +70,10 @@ export class SchedulerTimepickerCard extends LitElement {
           <div class="card-header">
             <div class="name">
               ${this.config.title !== undefined
-                ? typeof this.config.title == 'string'
-                  ? this.config.title
-                  : ''
-                : localize('ui.panel.common.title', this.hass.language)}
+          ? typeof this.config.title == 'string'
+            ? this.config.title
+            : ''
+          : localize('ui.panel.common.title', this.hass.language)}
             </div>
             <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
           </div>
@@ -82,12 +83,12 @@ export class SchedulerTimepickerCard extends LitElement {
               <div class="summary-entity">
                 <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
                 ${capitalize(
-                  PrettyPrintName(
-                    this.entity.name ||
-                      this.hass!.states[this.entity.id].attributes.friendly_name ||
-                      computeEntity(this.entity.id)
-                  )
-                )}
+            PrettyPrintName(
+              this.entity.name ||
+              this.hass!.states[this.entity.id].attributes.friendly_name ||
+              computeEntity(this.entity.id)
+            )
+          )}
               </div>
               <div class="summary-arrow">
                 <ha-icon icon="hass:arrow-right"> </ha-icon>
@@ -104,7 +105,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
             </button-group>
             ${this.entries[0].days.type == EDayType.Custom
-              ? html`
+          ? html`
                   <div>
                     <button-group
                       .items=${DayOptions}
@@ -115,7 +116,7 @@ export class SchedulerTimepickerCard extends LitElement {
                     </button-group>
                   </div>
                 `
-              : ''}
+          : ''}
 
             <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
             <time-picker
@@ -130,12 +131,12 @@ export class SchedulerTimepickerCard extends LitElement {
           <div class="card-actions">
             <mwc-button @click="${this.saveClick}">${this.hass.localize('ui.common.save')}</mwc-button>
             ${this.hass.user.is_admin && this.editItem
-              ? html`
+          ? html`
                   <mwc-button class="warning" @click=${this.deleteClick}
                     >${this.hass.localize('ui.common.delete')}</mwc-button
                   >
                 `
-              : ''}
+          : ''}
             <mwc-button @click="${this.optionsClick}" style="float: right"
               >${this.hass.localize('ui.dialogs.helper_settings.input_select.options')}</mwc-button
             >
@@ -148,10 +149,10 @@ export class SchedulerTimepickerCard extends LitElement {
           <div class="card-header">
             <div class="name">
               ${this.config.title !== undefined
-                ? typeof this.config.title == 'string'
-                  ? this.config.title
-                  : ''
-                : localize('ui.panel.common.title', this.hass.language)}
+          ? typeof this.config.title == 'string'
+            ? this.config.title
+            : ''
+          : localize('ui.panel.common.title', this.hass.language)}
             </div>
             <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
           </div>
@@ -161,12 +162,12 @@ export class SchedulerTimepickerCard extends LitElement {
               <div class="summary-entity">
                 <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
                 ${capitalize(
-                  PrettyPrintName(
-                    this.entity.name ||
-                      this.hass!.states[this.entity.id].attributes.friendly_name ||
-                      computeEntity(this.entity.id)
-                  )
-                )}
+            PrettyPrintName(
+              this.entity.name ||
+              this.hass!.states[this.entity.id].attributes.friendly_name ||
+              computeEntity(this.entity.id)
+            )
+          )}
               </div>
               <div class="summary-arrow">
                 <ha-icon icon="hass:arrow-right"> </ha-icon>
@@ -181,7 +182,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <button-group .items=${DayTypeOptions} value=${this.entries[0].days.type} @change=${this.selectDays}>
             </button-group>
             ${this.entries[0].days.type == EDayType.Custom
-              ? html`
+          ? html`
                   <div>
                     <button-group
                       .items=${DayOptions}
@@ -192,7 +193,7 @@ export class SchedulerTimepickerCard extends LitElement {
                     </button-group>
                   </div>
                 `
-              : ''}
+          : ''}
 
             <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
             <timeslot-editor
@@ -220,12 +221,12 @@ export class SchedulerTimepickerCard extends LitElement {
               >${this.hass.localize('ui.common.save')}</mwc-button
             >
             ${this.hass.user.is_admin && this.editItem
-              ? html`
+          ? html`
                   <mwc-button class="warning" @click=${this.deleteClick}
                     >${this.hass.localize('ui.common.delete')}</mwc-button
                   >
                 `
-              : ''}
+          : ''}
             <mwc-button @click=${this.optionsClick} style="float: right"
               >${this.hass.localize('ui.dialogs.helper_settings.input_select.options')}</mwc-button
             >
@@ -368,9 +369,28 @@ export class SchedulerTimepickerCard extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
-  deleteClick() {
-    const myEvent = new CustomEvent('deleteClick');
-    this.dispatchEvent(myEvent);
+
+  async deleteClick(ev) {
+    const element = ev.target as HTMLElement;
+    const result = await new Promise((resolve) => {
+
+      fireEvent(element, 'show-dialog', {
+        dialogTag: 'dialog-confirm-delete',
+        dialogImport: () => import('./dialog-confirm-delete'),
+        dialogParams: {
+          cancel: () => {
+            resolve(false);
+          },
+          confirm: () => {
+            resolve(true);
+          },
+        }
+      });
+    });
+    if (result) {
+      const myEvent = new CustomEvent('deleteClick');
+      this.dispatchEvent(myEvent);
+    }
   }
 
   static styles = css`
