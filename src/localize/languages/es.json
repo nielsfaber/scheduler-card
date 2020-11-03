@@ -89,7 +89,7 @@
         "interval": "desde las {startTime} a las {endTime}",
         "midnight": "medianoche",
         "noon": "mediodía",
-        "at_sun_event": "a la {sunEvent}" //Context dependand, with midnight is: a la [midnight], on noon is: al [noon]
+        "at_sun_event": "a la {sunEvent}"
       }
     },
     "panel": {
@@ -115,7 +115,7 @@
       },
       "conditions": {
         "equal_to": "igual a",
-        "unequal_to": "no es igual a",
+        "unequal_to": "desigual a",
         "all": "todos",
         "any": "cualquiera",
         "no_conditions_defined": "no hay ninguna condición definida"

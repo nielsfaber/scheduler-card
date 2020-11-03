@@ -5,16 +5,16 @@
       "action_with_parameter": "{action} with {parameter}"
     },
     "climate": {
-      "set_temperature": "set temperature[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
+      "set_temperature": "ajustar temperatura[ a {temperature}]",
+      "set_temperature_hvac_mode_heat": "ajustar temperatura[ a {temperature}]",
+      "set_temperature_hvac_mode_cool": "ajustar temperatura[ a {temperature}]",
       "set_hvac_mode": "set mode[ to {hvac_mode}]",
       "set_preset_mode": "set preset[ {preset_mode}]"
     },
     "cover": {
-      "close_cover": "close",
-      "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "close_cover": "fechar",
+      "open_cover": "abrir",
+      "set_cover_position": "ajustar posição[ a {position}]"
     },
     "fan": {
       "set_speed": "set speed[ to {speed}]",
@@ -31,7 +31,7 @@
       "select_option": "select option[ {option}]"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "ligar[ a {brightness} Brilho]"
     },
     "media_player": {
       "select_source": "select source[ {source}]"
@@ -48,37 +48,37 @@
   },
   "domains": {
     "alarm_control_panel": "alarm control panel",
-    "climate": "climate",
-    "cover": "covers",
-    "fan": "fans",
+    "climate": "ar condicionado",
+    "cover": "persiana",
+    "fan": "ventilador",
     "group": "groups",
     "humidifier": "humifiers",
     "input_boolean": "input boolean",
     "input_number": "input number",
     "input_select": "input select",
-    "light": "lights",
+    "light": "luz",
     "lock": "locks",
     "media_player": "media players",
     "scene": "scenes",
     "script": "scripts",
-    "switch": "switches",
-    "vacuum": "vacuums",
+    "switch": "interruptor",
+    "vacuum": "aspirador",
     "water_heater": "water heaters"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "daily",
-          "workdays": "workdays",
-          "weekend": "weekend"
+          "daily": "todos os dias",
+          "workdays": "dias da semana",
+          "weekend": "final da semana"
         },
         "day_types_long": {
-          "daily": "every day",
-          "workdays": "on workdays",
-          "weekend": "in the weekend"
+          "daily": "todos os dias",
+          "workdays": "dias da semana",
+          "weekend": "final da semana"
         },
-        "days": "days",
+        "days": "Dias",
         "tomorrow": "tomorrow",
         "repeated_days": "every {days}",
         "repeated_days_except": "every day except {excludedDays}",
@@ -94,20 +94,20 @@
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Agenda"
       },
       "overview": {
-        "no_entries": "There are no items to show",
+        "no_entries": "Não tem item pra mostar",
         "excluded_items": "{number} excluded {if number is 1} item {else} items",
         "hide_excluded": "hide excluded items",
         "additional_tasks": "{number} more {if number is 1} task {else} tasks"
       },
       "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
+        "no_groups_defined": "Não tem grupo definido",
+        "no_group_selected": "Selecione um grupo primeiro",
+        "no_entities_for_group": "Não tem entidade no grupo",
+        "no_entity_selected": "Selecione uma entidade primeiro",
+        "no_actions_for_entity": "Não há ações para esta entidade",
         "make_scheme": "make scheme"
       },
       "time_picker": {
