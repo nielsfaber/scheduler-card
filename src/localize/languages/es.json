@@ -1,127 +1,127 @@
 {
   "services": {
     "generic": {
-      "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "parameter_to_value": "{parameter} a {value}",
+      "action_with_parameter": "{action} con {parameter}"
     },
     "climate": {
-      "set_temperature": "set temperature[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
-      "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ {preset_mode}]"
+      "set_temperature": "establecer temperatura[ a {temperature}]",
+      "set_temperature_hvac_mode_heat": "calefacción [ a {temperature}]",
+      "set_temperature_hvac_mode_cool": "frío [ a {temperature}]",
+      "set_hvac_mode": "establecer modo[ a {hvac_mode}]",
+      "set_preset_mode": "establecer preajuste [ {preset_mode}]"
     },
     "cover": {
-      "close_cover": "close",
-      "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "close_cover": "cerrado",
+      "open_cover": "abierto",
+      "set_cover_position": "establecer posición [ a {position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "establecer velocidad [ a {speed}]",
+      "set_direction": "establecer dirección[ a {direction}]",
+      "oscillate": "establecer oscilación[ a {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "establecer humedad[ a {humidity}]"
     },
     "input_number": {
-      "set_value": "set value[ to {value}]"
+      "set_value": "establecer valor[ a {value}]"
     },
     "input_select": {
-      "select_option": "select option[ {option}]"
+      "select_option": "seleccionar opción[ {option}]"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "encender[ con brillo en {brightness}]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "seleccionar fuente[ {source}]"
     },
     "script": {
-      "script": "execute"
+      "script": "ejecutar"
     },
     "vacuum": {
-      "start_pause": "start / pause"
+      "start_pause": "iniciar / pausar"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_away_mode": "establecer modo fuera de casa"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "climate": "climate",
-    "cover": "covers",
-    "fan": "fans",
-    "group": "groups",
-    "humidifier": "humifiers",
+    "alarm_control_panel": "panel de control de alarma",
+    "climate": "climatización",
+    "cover": "cortinas",
+    "fan": "ventiladores",
+    "group": "grupos",
+    "humidifier": "humidificadores",
     "input_boolean": "input boolean",
     "input_number": "input number",
     "input_select": "input select",
-    "light": "lights",
-    "lock": "locks",
-    "media_player": "media players",
-    "scene": "scenes",
+    "light": "luces",
+    "lock": "cerraduras",
+    "media_player": "reproductores",
+    "scene": "escenas",
     "script": "scripts",
-    "switch": "switches",
-    "vacuum": "vacuums",
-    "water_heater": "water heaters"
+    "switch": "interruptores",
+    "vacuum": "aspiradores",
+    "water_heater": "calentador de agua"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "daily",
-          "workdays": "workdays",
-          "weekend": "weekend"
+          "daily": "a diario",
+          "workdays": "días hábiles",
+          "weekend": "fin de semana"
         },
         "day_types_long": {
-          "daily": "every day",
-          "workdays": "on workdays",
-          "weekend": "in the weekend"
+          "daily": "todos los días",
+          "workdays": "en días hábiles",
+          "weekend": "en el fin de semana"
         },
-        "days": "days",
-        "tomorrow": "tomorrow",
-        "repeated_days": "every {days}",
-        "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "days": "días",
+        "tomorrow": "mañana",
+        "repeated_days": "cada {days}",
+        "repeated_days_except": "cada dia excepto {excludedDays}",
+        "days_range": "de {startDay} a {endDay}"
       },
       "time": {
-        "absolute": "at {time}",
-        "interval": "from {startTime} to {endTime}",
-        "midnight": "midnight",
-        "noon": "noon",
-        "at_sun_event": "at {sunEvent}"
+        "absolute": "a las {time}",
+        "interval": "desde las {startTime} a las {endTime}",
+        "midnight": "medianoche",
+        "noon": "mediodía",
+        "at_sun_event": "a la {sunEvent}" //Context dependand, with midnight is: a la [midnight], on noon is: al [noon]
       }
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Programador"
       },
       "overview": {
-        "no_entries": "There are no items to show",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "no_entries": "No hay ningún elemento que mostrar",
+        "excluded_items": "{number} {if number is 1} elemento excluido {else} elementos excluidos",
+        "hide_excluded": "ocultar elementos excluidos",
+        "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
       },
       "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
-        "make_scheme": "make scheme"
+        "no_groups_defined": "No hay ningún grupo definido",
+        "no_group_selected": "selecciona un grupo primero",
+        "no_entities_for_group": "no hay ningúna entidad en este grupo",
+        "no_entity_selected": "selecciona una entidad primero",
+        "no_actions_for_entity": "no hay acciones para esta entidad",
+        "make_scheme": "crear planificación"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "selecciona un bloque de tiempo primero"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "equal_to": "igual a",
+        "unequal_to": "no es igual a",
+        "all": "todos",
+        "any": "cualquiera",
+        "no_conditions_defined": "no hay ninguna condición definida"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "acción después de ejecutar"
       }
     }
   }
