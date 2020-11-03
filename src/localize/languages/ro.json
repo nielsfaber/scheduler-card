@@ -43,7 +43,7 @@
       "start_pause": "start / pauză"
     },
     "water_heater": {
-      "set_away_mode": "setare mod plecat de acasă"
+      "set_away_mode": "setare mod plecat"
     }
   },
   "domains": {
@@ -55,7 +55,7 @@
     "humidifier": "umidificatoare",
     "input_boolean": "input boolean",
     "input_number": "input număr",
-    "input_select": "input select",
+    "input_select": "input selecție",
     "light": "lumini",
     "lock": "încuietori",
     "media_player": "media playere",
@@ -70,12 +70,12 @@
       "date": {
         "day_types_short": {
           "daily": "zilnic",
-          "workdays": "zile lucratoare",
+          "workdays": "zile lucrătoare",
           "weekend": "sfârșit de săptămână"
         },
         "day_types_long": {
           "daily": "zilnic",
-          "workdays": "în timpul săptămînii",
+          "workdays": "în timpul săptămânii",
           "weekend": "la sfârșit de săptămână"
         },
         "days": "zile",
