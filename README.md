@@ -660,7 +660,7 @@ The following actions are implemented:
  | ----------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
  | "Heat"                              | entity supports `hvac_mode: heat`                                                            | execute service `set_temperature` <br> with `hvac_mode: heat` <br> and `temperature` to the value you choose |
  | "Cool"                              | entity supports `hvac_mode: cool`                                                            | execute service `set_temperature` <br> with `hvac_mode: cool` <br> and `temperature` to the value you choose |
- | " Set temperature"                  | entity does not support `hvac_mode: heat` <br> and entity does not support `hvac_mode: cool` | execute service `set_temperature` <br> with `temperature` to the value you choose                            |
+ | "Set temperature"                   | entity does not support `hvac_mode: heat` <br> and entity does not support `hvac_mode: cool` | execute service `set_temperature` <br> with `temperature` to the value you choose                            |
  | "Turn Off"                          | entity supports `hvac_mode: off`                                                             | execute service `set_hvac_mode` with `hvac_mode: off`                                                        |
  | "Turn Off"                          | entity does not support `hvac_mode: off`                                                     | execute service `turn_off`                                                                                   |
 
@@ -675,7 +675,7 @@ As a workaround, you can add the 'legacy' set temperature action to the card and
 customize:
   climate: # replace with climate.my_entity if you want to target a specific device
     actions:
-      - service: set_temperature
+      - service: climate.set_temperature
         name: "Set temperature"
         icon: fire
         variable:
