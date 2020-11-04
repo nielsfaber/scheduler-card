@@ -34,6 +34,7 @@
   - [Display options](#display-options)
 - [Translations](#translations)
 - [FAQ](#faq)
+  - [My climate entity does not work when I create a schedule to change the temperature?](#my-climate-entity-does-not-work-when-i-create-a-schedule-to-change-the-temperature)
   - [*Can I make a schedule that checks a condition before executing the action?*](#can-i-make-a-schedule-that-checks-a-condition-before-executing-the-action)
   - [*How do I check which version I am using?*](#how-do-i-check-which-version-i-am-using)
   - [*How do I fix error 'Failed to call service scheduler/add. Service not found.' ?*](#how-do-i-fix-error-failed-to-call-service-scheduleradd-service-not-found-)
@@ -645,6 +646,49 @@ If you are missing a translation, or a translation needs to be improved, please 
 
 ---
 ## FAQ
+
+
+### My climate entity does not work when I create a schedule to change the temperature?
+
+The _scheduler-card_ checks the capabilities of your climate devices and shows appropriate actions for it.
+
+If your climate device features multiple [hvac_modes](https://developers.home-assistant.io/docs/core/entity/climate/#hvac-modes), the scheduler will automatically switch your climate device to the correct mode in the built-in actions.
+
+The following actions are implemented:
+
+ | Predefined action name <sup>1</sup> | Available when                                                                               | Behaviour of scheduler                                                                                       |
+ | ----------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+ | "Heat"                              | entity supports `hvac_mode: heat`                                                            | execute service `set_temperature` <br> with `hvac_mode: heat` <br> and `temperature` to the value you choose |
+ | "Cool"                              | entity supports `hvac_mode: cool`                                                            | execute service `set_temperature` <br> with `hvac_mode: cool` <br> and `temperature` to the value you choose |
+ | " Set temperature"                  | entity does not support `hvac_mode: heat` <br> and entity does not support `hvac_mode: cool` | execute service `set_temperature` <br> with `temperature` to the value you choose                            |
+ | "Turn Off"                          | entity supports `hvac_mode: off`                                                             | execute service `set_hvac_mode` with `hvac_mode: off`                                                        |
+ | "Turn Off"                          | entity does not support `hvac_mode: off`                                                     | execute service `turn_off`                                                                                   |
+
+<sup>1</sup> These are the English names, depending on your language they may be translated in your card.
+
+In case your device does not work well with actions 'heat' or 'cool', this indicates that there is a bug in the integration (which I cannot fix for you).
+Most probably the implementation of service [climate.set_temperature](https://www.home-assistant.io/integrations/climate/#service-climateset_temperature) does not check for the `hvac_mode` property.
+
+As a workaround, you can add the 'legacy' set temperature action to the card and see if it helps:
+
+```yaml
+customize:
+  climate: # replace with climate.my_entity if you want to target a specific device
+    actions:
+      - service: set_temperature
+        name: "Set temperature"
+        icon: fire
+        variable:
+          field: temperature
+          name: "Temperature"
+          min: 10
+          max: 30
+          step: 0.5
+    exclude_actions: # hide the built-in actions
+      - "heat" # use your local translation of this action name
+      - "cool" # use your local translation of this action name
+```
+
 
 ### *Can I make a schedule that checks a condition before executing the action?*
 
