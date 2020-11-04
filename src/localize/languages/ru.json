@@ -61,7 +61,7 @@
     "media_player": "медиа-плееры",
     "scene": "сцены",
     "script": "скрипты",
-    "switch": "часы",
+    "switch": "розетки",
     "vacuum": "пылесосы",
     "water_heater": "подогреватели воды"
   },
@@ -85,7 +85,7 @@
         "days_range": "с {startDay} до {endDay}"
       },
       "time": {
-        "absolute": "d {time}",
+        "absolute": "в {time}",
         "interval": "с {startTime} до {endTime}",
         "midnight": "полночь",
         "noon": "полдень",

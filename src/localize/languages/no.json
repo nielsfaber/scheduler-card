@@ -5,16 +5,16 @@
       "action_with_parameter": "{action} with {parameter}"
     },
     "climate": {
-      "set_temperature": "set temperature[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
+      "set_temperature": "sett temperatur[ to {temperature}]",
+      "set_temperature_hvac_mode_heat": "sett temperatur[ to {temperature}]",
+      "set_temperature_hvac_mode_cool": "sett temperatur[ to {temperature}]",
       "set_hvac_mode": "set mode[ to {hvac_mode}]",
       "set_preset_mode": "set preset[ {preset_mode}]"
     },
     "cover": {
-      "close_cover": "close",
-      "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "close_cover": "lukk",
+      "open_cover": "åpne",
+      "set_cover_position": "sett posisjon[ to {position}]"
     },
     "fan": {
       "set_speed": "set speed[ to {speed}]",
@@ -31,7 +31,7 @@
       "select_option": "select option[ {option}]"
     },
     "light": {
-      "turn_on": "turn on[ with {brightness} brightness]"
+      "turn_on": "slå på[ with {brightness} brightness]"
     },
     "media_player": {
       "select_source": "select source[ {source}]"
@@ -48,37 +48,37 @@
   },
   "domains": {
     "alarm_control_panel": "alarm control panel",
-    "climate": "climate",
+    "climate": "klima",
     "cover": "covers",
-    "fan": "fans",
+    "fan": "vifter",
     "group": "groups",
     "humidifier": "humifiers",
     "input_boolean": "input boolean",
     "input_number": "input number",
     "input_select": "input select",
-    "light": "lights",
+    "light": "lys",
     "lock": "locks",
     "media_player": "media players",
     "scene": "scenes",
     "script": "scripts",
-    "switch": "switches",
-    "vacuum": "vacuums",
+    "switch": "brytere",
+    "vacuum": "støvsugere",
     "water_heater": "water heaters"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "daily",
-          "workdays": "workdays",
+          "daily": "hver dag",
+          "workdays": "ukedager",
           "weekend": "weekend"
         },
         "day_types_long": {
-          "daily": "every day",
-          "workdays": "on workdays",
-          "weekend": "in the weekend"
+          "daily": "hver dag",
+          "workdays": "ukedager",
+          "weekend": "weekend"
         },
-        "days": "days",
+        "days": "Dager",
         "tomorrow": "tomorrow",
         "repeated_days": "every {days}",
         "repeated_days_except": "every day except {excludedDays}",
@@ -94,20 +94,20 @@
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Tidsplan"
       },
       "overview": {
-        "no_entries": "There are no items to show",
+        "no_entries": "Det er ingen definerte tidsplaner å vise",
         "excluded_items": "{number} excluded {if number is 1} item {else} items",
         "hide_excluded": "hide excluded items",
         "additional_tasks": "{number} more {if number is 1} task {else} tasks"
       },
       "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
+        "no_groups_defined": "Ingen grupper definert",
+        "no_group_selected": "Velg en gruppe først",
+        "no_entities_for_group": "Det finnes ingen entiteter i denne gruppen",
+        "no_entity_selected": "Velg en entitet først",
+        "no_actions_for_entity": "Det finnes ingen handlinger for denne entiteten",
         "make_scheme": "make scheme"
       },
       "time_picker": {
