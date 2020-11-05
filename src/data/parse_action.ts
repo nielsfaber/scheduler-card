@@ -14,12 +14,14 @@ export function parseAction(action: HassAction, hass: HomeAssistant, config: Car
 
   const id = uniqueId({ service: service, service_data: service_data });
   let match = actionList.find(e => uniqueId(e) == id);
-  if (!match)
+  if (!match) {
     match = actionList.find(
       e =>
         e.variable &&
         uniqueId(e) == uniqueId({ ...action, service_data: omit(action.service_data, [e.variable.field]) })
     );
+    if (match) match = { ...match, service_data: { ...match.service_data || {}, ...service_data } };
+  }
   if (!match) {
     const actionList = standardActions(entity, hass);
     match = actionList.find(el => equalAction(el, action));
@@ -34,10 +36,8 @@ export function parseAction(action: HassAction, hass: HomeAssistant, config: Car
           service_data: { ...match.service_data, [variable.field]: value },
         };
       }
-      //match = { ...match, service_data: omit(action.service_data, [match.variable!.field]) };
     }
   }
-
   if (match) return actionElement(match);
   const actionCfg: ActionConfig = { service: action.service, service_data: action.service_data };
   return actionElement(actionCfg);
