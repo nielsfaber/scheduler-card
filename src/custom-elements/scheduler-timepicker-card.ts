@@ -308,14 +308,13 @@ export class SchedulerTimepickerCard extends LitElement {
         this.updateActiveEntry({ variable: { type: EVariableType.List, value: config.options[0].value } });
 
       const val = this.entries[this.activeEntry].variable as ListVariable;
-
+      const options = config.options.map(e => Object.assign({ ...e }, { id: e.value }));
       if (config.options.length <= 1) return html``;
-
       return html`
         <div class="header">
           ${config.name || PrettyPrintName(config.field)}
         </div>
-        <button-group .items=${config.options} value=${val.value} @change=${this.updateListValue}>
+        <button-group .items=${options} value=${val.value} @change=${this.updateListValue}>
           ${this.hass.localize('ui.dialogs.helper_settings.input_select.no_options')}
         </button-group>
       `;
