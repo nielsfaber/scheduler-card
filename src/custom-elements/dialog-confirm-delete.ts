@@ -1,5 +1,6 @@
 import { LitElement, html, customElement, property, CSSResult, css, internalProperty } from 'lit-element';
 import { HomeAssistant, fireEvent } from 'custom-card-helpers';
+import { commonStyle } from '../styles';
 
 @customElement('dialog-confirm-delete')
 export class DialogConfirmDelete extends LitElement {
@@ -40,10 +41,10 @@ export class DialogConfirmDelete extends LitElement {
           </span>
         </ha-header-bar>
       </div>
-      <div>
+      <div class="wrapper">
         ${this.hass.localize("ui.dialogs.more_info_control.restored.confirm_remove_text")}
       </div>
-
+    
         <mwc-button
           slot="primaryAction"
           @click=${this.cancelClick}
@@ -71,5 +72,15 @@ export class DialogConfirmDelete extends LitElement {
 
   cancelClick() {
     this._params.cancel();
+  }
+
+
+
+  static get styles(): CSSResult {
+    return css`
+      div.wrapper {
+        color: var(--text-primary-color);
+      }
+    `;
   }
 }
