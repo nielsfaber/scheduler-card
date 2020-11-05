@@ -75,11 +75,11 @@ export class TimePicker extends LitElement {
   }
 
   private getHours() {
-    return formatTime(this.value, { amPm: this.formatAmPm }).hours;
+    return formatTime(this.value, { amPm: this.formatAmPm && !this.event }).hours;
   }
 
   private getMinutes() {
-    return formatTime(this.value, { amPm: this.formatAmPm }).minutes;
+    return formatTime(this.value, { amPm: this.formatAmPm && !this.event }).minutes;
   }
 
   private hoursUp() {
