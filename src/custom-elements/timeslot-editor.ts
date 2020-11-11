@@ -1,6 +1,6 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize } from '../localize/localize';
-import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig } from '../types';
+import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariableConfig } from '../types';
 import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
 import { pick, PrettyPrintName } from '../helpers';
 import { HomeAssistant } from 'custom-card-helpers';
@@ -128,7 +128,9 @@ export class TimeslotEditor extends LitElement {
       if ((entry.variable as LevelVariable).enabled)
         return computeLevelVariableDisplay(Number(entry.variable.value), action.variable as LevelVariableConfig);
     } else if (entry.variable && entry.variable.type == EVariableType.List) {
-      return PrettyPrintName(String(entry.variable.value));
+      const config = action.variable as ListVariableConfig;
+      const listItem = config.options.find(e => e.value == entry.variable!.value);
+      return PrettyPrintName(listItem && listItem.name ? listItem.name : String(entry.variable.value));
     }
     const service = action.service;
     return PrettyPrintName(action.name || localize(`services.${service}`, this.hass.language) || service);
