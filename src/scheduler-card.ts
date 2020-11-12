@@ -131,6 +131,8 @@ export class SchedulerCard extends LitElement {
         <scheduler-editor-card
           .hass=${this._hass}
           .config=${this._config}
+          .entity=${this.entity}
+          .selectedAction=${this.entries ? this.entries.every(e => e.endTime) ? CreateTimeScheme : this.actions[0].id : undefined}
           @nextClick=${this._confirmItemClick}
           @cancelClick=${this._cancelEditClick}
         >
@@ -150,6 +152,7 @@ export class SchedulerCard extends LitElement {
           @saveClick=${this._saveItemClick}
           @optionsClick=${this._gotoOptionsClick}
           @deleteClick=${this._deleteItemClick}
+          @editActionClick=${this._editActionClick}
         >
         </scheduler-timepicker-card>
       `;
@@ -173,6 +176,9 @@ export class SchedulerCard extends LitElement {
     this._view = EViews.NewSchedule;
     this.editItem = null;
     this.friendlyName = undefined;
+    this.entity = undefined;
+    this.actions = [];
+    this.entries = [];
   }
 
   private _cancelEditClick(): void {
@@ -187,45 +193,66 @@ export class SchedulerCard extends LitElement {
     const action = String(ev.detail.action);
 
     if (action != CreateTimeScheme) {
-      this.entries = [
-        {
-          entity: ev.detail.entity,
-          action: action,
-          time: { value: parseTimestamp('12:00') },
-          days: { type: EDayType.Daily },
-        },
-      ];
-
+      if (this.entries && this.entries.length == 1) { //editing an existing entry
+        let entry = this.entries[0];
+        if (entity != entry.entity) entry = { ...entry, entity: entity };
+        if (action != entry.action) entry = { ...entry, action: action, variable: undefined };
+        this.entries = [entry];
+      } else {
+        this.entries = [
+          {
+            entity: entity,
+            action: action,
+            time: { value: parseTimestamp('12:00') },
+            days: { type: EDayType.Daily },
+          },
+        ];
+      }
       this._view = EViews.TimePicker;
 
       this.actions = [computeEntityActions(entity, this._hass, this._config).find(e => e.id == action)!];
     } else {
-      this.entries = [
-        {
-          entity: ev.detail.entity,
-          action: '',
-          time: { value: parseTimestamp('00:00') },
-          endTime: { value: parseTimestamp('08:00') },
-          days: { type: EDayType.Daily },
-        },
-        {
-          entity: ev.detail.entity,
-          action: '',
-          time: { value: parseTimestamp('08:00') },
-          endTime: { value: parseTimestamp('16:00') },
-          days: { type: EDayType.Daily },
-        },
-        {
-          entity: ev.detail.entity,
-          action: '',
-          time: { value: parseTimestamp('16:00') },
-          endTime: { value: MinutesPerDay },
-          days: { type: EDayType.Daily },
-        },
-      ];
       this.actions = computeEntityActions(entity, this._hass, this._config);
+      if (this.entries && this.entries.length > 1) { //editing an existing timeline
+        let entries = this.entries;
+        this.entries = entries.map(entry => {
+          if (entity != entry.entity) entry = { ...entry, entity: entity };
+          if (entry.action && !this.actions.find(e => entry.action == e.id)) entry = { ...entry, action: '', variable: undefined };
+          return entry;
+        });
+      }
+      else {
+        this.entries = [
+          {
+            entity: ev.detail.entity,
+            action: '',
+            time: { value: parseTimestamp('00:00') },
+            endTime: { value: parseTimestamp('08:00') },
+            days: { type: EDayType.Daily },
+          },
+          {
+            entity: ev.detail.entity,
+            action: '',
+            time: { value: parseTimestamp('08:00') },
+            endTime: { value: parseTimestamp('16:00') },
+            days: { type: EDayType.Daily },
+          },
+          {
+            entity: ev.detail.entity,
+            action: '',
+            time: { value: parseTimestamp('16:00') },
+            endTime: { value: MinutesPerDay },
+            days: { type: EDayType.Daily },
+          },
+        ];
+      }
       this._view = EViews.TimeScheme;
     }
+  }
+
+  private _editActionClick(ev: CustomEvent): void {
+    this.entries = ev.detail as Entry[];
+    this._view = EViews.NewSchedule;
   }
 
   _saveItemClick(ev?: CustomEvent): void {

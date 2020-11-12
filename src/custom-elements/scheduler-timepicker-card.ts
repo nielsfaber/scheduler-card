@@ -80,7 +80,10 @@ export class SchedulerTimepickerCard extends LitElement {
           <div class="card-content">
             <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
             <div class="summary">
-              <div class="summary-entity">
+              <div
+                class="summary-entity"
+                @click=${this.editActionClick}
+              >
                 <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
                 ${capitalize(
             PrettyPrintName(
@@ -93,7 +96,10 @@ export class SchedulerTimepickerCard extends LitElement {
               <div class="summary-arrow">
                 <ha-icon icon="hass:arrow-right"> </ha-icon>
               </div>
-              <div class="summary-action">
+              <div
+                class="summary-action"
+                @click=${this.editActionClick}
+              >
                 <ha-icon icon="${PrettyPrintIcon(this.actions[0].icon || DefaultActionIcon)}"> </ha-icon>
                 ${capitalize(this.actions[0].name || computeEntity(this.actions[0].service))}
               </div>
@@ -159,7 +165,10 @@ export class SchedulerTimepickerCard extends LitElement {
           <div class="card-content">
             <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
             <div class="summary">
-              <div class="summary-entity">
+              <div
+                class="summary-entity"
+                @click=${this.editActionClick}
+              >
                 <ha-icon icon="${PrettyPrintIcon(this.entity.icon)}"> </ha-icon>
                 ${capitalize(
             PrettyPrintName(
@@ -172,7 +181,10 @@ export class SchedulerTimepickerCard extends LitElement {
               <div class="summary-arrow">
                 <ha-icon icon="hass:arrow-right"> </ha-icon>
               </div>
-              <div class="summary-action">
+              <div
+                class="summary-action"
+                @click=${this.editActionClick}
+              >
                 <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"> </ha-icon>
                 ${capitalize(localize('ui.panel.entity_picker.make_scheme', this.hass.language))}
               </div>
@@ -368,6 +380,10 @@ export class SchedulerTimepickerCard extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
+  editActionClick() {
+    const myEvent = new CustomEvent('editActionClick', { detail: this.entries });
+    this.dispatchEvent(myEvent);
+  }
 
   async deleteClick(ev) {
     const element = ev.target as HTMLElement;
@@ -431,6 +447,7 @@ export class SchedulerTimepickerCard extends LitElement {
       grid-template-areas: 'icon text';
       grid-auto-flow: column;
       grid-gap: 10px;
+      cursor: pointer;
     }
 
     div.summary-entity:before,
