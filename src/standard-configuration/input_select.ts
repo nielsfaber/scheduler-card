@@ -18,7 +18,7 @@ export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): 
     service: 'input_select.select_option',
     variable: listVariable({
       field: 'option',
-      name: hass.localize('ui.card.humidifier.mode'),
+      name: hass.localize('ui.components.dialogs.input_select.options'),
       options: inputSelectOptions(hass.localize, stateObj),
     }),
     icon: 'counter',
