@@ -17,7 +17,7 @@ export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): 
   {
     service: 'input_select.select_option',
     variable: listVariable({
-      field: 'mode',
+      field: 'option',
       name: hass.localize('ui.card.humidifier.mode'),
       options: inputSelectOptions(hass.localize, stateObj),
     }),
