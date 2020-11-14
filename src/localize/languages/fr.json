@@ -97,7 +97,7 @@
         "title": "Planificateur"
       },
       "overview": {
-        "no_entries": "il n'y a pas d'entrée a montrer",
+        "no_entries": "il n'y a pas d'entrée à montrer",
         "excluded_items": "{number}{if number is 1} entrée exclue{else} entrées exclues",
         "hide_excluded": "cacher les entrées exclues",
         "additional_tasks": "{number}{if number is 1} tâche à venir{else} tâches à venir"
