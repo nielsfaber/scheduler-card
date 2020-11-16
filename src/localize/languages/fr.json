@@ -97,10 +97,10 @@
         "title": "Planificateur"
       },
       "overview": {
-        "no_entries": "il n'y a pas d'item a montrer",
-        "excluded_items": "{number} exclu(s) {if number is 1} item {else} items",
-        "hide_excluded": "cacher les items exclus",
-        "additional_tasks": "{number} de plus {if number is 1} tâche {else} tâches"
+        "no_entries": "il n'y a pas d'entrée à montrer",
+        "excluded_items": "{number}{if number is 1} entrée exclue{else} entrées exclues",
+        "hide_excluded": "cacher les entrées exclues",
+        "additional_tasks": "{number}{if number is 1} tâche à venir{else} tâches à venir"
       },
       "entity_picker": {
         "no_groups_defined": "Aucun groupe défini",
