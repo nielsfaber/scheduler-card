@@ -176,7 +176,7 @@ If you have the AM/PM option enabled, 12-hour format will be used. You can click
 __Sunrise / sunset mode__
 
 If you have the [sun](https://www.home-assistant.io/integrations/sun/) integration in HA, a button with sun/moon icon shows up on the right. This is the _mode button_, which allows you to switch from a fixed time, to time relative to sunrise or sunset.  
-The card allows you to choose a time that is 2 hours around sunrise or sunset. The button will be disabled if the current time is not in this range.
+The card allows you to choose a time that is 12 hours around sunrise or sunset. The button will be disabled if the current time is not in this range.
 
 In sunrise/sunset mode, the time picker will show the offset relative to sunrise/sunset. The time offset is automatically calculated from fixed time.
 The _sunrise/sunrise button_ will show a sun icon when offset is relative to sunrise, or a moon icon when offset is relative sunset.

@@ -24,7 +24,7 @@ export class TimePicker extends LitElement {
   @property({ type: Boolean }) formatAmPm?: boolean = false;
   @property({ type: Number }) stepSize = DefaultTimeStep;
 
-  maxOffset = 2;
+  maxOffset = 12;
 
   updated() {
     const myEvent = new CustomEvent('change', { detail: { event: this.event } });
