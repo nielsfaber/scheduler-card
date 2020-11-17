@@ -69,7 +69,7 @@
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "diário",
+          "daily": "todos",
           "workdays": "semana de trabalho",
           "weekend": "fim-de-semana"
         },
@@ -85,7 +85,7 @@
         "days_range": "até {startDay} até {endDay}"
       },
       "time": {
-        "absolute": "à {time}",
+        "absolute": "Às {time}",
         "interval": "das {startTime} às {endTime}",
         "midnight": "meia-noite",
         "noon": "meio-dia",
@@ -111,7 +111,7 @@
         "make_scheme": "criar esquema"
       },
       "time_picker": {
-        "no_timeslot_selected": "Selecionar um período horário primeiro"
+        "no_timeslot_selected": "É necessário selecionar um período horário para escolher uma ação"
       },
       "conditions": {
         "equal_to": "é",
