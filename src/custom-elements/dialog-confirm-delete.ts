@@ -79,7 +79,7 @@ export class DialogConfirmDelete extends LitElement {
   static get styles(): CSSResult {
     return css`
       div.wrapper {
-        color: var(--text-primary-color);
+        color: var(--primary-text-color);
       }
     `;
   }

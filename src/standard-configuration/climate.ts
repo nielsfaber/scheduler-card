@@ -92,8 +92,8 @@ const climatePresets = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
     },
   ];
 
-  if (stateObj && stateObj.attributes.preset_list && Array.isArray(stateObj.attributes.preset_list)) {
-    return stateObj.attributes.preset_list.map(
+  if (stateObj && stateObj.attributes.preset_modes && Array.isArray(stateObj.attributes.preset_modes)) {
+    return stateObj.attributes.preset_modes.map(
       preset => presetList.find(el => el.value == preset) || { value: preset }
     );
   }

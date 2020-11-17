@@ -71,7 +71,6 @@ export class SchedulerEntitiesCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this.scheduleEntities = Object.keys(hass.states).filter(el => IsSchedulerEntity(el));
     this._hass = hass;
-    this.loadSchedules();
   }
 
   render() {
@@ -82,26 +81,26 @@ export class SchedulerEntitiesCard extends LitElement {
         <div class="card-header">
           <div class="name">
             ${this.config.title !== undefined
-              ? typeof this.config.title == 'string'
-                ? this.config.title
-                : ''
-              : localize('ui.panel.common.title', this._hass.language)}
+        ? typeof this.config.title == 'string'
+          ? this.config.title
+          : ''
+        : localize('ui.panel.common.title', this._hass.language)}
           </div>
           ${this.schedules.length && this.config.show_header_toggle
-            ? html`
+        ? html`
                 <ha-switch
                   ?checked=${this.schedules.some(el => el.state == 'waiting' || el.state == 'triggered')}
                   @change=${this.toggleDisableAll}
                 >
                 </ha-switch>
               `
-            : ''}
+        : ''}
         </div>
         <div class="card-content">
           ${this.getRows()}
         </div>
         ${this._hass.user.is_admin
-          ? html`
+        ? html`
         <div class="card-actions">
           <mwc-button
             @click=${this.newItemClick}
@@ -110,7 +109,7 @@ export class SchedulerEntitiesCard extends LitElement {
         </div>
       </ha-card>
       `
-          : ''}
+        : ''}
       </ha-card>
     `;
   }
@@ -126,7 +125,7 @@ export class SchedulerEntitiesCard extends LitElement {
     const includedSchedules: ScheduleEntity[] = [];
     const excludedEntities: ScheduleEntity[] = [];
 
-    const schedules = this.schedules
+    this.schedules
       .map(e => e.entity_id)
       .forEach(entity_id => {
         const entity = this._hass!.states[entity_id] as ScheduleEntity;
@@ -139,7 +138,7 @@ export class SchedulerEntitiesCard extends LitElement {
 
     return html`
       ${includedSchedules.map(entity => {
-        return html`
+      return html`
           <scheduler-entity-row
             class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
             .hass=${this._hass}
@@ -149,7 +148,7 @@ export class SchedulerEntitiesCard extends LitElement {
           >
           </scheduler-entity-row>
         `;
-      })}
+    })}
       ${excludedEntities.length
         ? !this.showDiscovered
           ? html`
@@ -157,22 +156,22 @@ export class SchedulerEntitiesCard extends LitElement {
                 <button
                   class="show-more"
                   @click=${() => {
-                    this.showDiscovered = true;
-                  }}
+              this.showDiscovered = true;
+            }}
                 >
                   +
                   ${localize(
-                    'ui.panel.overview.excluded_items',
-                    this._hass.language,
-                    '{number}',
-                    excludedEntities.length
-                  )}
+              'ui.panel.overview.excluded_items',
+              this._hass.language,
+              '{number}',
+              excludedEntities.length
+            )}
                 </button>
               </div>
             `
           : html`
               ${excludedEntities.map(entity => {
-                return html`
+            return html`
                   <scheduler-entity-row
                     class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
                     .hass=${this._hass}
@@ -182,13 +181,13 @@ export class SchedulerEntitiesCard extends LitElement {
                   >
                   </scheduler-entity-row>
                 `;
-              })}
+          })}
               <div>
                 <button
                   class="show-more"
                   @click=${() => {
-                    this.showDiscovered = false;
-                  }}
+              this.showDiscovered = false;
+            }}
                 >
                   ${capitalize(localize('ui.panel.overview.hide_excluded', this._hass.language))}
                 </button>
