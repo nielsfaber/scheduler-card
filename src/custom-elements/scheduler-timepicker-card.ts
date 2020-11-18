@@ -212,6 +212,7 @@ export class SchedulerTimepickerCard extends LitElement {
               .hass=${this.hass}
               .actions=${this.actions}
               .entries=${this.entries}
+              stepSize=${this.config.time_step || DefaultTimeStep}
               @update=${this.handlePlannerUpdate}
             >
             </timeslot-editor>
