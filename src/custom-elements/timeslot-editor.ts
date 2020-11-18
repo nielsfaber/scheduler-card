@@ -24,6 +24,9 @@ export class TimeslotEditor extends LitElement {
   @property({ type: Number }) _activeThumb: number | null = null;
   @property({ type: Boolean }) formatAmPm = false;
 
+  _currentTime: number | null = null;
+  _activeEntryMem: number | null = null;
+
   firstUpdated() {
     this.formatAmPm = formatAmPm(this.hass!.language);
   }
@@ -80,24 +83,31 @@ export class TimeslotEditor extends LitElement {
       output.push(html`
         <div
           class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.action ? ' filled' : ''}"
-          @click="${this._handleSegmentClick}"
-          index="${i}"
+          @click=${(ev: Event) => { this._handleSegmentClick(ev, i) }}
           style="width: ${(Duration(el) / MinutesPerDay) * 100}%"
         >
-          ${this.getEntryAction(el)}
+          <span class="content">${this.getEntryAction(el)}</div>
         </div>
       `);
       if (i < this.entries.length - 1) {
         const ts = this.entries[i].endTime!.value;
         output.push(html`
-          <div class="slider-thumb${this._activeThumb == i ? ' active' : ''}" index=${i}>
-            <ha-icon
-              icon="hass:unfold-more-vertical"
-              @mousedown="${this._handleTouchStart}"
-              @touchstart="${this._handleTouchStart}"
-            ></ha-icon>
+          <div
+            class="slider-thumb${this._activeThumb == i ? ' active' : ''} ${this._activeEntry == i || this._activeEntry == (i + 1) ? '' : 'hidden'}"
+            
+          >
             <div
-              class="slider-thumb-tooltip ${this.formatAmPm ? 'wide' : ''}"
+              class="slider-thumb-ripple"
+                @mousedown="${(ev: MouseEvent | TouchEvent) => { this._handleTouchStart(ev, i) }}"
+                @touchstart="${(ev: MouseEvent | TouchEvent) => { this._handleTouchStart(ev, i) }}"
+            >
+              <ha-icon
+                icon="hass:unfold-more-vertical"
+              >
+              </ha-icon>
+            </div>
+            <div
+              class="slider-thumb-tooltip ${this.formatAmPm ? 'wide' : ''} ${this._activeEntryMem == i && this._activeEntryMem != 0 ? 'right' : this._activeEntryMem == (i + 1) && (this._activeEntryMem + 1) != this.entries.length ? 'left' : 'center'}"
               value="time"
               @update="${this._updateMarker}"
             >
@@ -136,18 +146,18 @@ export class TimeslotEditor extends LitElement {
     return PrettyPrintName(action.name || localize(`services.${service}`, this.hass.language) || service);
   }
 
-  private _handleSegmentClick(e: Event) {
+  private _handleSegmentClick(e: Event, entry_id: number) {
     const el = e.target as HTMLElement;
-    const entry_id = Number(el.getAttribute('index'));
     this._activeEntry = this._activeEntry == entry_id ? null : entry_id;
-
+    this._activeEntryMem = entry_id;
     const myEvent = new CustomEvent('update', { detail: { entry: this._activeEntry } });
     this.dispatchEvent(myEvent);
   }
 
-  private _handleTouchStart(e: MouseEvent | TouchEvent) {
-    const thumbHandle = e.target as HTMLElement;
+  private _handleTouchStart(e: MouseEvent | TouchEvent, thumb_index: number) {
+    let thumbHandle = e.target as HTMLElement;
     if (!thumbHandle) return;
+    if (thumbHandle.nodeName == 'HA-ICON') thumbHandle = thumbHandle.parentElement as HTMLElement;
 
     const thumbElement = thumbHandle!.parentNode as HTMLElement;
 
@@ -157,7 +167,7 @@ export class TimeslotEditor extends LitElement {
     const secondSlot: HTMLElement = thumbElement.nextElementSibling as HTMLElement;
 
     const toolTip = thumbElement.querySelector('.slider-thumb-tooltip') as HTMLElement;
-    this._activeThumb = Number(thumbElement.getAttribute('index'));
+    this._activeThumb = thumb_index;
 
     const availableWidth = firstSlot.offsetWidth + secondSlot.offsetWidth;
     const trackWidth = trackCoords.width;
@@ -193,8 +203,10 @@ export class TimeslotEditor extends LitElement {
 
       let time = (x / trackWidth) * MinutesPerDay;
       time = Math.round(time) >= MinutesPerDay ? MinutesPerDay : roundTime(time, this.stepSize, false);
+      if (time == MinutesPerDay) time -= 1;
 
-      toolTip.dispatchEvent(new CustomEvent('update', { detail: { time: time } }));
+      this._currentTime = time;
+      toolTip.dispatchEvent(new CustomEvent('update'));
     };
 
     const mouseUpHandler = () => {
@@ -206,33 +218,35 @@ export class TimeslotEditor extends LitElement {
         /**/
       };
 
-      const newStop = parseTimestamp(toolTip.innerText);
-      const totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
-      const startTime = this.entries[slotIndex].time.value;
+      if (this._currentTime !== null) {
+        const newStop = this._currentTime;
+        const totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
+        const startTime = this.entries[slotIndex].time.value;
 
-      const entries = [...this.entries];
-      Object.assign(entries[slotIndex], { endTime: { value: newStop } } as Entry);
-      Object.assign(entries[slotIndex + 1], {
-        time: { value: newStop },
-        endTime: { value: startTime + totalDuration },
-      } as Entry);
+        const entries = [...this.entries];
+        Object.assign(entries[slotIndex], { endTime: { value: newStop } } as Entry);
+        Object.assign(entries[slotIndex + 1], {
+          time: { value: newStop },
+          endTime: { value: startTime + totalDuration },
+        } as Entry);
 
+        const myEvent = new CustomEvent('update', { detail: { entries: entries } });
+        this.dispatchEvent(myEvent);
+      }
+      this._currentTime = null;
       this._activeThumb = null;
-
-      const myEvent = new CustomEvent('update', { detail: { entries: entries } });
-      this.dispatchEvent(myEvent);
     };
 
     window.addEventListener('mouseup', mouseUpHandler);
     window.addEventListener('touchend', mouseUpHandler);
+    window.addEventListener('blur', mouseUpHandler);
     window.addEventListener('mousemove', mouseMoveHandler);
     window.addEventListener('touchmove', mouseMoveHandler);
   }
 
   private _updateMarker(e: CustomEvent) {
     const detail = e.detail;
-    let time = Number(detail.time);
-    if (time == MinutesPerDay) time -= 1;
+    const time = Number(this._currentTime);
     const target = e.target as HTMLElement;
     target.innerText = formatTime(time, { amPm: this.formatAmPm }).time;
   }
@@ -276,7 +290,6 @@ export class TimeslotEditor extends LitElement {
       width: 100%;
       display: flex;
     }
-
     div.slider-slot {
       height: calc(100%);
       width: 50%;
@@ -293,7 +306,6 @@ export class TimeslotEditor extends LitElement {
       position: relative;
       z-index: 1;
     }
-
     div.slider-slot:before {
       content: ' ';
       background: var(--primary-color);
@@ -305,32 +317,39 @@ export class TimeslotEditor extends LitElement {
       height: 100%;
       z-index: -1;
     }
-
     div.slider-slot:hover:before {
       opacity: 0.6;
     }
-
     div.slider-slot.filled:before {
       opacity: 0.8;
     }
-
     div.slider-slot.filled:hover:before {
       opacity: 1;
     }
-
     div.slider-slot.active:before {
       opacity: 0.85;
       background: var(--accent-color);
     }
-    // div.slider-slot:hover, div.slider-slot.active:hover {
-    //   opacity: 1;
-    // }
-
     div.slider-track div.slider-slot:first-of-type:before {
       border-radius: 4px 0px 0px 4px;
     }
     div.slider-track div.slider-slot:last-of-type:before {
       border-radius: 0px 4px 4px 0px;
+    }
+    div.slider-slot .content {
+      display: inline-block;
+      margin: 0px 12px;
+      word-break: break-all;
+      overflow: hidden;
+      line-height: 1em;
+      max-height: 3em;
+      text-overflow: ellipsis;
+    }
+    div.slider-track div.slider-slot:first-of-type .content {
+      margin-left: 2px;
+    }
+    div.slider-track div.slider-slot:last-of-type .content {
+      margin-right: 2px;
     }
     div.slider-thumb {
       height: 100%;
@@ -340,21 +359,55 @@ export class TimeslotEditor extends LitElement {
       cursor: pointer;
       z-index: 5;
       margin: 0px -1px;
+      position: relative;
     }
     div.slider-thumb.active {
       z-index: 100;
     }
+    div.slider-thumb-ripple {
+      background: none;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      flex: 1 0 36px;
+      position: relative;
+      border-radius: 50%;
+      margin-left: -18px;
+      margin-top: 7px;
+    }
+    div.slider-thumb-ripple:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.10);
+    }
+    div.slider-thumb .slider-thumb-ripple:before {
+      content: ' ';
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      background: rgba(var(--rgb-primary-text-color), 0.20);
+      z-index: -1;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+      transform: scale(0);
+    }
+    div.slider-thumb.active .slider-thumb-ripple:before {
+      transform: scale(1);
+    }
     div.slider-thumb ha-icon {
       background: var(--card-background-color);
       color: var(--primary-text-color);
-      width: 28px;
-      height: 28px;
-      --mdc-icon-size: 28px;
-      border-radius: 100%;
-      margin-left: -13px;
-      margin-top: 12px;
+      width: 24px;
+      height: 24px;
+      margin-top: 6px;
+      margin-left: 6px;
+      --mdc-icon-size: 24px;
+      border-radius: 50%;
     }
-
+    div.slider-thumb.hidden .slider-thumb-ripple {
+      display: none;
+    }
     div.slider-legend {
       display: flex;
       width: 100%;
@@ -370,7 +423,6 @@ export class TimeslotEditor extends LitElement {
     div.slider-legend-item.wide {
       width: calc(100% / 6);
     }
-
     div.slider-legend-item:before {
       content: ' ';
       background: var(--disabled-text-color);
@@ -405,12 +457,14 @@ export class TimeslotEditor extends LitElement {
       text-align: center;
       line-height: 26px;
       z-index: 1;
+      transition: all 0.1s ease-in-out;
+      transform-origin: center bottom;
     }
     div.slider-thumb-tooltip.wide {
       width: 70px;
       margin-left: -35px;
     }
-    div.slider-thumb-tooltip:before {
+    div.slider-thumb-tooltip.center:before {
       content: ' ';
       background: var(--primary-color);
       transform: rotate(-45deg);
@@ -429,21 +483,61 @@ export class TimeslotEditor extends LitElement {
       margin-left: 31px;
     }
     div.slider-thumb.active div.slider-thumb-tooltip {
-      background: var(--accent-color);
       z-index: 10;
     }
-    div.slider-thumb.active div.slider-thumb-tooltip:before {
-      background: var(--accent-color);
+    div.slider-thumb-tooltip.left {
+      margin-left: -49px;
+      transform-origin: right bottom;
     }
-
+    div.slider-thumb-tooltip.wide.left {
+      margin-left: -69px;
+    }
+    div.slider-thumb-tooltip.left:before {
+      content: ' ';
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent; 
+      border-right: 8px solid var(--primary-color);
+      opacity: 1;
+      position: absolute;
+      margin-top: 15px;
+      margin-left: 42px;
+      left: 0px;
+      top: 0px;
+      width: 0px;
+      height: 0px;
+      z-index: -1;
+    }
+    div.slider-thumb-tooltip.wide.left:before {
+      margin-left: 62px;
+    }
+    div.slider-thumb-tooltip.right {
+      margin-left: 1px;
+      transform-origin: left bottom;
+    }
+    div.slider-thumb-tooltip.right:before {
+      content: ' ';
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent; 
+      border-left: 8px solid var(--primary-color); 
+      opacity: 1;
+      position: absolute;
+      margin-top: 15px;
+      margin-left: 0px;
+      left: 0px;
+      top: 0px;
+      width: 0px;
+      height: 0px;
+      z-index: -1;
+    }
+    div.slider-thumb.hidden div.slider-thumb-tooltip  {
+      transform: scale(0);
+    }
     .padded-right {
       margin-right: 11px;
     }
-
     mwc-button {
       margin: 2px 0px;
     }
-
     mwc-button.active {
       background: var(--primary-color);
       --mdc-theme-primary: var(--text-primary-color);
