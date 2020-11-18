@@ -62,7 +62,7 @@ export class TimeslotEditor extends LitElement {
         </div>
       </div>
       <div>
-        <mwc-button @click=${this._addSlot} ?disabled=${this._activeEntry === null || this.entries.length >= 10}>
+        <mwc-button @click=${this._addSlot} ?disabled=${this._activeEntry === null || this.entries.length >= 24}>
           <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
           ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
         </mwc-button>
