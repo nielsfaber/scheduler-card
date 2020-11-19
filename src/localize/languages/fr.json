@@ -43,13 +43,13 @@
       "start_pause": "démarrer / pause"
     },
     "water_heater": {
-      "set_away_mode": "ajuster au mode absent"
+      "set_away_mode": "choisir le mode absent"
     }
   },
   "domains": {
     "alarm_control_panel": "panneau de contrôle de l'alarme",
     "climate": "climat",
-    "cover": "connecteurs",
+    "cover": "couvertures",
     "fan": "ventilateurs",
     "group": "groupes",
     "humidifier": "humidificateurs",
@@ -71,12 +71,12 @@
         "day_types_short": {
           "daily": "quotidien",
           "workdays": "jours de travail",
-          "weekend": "fin de semaine"
+          "weekend": "weekend"
         },
         "day_types_long": {
           "daily": "chaque jour",
           "workdays": "en semaine",
-          "weekend": "en fin de semaine"
+          "weekend": "le weekend"
         },
         "days": "jours",
         "tomorrow": "demain",
@@ -108,14 +108,14 @@
         "no_entities_for_group": "Il n'y a pas d'entité dans ce groupe",
         "no_entity_selected": "Choisir une entité en premier",
         "no_actions_for_entity": "Il n'y a pas d'action pour cet entité",
-        "make_scheme": "faire un schéma"
+        "make_scheme": "créer un schéma"
       },
       "time_picker": {
         "no_timeslot_selected": "Choisir une plage horaire en premier"
       },
       "conditions": {
         "equal_to": "égal à",
-        "unequal_to": "inégal à",
+        "unequal_to": "pas égal à",
         "all": "tous",
         "any": "tout",
         "no_conditions_defined": "Il n'y a pas de condition définie"
