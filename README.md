@@ -57,14 +57,24 @@ See it in action:
 <summary>click to show installation instructions </summary>
 
 HACS installation:
-1. Add `https://github.com/nielsfaber/scheduler-card` as a custom frontend repository.
+##### Note: Ensure you have a www folder created as in config/www or the installation will succeed but fails silently
+1. Click the Orange + button bottom right and search for Scheduler Card
 2. Click on "Install" under the new card that just popped up.
+3. Use the GUI; Configuration -> Lovelace Dashboards -> Resources Tab to add `/hacsfiles/scheduler-card/scheduler-card.js`, or add a reference to the card in the resources section of `configuration.yaml`:
+
+```yaml
+resources:
+  - url: /hacsfiles/scheduler-card/scheduler-card.js
+    type: module
+```
+
+
 
 Manual installation
 
 1. Download the latest release of `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
 
-2. Use the GUI to add `/local/scheduler-card/scheduler-card.js?v=0`, or add a reference to the card in the resources section of `configuration.yaml`:
+2. Use the GUI; Configuration -> Lovelace Dashboards -> Resources Tab to add `/local/scheduler-card/scheduler-card.js?v=0`, or add a reference to the card in the resources section of `configuration.yaml`:
 
 ```yaml
 resources:
