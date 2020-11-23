@@ -98,9 +98,9 @@
       },
       "overview": {
         "no_entries": "il n'y a pas d'entrée à montrer",
-        "excluded_items": "{number}{if number is 1} entrée exclue{else} entrées exclues",
+        "excluded_items": "{number} {if number is 1}entrée exclue{else}entrées exclues",
         "hide_excluded": "cacher les entrées exclues",
-        "additional_tasks": "{number}{if number is 1} tâche à venir{else} tâches à venir"
+        "additional_tasks": "{number} {if number is 1}tâche à venir{else}tâches à venir"
       },
       "entity_picker": {
         "no_groups_defined": "Aucun groupe défini",
