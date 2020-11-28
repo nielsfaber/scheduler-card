@@ -5,10 +5,10 @@
   "main": "dist/scheduler-card.js",
   "scripts": {
     "build": "npm run lint && npm run rollup && npm run babel",
-    "rollup": "npx rollup -c",
-    "babel": "npx babel dist/scheduler-card.js --out-file dist/scheduler-card.js",
-    "lint": "npx eslint src/**/*.ts --fix",
-    "start": "npx rollup -c --watch"
+    "rollup": "rollup -c",
+    "babel": "babel dist/scheduler-card.js --out-file dist/scheduler-card.js",
+    "lint": "eslint src/**/*.ts --fix",
+    "start": "rollup -c --watch"
   },
   "repository": {
     "type": "git",
