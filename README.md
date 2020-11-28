@@ -68,6 +68,7 @@ resources:
     type: module
 ```
 
+##### Note: Ensure to install [`https://github.com/nielsfaber/scheduler-component`](https://github.com/nielsfaber/scheduler-component) and add the integration in order for the scheduler to work properly.
 
 
 Manual installation
