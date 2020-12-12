@@ -51,7 +51,7 @@
     "climate": "climate",
     "cover": "covers",
     "fan": "fans",
-    "group": "groups",
+    "group": "entity groups",
     "humidifier": "humidifiers",
     "input_boolean": "input boolean",
     "input_number": "input number",
