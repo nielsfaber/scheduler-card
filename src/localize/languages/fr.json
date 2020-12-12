@@ -31,7 +31,7 @@
       "select_option": "choisir l'option[ {option}]"
     },
     "light": {
-      "turn_on": "alumer[ avec {brightness} luminosité]"
+      "turn_on": "allumer[ avec {brightness} luminosité]"
     },
     "media_player": {
       "select_source": "choisir la source[ {source}]"
@@ -48,7 +48,7 @@
   },
   "domains": {
     "alarm_control_panel": "panneau de contrôle de l'alarme",
-    "climate": "climat",
+    "climate": "thermostat",
     "cover": "couvertures",
     "fan": "ventilateurs",
     "group": "groupes",
