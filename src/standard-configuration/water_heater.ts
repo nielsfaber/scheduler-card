@@ -75,7 +75,7 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       name: hass.localize('ui.card.weather.attributes.temperature'),
       min: stateObj?.attributes.min_temp,
       max: stateObj?.attributes.max_temp,
-      step: hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+      step: stateObj?.attributes.target_temp_step || hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
       unit: hass.config.unit_system.temperature,
     }),
     icon: 'hass:thermometer',

@@ -2,26 +2,16 @@ import { LitElement, html, customElement, property, PropertyValues } from 'lit-e
 import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import {
-  EVariableType,
-  LevelVariable,
-  ListVariable,
   CardConfig,
   EntityElement,
   ActionElement,
-  ImportedEntry,
-  Entry,
-  HassAction,
-  HassEntry,
-  HassData,
-  OptionConfig,
-  Condition,
-  EDayType,
+  ScheduleConfig,
+  Action,
+  ERepeatType,
+  Timeslot,
 } from './types';
 import { CARD_VERSION, EViews, CreateTimeScheme } from './const';
-import { parseTimestamp, MinutesPerDay, formatTime, timeEventToString } from './date-time';
-import { importEntry } from './data/import_entry';
-import { pick, calculateTimeline } from './helpers';
-import { exportActionVariable } from './actionVariables';
+import { calculateTimeline, flatten, unique, omit } from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './custom-elements/scheduler-entities-card';
@@ -29,12 +19,13 @@ import './custom-elements/scheduler-entitypicker-card';
 import './custom-elements/scheduler-timepicker-card';
 import './custom-elements/scheduler-options-card';
 import './custom-elements/scheduler-card-editor';
-import { importAction } from './data/import_action';
+import './custom-elements/dialog-error';
 import { parseAction } from './data/parse_action';
 import { parseEntity } from './data/parse_entity';
 import { computeEntityActions } from './data/compute_entity_actions';
-import { uniqueId, equalAction } from './data/compute_action_id';
+import { equalAction } from './data/compute_action_id';
 import { IsSchedulerEntity } from './data/filter_entity';
+import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -63,10 +54,9 @@ export class SchedulerCard extends LitElement {
   @property()
   _view: EViews = EViews.Overview;
 
-  @property() entries: Entry[] = [];
-  @property() entity?: EntityElement;
+  @property() entities?: EntityElement[];
   @property() actions: ActionElement[] = [];
-  @property() friendlyName?: string;
+  @property() schedule?: ScheduleConfig;
 
   @property() translationsLoaded = false;
   editItem: string | null = null;
@@ -131,8 +121,8 @@ export class SchedulerCard extends LitElement {
         <scheduler-editor-card
           .hass=${this._hass}
           .config=${this._config}
-          .entity=${this.entity}
-          .selectedAction=${this.entries ? this.entries.every(e => e.endTime) ? CreateTimeScheme : this.actions[0].id : undefined}
+          .entities=${this.entities}
+          .schedule=${this.schedule}
           @nextClick=${this._confirmItemClick}
           @cancelClick=${this._cancelEditClick}
         >
@@ -143,8 +133,8 @@ export class SchedulerCard extends LitElement {
         <scheduler-timepicker-card
           .hass=${this._hass}
           .config=${this._config}
-          .entries=${this.entries}
-          .entity=${this.entity}
+          .schedule=${this.schedule}
+          .entities=${this.entities}
           .actions=${this.actions}
           ?timeslots=${this._view == EViews.TimeScheme}
           ?editItem=${this.editItem !== null}
@@ -161,10 +151,9 @@ export class SchedulerCard extends LitElement {
       <scheduler-options-card
         .hass=${this._hass}
         .config=${this._config}
-        .entries=${this.entries}
-        .friendlyName=${this.friendlyName}
+        .schedule=${this.schedule}
         @cancelClick=${this._cancelEditClick}
-        @saveClick=${ev => this._optionsBackClick(ev, true)}
+        @saveClick=${this._saveItemClick}
         @backClick=${this._optionsBackClick}
       >
       </scheduler-timescheme-card>
@@ -175,10 +164,9 @@ export class SchedulerCard extends LitElement {
   private _addItemClick(): void {
     this._view = EViews.NewSchedule;
     this.editItem = null;
-    this.friendlyName = undefined;
-    this.entity = undefined;
+    this.entities = [];
     this.actions = [];
-    this.entries = [];
+    this.schedule = undefined;
   }
 
   private _cancelEditClick(): void {
@@ -188,270 +176,163 @@ export class SchedulerCard extends LitElement {
 
   private _confirmItemClick(ev: CustomEvent): void {
     if (!this._hass || !this._config) return;
-    const entity = String(ev.detail.entity);
-    this.entity = parseEntity(entity, this._hass, this._config)!;
-    const action = String(ev.detail.action);
+    const entities: string[] = ev.detail.entities;
+    this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
 
+    const action: string = ev.detail.action;
+    const oldSchedule = this.schedule;
     if (action != CreateTimeScheme) {
-      if (this.entries && this.entries.length == 1) { //editing an existing entry
-        let entry = this.entries[0];
-        if (entity != entry.entity) entry = { ...entry, entity: entity };
-        if (action != entry.action) entry = { ...entry, action: action, variable: undefined };
-        this.entries = [entry];
-      } else {
-        this.entries = [
-          {
-            entity: entity,
-            action: action,
-            time: { value: parseTimestamp('12:00') },
-            days: { type: EDayType.Daily },
-          },
-        ];
-      }
-      this._view = EViews.TimePicker;
+      this.actions = [computeEntityActions(entities, this._hass, this._config).find(e => e.id == action)!];
+      const defaultTimeslot: Timeslot = {
+        start: '12:00:00',
+        actions: flatten(entities.map(e =>
+          Object({
+            service: this.actions[0].service,
+            entity_id: e,
+            service_data: this.actions[0].service_data
+          })
+        ))
+      };
 
-      this.actions = [computeEntityActions(entity, this._hass, this._config).find(e => e.id == action)!];
+      this.schedule = oldSchedule
+        ? {
+          ...oldSchedule,
+          timeslots: oldSchedule.timeslots.length == 1 && !oldSchedule.timeslots[0].stop
+            ? [{ ...oldSchedule.timeslots[0], actions: defaultTimeslot.actions }]
+            : [defaultTimeslot]
+        }
+        : {
+          weekdays: ['daily'],
+          timeslots: [defaultTimeslot],
+          repeat_type: ERepeatType.Repeat
+        };
+      this._view = EViews.TimePicker;
     } else {
-      this.actions = computeEntityActions(entity, this._hass, this._config);
-      if (this.entries && this.entries.length > 1) { //editing an existing timeline
-        let entries = this.entries;
-        this.entries = entries.map(entry => {
-          if (entity != entry.entity) entry = { ...entry, entity: entity };
-          if (entry.action && !this.actions.find(e => entry.action == e.id)) entry = { ...entry, action: '', variable: undefined };
-          return entry;
-        });
-      }
-      else {
-        this.entries = [
-          {
-            entity: ev.detail.entity,
-            action: '',
-            time: { value: parseTimestamp('00:00') },
-            endTime: { value: parseTimestamp('08:00') },
-            days: { type: EDayType.Daily },
-          },
-          {
-            entity: ev.detail.entity,
-            action: '',
-            time: { value: parseTimestamp('08:00') },
-            endTime: { value: parseTimestamp('16:00') },
-            days: { type: EDayType.Daily },
-          },
-          {
-            entity: ev.detail.entity,
-            action: '',
-            time: { value: parseTimestamp('16:00') },
-            endTime: { value: MinutesPerDay },
-            days: { type: EDayType.Daily },
-          },
-        ];
-      }
+      this.actions = computeEntityActions(entities, this._hass, this._config);
+      const defaultTimeslots = [
+        {
+          start: '00:00:00',
+          stop: '08:00:00',
+          actions: []
+        },
+        {
+          start: '08:00:00',
+          stop: '16:00:00',
+          actions: []
+        },
+        {
+          start: '16:00:00',
+          stop: '23:59:00',
+          actions: []
+        }
+      ];
+
+      this.schedule = oldSchedule
+        ? {
+          ...oldSchedule,
+          timeslots: oldSchedule.timeslots.length > 1 && oldSchedule.timeslots.every(e => e.stop)
+            ? oldSchedule.timeslots.map(slot => Object.assign(slot, { actions: [] }))
+            : defaultTimeslots
+        }
+        : {
+          weekdays: ['daily'],
+          timeslots: defaultTimeslots,
+          repeat_type: ERepeatType.Repeat
+        };
       this._view = EViews.TimeScheme;
     }
   }
 
   private _editActionClick(ev: CustomEvent): void {
-    this.entries = ev.detail as Entry[];
+    this.schedule = ev.detail;
     this._view = EViews.NewSchedule;
   }
 
-  _saveItemClick(ev?: CustomEvent): void {
-    if (!this._hass || !this._config) return;
-
-    if (ev) this.entries = ev.detail as Entry[];
-    const actions: HassAction[] = [];
-    const entries: HassEntry[] = [];
-    const conditions: Condition[] = [];
-    const options: OptionConfig = {};
-
-    this.entries.forEach(entry => {
-      if (!entry.action || !entry.entity) return;
-
-      const action = this.actions.find(e => e.id == entry.action)!;
-      const variableData = exportActionVariable(action, entry);
-
-      const output: HassAction = {
-        entity: entry.entity,
-        service: action.service,
-        service_data: { ...(action.service_data || {}), ...variableData },
-      };
-
-      let num = actions.findIndex(e => uniqueId(e) == uniqueId(output));
-      if (num == -1) num = actions.push(output) - 1;
-
-      const hassEntry: HassEntry = {
-        actions: [num],
-      };
-
-      if (!entry.time.event) Object.assign(hassEntry, { time: formatTime(entry.time.value).time });
-      else if (entry.time.event)
-        Object.assign(hassEntry, {
-          time: { event: timeEventToString(entry.time.event), offset: formatTime(entry.time.value).time },
-        });
-
-      if (entry.endTime) {
-        if (!entry.time.event) Object.assign(hassEntry, { end_time: formatTime(entry.endTime.value).time });
-        else if (entry.time.event)
-          Object.assign(hassEntry, {
-            end_time: { event: timeEventToString(entry.endTime.event!), offset: formatTime(entry.endTime.value).time },
-          });
-      }
-      let dayType = 'daily';
-      if (entry.days.type == EDayType.Workday) dayType = 'workday';
-      else if (entry.days.type == EDayType.Weekend) dayType = 'weekend';
-      else if (entry.days.type == EDayType.Custom) dayType = 'custom';
-
-      if (entry.days.type == EDayType.Custom)
-        Object.assign(hassEntry, { days: { type: dayType, list: entry.days.custom_days } });
-      else Object.assign(hassEntry, { days: { type: dayType } });
-
-      if ('conditions' in entry && entry.conditions?.items.length) {
-        const conditionNums: number[] = [];
-        entry.conditions?.items.forEach(condition => {
-          let num = conditions.findIndex(e => e === condition);
-          if (num < 0) num = conditions.push(condition) - 1;
-          conditionNums.push(num);
-        });
-        Object.assign(hassEntry, { conditions: { list: conditionNums, type: entry.conditions!.type } } as HassEntry);
-      }
-
-      if (entry.options && Object.keys(entry.options).length) {
-        const optionNums: number[] = [];
-        Object.entries(entry.options).forEach(([key, val]) => {
-          let num = Object.entries(options).findIndex(([k, v]) => ({ [key]: val } === { [k]: v }));
-          if (num < 0) {
-            Object.assign(options, { [key]: val });
-            num = Object.keys(options).length - 1;
-          }
-          optionNums.push(num);
-        });
-        Object.assign(hassEntry, { options: optionNums } as HassEntry);
-      }
-
-      entries.push(hassEntry);
-    });
-
-    const data: HassData = {
-      entries: entries,
-      actions: actions,
-    };
-
-    if (conditions.length) Object.assign(data, { conditions: conditions });
-    if (this.friendlyName) Object.assign(data, { name: this.friendlyName });
-    if (Object.keys(options).length) Object.assign(data, { options: options });
-
-    if (this.editItem) {
-      this._hass!.callService('scheduler', 'edit', Object.assign(data, { entity_id: this.editItem }));
-    } else {
-      this._hass!.callService('scheduler', 'add', data);
+  _saveItemClick(ev: CustomEvent): void {
+    if (!this._hass) return;
+    let schedule = ev.detail as ScheduleConfig;
+    schedule = {
+      ...schedule,
+      timeslots: schedule.timeslots.map(slot => {
+        if (!slot.actions || !slot.actions.length) return null;
+        if (!slot.stop) slot = omit(slot, ['stop']) as Timeslot;
+        if (!slot.conditions?.length) slot = omit(slot, ['conditions', 'condition_type']) as Timeslot;
+        return slot;
+      })
+        .filter(e => e) as Timeslot[]
     }
-
-    this.editItem = null;
-    this._view = EViews.Overview;
+    if (this.editItem) {
+      editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
+        .catch(e => handleError(e, this))
+        .then(() => {
+          this.editItem = null;
+          this._view = EViews.Overview;
+        });
+    }
+    else {
+      saveSchedule(this._hass, schedule)
+        .catch(e => handleError(e, this))
+        .then(() => {
+          this._view = EViews.Overview;
+        });
+    }
   }
 
   _deleteItemClick(): void {
+    if (!this.editItem || !this._hass) return;
     const entity_id = this.editItem;
-    this._hass!.callService('scheduler', 'remove', { entity_id: entity_id });
-    this.editItem = null;
-    this._view = EViews.Overview;
+    deleteSchedule(this._hass, entity_id)
+      .catch(e => handleError(e, this))
+      .then(() => {
+        this.editItem = null;
+        this._view = EViews.Overview;
+      });
   }
 
-  _editItemClick(ev: CustomEvent): void {
+  async _editItemClick(ev: CustomEvent) {
     if (!this._hass || !this._config) return;
-    const scheduleEntity = this._hass.states[ev.detail]!;
 
-    const entries: ImportedEntry[] = scheduleEntity.attributes.entries.map(importEntry);
-    const action = importAction(scheduleEntity.attributes.actions[0]);
+    const data = await fetchScheduleItem(this._hass, ev.detail);
+    if (!data) return;
+    const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id))));
+    this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
+    let actions = computeEntityActions(entities, this._hass, this._config);
 
-    const entityConfig = parseEntity(action.entity, this._hass, this._config);
-    this.entity = entityConfig;
+    const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
+    usedActions
+      .filter(a => !actions.find(e => equalAction(e, a)))
+      .forEach(e => {
+        actions.push(parseAction(e, this._hass!, this._config!))
+      });
 
-    this.actions = computeEntityActions(action.entity, this._hass, this._config);
+    this.actions = actions;
 
-    const conditions: Condition[] = scheduleEntity.attributes.conditions || [];
-    const options: OptionConfig = scheduleEntity.attributes.options || {};
-    this.entries = entries.map(el => {
-      const hassAction = el.actions
-        .filter(e => e < scheduleEntity.attributes.actions.length)
-        .map(e => importAction(scheduleEntity.attributes.actions[e]))
-        .shift()!;
-      const action = parseAction(hassAction, this._hass!, this._config!);
+    this.schedule = {
+      weekdays: data.weekdays,
+      timeslots: data.timeslots,
+      repeat_type: data.repeat_type,
+      name: data.name
+    }
 
-      const res = this.actions.find(e => equalAction(e, action));
-      if (!res) {
-        const actions = [...this.actions];
-        actions.push(action);
-        this.actions = actions;
-      }
-      let output: Entry = {
-        time: el.time,
-        endTime: el.endTime,
-        days: el.days,
-        entity: this.entity!.id,
-        action: res ? res.id : action.id,
-      };
+    this.editItem = data.schedule_id!;
 
-      if (action.variable && hassAction.service_data && action.variable.field in hassAction.service_data) {
-        if (action.variable.type == EVariableType.Level) {
-          const variableConfig: LevelVariable = {
-            type: EVariableType.Level,
-            value: Number(hassAction.service_data[action.variable.field]),
-            enabled: true,
-          };
-          output = { ...output, variable: variableConfig };
-        } else {
-          const variableConfig: ListVariable = {
-            type: EVariableType.List,
-            value: String(hassAction.service_data[action.variable.field]),
-          };
-          output = { ...output, variable: variableConfig };
-        }
-      }
-
-      if (el.conditions && el.conditions.items.length) {
-        Object.assign(output, {
-          conditions: {
-            type: el.conditions.type,
-            items: el.conditions.items.filter(e => conditions.length >= e - 1).map(e => conditions[e]),
-          },
-        });
-      }
-
-      if (el.options && Object.keys(el.options).length) {
-        Object.assign(output, {
-          options: el.options.reduce((obj, el) => Object.assign(obj, pick(options, [Object.keys(options)[el]])), {}),
-        });
-      }
-
-      return output;
-    });
-
-    this.editItem = scheduleEntity.entity_id;
-    this.friendlyName = scheduleEntity.attributes.friendly_name;
-
-    if (this.entries.every(e => e.endTime)) {
+    if (this.schedule.timeslots.every(e => e.stop)) {
       this._view = EViews.TimeScheme;
-      this.entries = calculateTimeline(this.entries);
+      this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots) };
     } else {
-      this.actions = this.actions.filter(e => e.id == this.entries[0].action);
       this._view = EViews.TimePicker;
+      this.actions = this.actions.filter(e => usedActions.find(a => equalAction(e, a)));
     }
   }
   _gotoOptionsClick(ev: CustomEvent): void {
-    this.entries = ev.detail as Entry[];
+    this.schedule = ev.detail as ScheduleConfig;
     this._view = EViews.Options;
   }
 
-  _optionsBackClick(ev: CustomEvent, saveAfter?: boolean): void {
-    this.entries = ev.detail.entries as Entry[];
-    this.friendlyName = ev.detail.friendlyName as string;
+  _optionsBackClick(ev: CustomEvent): void {
+    this.schedule = ev.detail as ScheduleConfig;
 
-    if (this.entries.every(e => e.endTime)) this._view = EViews.TimeScheme;
+    if (this.schedule.timeslots.every(e => e.stop)) this._view = EViews.TimeScheme;
     else this._view = EViews.TimePicker;
-
-    if (saveAfter) {
-      this._saveItemClick();
-    }
   }
 }

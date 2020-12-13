@@ -1,80 +1,65 @@
-import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
+import { LitElement, html, customElement, css, property } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
-import { CardConfig, ScheduleEntity } from '../types';
+import { CardConfig, Schedule } from '../types';
 import { commonStyle } from '../styles';
-import { HassEntity } from 'home-assistant-js-websocket';
+import { UnsubscribeFunc } from 'home-assistant-js-websocket';
+import { SubscribeMixin } from './subscribe-mixin';
 
 import './scheduler-entity-row';
-import { importAction } from '../data/import_action';
-import { IsSchedulerEntity, entityFilter } from '../data/filter_entity';
+import { entityFilter } from '../data/filter_entity';
 import { capitalize } from '../helpers';
+import { fetchSchedules } from '../data/websockets';
 
 @customElement('scheduler-entities-card')
-export class SchedulerEntitiesCard extends LitElement {
-  @property() _hass?: HomeAssistant;
+export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
+  @property() hass!: HomeAssistant;
   @property() config?: CardConfig;
 
   @property() showDiscovered = false;
+  @property() schedules?: Schedule[];
 
-  schedules: HassEntity[] = [];
-  scheduleEntities: string[] = [];
+  connectionError = false;
 
-  loadSchedules() {
-    if (!this._hass || !this.config) return;
-
-    let schedules = Object.entries(this._hass.states)
-      .filter(([k]) => IsSchedulerEntity(k))
-      .map(([, v]) => v);
-
-    if (this.config.discover_existing !== undefined && !this.config.discover_existing) {
-      schedules = schedules.filter(el =>
-        (el.attributes.actions.map(importAction).map(e => e.entity) as string[]).every(
-          e => this._hass!.states[e] && entityFilter(e, this.config!)
-        )
-      );
-    }
-
-    schedules.sort((a, b) => {
-      const remainingA = a.attributes.next_trigger ? new Date(a.attributes.next_trigger).valueOf() : null;
-      const remainingB = b.attributes.next_trigger ? new Date(b.attributes.next_trigger).valueOf() : null;
-
-      if (remainingA !== null && remainingB !== null) {
-        if (remainingA > remainingB) return 1;
-        else if (remainingA < remainingB) return -1;
-        else return a.entity_id < b.entity_id ? 1 : -1;
-      } else if (remainingB !== null) return 1;
-      else if (remainingA !== null) return -1;
-      else return a.entity_id < b.entity_id ? 1 : -1;
-    });
-
-    this.schedules = schedules;
-  }
-
-  protected shouldUpdate(changedProps: PropertyValues): boolean {
-    const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
-    if (oldHass && changedProps.size == 1) {
-      const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
-      if (scheduleEntities.length !== this.scheduleEntities.length) {
-        this.loadSchedules();
-        return true;
-      }
-      if (scheduleEntities.some((e, i) => e !== this.scheduleEntities[i])) return true;
-      if (scheduleEntities.some(e => oldHass.states[e] !== this._hass!.states[e])) return true;
-      return false;
-    }
+  public hassSubscribe(): Promise<UnsubscribeFunc>[] {
     this.loadSchedules();
-    return true;
+    return [
+      this.hass!.connection.subscribeEvents(
+        () => this.loadSchedules(),
+        "scheduler_updated"
+      )
+    ];
   }
 
-  set hass(hass: HomeAssistant) {
-    this.scheduleEntities = Object.keys(hass.states).filter(el => IsSchedulerEntity(el));
-    this._hass = hass;
+  private async loadSchedules(): Promise<void> {
+    fetchSchedules(this.hass)
+      .then(res => {
+        const schedules = res;
+
+        schedules.sort((a, b) => {
+          const remainingA = new Date(a.timestamps[a.next_entries[0]]).valueOf();
+          const remainingB = new Date(b.timestamps[b.next_entries[0]]).valueOf();
+
+          if (remainingA !== null && remainingB !== null) {
+            if (remainingA > remainingB) return 1;
+            else if (remainingA < remainingB) return -1;
+            else return a.entity_id < b.entity_id ? 1 : -1;
+          } else if (remainingB !== null) return 1;
+          else if (remainingA !== null) return -1;
+          else return a.entity_id < b.entity_id ? 1 : -1;
+        });
+
+        this.schedules = schedules;
+      })
+      .catch(_e => {
+        this.schedules = [];
+        this.connectionError = true;
+      });
   }
 
   render() {
-    if (!this._hass || !this.config || !this.schedules) return html``;
+    if (!this.hass || !this.config || !this.schedules) return html``;
 
     return html`
       <ha-card>
@@ -84,12 +69,12 @@ export class SchedulerEntitiesCard extends LitElement {
         ? typeof this.config.title == 'string'
           ? this.config.title
           : ''
-        : localize('ui.panel.common.title', this._hass.language)}
+        : localize('ui.panel.common.title', this.hass.language)}
           </div>
           ${this.schedules.length && this.config.show_header_toggle
         ? html`
                 <ha-switch
-                  ?checked=${this.schedules.some(el => el.state == 'waiting' || el.state == 'triggered')}
+                  ?checked=${this.schedules.some(el => el.enabled)}
                   @change=${this.toggleDisableAll}
                 >
                 </ha-switch>
@@ -99,57 +84,60 @@ export class SchedulerEntitiesCard extends LitElement {
         <div class="card-content">
           ${this.getRows()}
         </div>
-        ${this._hass.user.is_admin
-        ? html`
         <div class="card-actions">
           <mwc-button
             @click=${this.newItemClick}
-          >${this._hass.localize('ui.components.area-picker.add_dialog.add')}
+            ?disabled=${this.connectionError}
+          >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
           </mwc-button>
         </div>
-      </ha-card>
-      `
-        : ''}
       </ha-card>
     `;
   }
   getRows() {
-    if (!this.config || !this._hass || !this.schedules) return html``;
-    if (!this.schedules.length) {
+    if (!this.config || !this.hass || !this.schedules) return html``;
+    if (this.connectionError) {
       return html`
         <div>
-          ${localize('ui.panel.overview.no_entries', this._hass.language)}
+          <hui-warning>
+           ${localize('ui.panel.overview.backend_error', this.hass.language)}
+          </hui-warning>
         </div>
       `;
     }
-    const includedSchedules: ScheduleEntity[] = [];
-    const excludedEntities: ScheduleEntity[] = [];
+    else if (!Object.keys(this.schedules).length) {
+      return html`
+        <div>
+          ${localize('ui.panel.overview.no_entries', this.hass.language)}
+        </div>
+      `;
+    }
+    let includedSchedules: Schedule[] = [];
+    let excludedEntities: Schedule[] = [];
 
     this.schedules
-      .map(e => e.entity_id)
-      .forEach(entity_id => {
-        const entity = this._hass!.states[entity_id] as ScheduleEntity;
-        const discovered = !entity.attributes
-          .actions!.map(importAction)
-          .every(e => entityFilter(e.entity, this.config!));
-        if (discovered) excludedEntities.push(entity);
-        else includedSchedules.push(entity);
+      .forEach(schedule => {
+        const included = schedule.timeslots
+          .every(timeslot => timeslot.actions
+            .every(action => entityFilter(action.entity_id!, this.config!)))
+        if (included) includedSchedules.push(schedule)
+        else excludedEntities.push(schedule)
       });
 
     return html`
-      ${includedSchedules.map(entity => {
+      ${includedSchedules.map(schedule => {
       return html`
           <scheduler-entity-row
-            class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
-            .hass=${this._hass}
-            .schedule_entity=${entity.entity_id}
+            class="${schedule.enabled ? '' : 'disabled'}"
+            .hass=${this.hass}
+            .schedule=${schedule}
             .config=${this.config}
-            @click=${() => this.editItemClick(entity.entity_id)}
+            @click=${() => this.editItemClick(schedule.schedule_id!)}
           >
           </scheduler-entity-row>
         `;
     })}
-      ${excludedEntities.length
+      ${Object.keys(excludedEntities).length
         ? !this.showDiscovered
           ? html`
               <div>
@@ -162,7 +150,7 @@ export class SchedulerEntitiesCard extends LitElement {
                   +
                   ${localize(
               'ui.panel.overview.excluded_items',
-              this._hass.language,
+              this.hass.language,
               '{number}',
               excludedEntities.length
             )}
@@ -170,14 +158,14 @@ export class SchedulerEntitiesCard extends LitElement {
               </div>
             `
           : html`
-              ${excludedEntities.map(entity => {
+              ${excludedEntities.map(schedule => {
             return html`
                   <scheduler-entity-row
-                    class="${entity.state == 'waiting' || entity.state == 'triggered' ? '' : 'disabled'}"
-                    .hass=${this._hass}
-                    .schedule_entity=${entity.entity_id}
+                    class="${schedule.enabled ? '' : 'disabled'}"
+                    .hass=${this.hass}
+                    .schedule=${schedule}
                     .config=${this.config}
-                    @click=${() => this.editItemClick(entity.entity_id)}
+                    @click=${() => this.editItemClick(schedule.schedule_id!)}
                   >
                   </scheduler-entity-row>
                 `;
@@ -189,7 +177,7 @@ export class SchedulerEntitiesCard extends LitElement {
               this.showDiscovered = false;
             }}
                 >
-                  ${capitalize(localize('ui.panel.overview.hide_excluded', this._hass.language))}
+                  ${capitalize(localize('ui.panel.overview.hide_excluded', this.hass.language))}
                 </button>
               </div>
             `
@@ -198,10 +186,10 @@ export class SchedulerEntitiesCard extends LitElement {
   }
 
   toggleDisableAll(ev: Event) {
-    if (!this._hass || !this.schedules) return;
+    if (!this.hass || !this.schedules) return;
     const checked = (ev.target as HTMLInputElement).checked;
     this.schedules.forEach(el => {
-      this._hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
+      this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
     });
   }
 

@@ -40,6 +40,21 @@ export const commonStyle = css`
       font-weight: 500;
       font-size: 12px;
       margin: 20px 0px 0px 0px;
+      display: flex;
+      flex-direction: row;
+    }
+    div.header .switch {
+      text-transform: none;
+      font-weight: normal;
+      font-size: 14px;
+      display: flex;
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+    div.header ha-switch {
+      display: flex;
+      align-self: center;
+      margin: 0px 8px;
     }
     mwc-button {
       margin: 2px 0px;

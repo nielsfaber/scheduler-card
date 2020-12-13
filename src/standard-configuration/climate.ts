@@ -108,6 +108,15 @@ export const climateActions = (
   const hvac_modes: string[] = stateObj ? stateObj.attributes.hvac_modes : [];
   let modeList = climateModes(hass.localize, stateObj);
 
+  const tempVariable = levelVariable({
+    field: 'temperature',
+    name: hass.localize('ui.card.weather.attributes.temperature'),
+    min: stateObj?.attributes.min_temp,
+    max: stateObj?.attributes.max_temp,
+    step: stateObj?.attributes.target_temp_step || hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+    unit: hass.config.unit_system.temperature,
+  });
+
   const actions: ActionConfig[] = [
     {
       service: 'climate.set_preset_mode',
@@ -142,14 +151,7 @@ export const climateActions = (
   if (!filterCapabilities || (!hvac_modes.includes('cool') && !hvac_modes.includes('heat'))) {
     actions.push({
       service: 'climate.set_temperature',
-      variable: levelVariable({
-        field: 'temperature',
-        name: hass.localize('ui.card.weather.attributes.temperature'),
-        min: stateObj?.attributes.min_temp,
-        max: stateObj?.attributes.max_temp,
-        step: hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
-        unit: hass.config.unit_system.temperature,
-      }),
+      variable: tempVariable,
       icon: 'hass:thermometer',
       name: localize('services.climate.set_temperature', hass.language),
       supported_feature: 1,
@@ -160,14 +162,7 @@ export const climateActions = (
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'heat' },
-      variable: levelVariable({
-        field: 'temperature',
-        name: hass.localize('ui.card.weather.attributes.temperature'),
-        min: stateObj?.attributes.min_temp,
-        max: stateObj?.attributes.max_temp,
-        step: hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
-        unit: hass.config.unit_system.temperature,
-      }),
+      variable: tempVariable,
       icon: 'hass:fire',
       name: localize('services.climate.set_temperature_hvac_mode_heat', hass.language),
       supported_feature: 1,
@@ -179,14 +174,7 @@ export const climateActions = (
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'cool' },
-      variable: levelVariable({
-        field: 'temperature',
-        name: hass.localize('ui.card.weather.attributes.temperature'),
-        min: stateObj?.attributes.min_temp,
-        max: stateObj?.attributes.max_temp,
-        step: hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
-        unit: hass.config.unit_system.temperature,
-      }),
+      variable: tempVariable,
       icon: 'hass:snowflake',
       name: localize('services.climate.set_temperature_hvac_mode_cool', hass.language),
       supported_feature: 1,

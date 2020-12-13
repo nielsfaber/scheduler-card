@@ -139,20 +139,6 @@ export function ValidateConfig(config: any) {
             validateActionConfig(action);
           });
         }
-
-        tree = ['customize', key];
-        Optional(entryObj, 'states', ['array', 'object']);
-        RequiredArrayType(entryObj, 'states', 'string');
-        if (Has(entryObj, 'states') && Type(entryObj.states[key], 'object')) {
-          RequiredArrayType(entryObj, 'states', 'string');
-          if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
-            tree.push('states');
-            Required(entryObj.states, 'min', 'number');
-            Required(entryObj.states, 'max', 'number');
-            Optional(entryObj.states, 'step', 'number');
-            Optional(entryObj.states, 'unit', 'string');
-          }
-        }
       }
     });
   }

@@ -1,12 +1,12 @@
-import { CardConfig, ActionConfig, ListVariableConfig, HassAction, EVariableType } from '../types';
+import { CardConfig, ActionConfig, ListVariableConfig, EVariableType, Action } from '../types';
 import { HomeAssistant } from 'custom-card-helpers';
 import { omit } from '../helpers';
 import { standardActions } from '../standard-configuration/standardActions';
 import { uniqueId, equalAction } from './compute_action_id';
 import { computeEntityActionConfig, actionElement } from './compute_entity_actions';
 
-export function parseAction(action: HassAction, hass: HomeAssistant, config: CardConfig) {
-  const entity = action.entity;
+export function parseAction(action: Action, hass: HomeAssistant, config: CardConfig) {
+  const entity = action.entity_id;
   const service = action.service;
   const service_data = action.service_data || {};
 

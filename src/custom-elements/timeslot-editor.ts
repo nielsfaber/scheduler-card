@@ -1,21 +1,25 @@
 import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
 import { localize } from '../localize/localize';
-import { Entry, ActionElement, EVariableType, LevelVariable, LevelVariableConfig, ListVariableConfig } from '../types';
-import { formatTime, parseTimestamp, roundTime, MinutesPerDay } from '../date-time';
-import { pick, PrettyPrintName } from '../helpers';
+import { ActionElement, EVariableType, LevelVariableConfig, ListVariableConfig, Timeslot } from '../types';
+import { PrettyPrintName, unique } from '../helpers';
 import { HomeAssistant } from 'custom-card-helpers';
 import { computeLevelVariableDisplay } from '../actionVariables';
-import { formatAmPm } from '../data/date-time/format_time';
+import { formatAmPm, formatTime } from '../data/date-time/format_time';
+import { equalAction } from '../data/compute_action_id';
+import { stringToTime, roundTime, timeToString } from '../data/date-time/time';
+import { stringToDate } from '../data/date-time/string_to_date';
 
-function Duration(el: Entry) {
-  return el.endTime!.value - el.time.value;
+const secondsPerDay = 86400;
+
+function Duration(el: Timeslot) {
+  return stringToTime(el.stop!) - stringToTime(el.start);
 }
 
 @customElement('timeslot-editor')
 export class TimeslotEditor extends LitElement {
   @property() hass?: HomeAssistant;
   @property({ type: Array })
-  entries: Entry[] = [];
+  entries: Timeslot[] = [];
   shadowRoot: any;
 
   @property({ type: Array }) actions: ActionElement[] = [];
@@ -82,15 +86,15 @@ export class TimeslotEditor extends LitElement {
     this.entries.forEach((el, i) => {
       output.push(html`
         <div
-          class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.action ? ' filled' : ''}"
+          class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.actions ? ' filled' : ''}"
           @click=${(ev: Event) => { this._handleSegmentClick(ev, i) }}
-          style="width: ${(Duration(el) / MinutesPerDay) * 100}%"
+          style="width: ${(Duration(el) / secondsPerDay) * 100}%"
         >
           <span class="content">${this.getEntryAction(el)}</div>
         </div>
       `);
       if (i < this.entries.length - 1) {
-        const ts = this.entries[i].endTime!.value;
+        const ts = stringToTime(this.entries[i].stop!);
         output.push(html`
           <div
             class="slider-thumb${this._activeThumb == i ? ' active' : ''} ${this._activeEntry == i || this._activeEntry == (i + 1) ? '' : 'hidden'}"
@@ -111,7 +115,7 @@ export class TimeslotEditor extends LitElement {
               value="time"
               @update="${this._updateMarker}"
             >
-              ${formatTime(ts, { amPm: this.formatAmPm }).time}
+              ${formatTime(stringToDate(this.entries[i].stop!), this.hass!.language)}
             </div>
           </div>
         `);
@@ -122,28 +126,29 @@ export class TimeslotEditor extends LitElement {
 
   updated() {
     this.shadowRoot.querySelectorAll('.slider-thumb-tooltip').forEach((el, i) => {
-      const ts = this.entries[i].endTime!.value;
-      el.innerText = formatTime(ts, { amPm: this.formatAmPm }).time;
+      el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
     });
   }
 
-  getEntryAction(entry: Entry) {
+  getEntryAction(entry: Timeslot) {
     if (!this.hass) return;
-    if (!entry.action) return '';
-    const action = this.actions.find(e => {
-      return e.id == entry.action;
-    })!;
-
-    if (entry.variable && entry.variable.type == EVariableType.Level && action.variable) {
-      if ((entry.variable as LevelVariable).enabled)
-        return computeLevelVariableDisplay(Number(entry.variable.value), action.variable as LevelVariableConfig);
-    } else if (entry.variable && entry.variable.type == EVariableType.List) {
-      const config = action.variable as ListVariableConfig;
-      const listItem = config.options.find(e => e.value == entry.variable!.value);
-      return PrettyPrintName(listItem && listItem.name ? listItem.name : String(entry.variable.value));
-    }
-    const service = action.service;
-    return PrettyPrintName(action.name || localize(`services.${service}`, this.hass.language) || service);
+    if (!entry.actions) return '';
+    return unique(entry.actions.map(action => {
+      const actionConfig = this.actions.find(e => equalAction(e, action))!;
+      if (actionConfig.variable && actionConfig.variable.field in action.service_data) {
+        const value = action.service_data[actionConfig.variable.field];
+        if (actionConfig.variable.type == EVariableType.Level) {
+          const variableConfig = actionConfig.variable as LevelVariableConfig;
+          if (!isNaN(value))
+            return computeLevelVariableDisplay(Number(value), variableConfig);
+        } else if (actionConfig.variable.type == EVariableType.List) {
+          const config = actionConfig.variable as ListVariableConfig;
+          const listItem = config.options.find(e => e.value == value);
+          return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
+        }
+      }
+      return PrettyPrintName(actionConfig.name || localize(`services.${action.service}`, this.hass!.language) || action.service);
+    })).join(', ');
   }
 
   private _handleSegmentClick(e: Event, entry_id: number) {
@@ -201,9 +206,9 @@ export class TimeslotEditor extends LitElement {
       firstSlot.style.width = `${Math.round(x - xStart)}px`;
       secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;
 
-      let time = (x / trackWidth) * MinutesPerDay;
-      time = Math.round(time) >= MinutesPerDay ? MinutesPerDay : roundTime(time, this.stepSize, false);
-      if (time == MinutesPerDay) time -= 1;
+      let time = (x / trackWidth) * secondsPerDay;
+      time = Math.round(time) >= secondsPerDay ? secondsPerDay : roundTime(time, this.stepSize);
+      if (time == secondsPerDay) time -= 1;
 
       this._currentTime = time;
       toolTip.dispatchEvent(new CustomEvent('update'));
@@ -221,14 +226,12 @@ export class TimeslotEditor extends LitElement {
       if (this._currentTime !== null) {
         const newStop = this._currentTime;
         const totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
-        const startTime = this.entries[slotIndex].time.value;
+        const startTime = stringToTime(this.entries[slotIndex].start);
 
-        const entries = [...this.entries];
-        Object.assign(entries[slotIndex], { endTime: { value: newStop } } as Entry);
-        Object.assign(entries[slotIndex + 1], {
-          time: { value: newStop },
-          endTime: { value: startTime + totalDuration },
-        } as Entry);
+        const entries: Timeslot[] = Object.assign(this.entries, {
+          [slotIndex]: { ...this.entries[slotIndex], stop: timeToString(newStop) },
+          [slotIndex + 1]: { ...this.entries[slotIndex], start: timeToString(newStop), stop: timeToString(startTime + totalDuration) }
+        });
 
         const myEvent = new CustomEvent('update', { detail: { entries: entries } });
         this.dispatchEvent(myEvent);
@@ -244,41 +247,48 @@ export class TimeslotEditor extends LitElement {
     window.addEventListener('touchmove', mouseMoveHandler);
   }
 
-  private _updateMarker(e: CustomEvent) {
-    const detail = e.detail;
-    const time = Number(this._currentTime);
-    const target = e.target as HTMLElement;
-    target.innerText = formatTime(time, { amPm: this.formatAmPm }).time;
+  private _updateMarker(ev: Event) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const ts = new Date(startOfDay.getTime() + this._currentTime! * 1000);
+    const target = ev.target as HTMLElement;
+    target.innerText = formatTime(ts, this.hass!.language);
   }
 
   private _addSlot() {
     const activeSlot = this.entries[this._activeEntry!];
-    const startTime = activeSlot.time.value;
-    const endTime = activeSlot.endTime!.value;
+    const startTime = stringToTime(activeSlot.start);
+    const endTime = stringToTime(activeSlot.stop!);
     const newStop = roundTime(startTime + Duration(activeSlot) / 2, this.stepSize);
 
-    const newEntry = Object.assign(
+    const entries: Timeslot[] = [
+      ...this.entries.slice(0, this._activeEntry!),
+      { ...this.entries[this._activeEntry!], stop: timeToString(newStop) },
       {
-        time: { value: newStop },
-        endTime: { value: endTime },
-        action: '',
-      } as Entry,
-      pick(activeSlot, ['entity', 'days'])
-    );
-    const entries = [...this.entries];
-    Object.assign(entries[this._activeEntry!], { endTime: { value: newStop } } as Entry);
-    entries.splice(this._activeEntry! + 1, 0, newEntry);
+        start: timeToString(newStop),
+        stop: timeToString(endTime),
+        actions: []
+      },
+      ...this.entries.slice(this._activeEntry! + 1)
+    ];
+
     const myEvent = new CustomEvent('update', { detail: { entries: entries } });
     this.dispatchEvent(myEvent);
   }
 
   private _removeSlot() {
-    const cutIndex = this._activeEntry == this.entries.length - 1 ? this._activeEntry - 1 : this._activeEntry;
-    const mergedEntry = { ...this.entries[cutIndex! + 1] };
-    Object.assign(mergedEntry, { time: this.entries[cutIndex!].time, endTime: this.entries[cutIndex! + 1].endTime });
+    const cutIndex = this._activeEntry == this.entries.length - 1 ? this._activeEntry! - 1 : this._activeEntry!;
 
-    const entries = [...this.entries];
-    entries.splice(cutIndex!, 2, mergedEntry);
+    const entries: Timeslot[] = [
+      ...this.entries.slice(0, cutIndex),
+      {
+        ...this.entries[cutIndex! + 1],
+        start: this.entries[cutIndex!].start,
+        stop: this.entries[cutIndex! + 1].stop!,
+      },
+      ...this.entries.slice(cutIndex + 2)
+    ];
+
     if (this._activeEntry == this.entries.length) this._activeEntry--;
     const myEvent = new CustomEvent('update', { detail: { entries: entries } });
     this.dispatchEvent(myEvent);

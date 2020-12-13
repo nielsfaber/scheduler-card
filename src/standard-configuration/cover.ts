@@ -1,7 +1,7 @@
 import { ActionConfig } from '../types';
 import { levelVariable } from '../actionVariables';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
 export const coverIcon = (stateObj?: HassEntity): string => {
@@ -67,4 +67,16 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   },
 ];
 
-export const coverStates = ['open', 'closed'];
+
+export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) => [
+  {
+    value: "closed",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "closed" }, hass.language),
+    icon: stateIcon({ ...stateObj, state: "closed" })
+  },
+  {
+    value: "open",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "open" }, hass.language),
+    icon: stateIcon({ ...stateObj, state: "open" })
+  }
+];

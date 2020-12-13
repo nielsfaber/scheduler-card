@@ -1,48 +1,20 @@
 import { HassEntity } from 'home-assistant-js-websocket';
+import { HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
 
 export const binarySensorIcon = (stateObj?: HassEntity): string => {
-  const deviceClass = stateObj && stateObj.attributes.device_class ? stateObj.attributes.device_class : null;
-  switch (deviceClass) {
-    case 'battery':
-      return 'hass:battery-outline';
-    case 'cold':
-      return 'hass:snowflake';
-    case 'connectivity':
-      return 'hass:server-network';
-    case 'door':
-      return 'hass:door-closed';
-    case 'garage_door':
-      return 'hass:garage';
-    case 'gas':
-    case 'power':
-    case 'problem':
-    case 'safety':
-    case 'smoke':
-      return 'hass:shield-check';
-    case 'heat':
-      return 'hass:fire';
-    case 'light':
-      return 'hass:brightness-5';
-    case 'lock':
-      return 'hass:lock';
-    case 'moisture':
-      return 'hass:water';
-    case 'motion':
-      return 'hass:walk';
-    case 'occupancy':
-    case 'presence':
-      return 'hass:home-outline';
-    case 'opening':
-      return 'hass:square';
-    case 'plug':
-      return 'hass:power-plug-outline';
-    case 'sound':
-      return 'hass:music-note';
-    case 'vibration':
-      return 'hass:vibrate';
-    case 'window':
-      return 'hass:window-closed';
-    default:
-      return 'hass:radiobox-blank';
-  }
+  if (stateObj) return stateIcon({ ...stateObj, state: "off" }) || "hass:radiobox-blank";
+  else return "hass:radiobox-blank";
 };
+
+export const binarySensorStates = (hass: HomeAssistant, stateObj: HassEntity) => [
+  {
+    value: "off",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+    icon: stateIcon({ ...stateObj, state: "off" })
+  },
+  {
+    value: "on",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+    icon: stateIcon({ ...stateObj, state: "on" })
+  }
+];

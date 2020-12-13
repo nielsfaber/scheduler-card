@@ -1,72 +1,114 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { formatTime, wrapTime, MinutesPerHour, roundTime, parseTimestamp } from '../date-time';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, formatTime } from 'custom-card-helpers';
 import { DefaultTimeStep } from '../const';
 import { ETimeEvent } from '../types';
-import { formatAmPm } from '../data/date-time/format_time';
+import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
+import { stringToDate } from '../data/date-time/string_to_date';
+
+
 
 @customElement('time-picker')
 export class TimePicker extends LitElement {
-  _val = 0;
-  @property({ type: Number })
-  set value(val) {
-    const oldVal = this.value;
-    this._val = val;
-    this.requestUpdate('value', oldVal);
-  }
 
-  get value() {
-    return roundTime(this._val, this.stepSize);
-  }
+  value;
 
   @property() hass?: HomeAssistant;
-  @property({ type: String }) event?: ETimeEvent;
-  @property({ type: Boolean }) formatAmPm?: boolean = false;
   @property({ type: Number }) stepSize = DefaultTimeStep;
+
+  @property() relativeMode = false;
+  @property() event = ETimeEvent.Sunrise;
+
+  @property() _time: number = 0;
 
   maxOffset = 2;
 
-  updated() {
-    const myEvent = new CustomEvent('change', { detail: { event: this.event } });
-    this.dispatchEvent(myEvent);
+  get time() {
+    if (this._time >= 0) return this._time;
+    return Math.abs(this._time);
+  }
+  set time(value: number) {
+    this._time = roundTime(value, this.stepSize, {
+      wrapAround: !this.relativeMode,
+      maxHours: this.relativeMode ? this.maxOffset : undefined
+    });
   }
 
   firstUpdated() {
-    const options = this.event
-      ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour }
-      : { stepSize: this.stepSize };
-    this.value = wrapTime(this.value, options);
+    const res = parseRelativeTime(this.value);
+    if (!res) this.time = stringToTime(this.value);
+    else {
+      this.relativeMode = true;
+      this.event = res.event == ETimeEvent.Sunrise ? ETimeEvent.Sunrise : ETimeEvent.Sunset;
+      this.time = res.sign == '+' ? stringToTime(res.offset) : -stringToTime(res.offset);
+    }
+  }
 
-    this.formatAmPm = formatAmPm(this.hass!.language);
+  updated() {
+    if (this.relativeMode) {
+      const sign = this._time >= 0 ? '+' : '-';
+      const offset = timeToString(this.time);
+      this.value = `${this.event}${sign}${offset}`;
+    }
+    else {
+      this.value = timeToString(this.time);
+    }
+    const myEvent = new CustomEvent('change');
+    this.dispatchEvent(myEvent);
   }
 
   render() {
+    const timeString = this.relativeMode
+      ? timeToString(this.time)
+      : formatTime(stringToDate(timeToString(this.time)), this.hass!.language);
+
+    const timeParts = timeString.split(/:|\ /);
+
     return html`
       <div class="time-picker">
         <div class="hours-up">
-          <mwc-button @click="${this.hoursUp}">
+          <mwc-button @click=${() => this.time = this._time + 3600}>
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
-        <div class="hours">${this.getHours()}</div>
+        <div class="hours">${timeParts[0].padStart(2, '0')}</div>
         <div class="hours-down">
-          <mwc-button @click="${this.hoursDown}">
+          <mwc-button @click=${() => this.time = this._time - 3600}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
         <div class="separator">:</div>
         <div class="minutes-up">
-          <mwc-button @click="${this.minutesUp}">
+          <mwc-button @click=${() => this.time = this._time + this.stepSize * 60}>
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
-        <div class="minutes">${this.getMinutes()}</div>
+        <div class="minutes">${timeParts[1]}</div>
         <div class="minutes-down">
-          <mwc-button @click="${this.minutesDown}">
+          <mwc-button @click=${() => this.time = this._time - this.stepSize * 60}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
-        ${this.getSuffix()}
+        ${
+      this.relativeMode
+        ? html`
+        <div class="suffix">
+          <mwc-button @click=${this.toggleBeforeAfter}>
+            ${this.getBeforeAfter()}
+          </mwc-button>
+          <mwc-button @click=${this.toggleSunriseSunset}>
+            <ha-icon icon="hass:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"></ha-icon>
+          </mwc-button>
+        </div>
+          `
+        : timeParts.length > 2
+          ? html`
+        <div class="suffix">
+          <mwc-button @click=${this.toggleAmPm}>
+            ${timeParts[2]}
+          </mwc-button>
+        </div>
+      ` : ''
+      }    
         <div class="options">
           ${this.getSunModeToggle()}
         </div>
@@ -74,124 +116,62 @@ export class TimePicker extends LitElement {
     `;
   }
 
-  private getHours() {
-    return formatTime(this.value, { amPm: this.formatAmPm && !this.event }).hours;
-  }
-
-  private getMinutes() {
-    return formatTime(this.value, { amPm: this.formatAmPm && !this.event }).minutes;
-  }
-
-  private hoursUp() {
-    const options = this.event
-      ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour }
-      : { stepSize: this.stepSize };
-    this.value = wrapTime(this._val + MinutesPerHour, options);
-  }
-
-  private hoursDown() {
-    const options = this.event
-      ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour }
-      : { stepSize: this.stepSize };
-    this.value = wrapTime(this._val - MinutesPerHour, options);
-  }
-
-  private minutesUp() {
-    const options = this.event
-      ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour }
-      : { stepSize: this.stepSize };
-    this.value = wrapTime(this._val + this.stepSize, options);
-  }
-
-  private minutesDown() {
-    const options = this.event
-      ? { stepSize: this.stepSize, signed: true, max: this.maxOffset * MinutesPerHour }
-      : { stepSize: this.stepSize };
-    this.value = wrapTime(this._val - this.stepSize, options);
-  }
-
   private getSunModeToggle() {
     if (!this.hass) return html``;
     if (!this.hass.states['sun.sun']) return html``;
 
     return html`
-      <mwc-button @click="${this.toggleMode}" class="${this.event ? 'active' : ''}">
+      <mwc-button @click="${this.toggleMode}" class="${this.relativeMode ? 'active' : ''}">
         <ha-icon icon="hass:theme-light-dark"></ha-icon>
       </mwc-button>
     `;
   }
 
-  private getAmPm() {
-    return formatTime(this._val, { amPm: this.formatAmPm }).amPm;
-  }
-
   private getBeforeAfter() {
     if (!this.hass) return '';
-    return this.value < 0
+    return this._time < 0
       ? this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.before').slice(0, -1)
       : this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.after').slice(0, -1);
   }
 
-  private getSuffix() {
-    if (this.event) {
-      return html`
-        <div class="suffix">
-          <mwc-button @click="${this.toggleBeforeAfter}">
-            ${this.getBeforeAfter()}
-          </mwc-button>
-          <mwc-button @click="${this.toggleSunriseSunset}">
-            <ha-icon icon="hass:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"></ha-icon>
-          </mwc-button>
-        </div>
-      `;
-    } else if (this.formatAmPm) {
-      return html`
-        <div class="suffix">
-          <mwc-button @click="${this.toggleAmPm}">
-            ${this.getAmPm()}
-          </mwc-button>
-        </div>
-      `;
-    } else return html``;
-  }
-
   private toggleAmPm() {
-    if (this._val < 12 * MinutesPerHour) this.value = wrapTime(this._val + 12 * MinutesPerHour);
-    else this.value = wrapTime(this._val - 12 * MinutesPerHour);
+    this.time = this._time + 12 * 3600;
   }
 
   private toggleBeforeAfter() {
-    this.value = -this._val;
+    this.time = -this._time;
   }
 
   private toggleSunriseSunset() {
     this.event = this.event == ETimeEvent.Sunrise ? ETimeEvent.Sunset : ETimeEvent.Sunrise;
-    this.value = this._val; //force update the view
   }
 
   private toggleMode() {
     if (!this.hass) return;
-    const sunEntity = this.hass.states['sun.sun'];
-    const ts_sunrise = parseTimestamp(sunEntity.attributes.next_rising);
-    const ts_sunset = parseTimestamp(sunEntity.attributes.next_setting);
+    this.relativeMode = !this.relativeMode;
 
-    const ts = this.value;
-    if (!this.event) {
-      let ts_ref;
-      if (Math.abs(ts - ts_sunrise) < Math.abs(ts - ts_sunset)) {
-        ts_ref = ts_sunrise;
-        this.event = ETimeEvent.Sunrise;
-      } else {
-        ts_ref = ts_sunset;
-        this.event = ETimeEvent.Sunset;
-      }
-      this.value = ts - ts_ref;
-      if (this.value > this.maxOffset * MinutesPerHour) this.value = this.maxOffset * MinutesPerHour;
-      else if (this.value < -this.maxOffset * MinutesPerHour) this.value = -this.maxOffset * MinutesPerHour;
-    } else {
-      const ts_ref = this.event == ETimeEvent.Sunrise ? ts_sunrise : ts_sunset;
-      this.event = undefined;
-      this.value = ts + ts_ref;
+    const sunEntity = this.hass!.states['sun.sun'];
+    const ts_sunrise = stringToTime(sunEntity.attributes.next_rising);
+    const ts_sunset = stringToTime(sunEntity.attributes.next_setting);
+
+    if (this.relativeMode) {
+
+      this.event = Math.abs(this._time - ts_sunrise) < Math.abs(this._time - ts_sunset)
+        ? ETimeEvent.Sunrise
+        : ETimeEvent.Sunset;
+
+      let offset = this.event == ETimeEvent.Sunrise
+        ? this._time - ts_sunrise
+        : this._time - ts_sunset;
+
+      if (offset > 7200) offset = 7200;
+      else if (offset < -7200) offset = -7200;
+      this.time = offset;
+    }
+    else {
+      this.time = this.event == ETimeEvent.Sunrise
+        ? this._time + ts_sunrise
+        : this._time + ts_sunset;
     }
   }
 

@@ -98,6 +98,7 @@
       },
       "overview": {
         "no_entries": "There are no items to show",
+        "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{number} excluded {if number is 1} item {else} items",
         "hide_excluded": "hide excluded items",
         "additional_tasks": "{number} more {if number is 1} task {else} tasks"
@@ -108,7 +109,8 @@
         "no_entities_for_group": "There are no entities in this group",
         "no_entity_selected": "Select an entity first",
         "no_actions_for_entity": "There are no actions for this entity",
-        "make_scheme": "make scheme"
+        "make_scheme": "make scheme",
+        "multiple": "Multiple"
       },
       "time_picker": {
         "no_timeslot_selected": "Select a timeslot first"

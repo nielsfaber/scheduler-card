@@ -12,14 +12,64 @@ export interface Dictionary<TValue> {
 }
 export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
-export interface ScheduleEntity extends HassEntity {
-  attributes: HassEntityAttributeBase & {
-    actions: HassAction[];
-    entries: string[];
-    next_trigger?: string;
-    conditions?: Condition[];
-    options?: OptionConfig;
-  };
+export interface Condition {
+  entity_id: string;
+  match_type: EConditionMatchType;
+  value: string | number;
+  attribute: string;
+}
+
+export interface Action {
+  entity_id: string,
+  service: string,
+  service_data: Dictionary<any>,
+}
+
+export interface Timeslot {
+  start: string,
+  stop?: string,
+  conditions?: Condition[],
+  condition_type?: 'or' | 'and',
+  actions: Action[]
+}
+
+export type WeekdayType = (
+  'mon'
+  | 'tue'
+  | 'wed'
+  | 'thu'
+  | 'fri'
+  | 'sat'
+  | 'sun'
+  | 'workday'
+  | 'weekend'
+  | 'daily'
+)[]
+
+
+export interface Schedule {
+  schedule_id?: string,
+  weekdays: WeekdayType,
+  timeslots: Timeslot[],
+  enabled: boolean,
+  entity_id: string,
+  timestamps: string[],
+  next_entries: number[],
+  repeat_type: ERepeatType,
+  name?: string;
+}
+
+export interface ScheduleConfig {
+  weekdays: WeekdayType,
+  timeslots: Timeslot[],
+  repeat_type: ERepeatType,
+  name?: string;
+}
+
+export enum ERepeatType {
+  Repeat = 'repeat',
+  Pause = 'pause',
+  Single = 'single',
 }
 
 /* groups */
@@ -51,7 +101,6 @@ export interface EntityConfig {
   name?: string;
   icon?: string;
   actions?: ActionConfig[];
-  states?: StatesConfig;
   exclude_actions?: string[]
 }
 
@@ -71,7 +120,7 @@ export interface ActionElement extends ActionConfig {
   id: string;
   name?: string;
   service: string;
-  service_data?: Dictionary<any>;
+  service_data: Dictionary<any>;
   icon?: string;
   variable?: LevelVariableConfig | ListVariableConfig;
   supported_feature?: number;
@@ -168,12 +217,6 @@ export interface CardConfig extends LovelaceCardConfig {
 
 /* interface */
 
-export interface HassAction {
-  service: string;
-  entity: string;
-  service_data?: Dictionary<any>;
-}
-
 export interface HassEntry {
   time?: Time;
   days?: number[];
@@ -185,12 +228,6 @@ export interface HassEntry {
   options?: number[];
 }
 
-export interface HassData {
-  entries: HassEntry[];
-  actions: HassAction[];
-  conditions?: Condition[];
-}
-
 /* other */
 
 export enum EConditionMatchType {
@@ -200,11 +237,6 @@ export enum EConditionMatchType {
   Above = 'above',
 }
 
-export interface Condition {
-  entity: string;
-  match_type: EConditionMatchType;
-  state: string | number;
-}
 
 export enum EConditionType {
   Any = 'or',
@@ -220,11 +252,9 @@ export interface OptionConfig {
   run_once?: boolean;
 }
 
-export type StatesConfig = string[] | { min: number; max: number; step?: number; unit?: string };
-
 export enum ETimeEvent {
-  Sunrise = 'SUNRISE',
-  Sunset = 'SUNSET',
+  Sunrise = 'sunrise',
+  Sunset = 'sunset',
 }
 
 export interface Time {
