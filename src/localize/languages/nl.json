@@ -87,8 +87,8 @@
       "time": {
         "absolute": "om {time}",
         "interval": "van {startTime} tot {endTime}",
-        "midnight": "middernacht",
-        "noon": "12:00",
+        "at_midnight": "om middernacht",
+        "at_noon": "om 12:00",
         "at_sun_event": "bij {sunEvent}"
       }
     },

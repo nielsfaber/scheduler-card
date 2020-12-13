@@ -87,8 +87,8 @@
       "time": {
         "absolute": "в {time}",
         "interval": "с {startTime} до {endTime}",
-        "midnight": "полночь",
-        "noon": "полдень",
+        "at_midnight": "в полночь",
+        "at_noon": "в полдень",
         "at_sun_event": "в {sunEvent}"
       }
     },

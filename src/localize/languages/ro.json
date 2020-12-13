@@ -87,8 +87,8 @@
       "time": {
         "absolute": "la {time}",
         "interval": "de la {startTime} până la {endTime}",
-        "midnight": "miezul nopții",
-        "noon": "amiază",
+        "at_midnight": "la miezul nopții",
+        "at_noon": "la amiază",
         "at_sun_event": "la {sunEvent}"
       }
     },

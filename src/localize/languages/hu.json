@@ -87,8 +87,8 @@
       "time": {
         "absolute": "{time}-kor",
         "interval": "{startTime} - {endTime}",
-        "midnight": "éjfél",
-        "noon": "dél",
+        "at_midnight": "éjfélkor",
+        "at_noon": "délben",
         "at_sun_event": "{sunEvent}kor"
       }
     },

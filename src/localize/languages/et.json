@@ -87,8 +87,8 @@
       "time": {
         "absolute": "{time}",
         "interval": "{startTime} kuni {endTime}",
-        "midnight": "keskööl",
-        "noon": "keskpäeval",
+        "at_midnight": "keskööl",
+        "at_noon": "keskpäeval",
         "at_sun_event": "{sunEvent}"
       }
     },

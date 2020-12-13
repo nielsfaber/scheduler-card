@@ -55,12 +55,12 @@ export class MyRelativeTime extends LitElement {
           day = localize('ui.components.date.tomorrow', this._hass.language);
         else if (daysFromNow > 0)
           day = formatWeekday(dateObj, this._hass.language);
-        let time = formatTime(dateObj, this._hass.language);
+        let time = localize('ui.components.time.absolute', this._hass.language, '{time}', formatTime(dateObj, this._hass.language));
         if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0)
-          time = localize('ui.components.time.noon', this._hass.language);
+          time = localize('ui.components.time.at_noon', this._hass.language);
         else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0)
-          time = localize('ui.components.time.midnight', this._hass.language);
-        return String(day + ' ' + localize('ui.components.time.absolute', this._hass.language, '{time}', time)).trim();
+          time = localize('ui.components.time.at_midnight', this._hass.language);
+        return String(day + ' ' + time).trim();
       } else if (Math.round(delta / secondsPerMinute) > 60 && Math.round(delta / secondsPerMinute) < 120) {
         const mins = Math.round(delta / secondsPerMinute - 60);
         const ts2 = this._hass.localize('ui.components.relative_time.duration.minute', 'count', mins);

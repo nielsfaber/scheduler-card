@@ -87,8 +87,8 @@
       "time": {
         "absolute": "à {time}",
         "interval": "de {startTime} à {endTime}",
-        "midnight": "minuit",
-        "noon": "midi",
+        "at_midnight": "à minuit",
+        "at_noon": "à midi",
         "at_sun_event": "au {sunEvent}"
       }
     },
