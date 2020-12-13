@@ -1,5 +1,5 @@
 import { ActionConfig } from '../types';
-import { HomeAssistant } from 'custom-card-helpers';
+import { HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 
 export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity): ActionConfig[] => [
@@ -13,4 +13,18 @@ export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity)
     icon: 'hass:flash-off',
     name: hass.localize('ui.card.media_player.turn_off'),
   },
+];
+
+
+export const inputBooleanStates = (hass: HomeAssistant, stateObj: HassEntity) => [
+  {
+    value: "off",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+    icon: "hass:flash-off"
+  },
+  {
+    value: "on",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+    icon: "hass:flash"
+  }
 ];

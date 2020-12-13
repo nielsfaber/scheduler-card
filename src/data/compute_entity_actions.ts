@@ -93,6 +93,7 @@ export function actionElement(action: ActionConfig) {
   let item: ActionElement = {
     id: id,
     service: action.service,
+    service_data: {}
   };
 
   item = { ...item, ...omit(action, ['variable']) };
@@ -106,7 +107,15 @@ export function actionElement(action: ActionConfig) {
   return item;
 }
 
-export function computeEntityActions(entity: string, hass: HomeAssistant, config: Partial<CardConfig>) {
-  const actionList = computeEntityActionConfig(entity, hass, config);
-  return actionList.map(actionElement);
+export function computeEntityActions(entity: string | string[], hass: HomeAssistant, config: Partial<CardConfig>): ActionElement[] {
+  if (!Array.isArray(entity)) {
+    const actionList = computeEntityActionConfig(entity, hass, config);
+    return actionList.map(actionElement);
+  }
+  else {
+    const actions = entity.map(el => computeEntityActions(el, hass, config));
+    let actionsList = actions[0]
+      .filter(action => actions.every(e => e.map(el => el.id).includes(action.id)))
+    return actionsList;
+  }
 }

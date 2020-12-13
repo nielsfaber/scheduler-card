@@ -13,7 +13,6 @@ export function computeActionDisplay(action: ActionElement) {
   if (res) {
     let replacement = '';
     const wildcard = res[1].match(wildcardPattern);
-
     if (wildcard && action.service_data && wildcard[1] in action.service_data) {
       let value = '';
       if (action.variable && action.variable.field == wildcard[1] && action.variable.type == EVariableType.Level) {

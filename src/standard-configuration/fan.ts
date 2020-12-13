@@ -1,6 +1,6 @@
 import { listVariable } from '../actionVariables';
 import { ActionConfig } from '../types';
-import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
+import { LocalizeFunc, HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { localize } from '../localize/localize';
 
@@ -99,4 +99,17 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionCo
     icon: 'hass:cog-clockwise',
     name: localize('services.fan.set_direction', hass.language),
   },
+];
+
+export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => [
+  {
+    value: "off",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+    icon: "hass:power-off"
+  },
+  {
+    value: "on",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+    icon: "hass:power"
+  }
 ];

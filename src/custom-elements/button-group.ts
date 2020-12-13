@@ -16,11 +16,11 @@ export class VariableSlider extends LitElement {
   @property()
   value?: string | number | null | (string | number)[];
 
-  @property({ type: Number })
-  min?: number;
+  @property({ type: Number }) min?: number;
 
-  @property({ type: Boolean })
-  optional?: boolean;
+  @property({ type: Boolean }) optional?: boolean;
+
+  @property({ type: Boolean }) multiple?: boolean;
 
   render() {
     if (!this.items.length) {
@@ -42,10 +42,10 @@ export class VariableSlider extends LitElement {
     return html`
       <mwc-button class="${selection.includes(value) ? 'active' : ''}" @click="${() => this.selectItem(value)}">
         ${item.icon
-          ? html`
+        ? html`
               <ha-icon icon="${PrettyPrintIcon(item.icon)}" class="padded-right"></ha-icon>
             `
-          : ''}
+        : ''}
         ${PrettyPrintName(item.name)}
       </mwc-button>
     `;
@@ -57,8 +57,10 @@ export class VariableSlider extends LitElement {
         if (this.optional) this.value = null;
         else return;
       } else this.value = val;
+    } else if (!this.multiple) {
+      this.value = this.value.includes(val) ? [] : Array(val);
     } else {
-      let value: (string | number)[] = Array.isArray(this.value) ? this.value : [];
+      let value: (string | number)[] = Array.isArray(this.value) ? [...this.value] : [];
       if (value.includes(val)) {
         if (this.min !== undefined && value.length <= this.min) return;
         value = value.filter(e => e != val);

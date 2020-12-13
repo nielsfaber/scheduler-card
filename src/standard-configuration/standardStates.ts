@@ -1,26 +1,34 @@
-import { HassEntity } from 'home-assistant-js-websocket';
-import { computeDomain } from 'custom-card-helpers';
-import { StatesConfig } from '../types';
+import { computeDomain, HomeAssistant } from 'custom-card-helpers';
 import { alarmControlPanelStates } from './alarm_control_panel';
 import { coverStates } from './cover';
 import { lockStates } from './lock';
+import { binarySensorStates } from './binary_sensor';
+import { inputBooleanStates } from './input_boolean';
+import { switchStates } from './switch';
+import { personStates } from './person';
+import { fanStates } from './fan';
 
-export const standardStates = (entity: HassEntity): StatesConfig | undefined => {
-  const domain = computeDomain(entity.entity_id);
+export function standardStates(entity_id: string, hass: HomeAssistant) {
+  const domain = computeDomain(entity_id);
+  const stateObj = hass.states[entity_id];
 
   switch (domain) {
     case 'alarm_control_panel':
-      return alarmControlPanelStates;
+      return alarmControlPanelStates(hass, stateObj);
     case 'binary_sensor':
+      return binarySensorStates(hass, stateObj);
     case 'cover':
-      return coverStates;
+      return coverStates(hass, stateObj);
+    case 'fan':
+      return fanStates(hass, stateObj);
     case 'input_boolean':
+      return inputBooleanStates(hass, stateObj);
     case 'switch':
-      return ['on', 'off'];
+      return switchStates(hass, stateObj);
     case 'lock':
-      return lockStates;
+      return lockStates(hass, stateObj);
     case 'person':
-      return ['home', 'not_home'];
+      return personStates(hass, stateObj);
     default:
       return;
   }
