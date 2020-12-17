@@ -50,7 +50,6 @@ export class SchedulerTimepickerCard extends LitElement {
 
   render() {
     if (!this.hass || !this.config || !this.entities || !this.actions) return html``;
-
     return html`
         <ha-card>
           <div class="card-header">
@@ -218,16 +217,24 @@ export class SchedulerTimepickerCard extends LitElement {
         [...this.schedule.timeslots],
         { [this.activeEntry]: { ...this.schedule.timeslots[this.activeEntry], ...data } }
       )
-    }
+    };
   }
 
-  updateActiveEntryAction(data: Partial<Action>, num: number) {
+  updateActiveEntryAction(data: Partial<Action> | null, num: number) {
     if (this.activeEntry === null) return;
-    this.updateActiveEntry({
-      actions: Object.assign(
-        [...this.schedule.timeslots[this.activeEntry].actions],
-        { [num]: { ...this.schedule.timeslots[this.activeEntry].actions[num], ...data } })
-    });
+    if (data) {
+      this.updateActiveEntry({
+        actions: Object.assign(
+          [...this.schedule.timeslots[this.activeEntry].actions],
+          { [num]: { ...this.schedule.timeslots[this.activeEntry].actions[num], ...data } })
+      });
+    }
+    else {
+      this.updateActiveEntry({
+        actions: [...this.schedule.timeslots[this.activeEntry].actions]
+          .filter((_, i) => i != num)
+      });
+    }
   }
 
   handlePlannerUpdate(ev: CustomEvent) {
@@ -251,14 +258,27 @@ export class SchedulerTimepickerCard extends LitElement {
   selectAction(ev: Event) {
     if (!this.actions || this.activeEntry === null) return;
     const value = (ev.target as HTMLInputElement).value;
-    const action = this.actions.find(e => e.id == value)!;
-    this.entities!.map(e => e.id).forEach((entity_id, num) => {
-      this.updateActiveEntryAction({
-        entity_id: entity_id,
-        service: action.service,
-        service_data: action.service_data || {}
-      }, num);
-    });
+    if (value) {
+      const action = this.actions.find(e => e.id == value)!;
+      this.entities!.map(e => e.id).forEach((entity_id, num) => {
+        let service_data = action.service_data || {}
+        if (action.variable && action.variable.type == EVariableType.Level) {
+          const config = action.variable as LevelVariableConfig;
+          if (!(config.field in service_data) && !config.optional)
+            service_data = { ...service_data, [config.field]: config.min };
+        }
+        this.updateActiveEntryAction({
+          entity_id: entity_id,
+          service: action.service,
+          service_data: service_data
+        }, num);
+      });
+    }
+    else {
+      this.entities!.forEach((_, num) => {
+        this.updateActiveEntryAction(null, num);
+      });
+    }
   }
 
   getVariableEditor() {
