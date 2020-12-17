@@ -35,7 +35,17 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   private async loadSchedules(): Promise<void> {
     fetchSchedules(this.hass)
       .then(res => {
-        const schedules = res;
+        let schedules = res;
+
+        if (this.config!.discover_existing !== undefined && !this.config!.discover_existing) {
+          schedules = schedules.filter(item =>
+            item.timeslots.every(slot =>
+              slot.actions.every(action =>
+                entityFilter(action.entity_id, this.config!)
+              )
+            )
+          );
+        }
 
         schedules.sort((a, b) => {
           const remainingA = new Date(a.timestamps[a.next_entries[0]]).valueOf();
