@@ -13,7 +13,7 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     },
   ];
 
-  if (stateObj && stateObj.attributes.supported_features && !(stateObj.attributes.supported_features & 1)) {
+  if (stateObj && stateObj.attributes.supported_features !== undefined && !(stateObj.attributes.supported_features & 1)) {
     actions.push({
       service: 'light.turn_on',
       icon: 'hass:lightbulb-on',

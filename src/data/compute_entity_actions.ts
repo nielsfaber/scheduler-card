@@ -9,10 +9,11 @@ import {
 import { HomeAssistant, computeDomain, computeEntity } from 'custom-card-helpers';
 import { omit } from '../helpers';
 import { standardActions } from '../standard-configuration/standardActions';
-import { matchPattern } from './filter_entity';
+import { matchPattern, entityFilter } from './filter_entity';
 import { listVariable, levelVariable } from '../actionVariables';
 import { DefaultActionIcon } from '../const';
 import { uniqueId, equalAction } from './compute_action_id';
+import { VariableSlider } from '../custom-elements/button-group';
 
 export function computeEntityActionConfig(entity: string, hass: HomeAssistant, config: Partial<CardConfig>) {
   const stateObj = hass.states[entity];
@@ -116,6 +117,38 @@ export function computeEntityActions(entity: string | string[], hass: HomeAssist
     const actions = entity.map(el => computeEntityActions(el, hass, config));
     let actionsList = actions[0]
       .filter(action => actions.every(e => e.map(el => el.id).includes(action.id)))
+      .map(action => {
+        if (action.variable) {
+          if (!actions.every(entityActions => entityActions.find(e => e.id == action.id)!.variable)) return omit(action, ['variable']) as ActionElement;
+          else {
+            if (action.variable.type == EVariableType.Level) {
+              return {
+                ...action,
+                variable: {
+                  ...action.variable,
+                  min: Math.max(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).min)),
+                  max: Math.min(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).max)),
+                  step: Math.max(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).step)),
+                }
+              }
+            } else {
+              let options = (action.variable as ListVariableConfig).options;
+              actions.forEach(entityActions => {
+                let config = (entityActions.find(e => e.id == action.id)!.variable as ListVariableConfig);
+                options = options.filter(e => config.options.map(e => e.value).includes(e.value));
+              });
+              return {
+                ...action,
+                variable: {
+                  ...action.variable,
+                  options: options
+                }
+              }
+            }
+          }
+        }
+        return action;
+      });
     return actionsList;
   }
 }
