@@ -12,7 +12,10 @@ import { stringToDate } from '../data/date-time/string_to_date';
 const secondsPerDay = 86400;
 
 function Duration(el: Timeslot) {
-  return stringToTime(el.stop!) - stringToTime(el.start);
+  const start = stringToTime(el.start);
+  let stop = stringToTime(el.stop!);
+  if(stop < start) stop += secondsPerDay;
+  return stop - start;
 }
 
 @customElement('timeslot-editor')
@@ -208,7 +211,6 @@ export class TimeslotEditor extends LitElement {
 
       let time = (x / trackWidth) * secondsPerDay;
       time = Math.round(time) >= secondsPerDay ? secondsPerDay : roundTime(time, this.stepSize);
-      if (time == secondsPerDay) time -= 1;
 
       this._currentTime = time;
       toolTip.dispatchEvent(new CustomEvent('update'));
@@ -227,10 +229,9 @@ export class TimeslotEditor extends LitElement {
         const newStop = this._currentTime;
         const totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
         const startTime = stringToTime(this.entries[slotIndex].start);
-
         const entries: Timeslot[] = Object.assign(this.entries, {
           [slotIndex]: { ...this.entries[slotIndex], stop: timeToString(newStop) },
-          [slotIndex + 1]: { ...this.entries[slotIndex], start: timeToString(newStop), stop: timeToString(startTime + totalDuration) }
+          [slotIndex + 1]: { ...this.entries[slotIndex + 1], start: timeToString(newStop), stop: timeToString(startTime + totalDuration) }
         });
 
         const myEvent = new CustomEvent('update', { detail: { entries: entries } });

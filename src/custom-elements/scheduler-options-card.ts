@@ -9,7 +9,7 @@ import { commonStyle } from '../styles';
 import { parseEntity } from '../data/parse_entity';
 import { entityFilter } from '../data/filter_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, pick } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, pick, IsDefaultName } from '../helpers';
 import { standardStates } from '../standard-configuration/standardStates';
 
 import './button-group';
@@ -124,8 +124,7 @@ export class SchedulerOptionsCard extends LitElement {
 
           <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
           <paper-input no-label-float
-            .value=${this.schedule.name || ''}
-            .configValue=${''}
+            value=${this.schedule.name}
             @value-changed=${this.updateName}
           ></paper-input>
 

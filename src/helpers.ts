@@ -50,7 +50,6 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       }
       : e
   );
-
   let startTime = 0;
 
   for (let i = 0; i < entries.length; i++) {
@@ -69,9 +68,9 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
     startTime = stringToTime(entry.stop!);
   }
 
-  const endOfDay = 23 * 3600 + 59 * 60;
+  const endOfDay = 24 * 3600;
 
-  if (startTime < endOfDay) {
+  if (startTime < endOfDay && startTime > 0) {
     entries.push(
       Object({
         start: timeToString(startTime),
@@ -82,4 +81,9 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
   }
 
   return entries;
+}
+
+export function IsDefaultName(name?: string) {
+  if (!name) return false;
+  return name.match(/^Schedule\ #[a-f0-9]{6}/) !== null;
 }

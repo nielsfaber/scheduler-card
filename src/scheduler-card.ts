@@ -11,7 +11,7 @@ import {
   Timeslot,
 } from './types';
 import { CARD_VERSION, EViews, CreateTimeScheme } from './const';
-import { calculateTimeline, flatten, unique, omit } from './helpers';
+import { calculateTimeline, flatten, unique, omit, IsDefaultName } from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './custom-elements/scheduler-entities-card';
@@ -24,7 +24,6 @@ import { parseAction } from './data/parse_action';
 import { parseEntity } from './data/parse_entity';
 import { computeEntityActions } from './data/compute_entity_actions';
 import { equalAction } from './data/compute_action_id';
-import { IsSchedulerEntity } from './data/filter_entity';
 import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
 
 (window as any).customCards = (window as any).customCards || [];
@@ -60,10 +59,8 @@ export class SchedulerCard extends LitElement {
 
   @property() translationsLoaded = false;
   editItem: string | null = null;
-  scheduleEntities: string[] = [];
 
   set hass(hass: HomeAssistant) {
-    this.scheduleEntities = Object.keys(hass.states).filter(el => IsSchedulerEntity(el));
     this._hass = hass;
   }
 
@@ -85,10 +82,6 @@ export class SchedulerCard extends LitElement {
         this.translationsLoaded = true;
         return true;
       }
-      const scheduleEntities = Object.keys(oldHass.states).filter(el => IsSchedulerEntity(el));
-      if (scheduleEntities.length !== this.scheduleEntities.length) return true;
-      if (scheduleEntities.some((e, i) => e !== this.scheduleEntities[i])) return true;
-      if (scheduleEntities.some(e => oldHass.states[e] !== this._hass!.states[e])) return true;
       return false;
     }
     return true;
@@ -100,8 +93,7 @@ export class SchedulerCard extends LitElement {
   }
 
   public getCardSize() {
-    if (!this._hass || !this.scheduleEntities.length) return 6;
-    return 6 + this.scheduleEntities.length;
+    return 9;
   }
 
   protected render() {
@@ -222,7 +214,7 @@ export class SchedulerCard extends LitElement {
         },
         {
           start: '16:00:00',
-          stop: '23:59:00',
+          stop: '00:00:00',
           actions: []
         }
       ];
@@ -261,7 +253,9 @@ export class SchedulerCard extends LitElement {
       })
         .filter(e => e) as Timeslot[]
     }
+
     if (this.editItem) {
+      if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: "" };
       editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
         .catch(e => handleError(e, this))
         .then(() => {
@@ -297,7 +291,6 @@ export class SchedulerCard extends LitElement {
     const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id))));
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
     let actions = computeEntityActions(entities, this._hass, this._config);
-
     const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
     usedActions
       .filter(a => !actions.find(e => equalAction(e, a)))

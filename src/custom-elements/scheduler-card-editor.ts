@@ -8,7 +8,7 @@ import { commonStyle } from '../styles';
 import { domainIcons } from '../standard-configuration/standardIcon';
 import { parseEntity } from '../data/parse_entity';
 import { computeEntityActions } from '../data/compute_entity_actions';
-import { IsSchedulerEntity } from '../data/filter_entity';
+import { fetchSchedules } from '../data/websockets';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
@@ -17,10 +17,17 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   @property() selectedDomain = '';
   @property() titleOption = 'standard';
 
+  @property() scheduleEntities: string[] = [];
+
   public setConfig(config: CardConfig): void {
     this._config = config;
     this.titleOption = this.getTitleOption();
   }
+
+  async firstUpdated() {
+    this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
+  }
+
   protected render(): TemplateResult | void {
     if (!this.hass) {
       return html``;
@@ -36,7 +43,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         >
         </button-group>
         ${this.titleOption == 'custom'
-          ? html`
+        ? html`
               <paper-input
                 label="Custom title"
                 .value=${this.getTitle()}
@@ -44,7 +51,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 @value-changed=${this.updateTitle}
               ></paper-input>
             `
-          : ''}
+        : ''}
 
         <div class="header">Show all schedules</div>
         <div class="text-field">
@@ -53,9 +60,9 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         </div>
         <button-group
           .items=${[
-            { id: 'true', name: 'on' },
-            { id: 'false', name: 'off' },
-          ]}
+        { id: 'true', name: 'on' },
+        { id: 'false', name: 'off' },
+      ]}
           value=${this.getDiscoveryOption()}
           @change=${this.updateDiscoveryOption}
         >
@@ -160,7 +167,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     const includedDomains = this._config.include ? [...this._config.include] : [];
     const entityList = Object.keys(this.hass.states)
-      .filter(e => !IsSchedulerEntity(e))
+      .filter(e => computeDomain(e) != "switch" || !this.scheduleEntities.includes(e))
       .map(e => parseEntity(e, this.hass!, { include: ['*'] }))
       .filter(e => computeEntityActions(e.id, this.hass!, {}).length) as EntityElement[];
 
@@ -174,8 +181,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         <div
           class="row"
           @click=${() => {
-            this.toggleSelectDomain(domain);
-          }}
+          this.toggleSelectDomain(domain);
+        }}
         >
           <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}"> </ha-icon>
 
@@ -203,7 +210,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     const includedEntities = this._config.include ? [...this._config.include] : [];
     return Object.entries(this.hass.states)
-      .filter(([e]) => computeDomain(e) == domain && !IsSchedulerEntity(e))
+      .filter(([e]) => computeDomain(e) == domain)
+      .filter(([e]) => domain != "switch" || !this.scheduleEntities.includes(e))
       .map(([entity_id, cfg]) => {
         const name = cfg.attributes.friendly_name || computeEntity(entity_id);
         const enabled = includedEntities.includes(entity_id);

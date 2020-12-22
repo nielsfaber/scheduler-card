@@ -21,7 +21,7 @@ export function timeToString(time: number) {
   const minutes = Math.floor(time / 60);
   time -= minutes * 60;
   const seconds = Math.round(time);
-  return String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+  return String(hours % 24).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
 }
 
 export function roundTime(value: number, stepSize: number, options: { wrapAround?: boolean, maxHours?: number } = { wrapAround: true }) {

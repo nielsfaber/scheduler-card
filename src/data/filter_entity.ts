@@ -16,7 +16,7 @@ export function matchPattern(pattern: string, value: string) {
         const regex = new RegExp(pattern.slice(1, -1));
         res = regex.test(value);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   return res;
 }
@@ -32,13 +32,8 @@ export function applyFilters(
   return match;
 }
 
-export function IsSchedulerEntity(entity_id: string) {
-  return entity_id.match(/^switch.schedule_[0-9a-f]{6}$/);
-}
-
 export function entityFilter(entity_id: string, config: CardConfig) {
-  if (IsSchedulerEntity(entity_id)) return false;
-  else if (!applyFilters(entity_id, config) && (!config.groups || !config.groups.some(e => applyFilters(entity_id, e))))
+  if (!applyFilters(entity_id, config) && (!config.groups || !config.groups.some(e => applyFilters(entity_id, e))))
     return false;
   return true;
 }

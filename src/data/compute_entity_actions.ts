@@ -9,11 +9,10 @@ import {
 import { HomeAssistant, computeDomain, computeEntity } from 'custom-card-helpers';
 import { omit } from '../helpers';
 import { standardActions } from '../standard-configuration/standardActions';
-import { matchPattern, entityFilter } from './filter_entity';
+import { matchPattern } from './filter_entity';
 import { listVariable, levelVariable } from '../actionVariables';
 import { DefaultActionIcon } from '../const';
 import { uniqueId, equalAction } from './compute_action_id';
-import { VariableSlider } from '../custom-elements/button-group';
 
 export function computeEntityActionConfig(entity: string, hass: HomeAssistant, config: Partial<CardConfig>) {
   const stateObj = hass.states[entity];
@@ -57,6 +56,7 @@ export function computeEntityActionConfig(entity: string, hass: HomeAssistant, c
       .forEach(action => {
         if (!computeDomain(action.service).length)
           action = { ...action, service: computeDomain(entity) + '.' + computeEntity(action.service) };
+        if (action.service_data) action = { ...action, service_data: omit(action.service_data, ['entity_id']) };
         let res = actionList.findIndex(el => equalAction(el, action));
         if (res >= 0 && action.service_data && uniqueId(action) != uniqueId(actionList[res])) res = -1;
         if (res >= 0) {
