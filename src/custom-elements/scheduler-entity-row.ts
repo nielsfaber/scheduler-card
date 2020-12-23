@@ -24,6 +24,13 @@ export class ScheduleEntityRow extends LitElement {
   @property() config!: CardConfig;
 
   render() {
+    if (!this.schedule.next_entries.length) {
+      return html`
+        <hui-warning>
+          Defective schedule entity: ${this.schedule.entity_id}
+        </hui-warning>
+      `;
+    }
     const nextEntry = this.schedule.timeslots[this.schedule.next_entries[0]];
     const entities = unique(nextEntry.actions.map(e => e.entity_id)).map(e => parseEntity(e, this.hass, this.config));
     const entityIcon = unique(entities.map(e => e.icon)).length == 1
@@ -252,6 +259,9 @@ export class ScheduleEntityRow extends LitElement {
     }
     ha-switch {
       padding: 13px 5px;
+    }
+    hui-warning {
+      flex: 1 0 40px;
     }
   `;
 }
