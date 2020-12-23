@@ -10,7 +10,6 @@ export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]
       : [];
   //find matches
   const mixedDomains = entities.map(e => computeDomain(e)).filter((v, k, arr) => arr.indexOf(v) === k).length > 1;
-
   if (mixedDomains) {
     entityActions = entityActions.map(actionList => {
       return actionList.map(action => {
@@ -25,6 +24,7 @@ export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]
       });
     });
   }
+  if (!entityActions.length) return [];
 
   const actions = entityActions[0].filter(action => {
     return entityActions.every(e => {
