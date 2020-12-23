@@ -1,7 +1,7 @@
 import { LitElement, html, customElement, property, css } from 'lit-element';
 import { localize } from '../localize/localize';
 //import { Config } from '../config';
-import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType } from '../types';
+import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot } from '../types';
 
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { entityGroups } from '../data/entity_group';
@@ -124,7 +124,8 @@ export class SchedulerOptionsCard extends LitElement {
 
           <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
           <paper-input no-label-float
-            value=${this.schedule.name}
+            value=${this.schedule.name || ''}
+            placeholder=${this.schedule.name ? "" : this.hass.localize('ui.components.area-picker.add_dialog.name')}
             @value-changed=${this.updateName}
           ></paper-input>
 
@@ -381,7 +382,7 @@ export class SchedulerOptionsCard extends LitElement {
       ...this.schedule,
       timeslots: this.schedule.timeslots.map(e =>
         Object.assign(e, {
-          type: type,
+          condition_type: type,
         })
       )
     }
