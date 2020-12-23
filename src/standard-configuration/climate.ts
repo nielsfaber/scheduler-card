@@ -107,13 +107,12 @@ export const climateActions = (
 ): ActionConfig[] => {
   const hvac_modes: string[] = stateObj ? stateObj.attributes.hvac_modes : [];
   let modeList = climateModes(hass.localize, stateObj);
-
   const tempVariable = levelVariable({
     field: 'temperature',
     name: hass.localize('ui.card.weather.attributes.temperature'),
     min: stateObj?.attributes.min_temp,
     max: stateObj?.attributes.max_temp,
-    step: stateObj?.attributes.target_temp_step || hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+    step: stateObj?.attributes.target_temp_step ? stateObj?.attributes.target_temp_step : hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
     unit: hass.config.unit_system.temperature,
   });
 
