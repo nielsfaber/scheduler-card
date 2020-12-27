@@ -50,7 +50,7 @@ The card works on top of the [scheduler custom component](https://github.com/nie
 
 See it in action:
 
-![alt text](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/Demonstration.gif?raw=true "demonstration video")
+![alt text](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/Demonstration.gif?raw=true "demonstration video")
 
 ## Installation
 <details>
@@ -146,7 +146,7 @@ The actions that you can perform for the selected entity show up here.
  Actions can contain a variable setting (e.g. turn on a lamp at specific brightness, or change the setpoint for a thermostat).
 These can be defined in the next page.
 
-<img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_select_entity.png?raw=true" width="500">
+<img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/instructions_select_entity.png?raw=true" width="500">
 
 #### Choosing the days
 After clicking the 'next' button, a new view appears.
@@ -196,7 +196,7 @@ Also here, buttons can be clicked to toggle.
 
 :warning: **Important**: _What you see is what you get_ here. If you want to store time as relative to sunrise or sunset, make sure that you have this _mode_ activated when you click the save button.
 
-<img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/instructions_timepicker.png?raw=true" width="400">
+<img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/instructions_timepicker.png?raw=true" width="400">
 
 ---
 
@@ -245,7 +245,7 @@ When a timeslot is selected, you can click the '+' or '-' buttons to either divi
 :warning: **Note** Due to the limited width of the Lovelace cards in HA, it might be difficult to make a short timeslot. 
 Since there is not really a way to fix this, it's recommended to use a PC or use your phone on landscape mode when creating a time scheme.
 
-<img src="https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/timescheme_example.png?raw=true" width="600">
+<img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/timescheme_example.png?raw=true" width="600">
 
 ---
 ### Options panel
@@ -395,7 +395,7 @@ groups:
 ```
 Result:
 
-![groups example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/groups_example.png?raw=true)
+![groups example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/groups_example.png?raw=true)
 
 ### Schedule discovery
 
@@ -467,7 +467,7 @@ customize:
   ```
 Result:
 
-![customize example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/entities_example.png?raw=true)
+![customize example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/entities_example.png?raw=true)
 
 
 **Customizing actions from standard configuration**
@@ -515,7 +515,7 @@ customize:
 ```
 You can now select the speed for this action in the schedule editor:
 
-![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_example.png?raw=true)
+![action variable example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/action_variable_example.png?raw=true)
 
 #### List action variable
 
@@ -561,7 +561,7 @@ customize:
 ```
 Now the list of options become visible when you set up the action:
 
-![action variable example](https://github.com/nielsfaber/scheduler-card/blob/master/screenshots/action_variable_list_example.png?raw=true)
+![action variable example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/action_variable_list_example.png?raw=true)
 
 
 #### Conditions
@@ -653,7 +653,7 @@ Currently the following languages are supported:
 
 
 The translations are maintained by users.
-If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/master/src/localize/languages/en.json) file as a starting point.
+If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/main/src/localize/languages/en.json) file as a starting point.
 
 ---
 ## FAQ
