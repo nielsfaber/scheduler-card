@@ -13,6 +13,7 @@ import * as pt from './languages/pt.json';
 import * as pt_br from './languages/pt-br.json';
 import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
+import * as uk from './languages/uk.json';
 
 const languages: any = {
   cs: cs,
@@ -33,6 +34,7 @@ const languages: any = {
   pt_BR: pt_br,
   ro: ro,
   ru: ru,
+  uk: uk,
 };
 
 export function localize(
