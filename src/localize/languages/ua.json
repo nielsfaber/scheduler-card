@@ -107,13 +107,13 @@
         "no_groups_defined": "Немає визначених груп",
         "no_group_selected": "Спершу виберіть групу",
         "no_entities_for_group": "В даній групі відсутні елементи",
-        "no_entity_selected": "Виберіть елемент",
+        "no_entity_selected": "Спершу виберіть елемент",
         "no_actions_for_entity": "Немає дій для цього елемента",
         "make_scheme": "створити схему",
         "multiple": "Декілька"
       },
       "time_picker": {
-        "no_timeslot_selected": "Виберіть часовий проміжок"
+        "no_timeslot_selected": "Спершу виберіть часовий проміжок"
       },
       "conditions": {
         "equal_to": "дорівнює",
