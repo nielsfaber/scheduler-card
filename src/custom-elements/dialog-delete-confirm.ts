@@ -2,8 +2,8 @@ import { LitElement, html, customElement, property, CSSResult, css, internalProp
 import { HomeAssistant, fireEvent } from 'custom-card-helpers';
 import { commonStyle } from '../styles';
 
-@customElement('dialog-confirm-delete')
-export class DialogConfirmDelete extends LitElement {
+@customElement('dialog-delete-confirm')
+export class DialogDeleteConfirm extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @internalProperty() private _params?: any;

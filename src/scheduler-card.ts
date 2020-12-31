@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
-import { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 
 import {
   CardConfig,
@@ -20,6 +20,7 @@ import './custom-elements/scheduler-timepicker-card';
 import './custom-elements/scheduler-options-card';
 import './custom-elements/scheduler-card-editor';
 import './custom-elements/dialog-error';
+import './custom-elements/dialog-delete-defective';
 import { parseAction } from './data/parse_action';
 import { parseEntity } from './data/parse_entity';
 import { computeEntityActions } from './data/compute_entity_actions';
@@ -306,8 +307,29 @@ export class SchedulerCard extends LitElement {
       repeat_type: data.repeat_type,
       name: data.name
     }
-
     this.editItem = data.schedule_id!;
+
+    if(!this.entities.length || !this.schedule.timeslots.length) {
+      const result = await new Promise((resolve) => {
+  
+        fireEvent(this, 'show-dialog', {
+          dialogTag: 'dialog-delete-defective',
+          dialogImport: () => import('./custom-elements/dialog-delete-defective'),
+          dialogParams: {
+            cancel: () => {
+              resolve(false);
+            },
+            confirm: () => {
+              resolve(true);
+            },
+          }
+        });
+      });
+      if (result) this._deleteItemClick();
+      else this._cancelEditClick();
+      return;
+    }
+
 
     if (this.schedule.timeslots.every(e => e.stop)) {
       this._view = EViews.TimeScheme;

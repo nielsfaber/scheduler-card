@@ -115,6 +115,7 @@ export function computeEntityActions(entity: string | string[], hass: HomeAssist
   }
   else {
     const actions = entity.map(el => computeEntityActions(el, hass, config));
+    if(!actions.length) return [];
     let actionsList = actions[0]
       .filter(action => actions.every(e => e.map(el => el.id).includes(action.id)))
       .map(action => {

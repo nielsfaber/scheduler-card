@@ -20,7 +20,7 @@ import { DefaultTimeStep, DefaultActionIcon } from '../const';
 import './time-picker';
 import './timeslot-editor';
 import './variable-slider';
-import './dialog-confirm-delete';
+import './dialog-delete-confirm';
 import { commonStyle } from '../styles';
 import { computeActionDisplay } from '../data/compute_action_display';
 import { startOfWeek } from '../data/date-time/start_of_week';
@@ -390,8 +390,8 @@ export class SchedulerTimepickerCard extends LitElement {
     const result = await new Promise((resolve) => {
 
       fireEvent(element, 'show-dialog', {
-        dialogTag: 'dialog-confirm-delete',
-        dialogImport: () => import('./dialog-confirm-delete'),
+        dialogTag: 'dialog-delete-confirm',
+        dialogImport: () => import('./dialog-delete-confirm'),
         dialogParams: {
           cancel: () => {
             resolve(false);
