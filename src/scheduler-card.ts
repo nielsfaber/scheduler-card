@@ -293,12 +293,12 @@ export class SchedulerCard extends LitElement {
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
     let actions = computeEntityActions(entities, this._hass, this._config);
     const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
-    usedActions
-      .filter(a => !actions.find(e => equalAction(e, a)))
-      .forEach(e => {
-        actions.push(parseAction(e, this._hass!, this._config!))
-      });
 
+    usedActions
+      .forEach(e => {
+        if(!actions.find(a => equalAction(a, e)))
+          actions.push(parseAction(e, this._hass!, this._config!))
+      });
     this.actions = actions;
 
     this.schedule = {

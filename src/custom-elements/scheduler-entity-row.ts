@@ -45,7 +45,7 @@ export class ScheduleEntityRow extends LitElement {
         ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, this.hass.language) || entityDomains[0]}`
         : `${entities.length}x entities`;
 
-    const actionConfig = parseAction(nextEntry.actions[0], this.hass, this.config);
+    const actionConfig = parseAction(nextEntry.actions[0], this.hass, this.config, true);
     const entityConfig = parseEntity(nextEntry.actions[0].entity_id!, this.hass, this.config);
 
     const icon =

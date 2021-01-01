@@ -1,15 +1,14 @@
-import { CardConfig, ActionConfig, ListVariableConfig, EVariableType, Action } from '../types';
+import { CardConfig, ActionConfig, ListVariableConfig, EVariableType, Action, LevelVariableConfig } from '../types';
 import { HomeAssistant } from 'custom-card-helpers';
 import { omit } from '../helpers';
 import { standardActions } from '../standard-configuration/standardActions';
 import { uniqueId, equalAction } from './compute_action_id';
 import { computeEntityActionConfig, actionElement } from './compute_entity_actions';
 
-export function parseAction(action: Action, hass: HomeAssistant, config: CardConfig) {
+export function parseAction(action: Action, hass: HomeAssistant, config: CardConfig, preserveServiceData: boolean = false) {
   const entity = action.entity_id;
   const service = action.service;
   const service_data = action.service_data || {};
-
   const actionList = computeEntityActionConfig(entity, hass, config);
 
   const id = uniqueId({ service: service, service_data: service_data });
@@ -33,6 +32,14 @@ export function parseAction(action: Action, hass: HomeAssistant, config: CardCon
         match = {
           ...match,
           variable: { ...variable },
+          service_data: { ...match.service_data, [variable.field]: value },
+        };
+      }
+      else if (match.variable!.type == EVariableType.Level && preserveServiceData) {
+        let variable = match.variable as LevelVariableConfig;
+        const value = action.service_data![variable.field];
+        match = {
+          ...match,
           service_data: { ...match.service_data, [variable.field]: value },
         };
       }
