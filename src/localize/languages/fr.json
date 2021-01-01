@@ -7,7 +7,7 @@
     "climate": {
       "set_temperature": "ajuster la température[ à {temperature}]",
       "set_temperature_hvac_mode_heat": "chauffe[ à {temperature}]",
-      "set_temperature_hvac_mode_cool": "refroidi[ à {temperature}]",
+      "set_temperature_hvac_mode_cool": "refroidit[ à {temperature}]",
       "set_hvac_mode": "ajuster le mode[ à {hvac_mode}]",
       "set_preset_mode": "choisir le pré-réglage[ {preset_mode}]"
     },
@@ -31,7 +31,7 @@
       "select_option": "choisir l'option[ {option}]"
     },
     "light": {
-      "turn_on": "allumer[ avec {brightness} luminosité]"
+      "turn_on": "allumer[ avec une luminosité de {brightness}]"
     },
     "media_player": {
       "select_source": "choisir la source[ {source}]"
@@ -49,19 +49,19 @@
   "domains": {
     "alarm_control_panel": "panneau de contrôle de l'alarme",
     "climate": "thermostat",
-    "cover": "couvertures",
-    "fan": "ventilateurs",
-    "group": "groupes",
-    "humidifier": "humidificateurs",
+    "cover": "volet",
+    "fan": "ventilateur",
+    "group": "groupe",
+    "humidifier": "humidificateur",
     "input_boolean": "entrée booléenne",
     "input_number": "entrée numérique",
     "input_select": "entrée de sélection",
     "light": "lumière",
     "lock": "serrure",
-    "media_player": "lecteurs multimédias",
-    "scene": "scènes",
-    "script": "scripts",
-    "switch": "interrupteurs",
+    "media_player": "lecteur multimédia",
+    "scene": "scène",
+    "script": "script",
+    "switch": "interrupteur",
     "vacuum": "aspirateur",
     "water_heater": "chauffe eau"
   },
@@ -107,11 +107,11 @@
         "no_group_selected": "Choisir un groupe en premier",
         "no_entities_for_group": "Il n'y a pas d'entité dans ce groupe",
         "no_entity_selected": "Choisir une entité en premier",
-        "no_actions_for_entity": "Il n'y a pas d'action pour cet entité",
+        "no_actions_for_entity": "Il n'y a pas d'action pour cette entité",
         "make_scheme": "créer un schéma"
       },
       "time_picker": {
-        "no_timeslot_selected": "Choisir une plage horaire en premier"
+        "no_timeslot_selected": "Choisir d'abord une plage horaire"
       },
       "conditions": {
         "equal_to": "égal à",
