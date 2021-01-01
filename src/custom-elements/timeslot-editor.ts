@@ -1,4 +1,4 @@
-import { LitElement, html, customElement, css, property, TemplateResult } from 'lit-element';
+import { LitElement, html, customElement, css, property, TemplateResult, eventOptions } from 'lit-element';
 import { localize } from '../localize/localize';
 import { ActionElement, EVariableType, LevelVariableConfig, ListVariableConfig, Timeslot } from '../types';
 import { PrettyPrintName, unique } from '../helpers';
@@ -105,8 +105,9 @@ export class TimeslotEditor extends LitElement {
           >
             <div
               class="slider-thumb-ripple"
-                @mousedown="${(ev: MouseEvent | TouchEvent) => { this._handleTouchStart(ev, i) }}"
-                @touchstart="${(ev: MouseEvent | TouchEvent) => { this._handleTouchStart(ev, i) }}"
+              index="${i}"
+              @mousedown=${this._handleTouchStart}
+              @touchstart=${this._handleTouchStart}
             >
               <ha-icon
                 icon="hass:unfold-more-vertical"
@@ -162,10 +163,13 @@ export class TimeslotEditor extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
-  private _handleTouchStart(e: MouseEvent | TouchEvent, thumb_index: number) {
+  @eventOptions({passive: true})
+  private _handleTouchStart(e: MouseEvent | TouchEvent) {
     let thumbHandle = e.target as HTMLElement;
     if (!thumbHandle) return;
+
     if (thumbHandle.nodeName == 'HA-ICON') thumbHandle = thumbHandle.parentElement as HTMLElement;
+    const thumb_index = Number(thumbHandle.getAttribute("index"));
 
     const thumbElement = thumbHandle!.parentNode as HTMLElement;
 
@@ -349,7 +353,7 @@ export class TimeslotEditor extends LitElement {
     }
     div.slider-slot .content {
       display: inline-block;
-      margin: 0px 12px;
+      margin: 0px 2px;
       word-break: break-all;
       overflow: hidden;
       line-height: 1em;

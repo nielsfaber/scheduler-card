@@ -51,7 +51,7 @@ export class MyRelativeTime extends LitElement {
           (dateObj.valueOf() - startOfToday.valueOf()) / (hoursPerDay * secondsPerHour * 1000)
         );
         let day = '';
-        if (daysFromNow == 1 && dateObj.getHours() == 0 && dateObj.getMinutes() == 0)
+        if (daysFromNow == 1)
           day = localize('ui.components.date.tomorrow', this._hass.language);
         else if (daysFromNow > 0)
           day = formatWeekday(dateObj, this._hass.language);

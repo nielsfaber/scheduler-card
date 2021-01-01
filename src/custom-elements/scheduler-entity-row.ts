@@ -1,4 +1,4 @@
-import { LitElement, html, customElement, css, property } from 'lit-element';
+import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { CardConfig, ETimeEvent, EDayType, Schedule, Timeslot, WeekdayType } from '../types';
 import { PrettyPrintName, capitalize, PrettyPrintIcon, unique } from '../helpers';
@@ -16,22 +16,40 @@ import { weekdayToList } from '../data/date-time/weekday_to_list';
 import { stringToTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { standardIcon } from '../standard-configuration/standardIcon';
+import { STATE_NOT_RUNNING } from 'home-assistant-js-websocket';
 
 @customElement('scheduler-entity-row')
 export class ScheduleEntityRow extends LitElement {
   @property() hass!: HomeAssistant;
-  @property() schedule!: Schedule;
   @property() config!: CardConfig;
+  @property() _schedule!: Schedule;
+
+  set schedule(schedule: Schedule) {
+    this._schedule = schedule;
+  }
+
+  shouldUpdate(changedProps: PropertyValues) {
+    if(changedProps.size > 1) return true;
+    const oldSchedule = changedProps.get("_schedule") as Schedule | undefined;
+    const newSchedule = this._schedule;
+    return JSON.stringify(oldSchedule) !== JSON.stringify(newSchedule);
+  }
 
   render() {
-    if (!this.schedule.next_entries.length) {
-      return html`
+    if (!this._schedule.next_entries.length) {
+      return this.hass.config.state !== STATE_NOT_RUNNING
+      ? html`
         <hui-warning>
-          Defective schedule entity: ${this.schedule.entity_id}
+          Defective schedule entity: ${this._schedule.entity_id}
+        </hui-warning>
+      `
+      : html`
+        <hui-warning>
+        ${this.hass.localize("ui.panel.lovelace.warning.starting")}
         </hui-warning>
       `;
     }
-    const nextEntry = this.schedule.timeslots[this.schedule.next_entries[0]];
+    const nextEntry = this._schedule.timeslots[this._schedule.next_entries[0]];
     const entities = unique(nextEntry.actions.map(e => e.entity_id)).map(e => parseEntity(e, this.hass, this.config));
     const entityIcon = unique(entities.map(e => e.icon)).length == 1
       ? entities[0].icon
@@ -56,23 +74,23 @@ export class ScheduleEntityRow extends LitElement {
     const computeDisplayItem = (displayItem: string): string => {
       switch (displayItem) {
         case 'name':
-          return this.schedule.name || '';
+          return this._schedule.name || '';
         case 'relative-time':
           return `<my-relative-time></my-relative-time>`;
         case 'additional-tasks':
-          return this.schedule.timeslots.length > 1
+          return this._schedule.timeslots.length > 1
             ? '+' +
             localize(
               'ui.panel.overview.additional_tasks',
               this.hass!.language,
               '{number}',
-              String(this.schedule.timeslots.length - 1)
+              String(this._schedule.timeslots.length - 1)
             )
             : '';
         case 'time':
-          return capitalize(this.computeTime(this.schedule.timeslots[this.schedule.next_entries[0]]));
+          return capitalize(this.computeTime(this._schedule.timeslots[this._schedule.next_entries[0]]));
         case 'days':
-          return capitalize(this.computeDays(this.schedule.weekdays));
+          return capitalize(this.computeDays(this._schedule.weekdays));
         case 'entity':
           return entityName.length ? capitalize(PrettyPrintName(entityName)) : '';
         case 'action':
@@ -93,7 +111,7 @@ export class ScheduleEntityRow extends LitElement {
         if (parts.length == 1) return unsafeHTML(input);
         return html`
           ${parts[0] ? unsafeHTML(parts[0]) : ''}
-          <my-relative-time .hass=${this.hass} .datetime=${new Date(this.schedule.timestamps[this.schedule.next_entries[0]])}> </my-relative-time>
+          <my-relative-time .hass=${this.hass} .datetime=${new Date(this._schedule.timestamps[this._schedule.next_entries[0]])}> </my-relative-time>
           ${parts[1] ? unsafeHTML(parts[1]) : ''}
         `;
       };
@@ -122,7 +140,7 @@ export class ScheduleEntityRow extends LitElement {
         : renderDisplayItems(this.config.display_options.secondary_info)}
         </div>
       </div>
-      <ha-switch ?checked=${this.schedule.enabled} @click=${this.toggleDisabled}>
+      <ha-switch ?checked=${this._schedule.enabled} @click=${this.toggleDisabled}>
       </ha-switch>
     `;
   }
@@ -227,10 +245,10 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   toggleDisabled(ev: Event) {
-    if (!this.hass || !this.schedule) return;
+    if (!this.hass || !this._schedule) return;
     ev.stopPropagation();
     const checked = !(ev.target as HTMLInputElement).checked;
-    this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this.schedule.entity_id });
+    this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this._schedule.entity_id });
   }
 
   static styles = css`
