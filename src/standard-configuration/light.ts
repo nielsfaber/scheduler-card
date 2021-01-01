@@ -1,7 +1,7 @@
 import { HassEntity } from 'home-assistant-js-websocket';
 import { levelVariable } from '../actionVariables';
 import { ActionConfig } from '../types';
-import { HomeAssistant } from 'custom-card-helpers';
+import { computeStateDisplay, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
 export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => {
@@ -39,3 +39,17 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
 
   return actions;
 };
+
+
+export const lightStates = (hass: HomeAssistant, stateObj: HassEntity) => [
+  {
+    value: "off",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+    icon: "hass:lightbulb-off"
+  },
+  {
+    value: "on",
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+    icon: "hass:lightbulb"
+  }
+];

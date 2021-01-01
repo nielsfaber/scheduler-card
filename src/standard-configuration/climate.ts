@@ -1,6 +1,6 @@
 import { levelVariable, listVariable } from '../actionVariables';
 import { ActionConfig } from '../types';
-import { HomeAssistant, LocalizeFunc } from 'custom-card-helpers';
+import { computeStateDisplay, HomeAssistant, LocalizeFunc } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { localize } from '../localize/localize';
 
@@ -193,4 +193,49 @@ export const climateActions = (
   });
 
   return actions;
+};
+
+
+export const climateStates = (hass: HomeAssistant, stateObj: HassEntity) => {
+  const modeList = [
+    {
+      value: 'off',
+      icon: 'hass:power-off',
+      name: hass.localize('state.climate.off'),
+    },
+    {
+      value: 'heat',
+      icon: 'hass:fire',
+      name: hass.localize('state.climate.heat'),
+    },
+    {
+      value: 'cool',
+      icon: 'hass:snowflake',
+      name: hass.localize('state.climate.cool'),
+    },
+    {
+      value: 'heat_cool',
+      icon: 'hass:thermometer',
+      name: hass.localize('state.climate.heat_cool'),
+    },
+    {
+      value: 'auto',
+      icon: 'hass:autorenew',
+      name: hass.localize('state_attributes.climate.auto'),
+    },
+    {
+      value: 'dry',
+      icon: 'hass:water-percent',
+      name: hass.localize('state.climate.dry'),
+    },
+    {
+      value: 'fan_only',
+      icon: 'hass:fan',
+      name: hass.localize('state.climate.fan_only'),
+    },
+  ];
+  if (stateObj && stateObj.attributes.hvac_modes && Array.isArray(stateObj.attributes.hvac_modes)) {
+    return modeList.filter(e => stateObj.attributes.hvac_modes.includes(e.value));
+  }
+  return modeList;
 };
