@@ -187,8 +187,9 @@ export class TimeslotEditor extends LitElement {
     const slots = Array.from(trackElement.querySelectorAll('.slider-slot')) as HTMLElement[];
     const slotWidths = slots.map(e => e.offsetWidth);
 
-    const x_min = trackWidth / secondsPerDay * this.stepSize * 60;
-    const x_max = trackWidth - x_min;
+    const xMin = trackWidth / secondsPerDay * this.stepSize * 60;
+    const xMax = trackWidth - xMin;
+    const wMin = xMin;
 
     let xStart = 0;
     let slotIndex = -1;
@@ -208,10 +209,10 @@ export class TimeslotEditor extends LitElement {
       } else startDragX = (e as MouseEvent).pageX;
 
       let x = startDragX - trackCoords.left;
-      if (x < x_min) x = x_min;
-      else if (x > x_max) x = x_max;
-      else if (x > availableWidth + xStart) x = availableWidth + xStart;
-      else if (x < xStart) x = xStart;
+      if (x < xMin) x = xMin;
+      else if (x > xMax) x = xMax;
+      else if (x > availableWidth + xStart - wMin) x = availableWidth + xStart - wMin;
+      else if (x < (xStart + wMin)) x = xStart + wMin;
 
       firstSlot.style.width = `${Math.round(x - xStart)}px`;
       secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;
