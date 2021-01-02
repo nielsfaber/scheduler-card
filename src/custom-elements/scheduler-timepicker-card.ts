@@ -444,12 +444,15 @@ export class SchedulerTimepickerCard extends LitElement {
       cursor: pointer;
       background: rgba(var(--rgb-primary-color), 0.15);
       border-radius: 4px;
+      align-items: center;
     }
     div.summary-entity div,
     div.summary-action div {
       display: flex;
       flex-grow: 1;
       margin: 5px;
+      width: 100%;
+      align-items: center;
     }
     div.summary-entity ha-icon,
     div.summary-action ha-icon {
