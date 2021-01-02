@@ -9,6 +9,7 @@ import { personStates } from './person';
 import { fanStates } from './fan';
 import { lightStates } from './light';
 import { climateStates } from './climate';
+import { deviceTrackerStates } from './device_tracker';
 
 export function standardStates(entity_id: string, hass: HomeAssistant) {
   const domain = computeDomain(entity_id);
@@ -23,6 +24,8 @@ export function standardStates(entity_id: string, hass: HomeAssistant) {
       return climateStates(hass, stateObj);
     case 'cover':
       return coverStates(hass, stateObj);
+    case 'device_tracker':
+      return deviceTrackerStates(hass, stateObj);
     case 'fan':
       return fanStates(hass, stateObj);
     case 'input_boolean':
