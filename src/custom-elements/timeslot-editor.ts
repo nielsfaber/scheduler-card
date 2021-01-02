@@ -14,7 +14,7 @@ const secondsPerDay = 86400;
 function Duration(el: Timeslot) {
   const start = stringToTime(el.start);
   let stop = stringToTime(el.stop!);
-  if(stop < start) stop += secondsPerDay;
+  if (stop < start) stop += secondsPerDay;
   return stop - start;
 }
 
@@ -76,7 +76,7 @@ export class TimeslotEditor extends LitElement {
           <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
           ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
         </mwc-button>
-        <mwc-button @click=${this._removeSlot} ?disabled=${this._activeEntry === null || this.entries.length <= 3}>
+        <mwc-button @click=${this._removeSlot} ?disabled=${this._activeEntry === null || this.entries.length <= 2}>
           <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
           ${this.hass.localize('ui.common.delete')}
         </mwc-button>
@@ -163,7 +163,7 @@ export class TimeslotEditor extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
-  @eventOptions({passive: true})
+  @eventOptions({ passive: true })
   private _handleTouchStart(e: MouseEvent | TouchEvent) {
     let thumbHandle = e.target as HTMLElement;
     if (!thumbHandle) return;
@@ -187,6 +187,9 @@ export class TimeslotEditor extends LitElement {
     const slots = Array.from(trackElement.querySelectorAll('.slider-slot')) as HTMLElement[];
     const slotWidths = slots.map(e => e.offsetWidth);
 
+    const x_min = trackWidth / secondsPerDay * this.stepSize * 60;
+    const x_max = trackWidth - x_min;
+
     let xStart = 0;
     let slotIndex = -1;
     slots.forEach((e, i) => {
@@ -205,10 +208,10 @@ export class TimeslotEditor extends LitElement {
       } else startDragX = (e as MouseEvent).pageX;
 
       let x = startDragX - trackCoords.left;
-      if (x < 0) x = 0;
-      else if (x > trackCoords.width) x = trackCoords.width;
-      if (x > availableWidth + xStart) x = availableWidth + xStart;
-      if (x < xStart) x = xStart;
+      if (x < x_min) x = x_min;
+      else if (x > x_max) x = x_max;
+      else if (x > availableWidth + xStart) x = availableWidth + xStart;
+      else if (x < xStart) x = xStart;
 
       firstSlot.style.width = `${Math.round(x - xStart)}px`;
       secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;

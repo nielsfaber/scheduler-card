@@ -41,7 +41,12 @@ export function PrettyPrintIcon(input?: string) {
 
 export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
   //TBD implementation for sun
-  entries.sort((a, b) => (stringToTime(a.start) > stringToTime(b.start) ? 1 : -1));
+  entries.sort((a, b) => {
+    if (stringToTime(a.start) > stringToTime(b.start)) return 1;
+    else if (stringToTime(a.start) < stringToTime(b.start)) return -1;
+    else return stringToTime(a.stop!) > stringToTime(b.stop!) ? 1 : -1;
+  });
+
   entries = entries.map(e =>
     stringToTime(e.stop!) < stringToTime(e.start)
       ? {
@@ -51,8 +56,9 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       : e
   );
   let startTime = 0;
+  const len = entries.length;
 
-  for (let i = 0; i < entries.length; i++) {
+  for (let i = 0; i < len; i++) {
     const entry = entries[i];
     if (stringToTime(entry.start) > startTime) {
       entries.splice(
@@ -67,7 +73,6 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
     }
     startTime = stringToTime(entry.stop!);
   }
-
   const endOfDay = 24 * 3600;
 
   if (startTime < endOfDay && startTime > 0) {

@@ -296,7 +296,7 @@ export class SchedulerCard extends LitElement {
 
     usedActions
       .forEach(e => {
-        if(!actions.find(a => equalAction(a, e)))
+        if (!actions.find(a => equalAction(a, e)))
           actions.push(parseAction(e, this._hass!, this._config!))
       });
     this.actions = actions;
@@ -309,9 +309,8 @@ export class SchedulerCard extends LitElement {
     }
     this.editItem = data.schedule_id!;
 
-    if(!this.entities.length || !this.schedule.timeslots.length) {
+    if (!this.entities.length || !this.schedule.timeslots.length) {
       const result = await new Promise((resolve) => {
-  
         fireEvent(this, 'show-dialog', {
           dialogTag: 'dialog-delete-defective',
           dialogImport: () => import('./custom-elements/dialog-delete-defective'),
@@ -329,7 +328,6 @@ export class SchedulerCard extends LitElement {
       else this._cancelEditClick();
       return;
     }
-
 
     if (this.schedule.timeslots.every(e => e.stop)) {
       this._view = EViews.TimeScheme;
