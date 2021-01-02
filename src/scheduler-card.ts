@@ -83,6 +83,7 @@ export class SchedulerCard extends LitElement {
         this.translationsLoaded = true;
         return true;
       }
+      else if (this._view == EViews.Overview) return true;
       return false;
     }
     return true;
