@@ -55,6 +55,7 @@ export const commonStyle = css`
       display: flex;
       align-self: center;
       margin: 0px 8px;
+      line-height: 24px;
     }
     mwc-button {
       margin: 2px 0px;

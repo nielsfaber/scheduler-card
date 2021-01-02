@@ -434,16 +434,17 @@ export class SchedulerOptionsCard extends LitElement {
       flex-direction: row;
       align-items: center;
       padding: 4px 0px;
-      background: rgba(var(--rgb-primary-text-color), 0.08);
+      background: rgba(var(--rgb-primary-color), 0.15);
+      color: var(--dark-primary-color);
       border-radius: 8px;
       margin: 2px 0px;
-      font-weight: 400;
+      font-size: 14px;
+      font-weight: 500;
     }
     div.summary ha-icon {
       flex: 0 0 48px;
       justify-content: center;
       display: flex;
-      color: var(--state-icon-color);
     }
     div.summary span {
       flex: 1 0 60px;
