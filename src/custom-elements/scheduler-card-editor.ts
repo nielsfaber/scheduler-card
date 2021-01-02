@@ -9,6 +9,7 @@ import { domainIcons } from '../standard-configuration/standardIcon';
 import { parseEntity } from '../data/parse_entity';
 import { computeEntityActions } from '../data/compute_entity_actions';
 import { fetchSchedules } from '../data/websockets';
+import { standardStates } from '../standard-configuration/standardStates';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
@@ -83,7 +84,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         </variable-slider>
 
         <div class="header">Included entities</div>
-        <div class="text-field">Click on a group to open it.</div>
+        <div class="text-field">Select the entities that you want to control using the scheduler. You can click on a group to open it.<br> Note that some entities (such as sensors) can only be used for conditions, not for actions.</div>
         ${this.getDomainSwitches()}
       </div>
     `;
@@ -165,23 +166,24 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
-    const includedDomains = this._config.include ? [...this._config.include] : [];
     const entityList = Object.keys(this.hass.states)
       .filter(e => computeDomain(e) != "switch" || !this.scheduleEntities.includes(e))
       .map(e => parseEntity(e, this.hass!, { include: ['*'] }))
-      .filter(e => computeEntityActions(e.id, this.hass!, {}).length) as EntityElement[];
+      .filter(e => standardStates(e.id, this.hass!)?.length || computeEntityActions(e.id, this.hass!, {}).length);
 
     const domainList = entityList.map(e => computeDomain(e.id)).filter((v, k, arr) => arr.indexOf(v) === k);
+    domainList.sort((a, b) => (a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1));
+
+    const includedDomains = this._config.include ? [...this._config.include] : [];
 
     return domainList.map(domain => {
-      const enabled = includedDomains.includes(domain);
       const count = entityList.filter(e => computeDomain(e.id) == domain).length;
       if (!count) return ``;
       return html`
         <div
           class="row"
           @click=${() => {
-          this.toggleSelectDomain(domain);
+          this.toggleShowDomain(domain);
         }}
         >
           <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}"> </ha-icon>
@@ -192,8 +194,12 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
               ${count} ${count == 1 ? 'entity' : 'entities'}
             </div>
           </div>
-          <ha-icon-button icon="${this.selectedDomain == domain ? 'mdi:chevron-down' : 'mdi:chevron-right'}">
-          </ha-icon-button>
+          <ha-switch
+            @click=${(ev: Event) => { ev.stopPropagation() }}
+            @change=${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}}
+            ?checked=${includedDomains.includes(domain)}
+          >
+          </ha-switch>
         </div>
         ${this.selectedDomain == domain
           ? html`
@@ -214,7 +220,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       .filter(([e]) => domain != "switch" || !this.scheduleEntities.includes(e))
       .map(([entity_id, cfg]) => {
         const name = cfg.attributes.friendly_name || computeEntity(entity_id);
-        const enabled = includedEntities.includes(entity_id);
+        const enabled = includedEntities.includes(entity_id) || includedEntities.includes(computeDomain(entity_id));
         return html`
           <div class="row" @click=${() => this.toggleSelectEntity(entity_id)}>
             <state-badge .hass=${this.hass} .stateObj=${this.hass!.states[entity_id]}> </state-badge>
@@ -224,19 +230,36 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 ${entity_id}
               </div>
             </div>
-            <ha-switch ?checked=${enabled}> </ha-switch>
+            <ha-switch
+              ?checked=${enabled}
+              ?disabled=${includedEntities.includes(computeDomain(entity_id))}
+            ></ha-switch>
           </div>
         `;
       });
   }
 
-  toggleSelectDomain(domain: string) {
+  toggleShowDomain(domain: string) {
     if (!this._config || !this.hass) return;
     if (this.selectedDomain != domain) {
       this.selectedDomain = domain;
     } else {
       this.selectedDomain = '';
     }
+  }
+
+  toggleSelectDomain(domain: string, enabled: boolean) {
+    if (!this._config || !this.hass) return;
+    let includedEntities = this._config.include ? [...this._config.include] : [];
+    if (!includedEntities.includes(domain) && enabled) {
+      includedEntities = includedEntities.filter(e => !e.startsWith(domain));
+      includedEntities.push(domain);
+    }
+    else if (includedEntities.includes(domain) && !enabled) includedEntities = includedEntities.filter(e => e != domain);
+    else return;
+    includedEntities.sort();
+    this._config = Object.assign({ ...this._config }, { include: includedEntities });
+    fireEvent(this, 'config-changed', { config: this._config });
   }
 
   toggleSelectEntity(entity_id: string) {
