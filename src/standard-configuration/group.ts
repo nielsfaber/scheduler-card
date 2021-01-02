@@ -1,6 +1,6 @@
-import { ActionConfig } from '../types';
+import { ActionConfig, ListVariableOption } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { computeDomain, computeEntity } from 'custom-card-helpers';
+import { computeDomain, computeEntity, HomeAssistant } from 'custom-card-helpers';
 import { uniqueId } from '../data/compute_action_id';
 
 export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]) {
@@ -32,4 +32,18 @@ export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]
     });
   });
   return actions;
+}
+
+export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityStates: ListVariableOption[][]) => {
+  if (!entityStates.length) return [];
+  let states = [...entityStates[0]];
+  if (!states.length) return [];
+
+  entityStates.forEach(entity => {
+    states = states.filter(e => {
+      return entity.find(el => el.value == e.value);
+    });
+  });
+
+  return states;
 }

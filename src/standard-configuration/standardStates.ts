@@ -10,10 +10,13 @@ import { fanStates } from './fan';
 import { lightStates } from './light';
 import { climateStates } from './climate';
 import { deviceTrackerStates } from './device_tracker';
+import { groupStates } from './group';
+import { HassEntity } from 'home-assistant-js-websocket';
 
 export function standardStates(entity_id: string, hass: HomeAssistant) {
   const domain = computeDomain(entity_id);
-  const stateObj = hass.states[entity_id];
+  const stateObj: HassEntity | undefined = hass.states[entity_id];
+  if (!stateObj) return [];
 
   switch (domain) {
     case 'alarm_control_panel':
@@ -28,6 +31,10 @@ export function standardStates(entity_id: string, hass: HomeAssistant) {
       return deviceTrackerStates(hass, stateObj);
     case 'fan':
       return fanStates(hass, stateObj);
+    case 'group':
+      const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
+      const configs = entities.map(e => standardStates(e, hass));
+      return groupStates(hass, stateObj, configs);
     case 'input_boolean':
       return inputBooleanStates(hass, stateObj);
     case 'switch':
