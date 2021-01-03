@@ -266,21 +266,21 @@ For more information on this, see [conditions](#conditions).
 
 :warning: **Note**: Conditions are only evaluated at the time the actions should fire. This means that if the conditions are not met, the timer event will be skipped. It will not be re-evaluated when any of the entities involved in the conditions change.
 
-#### Friendly name
+#### Name
 
 By default, all schedules will have an automatically generated entity ID and friendly name.
 This means they could be hard to find back in the entity registry.
 
-The friendly name setting allows you to change the name (not the entity ID) to anything that makes it recognizable for you.
+By defining your own friendly name, this will assigned to the entity, and the entity ID of the entitywill be based on this name as well.
 If you leave the field empty, the automatically generated name shall be used instead.
 
-Note if a custom friendly name is provided it shall be displayed in the overview page as well.
+#### Behaviour after triggering
 
-#### Disable after trigger
-
-The *disable after trigger* option does exactly what it says.
-It waits for the timer to expire, executes the actions, and will then disable the schedule.
-You can enable the schedule again to reset it.
+The *behaviour after triggering* option does exactly what it says.
+You can choose what to do after the schedule is triggered:
+* Repeat (default option): the schedule will reset the timer for next execution after it is triggered
+* Single: the schedule will remove itself after it has been triggered once
+* Pause: the schedule will disable itself after it has been triggered once, it can be reset by turning it back on
 
 ## Configuration
 
