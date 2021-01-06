@@ -201,37 +201,37 @@ export const climateStates = (hass: HomeAssistant, stateObj: HassEntity) => {
     {
       value: 'off',
       icon: 'hass:power-off',
-      name: hass.localize('state.climate.off'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
     },
     {
       value: 'heat',
       icon: 'hass:fire',
-      name: hass.localize('state.climate.heat'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat" }, hass.language),
     },
     {
       value: 'cool',
       icon: 'hass:snowflake',
-      name: hass.localize('state.climate.cool'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "cool" }, hass.language),
     },
     {
       value: 'heat_cool',
       icon: 'hass:thermometer',
-      name: hass.localize('state.climate.heat_cool'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat_cool" }, hass.language),
     },
     {
       value: 'auto',
       icon: 'hass:autorenew',
-      name: hass.localize('state_attributes.climate.auto'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "auto" }, hass.language),
     },
     {
       value: 'dry',
       icon: 'hass:water-percent',
-      name: hass.localize('state.climate.dry'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "dry" }, hass.language),
     },
     {
       value: 'fan_only',
       icon: 'hass:fan',
-      name: hass.localize('state.climate.fan_only'),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "fan_only" }, hass.language),
     },
   ];
   if (stateObj && stateObj.attributes.hvac_modes && Array.isArray(stateObj.attributes.hvac_modes)) {

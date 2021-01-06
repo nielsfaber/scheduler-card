@@ -25,3 +25,5 @@ export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): 
     name: localize('services.input_select.select_option', hass.language),
   },
 ];
+
+export const inputSelectStates = (hass: HomeAssistant, stateObj: HassEntity) => inputSelectOptions(hass.localize, stateObj);

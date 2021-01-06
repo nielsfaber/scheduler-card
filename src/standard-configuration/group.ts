@@ -35,15 +35,17 @@ export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]
 }
 
 export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityStates: ListVariableOption[][]) => {
-  if (!entityStates.length) return [];
+  if (!entityStates.length || !Array.isArray(entityStates[0])) return [];
   let states = [...entityStates[0]];
   if (!states.length) return [];
 
-  entityStates.forEach(entity => {
-    states = states.filter(e => {
-      return entity.find(el => el.value == e.value);
+  entityStates
+    .filter(e => Array.isArray(e))
+    .forEach(entity => {
+      states = states.filter(e => {
+        return entity.find(el => el.value == e.value);
+      });
     });
-  });
 
   return states;
 }
