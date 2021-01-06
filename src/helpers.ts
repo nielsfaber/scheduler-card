@@ -56,7 +56,7 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       : e
   );
   let startTime = 0;
-  const len = entries.length;
+  let len = entries.length;
 
   for (let i = 0; i < len; i++) {
     const entry = entries[i];
@@ -64,12 +64,13 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       entries.splice(
         i,
         0,
-        Object({
+        Object.assign({ ...entry }, {
           start: timeToString(startTime),
           stop: entry.start,
           actions: []
         })
-      )
+      );
+      len++;
     }
     startTime = stringToTime(entry.stop!);
   }
@@ -77,7 +78,7 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
 
   if (startTime < endOfDay && startTime > 0) {
     entries.push(
-      Object({
+      Object.assign({ ...entries[0] }, {
         start: timeToString(startTime),
         stop: timeToString(endOfDay),
         actions: []
