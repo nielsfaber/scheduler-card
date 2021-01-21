@@ -173,7 +173,7 @@ export class SchedulerOptionsCard extends LitElement {
 
       const hassEntities = Object.keys(this.hass.states)
         .filter(e => entityFilter(e, this.config!))
-        .filter(e => standardStates(e, this.hass!)?.length || computeDomain(e) == "sensor");
+        .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
 
       const groups = entityGroups(hassEntities, this.config, this.hass);
       groups.sort((a, b) => (a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1));
@@ -206,7 +206,8 @@ export class SchedulerOptionsCard extends LitElement {
       const entity = parseEntity(this.selectedEntity, this.hass!, this.config!);
       const stateObj = this.hass!.states[this.selectedEntity];
       const states = standardStates(this.selectedEntity, this.hass);
-      const matchTypes = computeDomain(this.selectedEntity) == "sensor" && !isNaN(Number(stateObj.state))
+
+      const matchTypes = (computeDomain(this.selectedEntity) == "sensor" && !isNaN(Number(stateObj.state))) || ["proximity", "input_number"].includes(computeDomain(this.selectedEntity))
         ? Object.entries(pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])).map(([k, v]) => Object.assign(v, { id: k }))
         : Object.entries(pick(this.matchTypes, [EConditionMatchType.Equal, EConditionMatchType.Unequal])).map(([k, v]) => Object.assign(v, { id: k }));
       return html`
@@ -234,7 +235,7 @@ export class SchedulerOptionsCard extends LitElement {
       </button-group>
       
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
-        ${states
+        ${states && states.length
           ?
           html`
       <button-group
@@ -247,7 +248,7 @@ export class SchedulerOptionsCard extends LitElement {
           :
           html`
             <paper-input
-              label="${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}${stateObj.attributes.unit_of_measurement ? ` (${stateObj.attributes.unit_of_measurement})` : ''}"
+              label="${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}${stateObj.attributes.unit_of_measurement ? ` [${stateObj.attributes.unit_of_measurement}]` : ''}"
               value=${this.conditionValue ? this.conditionValue : ""}
               @value-changed=${(ev: Event) => { const value = (ev.target as HTMLInputElement).value; this.conditionValue = isNaN(Number(value)) ? value : Number(value) }}
             >
@@ -347,7 +348,7 @@ export class SchedulerOptionsCard extends LitElement {
 
     const hassEntities = Object.keys(this.hass.states)
       .filter(e => entityFilter(e, this.config!))
-      .filter(e => standardStates(e, this.hass!)?.length || computeDomain(e) == "sensor");
+      .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
     const groups = entityGroups(hassEntities, this.config, this.hass);
     this.selectedGroup = groups.find(e => e.entities.includes(item.entity_id))?.id;
     this.selectedEntity = item.entity_id;
