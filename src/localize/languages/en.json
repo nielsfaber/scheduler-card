@@ -14,7 +14,8 @@
     "cover": {
       "close_cover": "close",
       "open_cover": "open",
-      "set_cover_position": "set position[ to {position}]"
+      "set_cover_position": "set position[ to {position}]",
+      "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
       "set_speed": "set speed[ to {speed}]",

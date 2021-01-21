@@ -45,11 +45,13 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     service: 'cover.open_cover',
     icon: coverIconOpen(stateObj),
     name: localize('services.cover.open_cover', hass.language),
+    supported_feature: 1
   },
   {
     service: 'cover.close_cover',
     icon: coverIcon(stateObj),
     name: localize('services.cover.close_cover', hass.language),
+    supported_feature: 2,
   },
   {
     service: 'cover.set_cover_position',
@@ -64,6 +66,32 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     supported_feature: 4,
     icon: 'hass:ray-vertex',
     name: localize('services.cover.set_cover_position', hass.language),
+  },
+  // {
+  //   service: 'cover.open_cover_tilt',
+  //   icon: 'hass:valve-open',
+  //   name: localize('services.cover.open_cover', hass.language),
+  //   supported_feature: 16,
+  // },
+  // {
+  //   service: 'cover.close_cover_tilt',
+  //   icon: 'hass:valve-closed',
+  //   name: localize('services.cover.close_cover', hass.language),
+  //   supported_feature: 32,
+  // },
+  {
+    service: 'cover.set_cover_tilt_position',
+    variable: levelVariable({
+      field: 'tilt_position',
+      name: hass.localize('ui.card.cover.tilt_position', hass.language),
+      min: 0,
+      max: 100,
+      step: 1,
+      unit: '%',
+    }),
+    supported_feature: 128,
+    icon: 'hass:valve',
+    name: localize('services.cover.set_cover_tilt_position', hass.language),
   },
 ];
 
