@@ -71,6 +71,7 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
         })
       );
       len++;
+      i++;
     }
     startTime = stringToTime(entry.stop!);
   }
