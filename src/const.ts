@@ -1,4 +1,4 @@
-export const CARD_VERSION = 'v2.0.4';
+export const CARD_VERSION = 'v2.0.5';
 
 export const DefaultTimeStep = 10;
 
