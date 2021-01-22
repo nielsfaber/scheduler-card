@@ -15,6 +15,8 @@
       "close_cover": "zamknij",
       "open_cover": "otwórz",
       "set_cover_position": "ustaw pozycję[ na {position}]"
+      "set_cover_tilt_position": "ustaw pozycję lameli[ na {tilt_position}]"
+    },
     },
     "fan": {
       "set_speed": "ustaw prędkość[ na {speed}]",
