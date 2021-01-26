@@ -216,7 +216,7 @@ But there are differences:
 * If you create (or edit) a new time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
 * If you enable a disabled time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
 * If HA is restarted: the schedule will determine which timeslot is active, and trigger this action immediately.
-* If the entity (used in the action) is *unavailable* when the action needs to be triggered: the schedule will wait for this entity to become *available* (anything other than *unavailable*), and then trigger the action. Ofcourse only while the timeslot is active.
+* If the entity (used in the action) is *unavailable* when the action needs to be triggered: the schedule will wait for this entity to become *available* (anything other than *unavailable*), and then trigger the action. Of course only while the timeslot is active.
 
 After a timeslot has triggered the action, the schedule will wait for the next timeslot.
 So, you can keep controlling your entity as you want without worrying that the schedule will not re-trigger its action again.
@@ -271,7 +271,7 @@ For more information on this, see [conditions](#conditions).
 By default, all schedules will have an automatically generated entity ID and friendly name.
 This means they could be hard to find back in the entity registry.
 
-By defining your own friendly name, this will assigned to the entity, and the entity ID of the entitywill be based on this name as well.
+By defining your own friendly name, this will assigned to the entity, and the entity ID of the entity will be based on this name as well.
 If you leave the field empty, the automatically generated name shall be used instead.
 
 #### Behaviour after triggering
@@ -341,7 +341,7 @@ The `include` configuration allows you to pick entities from your HA config that
 
 You can either provide the full `entity_id` of the entities, or only the domain.
 
-The list supports wildcards (*) as well. It is recommended to use quotes ("") around your input, else it may be wrongly interpretated.
+The list supports wildcards (*) as well. It is recommended to use quotes ("") around your input, else it may be wrongly interpreted.
 
 <u>Example:</u>
 
@@ -602,7 +602,7 @@ Supported options for `display_options`:
 | ---------------- | -------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
 | `primary_info`   | string or list | `- "{entity}: {action}"`<br>`- additional-tasks` | Displayed text on the first line.<br>Choose from the properties below. |
 | `secondary_info` | string or list | `relative-time`                                  | Displayed text on the second line<br>Choose from the properties below. |
-| `icon`           | string         | "action"                                         | Choose which icon is diplayed (`action` or `entity`)                   |
+| `icon`           | string         | "action"                                         | Choose which icon is displayed (`action` or `entity`)                   |
 
 For creating multiple lines, enter a list of multiple properties. Empty items will be automatically skipped.
 
