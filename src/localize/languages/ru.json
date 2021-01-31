@@ -109,6 +109,7 @@
         "no_entity_selected": "Выберите элемент",
         "no_actions_for_entity": "Нет действий для этого элемента",
         "make_scheme": "создать схему"
+        "multiple": "Множественный"
       },
       "time_picker": {
         "no_timeslot_selected": "Выберите временной слот"
