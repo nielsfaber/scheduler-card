@@ -16,7 +16,7 @@ def cross_validate(english_value, other_language_value, other_language, key_name
     this_lang = Locale(this_lang).getDisplayName(english_lang)
     if other_language_value is None:
         print(
-            "💥 In" + Style.BRIGHT + Fore.YELLOW,
+            "🟡 In" + Style.BRIGHT + Fore.YELLOW,
             f"{this_lang}" + Style.RESET_ALL,
             f"there is no value for {Fore.CYAN + key_name + Fore.WHITE}.",
         )
