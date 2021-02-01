@@ -6,13 +6,13 @@ from colorama import init, Fore, Style
 init()
 # Crossvalidator
 english_file = json.load(open("./src/localize/languages/en.json"))
-def cross_validate(english_value, other_language_value, key_name, other_language):
+def cross_validate(english_value, other_language_value, other_language, key_name=None):
     if other_language_value is None:
       print(f"⚠ In {other_language}, there is no value for {key_name}.")
     if type(english_value) != type(other_language_value):
         raise Exception("The type of the English value and the type of {other_language}'s value are different.")
     for name, item in english_value.items():
-        cross_validate(item, other_language_value.get(name), name, other_language)
+        cross_validate(item, other_language_value.get(name), other_language, name)
                            
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
