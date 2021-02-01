@@ -21,8 +21,9 @@ jobs:
       - uses: "actions/checkout@v2"
       - name: Pip installs
         run: |
-          python3 -m pip install colorama setuptools
-          python3 -m pip install pyicu
+          python3 -m pip install colorama
+          # setuptools
+          # python3 -m pip install pyicu
       - name: Language validation
         run: |
           python3 .github/workflows/check.py
