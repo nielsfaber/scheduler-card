@@ -25,4 +25,12 @@ for filename in glob.glob(r"./src/localize/languages/*.json"):
             Style.BRIGHT + Fore.RED + str(e).replace("Expecting", "expecting"),
         )
         raise e
-print("🎉 All JSON files in src/localize/languages were loaded successfully. They might not have everything they need, but they're all valid.")
+print(
+    "🎉 All JSON files in",
+    Style.BRIGHT + "src/localize/languages" + Style.DIM,
+    "were loaded",
+    Fore.GREEN
+    + "successfully"
+    + Fore.WHITE
+    + ". They might not have everything they need, but they're all valid.",
+)
