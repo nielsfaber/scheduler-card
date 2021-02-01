@@ -22,7 +22,7 @@ def cross_validate(english_value, new_value):
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        cross_validate(english_value, json.load(open(filename, encoding="utf-8")))
+        cross_validate(english_file, json.load(open(filename, encoding="utf-8")))
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
@@ -43,9 +43,7 @@ for filename in glob.glob("./src/localize/languages/*.json"):
 print(
     "🎉 All JSON files in",
     Style.BRIGHT + "src/localize/languages" + Style.DIM,
-    "were loaded",
+    "were validated",
     Fore.GREEN
-    + "successfully"
-    + Fore.WHITE
-    + ". They might not have everything they need, but they're all valid.",
+    + "successfully."
 )
