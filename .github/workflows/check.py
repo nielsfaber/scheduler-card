@@ -25,7 +25,7 @@ def cross_validate(english_value, other_language_value, other_language):
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        cross_validate(english_file, json.load(open(filename, encoding="utf-8")))
+        cross_validate(english_file, json.load(open(filename, encoding="utf-8")), filename)
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
