@@ -4,10 +4,25 @@ import json
 from colorama import init, Fore, Style
 
 init()
+# Crossvalidator
+english_file = open("./src/localize/languages/en.json").read()
+def cross_validate(english_value, new_value):
+    if type(english_value) != type(new_value):
+        print(f"English type: {type(english_value)} New type: {type(new_value)}")
+        print(f"English value: {english_value} New value: {new_value}")
+        raise Exception("The type of the english value and the type of the new value are different.")
+    if is_instance(new_value, dict):
+        for name, item in new_value.items():
+            print(english_value[name], item)
+            cross_validate(english_value[name], item)
+    if is_instance(new_value, list):
+        for index, item in enumerate(new_value):
+            print(english_value[index], item)
+            cross_validate(english_value[index], item)
 # The thing
-for filename in glob.glob(r"./src/localize/languages/*.json"):
+for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        json.load(open(filename, encoding="utf-8"))
+        cross_validate(english_value, json.load(open(filename, encoding="utf-8")))
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
