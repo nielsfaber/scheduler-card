@@ -2,16 +2,17 @@
 import glob
 import json
 from colorama import init, Fore, Style
-from babel import Locale
+from icu import Locale
 
 init()
 # Crossvalidator
 english_file = json.load(open("./src/localize/languages/en.json"))
+english_lang = Locale("en_US")
 
 
 def cross_validate(english_value, other_language_value, other_language, key_name=None):
     this_lang = other_language.split("/")[-1].split(".js")[0].replace("-", "_")
-    this_lang = Locale.parse("en_US").get_display_name(this_lang)
+    this_lang = Locale(this_lang).getDisplayName(english_lang)
     if other_language_value is None:
         print(
             "💥 In",
