@@ -2,7 +2,7 @@
 import glob
 import json
 from colorama import init, Fore, Style
-from iso639 import languages
+from babel import Locale
 
 init()
 # Crossvalidator
@@ -11,7 +11,7 @@ english_file = json.load(open("./src/localize/languages/en.json"))
 
 def cross_validate(english_value, other_language_value, other_language, key_name=None):
     this_lang = other_language.split("/")[-1].split(".js")[0]
-    this_lang = languages.get(alpha2=this_lang).name
+    this_lang = Locale.parse(this_lang).get_display_name(this_lang)
     if other_language_value is None:
         print(
             "⚠ In",
