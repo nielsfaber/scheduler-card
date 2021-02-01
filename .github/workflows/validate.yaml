@@ -23,4 +23,4 @@ jobs:
         run: |
           python3 -m pip install colorama setuptools
           python3 -m pip install pyicu
-          script -e -c python3 .github/workflows/check.py
+          script -e -c "python3 .github/workflows/check.py"
