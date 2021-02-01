@@ -11,11 +11,11 @@ def cross_validate(english_value, new_value):
         print(f"English type: {type(english_value)} New type: {type(new_value)}")
         print(f"English value: {english_value} New value: {new_value}")
         raise Exception("The type of the english value and the type of the new value are different.")
-    if is_instance(new_value, dict):
+    if isinstance(new_value, dict):
         for name, item in new_value.items():
             print(english_value[name], item)
             cross_validate(english_value[name], item)
-    if is_instance(new_value, list):
+    if isinstance(new_value, list):
         for index, item in enumerate(new_value):
             print(english_value[index], item)
             cross_validate(english_value[index], item)
