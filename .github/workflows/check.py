@@ -10,6 +10,7 @@ print(
     "were validated",
     Fore.GREEN + "successfully.",
 )
+exit()
 from icu import Locale
 
 # Crossvalidator
