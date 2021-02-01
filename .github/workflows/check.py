@@ -11,12 +11,12 @@ english_file = json.load(open("./src/localize/languages/en.json"))
 def cross_validate(english_value, other_language_value, other_language, key_name=None):
     if other_language_value is None:
         print(f"⚠ In {other_language}, there is no value for {key_name}.")
-    if type(english_value) != type(other_language_value):
+    elif type(english_value) != type(other_language_value):
         raise Exception(
             f"The type of the English value ({english_value}) and the type of"
             + f"{other_language}'s value ({other_language_value}) are different for key {key_name}."
         )
-    if isinstance(english_value, dict):
+    elif isinstance(english_value, dict):
         for name, item in english_value.items():
             cross_validate(item, other_language_value.get(name), other_language, name)
 
