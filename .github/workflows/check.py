@@ -16,8 +16,8 @@ def cross_validate(english_value, other_language_value, other_language, key_name
     if other_language_value is None:
         print(
             "💥 In",
-            Style.BRIGHT + f"{this_lang}" + Style.DIM,
-            f"there is no value for {key_name}.",
+            Style.BRIGHT + Fore.YELLOW + f"{this_lang}",
+            Style.DIM + f"there is no value for {key_name}.",
         )
     elif type(english_value) != type(other_language_value):
         raise Exception(
