@@ -5,7 +5,7 @@ from colorama import init, Fore, Style
 
 init()
 # Crossvalidator
-english_file = open("./src/localize/languages/en.json").read()
+english_file = open("./src/localize/languages/en.json")
 def cross_validate(english_value, new_value):
     if type(english_value) != type(new_value):
         print(f"English type: {type(english_value)} New type: {type(new_value)}")
@@ -22,7 +22,7 @@ def cross_validate(english_value, new_value):
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        cross_validate(english_file, json.load(open(filename, encoding="utf-8")))
+        cross_validate(json.load(english_file), json.load(open(filename, encoding="utf-8")))
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
