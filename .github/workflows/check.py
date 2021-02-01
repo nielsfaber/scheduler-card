@@ -15,7 +15,7 @@ def cross_validate(english_value, other_language_value, other_language, key_name
     if other_language_value is None:
         print(
             "⚠ In",
-            +f"{Style.BRIGHT + this_lang + Style.DIM},",
+            f"{Style.BRIGHT + this_lang + Style.DIM},",
             "there is no value for {key_name}.",
         )
     elif type(english_value) != type(other_language_value):
