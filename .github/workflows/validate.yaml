@@ -14,7 +14,6 @@ jobs:
       - name: HACS validation
         uses: "hacs/action@main"
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
   language_validate:
     runs-on: "ubuntu-latest"
