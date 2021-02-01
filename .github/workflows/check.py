@@ -4,13 +4,6 @@ import json
 from colorama import init, Fore, Style
 
 init()
-print(
-    "🎉 All JSON files in",
-    Style.BRIGHT + "src/localize/languages" + Style.DIM,
-    "were validated",
-    Fore.GREEN + "successfully." + Style.RESET_ALL
-)
-exit()
 from icu import Locale
 
 # Crossvalidator
