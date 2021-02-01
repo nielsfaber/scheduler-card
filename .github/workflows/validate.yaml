@@ -16,3 +16,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
+      - name: Language JSON validation
+        run: |
+          python3 -m pip install colorama
+          python3 .github/workflows/check.py
