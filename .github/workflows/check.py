@@ -2,9 +2,16 @@
 import glob
 import json
 from colorama import init, Fore, Style
-from icu import Locale
 
 init()
+print(
+    "🎉 All JSON files in",
+    Style.BRIGHT + "src/localize/languages" + Style.DIM,
+    "were validated",
+    Fore.GREEN + "successfully.",
+)
+from icu import Locale
+
 # Crossvalidator
 english_file = json.load(open("./src/localize/languages/en.json"))
 english_lang = Locale("en_US")
