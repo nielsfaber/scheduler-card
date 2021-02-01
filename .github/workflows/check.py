@@ -16,9 +16,9 @@ def cross_validate(english_value, other_language_value, other_language, key_name
     this_lang = Locale(this_lang).getDisplayName(english_lang)
     if other_language_value is None:
         print(
-            "💥 In",
-            Style.BRIGHT + Fore.YELLOW + f"{this_lang}",
-            Style.DIM + f"there is no value for {key_name}.",
+            "💥 In" + Style.BRIGHT + Fore.YELLOW,
+            f"{this_lang}" + Style.RESET_ALL,
+            f"there is no value for {Fore.CYAN + key_name + Fore.WHITE}.",
         )
     elif type(english_value) != type(other_language_value):
         raise Exception(
@@ -55,7 +55,7 @@ for filename in glob.glob("./src/localize/languages/*.json"):
         raise e
 print(
     "🎉 All JSON files in",
-    Style.BRIGHT + "src/localize/languages" + Style.DIM,
+    Style.BRIGHT + Fore.BLUE + "src/localize/languages" + Style.RESET_ALL,
     "were validated",
     Fore.GREEN + "successfully.",
 )
