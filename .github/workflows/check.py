@@ -10,8 +10,8 @@ english_file = json.load(open("./src/localize/languages/en.json"))
 
 
 def cross_validate(english_value, other_language_value, other_language, key_name=None):
-    this_lang = other_language.split("/")[-1].split(".js")[0]
-    this_lang = Locale.parse(this_lang).get_display_name(this_lang)
+    this_lang = other_language.split("/")[-1].split(".js")[0].replace("-", "_")
+    this_lang = Locale.parse("en_US").get_display_name(this_lang)
     if other_language_value is None:
         print(
             "⚠ In",
