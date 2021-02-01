@@ -2,6 +2,7 @@
 import glob
 import json
 from colorama import init, Fore, Style
+from iso639 import languages
 
 init()
 # Crossvalidator
@@ -9,12 +10,17 @@ english_file = json.load(open("./src/localize/languages/en.json"))
 
 
 def cross_validate(english_value, other_language_value, other_language, key_name=None):
+    this_lang = languages.get(alpha2=other_language).name
     if other_language_value is None:
-        print(f"⚠ In {other_language}, there is no value for {key_name}.")
+        print(
+            "⚠ In",
+            + f"{Style.BRIGHT + this_lang + Style.DIM},",
+            "there is no value for {key_name}.",
+        )
     elif type(english_value) != type(other_language_value):
         raise Exception(
             f"The type of the English value ({english_value}) and the type of"
-            + f"{other_language}'s value ({other_language_value}) are different for key {key_name}."
+            + f"{this_lang}'s value ({other_language_value}) are different for key {key_name}."
         )
     elif isinstance(english_value, dict):
         for name, item in english_value.items():
