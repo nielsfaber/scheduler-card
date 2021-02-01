@@ -6,24 +6,21 @@ from colorama import init, Fore, Style
 init()
 # Crossvalidator
 english_file = json.load(open("./src/localize/languages/en.json"))
-def cross_validate(english_value, new_value):
-    if type(english_value) != type(new_value):
-        print(f"English type: {type(english_value)} New type: {type(new_value)}")
-        print(f"English value: {english_value} New value: {new_value}")
-        raise Exception("The type of the english value and the type of the new value are different.")
-    if isinstance(new_value, dict):
+def cross_validate(english_value, other_language_value, other_language):
+    if type(english_value) != type(other_language_value):
+        print(f"In English, the type is {type(english_value)}, and the value is {english_value}.")
+        print(f"In {other_language}, the type is {type(other_language_value)}, and the value is {other_language_value}.")
+        raise Exception("The type of the English value and the type of this language's value are different.")
+    if isinstance(english_value, dict):
         for name, item in english_value.items():
-            cross_validate(item, new_value.get(name))
-    elif isinstance(new_value, list):
+            cross_validate(item, other_language_value.get(name), other_language)
+    elif isinstance(english_value, list):
         if len(english_value) != len(new_value):
-            print(f"English length: {len(english_value)} New length: {len(new_value)}")
-            print(f"English value: {english_value} New value: {new_value}")
-            raise Exception("The length of the english list and the length of the new list are different.")
+            print(f"In English, the length is {len(english_value)}, and the value is {english_value}.")
+            print(f"In {other_language}, the length is {len(other_language_value)}, and the value is {other_language_value}.")
+            raise Exception("The length of the English list and the length of this language's list are different.")
         for index, item in enumerate(english_value):
-            cross_validate(item, new_value[index])
-    elif new_value is None:
-        print(f"English value: {english_value}")
-        raise Exception("The new value is none.")
+            cross_validate(item, other_language_value[index], other_language)
                            
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
