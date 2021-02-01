@@ -11,6 +11,7 @@ def cross_validate(english_value, other_language_value, other_language, key_name
       print(f"⚠ In {other_language}, there is no value for {key_name}.")
     if type(english_value) != type(other_language_value):
         raise Exception("The type of the English value and the type of {other_language}'s value are different.")
+    print(english_value, other_language_value, other_language, key_name)
     for name, item in english_value.items():
         cross_validate(item, other_language_value.get(name), other_language, name)
                            
