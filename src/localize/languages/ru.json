@@ -108,7 +108,7 @@
         "no_entities_for_group": "Отсутствуют элементы в группе",
         "no_entity_selected": "Выберите элемент",
         "no_actions_for_entity": "Нет действий для этого элемента",
-        "make_scheme": "создать схему"
+        "make_scheme": "создать схему",
         "multiple": "Множественный"
       },
       "time_picker": {
