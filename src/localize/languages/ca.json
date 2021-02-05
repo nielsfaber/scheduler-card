@@ -1,0 +1,131 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} a {value}",
+      "action_with_parameter": "{action} amb {parameter}"
+    },
+    "climate": {
+      "set_temperature": "establir temperatura[ a {temperature}]",
+      "set_temperature_hvac_mode_heat": "calefacció[ a {temperature}]",
+      "set_temperature_hvac_mode_cool": "fred[ a {temperature}]",
+      "set_hvac_mode": "establir mode[ a {hvac_mode}]",
+      "set_preset_mode": "establir preajustament[ a {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "tancar",
+      "open_cover": "obert",
+      "set_cover_position": "establir posició[ a {position}]",
+      "set_cover_tilt_position": "ajustar inclinació [ a {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "ajustar velocitat[ a {speed}]",
+      "set_direction": "ajustar direcció[ a {direction}]",
+      "oscillate": "ajustar oscilació[ a {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "ajustar humitat[ a {humidity}]"
+    },
+    "input_number": {
+      "set_value": "establir valor[ a {value}]"
+    },
+    "input_select": {
+      "select_option": "seleccionar opció[ {option}]"
+    },
+    "light": {
+      "turn_on": "encendre[ al {brightness} lluent]"
+    },
+    "media_player": {
+      "select_source": "escollir font[ {source}]"
+    },
+    "script": {
+      "script": "executar"
+    },
+    "vacuum": {
+      "start_pause": "iniciar / pausa"
+    },
+    "water_heater": {
+      "set_away_mode": "establir mode fora de casa"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "panell de control alarma",
+    "climate": "climatització",
+    "cover": "cortines",
+    "fan": "ventiladors",
+    "group": "grups",
+    "humidifier": "humidificadors",
+    "input_boolean": "entrada booleana",
+    "input_number": "entrada numberica",
+    "input_select": "entrada de selecció",
+    "light": "llums",
+    "lock": "panys",
+    "media_player": "reproductors",
+    "scene": "escenes",
+    "script": "scripts",
+    "switch": "interruptors",
+    "vacuum": "aspiradores",
+    "water_heater": "escalfadors d'aigua"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "diari",
+          "workdays": "feiners",
+          "weekend": "cap de setmana"
+        },
+        "day_types_long": {
+          "daily": "cada dia",
+          "workdays": "els dies feiners",
+          "weekend": "el cap de setmana"
+        },
+        "days": "dies",
+        "tomorrow": "demà",
+        "repeated_days": "cada {days}",
+        "repeated_days_except": "cada dia except {excludedDays}",
+        "days_range": "de {startDay} a {endDay}"
+      },
+      "time": {
+        "absolute": "a les {time}",
+        "interval": "de {startTime}  {endTime}",
+        "at_midnight": "a mijanit",
+        "at_noon": "al migdia",
+        "at_sun_event": "a la {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Programador"
+      },
+      "overview": {
+        "no_entries": "Sense elements per a mostrar",
+        "backend_error": "No es pot conectar al component programador.Cal instalar-lo com a integració abans d'usar aquesta tarjeta.",
+        "excluded_items": "{number} {if number is 1} element exclòs {else} elements exclosos",
+        "hide_excluded": "amaga elements exclosos",
+        "additional_tasks": "{number}  {if number is 1} tasca més {else} tasques més"
+      },
+      "entity_picker": {
+        "no_groups_defined": "No hi ha grups definits",
+        "no_group_selected": "Selecciona abans un grup",
+        "no_entities_for_group": "Cap entitat en aquest grup",
+        "no_entity_selected": "Selecciona abans una entitat",
+        "no_actions_for_entity": "No hi ha accions per a aquesta entitat",
+        "make_scheme": "Crea planificació",
+        "multiple": "Multiple"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Selecciona un bloc temporal"
+      },
+      "conditions": {
+        "equal_to": "igual",
+        "unequal_to": "diferent a",
+        "all": "tots",
+        "any": "qualsevol",
+        "no_conditions_defined": "cap condició definida"
+      },
+      "options": {
+        "repeat_type": "comportament un cop activat"
+      }
+    }
+  }
+}
