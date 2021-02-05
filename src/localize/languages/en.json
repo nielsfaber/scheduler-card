@@ -2,7 +2,7 @@
   "services": {
     "generic": {
       "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "action_with_parameter": "{action} with {parameter}",
     },
     "climate": {
       "set_temperature": "set temperature[ to {temperature}]",
