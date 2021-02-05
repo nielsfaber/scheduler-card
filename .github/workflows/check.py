@@ -20,7 +20,7 @@ except FileNotFoundError:
 
 try:
     english_file = json.load(english_file)
-except json.decoder.JSONDecodeError:
+except json.decoder.JSONDecodeError as e:
     print(
         "❗ The original",
         Style.BRIGHT + "English file",
@@ -64,7 +64,7 @@ for filename in glob.glob("./src/localize/languages/*.json"):
     try:
         file = json.load(open(filename, encoding="utf-8"))
         cross_validate(english_file, file, filename)
-    except json.decoder.JSONDecodeError:
+    except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
             Style.BRIGHT + filename,
