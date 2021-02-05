@@ -32,7 +32,6 @@ jobs:
         run: |
           python3 -m pip install colorama setuptools pretty-errors
           python3 -m pip install pyicu
-          python3 -m pretty_errors
       - name: Language validation
         run: |
           script -e -c "python3 .github/workflows/check.py"
