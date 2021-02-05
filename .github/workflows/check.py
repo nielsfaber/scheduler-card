@@ -29,7 +29,7 @@ except json.decoder.JSONDecodeError as e:
     )
     print(
         "You may need to add a",
-        Fore.GREEN + "comma at the end of a line" + Fore.WHITE,
+        Fore.GREEN + "comma at the end of a line" + Style.RESET_ALL,
         "before adding another line.",
     )
     print(
