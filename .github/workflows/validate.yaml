@@ -19,8 +19,10 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v2"
-      - name: Language validation
+      - name: Install dependencies
         run: |
           python3 -m pip install colorama setuptools
           python3 -m pip install pyicu
+      - name: Language validation
+        run: |
           script -e -c "python3 .github/workflows/check.py"
