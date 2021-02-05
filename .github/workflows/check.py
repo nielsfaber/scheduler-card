@@ -1,6 +1,7 @@
 # Setup
 import glob
 import json
+import pretty_errors
 from colorama import init, Fore, Style
 
 init()
