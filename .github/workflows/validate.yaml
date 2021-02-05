@@ -30,7 +30,7 @@ jobs:
           key: language-validate-pip-cache
       - name: Install dependencies
         run: |
-          python3 -m pip install colorama setuptools pretty-errors
+          python3 -m pip install colorama setuptools
           python3 -m pip install pyicu
       - name: Language validation
         run: |
