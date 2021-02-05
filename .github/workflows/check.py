@@ -11,15 +11,17 @@ try:
     english_file = open("./src/localize/languages/en.json")
 except FileNotFoundError as e:
     print(
-        "❗ The original English file was deleted. It needs to be there in order for this PR to be merged."
+        "❗ The original English file was deleted."
     )
+    print("It needs to be there in order for this PR to be merged.")
     raise e
 try:
     english_file = json.load(english_file)
 except json.decoder.JSONDecodeError as e:
     print(
-        "❗ The original English file contains invalid JSON. It needs to be fixed before this PR can be merged."
+        "❗ The original English file contains invalid JSON."
     )
+    print("It needs to be fixed before this PR can be merged.")
     print(
         "You may need to add a",
         Fore.GREEN + "comma at the end of a line" + Fore.WHITE,
