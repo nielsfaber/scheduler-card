@@ -7,7 +7,29 @@ init()
 from icu import Locale
 
 # Crossvalidator
-english_file = json.load(open("./src/localize/languages/en.json"))
+try:
+    english_file = open("./src/localize/languages/en.json")
+except FileNotFoundError as e:
+    print(
+        "❗ The original English file was deleted. It needs to be there in order for this PR to be merged."
+    )
+    raise e
+try:
+    english_file = json.load(english_file)
+except json.decoder.JSONDecodeError as e:
+    print(
+        "❗ The original English file contains invalid JSON. It needs to be fixed before this PR can be merged."
+    )
+    print(
+        "You may need to add a",
+        Fore.GREEN + "comma at the end of a line" + Fore.WHITE,
+        "before adding another line.",
+    )
+    print(
+        "The error is",
+        Style.BRIGHT + Fore.RED + str(e).replace("Expecting", "expecting"),
+    )
+    raise e
 english_lang = Locale("en_US")
 
 
@@ -33,15 +55,14 @@ def cross_validate(english_value, other_language_value, other_language, key_name
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        cross_validate(
-            english_file, json.load(open(filename, encoding="utf-8")), filename
-        )
+        file = json.load(open(filename, encoding="utf-8"))
+        cross_validate(english_file, file, filename)
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
             Style.BRIGHT + filename,
             Style.DIM + Fore.RED + "contains invalid JSON.",
-            Style.RESET_ALL + "Please fix it before merging this PR.",
+            Style.RESET_ALL + "It needs to be fixed before this PR can be merged.",
         )
         print(
             "You may need to add a",
