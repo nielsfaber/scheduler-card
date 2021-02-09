@@ -103,13 +103,13 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionCo
 
 export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => [
   {
-    value: "off",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
-    icon: "hass:power-off"
+    value: 'off',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, hass.language),
+    icon: 'hass:power-off',
   },
   {
-    value: "on",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
-    icon: "hass:power"
-  }
+    value: 'on',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, hass.language),
+    icon: 'hass:power',
+  },
 ];

@@ -112,7 +112,11 @@ export const climateActions = (
     name: hass.localize('ui.card.weather.attributes.temperature'),
     min: stateObj?.attributes.min_temp,
     max: stateObj?.attributes.max_temp,
-    step: stateObj?.attributes.target_temp_step ? stateObj?.attributes.target_temp_step : hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+    step: stateObj?.attributes.target_temp_step
+      ? stateObj?.attributes.target_temp_step
+      : hass.config.unit_system.temperature.includes('F')
+      ? 1
+      : 0.5,
     unit: hass.config.unit_system.temperature,
   });
 
@@ -195,43 +199,42 @@ export const climateActions = (
   return actions;
 };
 
-
 export const climateStates = (hass: HomeAssistant, stateObj: HassEntity) => {
   const modeList = [
     {
       value: 'off',
       icon: 'hass:power-off',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, hass.language),
     },
     {
       value: 'heat',
       icon: 'hass:fire',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'heat' }, hass.language),
     },
     {
       value: 'cool',
       icon: 'hass:snowflake',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "cool" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'cool' }, hass.language),
     },
     {
       value: 'heat_cool',
       icon: 'hass:thermometer',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat_cool" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'heat_cool' }, hass.language),
     },
     {
       value: 'auto',
       icon: 'hass:autorenew',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "auto" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'auto' }, hass.language),
     },
     {
       value: 'dry',
       icon: 'hass:water-percent',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "dry" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'dry' }, hass.language),
     },
     {
       value: 'fan_only',
       icon: 'hass:fan',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "fan_only" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: 'fan_only' }, hass.language),
     },
   ];
   if (stateObj && stateObj.attributes.hvac_modes && Array.isArray(stateObj.attributes.hvac_modes)) {

@@ -94,7 +94,7 @@ export function actionElement(action: ActionConfig) {
   let item: ActionElement = {
     id: id,
     service: action.service,
-    service_data: {}
+    service_data: {},
   };
 
   item = { ...item, ...omit(action, ['variable']) };
@@ -108,43 +108,60 @@ export function actionElement(action: ActionConfig) {
   return item;
 }
 
-export function computeEntityActions(entity: string | string[], hass: HomeAssistant, config: Partial<CardConfig>): ActionElement[] {
+export function computeEntityActions(
+  entity: string | string[],
+  hass: HomeAssistant,
+  config: Partial<CardConfig>
+): ActionElement[] {
   if (!Array.isArray(entity)) {
     const actionList = computeEntityActionConfig(entity, hass, config);
     return actionList.map(actionElement);
-  }
-  else {
+  } else {
     const actions = entity.map(el => computeEntityActions(el, hass, config));
-    if(!actions.length) return [];
-    let actionsList = actions[0]
+    if (!actions.length) return [];
+    const actionsList = actions[0]
       .filter(action => actions.every(e => e.map(el => el.id).includes(action.id)))
       .map(action => {
         if (action.variable) {
-          if (!actions.every(entityActions => entityActions.find(e => e.id == action.id)!.variable)) return omit(action, ['variable']) as ActionElement;
+          if (!actions.every(entityActions => entityActions.find(e => e.id == action.id)!.variable))
+            return omit(action, ['variable']) as ActionElement;
           else {
             if (action.variable.type == EVariableType.Level) {
               return {
                 ...action,
                 variable: {
                   ...action.variable,
-                  min: Math.max(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).min)),
-                  max: Math.min(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).max)),
-                  step: Math.max(...actions.map(entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).step)),
-                }
-              }
+                  min: Math.max(
+                    ...actions.map(
+                      entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).min
+                    )
+                  ),
+                  max: Math.min(
+                    ...actions.map(
+                      entityActions => (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).max
+                    )
+                  ),
+                  step: Math.max(
+                    ...actions.map(
+                      entityActions =>
+                        (entityActions.find(e => e.id == action.id)!.variable as LevelVariableConfig).step
+                    )
+                  ),
+                },
+              };
             } else {
               let options = (action.variable as ListVariableConfig).options;
               actions.forEach(entityActions => {
-                let config = (entityActions.find(e => e.id == action.id)!.variable as ListVariableConfig);
+                const config = entityActions.find(e => e.id == action.id)!.variable as ListVariableConfig;
                 options = options.filter(e => config.options.map(e => e.value).includes(e.value));
               });
               return {
                 ...action,
                 variable: {
                   ...action.variable,
-                  options: options
-                }
-              }
+                  options: options,
+                },
+              };
             }
           }
         }

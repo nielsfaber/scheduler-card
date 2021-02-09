@@ -5,11 +5,8 @@ import { ETimeEvent } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
 
-
-
 @customElement('time-picker')
 export class TimePicker extends LitElement {
-
   value;
 
   @property() hass?: HomeAssistant;
@@ -18,7 +15,7 @@ export class TimePicker extends LitElement {
   @property() relativeMode = false;
   @property() event = ETimeEvent.Sunrise;
 
-  @property() _time: number = 0;
+  @property() _time = 0;
 
   maxOffset = 2;
 
@@ -29,7 +26,7 @@ export class TimePicker extends LitElement {
   set time(value: number) {
     this._time = roundTime(value, this.stepSize, {
       wrapAround: !this.relativeMode,
-      maxHours: this.relativeMode ? this.maxOffset : undefined
+      maxHours: this.relativeMode ? this.maxOffset : undefined,
     });
   }
 
@@ -48,8 +45,7 @@ export class TimePicker extends LitElement {
       const sign = this._time >= 0 ? '+' : '-';
       const offset = timeToString(this.time);
       this.value = `${this.event}${sign}${offset}`;
-    }
-    else {
+    } else {
       this.value = timeToString(this.time);
     }
     const myEvent = new CustomEvent('change');
@@ -66,49 +62,50 @@ export class TimePicker extends LitElement {
     return html`
       <div class="time-picker">
         <div class="hours-up">
-          <mwc-button @click=${() => this.time = this._time + 3600}>
+          <mwc-button @click=${() => (this.time = this._time + 3600)}>
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="hours">${timeParts[0].padStart(2, '0')}</div>
         <div class="hours-down">
-          <mwc-button @click=${() => this.time = this._time - 3600}>
+          <mwc-button @click=${() => (this.time = this._time - 3600)}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
         <div class="separator">:</div>
         <div class="minutes-up">
-          <mwc-button @click=${() => this.time = this._time + this.stepSize * 60}>
+          <mwc-button @click=${() => (this.time = this._time + this.stepSize * 60)}>
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="minutes">${timeParts[1]}</div>
         <div class="minutes-down">
-          <mwc-button @click=${() => this.time = this._time - this.stepSize * 60}>
+          <mwc-button @click=${() => (this.time = this._time - this.stepSize * 60)}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
           </mwc-button>
         </div>
-        ${
-      this.relativeMode
-        ? html`
-        <div class="suffix">
-          <mwc-button @click=${this.toggleBeforeAfter}>
-            ${this.getBeforeAfter()}
-          </mwc-button>
-          <mwc-button @click=${this.toggleSunriseSunset}>
-            <ha-icon icon="hass:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"></ha-icon>
-          </mwc-button>
-        </div>
-          `
-        : timeParts.length > 2
+        ${this.relativeMode
           ? html`
-        <div class="suffix">
-          <mwc-button @click=${this.toggleAmPm}>
-            ${timeParts[2]}
-          </mwc-button>
-        </div>
-      ` : ''
-      }    
+              <div class="suffix">
+                <mwc-button @click=${this.toggleBeforeAfter}>
+                  ${this.getBeforeAfter()}
+                </mwc-button>
+                <mwc-button @click=${this.toggleSunriseSunset}>
+                  <ha-icon
+                    icon="hass:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"
+                  ></ha-icon>
+                </mwc-button>
+              </div>
+            `
+          : timeParts.length > 2
+          ? html`
+              <div class="suffix">
+                <mwc-button @click=${this.toggleAmPm}>
+                  ${timeParts[2]}
+                </mwc-button>
+              </div>
+            `
+          : ''}
         <div class="options">
           ${this.getSunModeToggle()}
         </div>
@@ -155,23 +152,16 @@ export class TimePicker extends LitElement {
     const ts_sunset = stringToTime(sunEntity.attributes.next_setting);
 
     if (this.relativeMode) {
+      this.event =
+        Math.abs(this._time - ts_sunrise) < Math.abs(this._time - ts_sunset) ? ETimeEvent.Sunrise : ETimeEvent.Sunset;
 
-      this.event = Math.abs(this._time - ts_sunrise) < Math.abs(this._time - ts_sunset)
-        ? ETimeEvent.Sunrise
-        : ETimeEvent.Sunset;
-
-      let offset = this.event == ETimeEvent.Sunrise
-        ? this._time - ts_sunrise
-        : this._time - ts_sunset;
+      let offset = this.event == ETimeEvent.Sunrise ? this._time - ts_sunrise : this._time - ts_sunset;
 
       if (offset > 7200) offset = 7200;
       else if (offset < -7200) offset = -7200;
       this.time = offset;
-    }
-    else {
-      this.time = this.event == ETimeEvent.Sunrise
-        ? this._time + ts_sunrise
-        : this._time + ts_sunset;
+    } else {
+      this.time = this.event == ETimeEvent.Sunrise ? this._time + ts_sunrise : this._time + ts_sunset;
     }
   }
 

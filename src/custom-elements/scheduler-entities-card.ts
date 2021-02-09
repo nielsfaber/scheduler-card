@@ -14,25 +14,25 @@ import { fetchSchedules } from '../data/websockets';
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
-
   @property() config?: CardConfig;
   @property() showDiscovered = false;
   @property() schedules?: Schedule[];
 
   @property() private _hass!: HomeAssistant;
-  set hass(hass: HomeAssistant) { this._hass = hass; }
-  get hass() { return this._hass; }
+  set hass(hass: HomeAssistant) {
+    this._hass = hass;
+  }
+  get hass() {
+    return this._hass;
+  }
 
   connectionError = false;
 
   public hassSubscribe(): Promise<UnsubscribeFunc>[] {
     this.loadSchedules();
-    return this.hass.user.is_admin ? [
-      this._hass!.connection.subscribeEvents(
-        () => this.loadSchedules(),
-        "scheduler_updated"
-      )
-    ] : [];
+    return this.hass.user.is_admin
+      ? [this._hass!.connection.subscribeEvents(() => this.loadSchedules(), 'scheduler_updated')]
+      : [];
   }
 
   private async loadSchedules(): Promise<void> {
@@ -42,11 +42,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
 
         if (this.config!.discover_existing !== undefined && !this.config!.discover_existing) {
           schedules = schedules.filter(item =>
-            item.timeslots.every(slot =>
-              slot.actions.every(action =>
-                entityFilter(action.entity_id, this.config!)
-              )
-            )
+            item.timeslots.every(slot => slot.actions.every(action => entityFilter(action.entity_id, this.config!)))
           );
         }
 
@@ -74,7 +70,9 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
     if (oldHass && changedProps.size == 1 && this.schedules)
-      return this.schedules!.some(e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this._hass.states[e.entity_id]));
+      return this.schedules!.some(
+        e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this._hass.states[e.entity_id])
+      );
     else return true;
   }
 
@@ -86,33 +84,35 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         <div class="card-header">
           <div class="name">
             ${this.config.title !== undefined
-        ? typeof this.config.title == 'string'
-          ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this._hass.language)}
+              ? typeof this.config.title == 'string'
+                ? this.config.title
+                : ''
+              : localize('ui.panel.common.title', this._hass.language)}
           </div>
           ${this.schedules.length && this.config.show_header_toggle
-        ? html`
+            ? html`
                 <ha-switch
-                  ?checked=${this.schedules.some(el => ["on", "triggered"].includes(this.hass.states[el.entity_id]?.state || ''))}
+                  ?checked=${this.schedules.some(el =>
+                    ['on', 'triggered'].includes(this.hass.states[el.entity_id]?.state || '')
+                  )}
                   @change=${this.toggleDisableAll}
                 >
                 </ha-switch>
               `
-        : ''}
+            : ''}
         </div>
         <div class="card-content">
           ${this.getRows()}
         </div>
         ${this._hass.user.is_admin
-        ? html`
-        <div class="card-actions">
-          <mwc-button
-            @click=${this.newItemClick}
-            ?disabled=${this.connectionError}
-          >${this._hass.localize('ui.components.area-picker.add_dialog.add')}
-          </mwc-button>
-        </div>` : ''}
+          ? html`
+              <div class="card-actions">
+                <mwc-button @click=${this.newItemClick} ?disabled=${this.connectionError}
+                  >${this._hass.localize('ui.components.area-picker.add_dialog.add')}
+                </mwc-button>
+              </div>
+            `
+          : ''}
       </ha-card>
     `;
   }
@@ -122,36 +122,36 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       return html`
         <div>
           <hui-warning>
-           ${localize('ui.panel.overview.backend_error', this._hass.language)}
+            ${localize('ui.panel.overview.backend_error', this._hass.language)}
           </hui-warning>
         </div>
       `;
-    }
-    else if (!Object.keys(this.schedules).length) {
+    } else if (!Object.keys(this.schedules).length) {
       return html`
         <div>
           ${localize('ui.panel.overview.no_entries', this._hass.language)}
         </div>
       `;
     }
-    let includedSchedules: Schedule[] = [];
-    let excludedEntities: Schedule[] = [];
+    const includedSchedules: Schedule[] = [];
+    const excludedEntities: Schedule[] = [];
 
-    this.schedules
-      .forEach(schedule => {
-        const included = schedule.timeslots
-          .every(timeslot => timeslot.actions
-            .every(action => entityFilter(action.entity_id!, this.config!)))
-        if (included) includedSchedules.push(schedule)
-        else excludedEntities.push(schedule)
-      });
+    this.schedules.forEach(schedule => {
+      const included = schedule.timeslots.every(timeslot =>
+        timeslot.actions.every(action => entityFilter(action.entity_id!, this.config!))
+      );
+      if (included) includedSchedules.push(schedule);
+      else excludedEntities.push(schedule);
+    });
 
     return html`
       ${includedSchedules.map(schedule => {
-      const state = this.hass.states[schedule.entity_id]?.state || '';
-      return html`
+        const state = this.hass.states[schedule.entity_id]?.state || '';
+        return html`
           <scheduler-entity-row
-            class="${["on", "triggered"].includes(state) ? '' : 'disabled'} ${this._hass.user.is_admin ? '' : 'readonly'}"
+            class="${['on', 'triggered'].includes(state) ? '' : 'disabled'} ${this._hass.user.is_admin
+              ? ''
+              : 'readonly'}"
             .hass=${this._hass}
             .schedule=${schedule}
             .config=${this.config}
@@ -159,7 +159,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
           >
           </scheduler-entity-row>
         `;
-    })}
+      })}
       ${Object.keys(excludedEntities).length
         ? !this.showDiscovered
           ? html`
@@ -167,25 +167,27 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
                 <button
                   class="show-more"
                   @click=${() => {
-              this.showDiscovered = true;
-            }}
+                    this.showDiscovered = true;
+                  }}
                 >
                   +
                   ${localize(
-              'ui.panel.overview.excluded_items',
-              this._hass.language,
-              '{number}',
-              excludedEntities.length
-            )}
+                    'ui.panel.overview.excluded_items',
+                    this._hass.language,
+                    '{number}',
+                    excludedEntities.length
+                  )}
                 </button>
               </div>
             `
           : html`
               ${excludedEntities.map(schedule => {
-            const state = this.hass.states[schedule.entity_id]?.state || '';
-            return html`
+                const state = this.hass.states[schedule.entity_id]?.state || '';
+                return html`
                   <scheduler-entity-row
-                    class="${["on", "triggered"].includes(state) ? '' : 'disabled'} ${this._hass.user.is_admin ? '' : 'readonly'}"
+                    class="${['on', 'triggered'].includes(state) ? '' : 'disabled'} ${this._hass.user.is_admin
+                      ? ''
+                      : 'readonly'}"
                     .hass=${this._hass}
                     .schedule=${schedule}
                     .config=${this.config}
@@ -193,13 +195,13 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
                   >
                   </scheduler-entity-row>
                 `;
-          })}
+              })}
               <div>
                 <button
                   class="show-more"
                   @click=${() => {
-              this.showDiscovered = false;
-            }}
+                    this.showDiscovered = false;
+                  }}
                 >
                   ${capitalize(localize('ui.panel.overview.hide_excluded', this._hass.language))}
                 </button>

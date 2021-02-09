@@ -27,5 +27,4 @@ export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): 
 ];
 
 export const inputSelectStates = (hass: HomeAssistant, stateObj: HassEntity) =>
-  inputSelectOptions(hass.localize, stateObj)
-    .map(e => Object.assign(e, { name: e.value }));
+  inputSelectOptions(hass.localize, stateObj).map(e => Object.assign(e, { name: e.value }));

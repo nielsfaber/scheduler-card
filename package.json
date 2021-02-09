@@ -4,7 +4,7 @@
   "description": "Scheduler card for Lovelace",
   "main": "dist/scheduler-card.js",
   "scripts": {
-    "build": "npm run lint && npm run rollup && npm run babel",
+    "build": "npm run lint && npm run rollup ",
     "rollup": "rollup -c",
     "babel": "babel dist/scheduler-card.js --out-file dist/scheduler-card.js",
     "lint": "eslint src/**/*.ts --fix",
@@ -26,8 +26,8 @@
     "@babel/plugin-proposal-decorators": "^7.4.0",
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-json": "^4.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
+    "babel-cli": "^6.26.0",
     "custom-card-helpers": "^1.6.6",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -47,6 +47,7 @@
     "typescript": "^3.6.4"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
     "rollup-plugin-commonjs": "^10.1.0"
   }
 }

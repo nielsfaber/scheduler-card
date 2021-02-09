@@ -21,38 +21,22 @@ export class DialogDeleteDefective extends LitElement {
   render() {
     if (!this._params) return html``;
     return html`
+      <ha-dialog open .heading=${true} @closed=${this.closeDialog} @close-dialog=${this.closeDialog}>
+        <div slot="heading">
+          <ha-header-bar>
+            <ha-icon-button slot="navigationIcon" dialogAction="cancel" icon="mdi:close"> </ha-icon-button>
+            <span slot="title">
+              Defective entity
+            </span>
+          </ha-header-bar>
+        </div>
+        <div class="wrapper">
+          This schedule is defective and cannot be edited with the card. Consider to delete the item and recreate it. If
+          the problem persists, please report the issue on GitHub.
+        </div>
 
-      <ha-dialog
-        open
-        .heading=${true}
-        @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-      >
-      <div slot="heading">
-        <ha-header-bar>
-          <ha-icon-button
-            slot="navigationIcon"
-            dialogAction="cancel"
-            icon="mdi:close"
-          >
-          </ha-icon-button>
-          <span slot="title">
-            Defective entity
-          </span>
-        </ha-header-bar>
-      </div>
-      <div class="wrapper">
-        This schedule is defective and cannot be edited with the card. 
-        Consider to delete the item and recreate it.
-        If the problem persists, please report the issue on GitHub.
-      </div>
-    
-        <mwc-button
-          slot="primaryAction"
-          @click=${this.cancelClick}
-          dialogAction="close"
-        >
-            ${this.hass.localize("ui.dialogs.generic.cancel")}
+        <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
+          ${this.hass.localize('ui.dialogs.generic.cancel')}
         </mwc-button>
         <mwc-button
           slot="secondaryAction"
@@ -60,11 +44,9 @@ export class DialogDeleteDefective extends LitElement {
           @click=${this.confirmClick}
           dialogAction="close"
         >
-            ${this.hass.localize("ui.common.delete")}
+          ${this.hass.localize('ui.common.delete')}
         </mwc-button>
-
       </ha-dialog>
-      
     `;
   }
 
@@ -75,8 +57,6 @@ export class DialogDeleteDefective extends LitElement {
   cancelClick() {
     this._params.cancel();
   }
-
-
 
   static get styles(): CSSResult {
     return css`

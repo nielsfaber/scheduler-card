@@ -5,7 +5,7 @@ import { standardActions } from '../standard-configuration/standardActions';
 import { uniqueId, equalAction } from './compute_action_id';
 import { computeEntityActionConfig, actionElement } from './compute_entity_actions';
 
-export function parseAction(action: Action, hass: HomeAssistant, config: CardConfig, preserveServiceData: boolean = false) {
+export function parseAction(action: Action, hass: HomeAssistant, config: CardConfig, preserveServiceData = false) {
   const entity = action.entity_id;
   const service = action.service;
   const service_data = action.service_data || {};
@@ -19,7 +19,7 @@ export function parseAction(action: Action, hass: HomeAssistant, config: CardCon
         e.variable &&
         uniqueId(e) == uniqueId({ ...action, service_data: omit(action.service_data, [e.variable.field]) })
     );
-    if (match) match = { ...match, service_data: { ...match.service_data || {}, ...service_data } };
+    if (match) match = { ...match, service_data: { ...(match.service_data || {}), ...service_data } };
   }
   if (!match) {
     const actionList = standardActions(entity, hass);
@@ -34,9 +34,8 @@ export function parseAction(action: Action, hass: HomeAssistant, config: CardCon
           variable: { ...variable },
           service_data: { ...match.service_data, [variable.field]: value },
         };
-      }
-      else if (match.variable!.type == EVariableType.Level && preserveServiceData) {
-        let variable = match.variable as LevelVariableConfig;
+      } else if (match.variable!.type == EVariableType.Level && preserveServiceData) {
+        const variable = match.variable as LevelVariableConfig;
         const value = action.service_data![variable.field];
         match = {
           ...match,

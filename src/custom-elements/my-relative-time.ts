@@ -51,11 +51,14 @@ export class MyRelativeTime extends LitElement {
           (dateObj.valueOf() - startOfToday.valueOf()) / (hoursPerDay * secondsPerHour * 1000)
         );
         let day = '';
-        if (daysFromNow == 1)
-          day = localize('ui.components.date.tomorrow', this._hass.language);
-        else if (daysFromNow > 0)
-          day = formatWeekday(dateObj, this._hass.language);
-        let time = localize('ui.components.time.absolute', this._hass.language, '{time}', formatTime(dateObj, this._hass.language));
+        if (daysFromNow == 1) day = localize('ui.components.date.tomorrow', this._hass.language);
+        else if (daysFromNow > 0) day = formatWeekday(dateObj, this._hass.language);
+        let time = localize(
+          'ui.components.time.absolute',
+          this._hass.language,
+          '{time}',
+          formatTime(dateObj, this._hass.language)
+        );
         if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0)
           time = localize('ui.components.time.at_noon', this._hass.language);
         else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0)
@@ -70,8 +73,7 @@ export class MyRelativeTime extends LitElement {
         if (this._hass.localize('ui.components.relative_time.future')) {
           const ts1 = this._hass.localize('ui.components.relative_time.duration.hour', 'count', 1);
           return this._hass.localize('ui.components.relative_time.future', 'time', `${ts1} ${join} ${ts2}`);
-        }
-        else {
+        } else {
           const ts1 = this._hass.localize('ui.components.relative_time.future_duration.hour', 'count', 1);
           return `${ts1} ${join} ${ts2}`;
         }
@@ -82,8 +84,7 @@ export class MyRelativeTime extends LitElement {
         if (this._hass.localize('ui.components.relative_time.future')) {
           const ts1 = this._hass.localize('ui.components.relative_time.duration.minute', 'count', 1);
           return this._hass.localize('ui.components.relative_time.future', 'time', `${ts1} ${join} ${ts2}`);
-        }
-        else {
+        } else {
           const ts1 = this._hass.localize('ui.components.relative_time.future_duration.minute', 'count', 1);
           return `${ts1} ${join} ${ts2}`;
         }
@@ -104,8 +105,7 @@ export class MyRelativeTime extends LitElement {
     if (this._hass.localize(`ui.components.relative_time.${tense}`)) {
       const ts = this._hass.localize(`ui.components.relative_time.duration.${unit}`, 'count', roundedDelta);
       return this._hass.localize(`ui.components.relative_time.${tense}`, 'time', ts);
-    }
-    else {
+    } else {
       return this._hass.localize(`ui.components.relative_time.${tense}_duration.${unit}`, 'count', roundedDelta);
     }
   }

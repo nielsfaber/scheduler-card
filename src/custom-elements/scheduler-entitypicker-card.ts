@@ -54,8 +54,8 @@ export class SchedulerEditorCard extends LitElement {
 
     const entities = Object.keys(this.hass.states)
       .filter(e => entityFilter(e, this.config!))
-      .filter(e => computeDomain(e) != "switch" || !this.scheduleEntities.includes(e))
-      .filter(e => computeEntityActions(e, this.hass!, this.config!).length)
+      .filter(e => computeDomain(e) != 'switch' || !this.scheduleEntities.includes(e))
+      .filter(e => computeEntityActions(e, this.hass!, this.config!).length);
 
     const groups = entityGroups(entities, this.config, this.hass);
     groups.sort((a, b) => (a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1));
@@ -100,10 +100,10 @@ export class SchedulerEditorCard extends LitElement {
         <div class="card-header">
           <div class="name">
             ${this.config.title !== undefined
-        ? typeof this.config.title == 'string'
-          ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this.hass.language)}
+              ? typeof this.config.title == 'string'
+                ? this.config.title
+                : ''
+              : localize('ui.panel.common.title', this.hass.language)}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
         </div>
@@ -115,20 +115,20 @@ export class SchedulerEditorCard extends LitElement {
 
           <div class="header">
             ${this.hass.localize('ui.components.entity.entity-picker.entity')}
-            ${
-      entities.length > 1
-        ? html`
-                <div class="switch">
-                  <ha-switch
-                    ?checked=${this.multipleEntity}
-                    @change=${(ev: Event) => { this.multipleEntity = (ev.target as HTMLInputElement).checked }}
-                  >
-                  </ha-switch>
-                  ${localize('ui.panel.entity_picker.multiple', this.hass.language)}          
-                </div>
-              `
-        : ''
-      }
+            ${entities.length > 1
+              ? html`
+                  <div class="switch">
+                    <ha-switch
+                      ?checked=${this.multipleEntity}
+                      @change=${(ev: Event) => {
+                        this.multipleEntity = (ev.target as HTMLInputElement).checked;
+                      }}
+                    >
+                    </ha-switch>
+                    ${localize('ui.panel.entity_picker.multiple', this.hass.language)}
+                  </div>
+                `
+              : ''}
           </div>
           <button-group
             .items=${entities}
@@ -138,15 +138,15 @@ export class SchedulerEditorCard extends LitElement {
             ?optional=${true}
           >
             ${!this.selectedGroup
-        ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
-        : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
+              ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
+              : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
           </button-group>
 
           <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
           <button-group .items=${actions} value=${this.selectedAction} @change=${this.selectAction}>
             ${!this.selectedEntities.length
-        ? localize('ui.panel.entity_picker.no_entity_selected', this.hass.language)
-        : localize('ui.panel.entity_picker.no_actions_for_entity', this.hass.language)}
+              ? localize('ui.panel.entity_picker.no_entity_selected', this.hass.language)
+              : localize('ui.panel.entity_picker.no_actions_for_entity', this.hass.language)}
           </button-group>
           ${this.makeSchemeButton(actions)}
         </div>
@@ -167,8 +167,8 @@ export class SchedulerEditorCard extends LitElement {
         <mwc-button
           class="${this.selectedAction == CreateTimeScheme ? ' active' : ''}"
           @click=${() => {
-        this.selectedAction = CreateTimeScheme;
-      }}>
+            this.selectedAction = CreateTimeScheme;
+          }}>
           <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
           ${localize('ui.panel.entity_picker.make_scheme', this.hass.language)}
         </mwc-button>
@@ -185,7 +185,8 @@ export class SchedulerEditorCard extends LitElement {
   }
 
   selectEntity(ev: Event | string) {
-    const value: string[] = typeof ev == 'string' ? Array(ev) : (ev.target as HTMLInputElement).value as unknown as string[];
+    const value: string[] =
+      typeof ev == 'string' ? Array(ev) : (((ev.target as HTMLInputElement).value as unknown) as string[]);
     this.selectedEntities = value;
     this.selectedAction = undefined;
   }

@@ -48,4 +48,4 @@ export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityS
     });
 
   return states;
-}
+};

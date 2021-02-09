@@ -42,10 +42,10 @@ export class VariableSlider extends LitElement {
     return html`
       <mwc-button class="${selection.includes(value) ? 'active' : ''}" @click="${() => this.selectItem(value)}">
         ${item.icon
-        ? html`
+          ? html`
               <ha-icon icon="${PrettyPrintIcon(item.icon)}" class="padded-right"></ha-icon>
             `
-        : ''}
+          : ''}
         ${PrettyPrintName(item.name)}
       </mwc-button>
     `;

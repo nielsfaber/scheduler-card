@@ -13,7 +13,11 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     },
   ];
 
-  if (stateObj && stateObj.attributes.supported_features !== undefined && !(stateObj.attributes.supported_features & 1)) {
+  if (
+    stateObj &&
+    stateObj.attributes.supported_features !== undefined &&
+    !(stateObj.attributes.supported_features & 1)
+  ) {
     actions.push({
       service: 'light.turn_on',
       icon: 'hass:lightbulb-on',
@@ -40,16 +44,15 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   return actions;
 };
 
-
 export const lightStates = (hass: HomeAssistant, stateObj: HassEntity) => [
   {
-    value: "off",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
-    icon: "hass:lightbulb-off"
+    value: 'off',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, hass.language),
+    icon: 'hass:lightbulb-off',
   },
   {
-    value: "on",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
-    icon: "hass:lightbulb"
-  }
+    value: 'on',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, hass.language),
+    icon: 'hass:lightbulb',
+  },
 ];

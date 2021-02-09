@@ -15,17 +15,15 @@ export const switchActions = (hass: HomeAssistant, _stateObj?: HassEntity): Acti
   },
 ];
 
-
-
 export const switchStates = (hass: HomeAssistant, stateObj: HassEntity) => [
   {
-    value: "off",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
-    icon: "hass:flash-off"
+    value: 'off',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, hass.language),
+    icon: 'hass:flash-off',
   },
   {
-    value: "on",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
-    icon: "hass:flash"
-  }
+    value: 'on',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, hass.language),
+    icon: 'hass:flash',
+  },
 ];

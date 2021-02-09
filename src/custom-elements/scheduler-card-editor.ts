@@ -44,7 +44,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         >
         </button-group>
         ${this.titleOption == 'custom'
-        ? html`
+          ? html`
               <paper-input
                 label="Custom title"
                 .value=${this.getTitle()}
@@ -52,7 +52,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 @value-changed=${this.updateTitle}
               ></paper-input>
             `
-        : ''}
+          : ''}
 
         <div class="header">Show all schedules</div>
         <div class="text-field">
@@ -61,9 +61,9 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         </div>
         <button-group
           .items=${[
-        { id: 'true', name: 'on' },
-        { id: 'false', name: 'off' },
-      ]}
+            { id: 'true', name: 'on' },
+            { id: 'false', name: 'off' },
+          ]}
           value=${this.getDiscoveryOption()}
           @change=${this.updateDiscoveryOption}
         >
@@ -84,7 +84,10 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         </variable-slider>
 
         <div class="header">Included entities</div>
-        <div class="text-field">Select the entities that you want to control using the scheduler. You can click on a group to open it.<br> Note that some entities (such as sensors) can only be used for conditions, not for actions.</div>
+        <div class="text-field">
+          Select the entities that you want to control using the scheduler. You can click on a group to open it.<br />
+          Note that some entities (such as sensors) can only be used for conditions, not for actions.
+        </div>
         ${this.getDomainSwitches()}
       </div>
     `;
@@ -167,7 +170,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
     const entityList = Object.keys(this.hass.states)
-      .filter(e => computeDomain(e) != "switch" || !this.scheduleEntities.includes(e))
+      .filter(e => computeDomain(e) != 'switch' || !this.scheduleEntities.includes(e))
       .map(e => parseEntity(e, this.hass!, { include: ['*'] }))
       .filter(e => standardStates(e.id, this.hass!)?.length || computeEntityActions(e.id, this.hass!, {}).length);
 
@@ -183,8 +186,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         <div
           class="row"
           @click=${() => {
-          this.toggleShowDomain(domain);
-        }}
+            this.toggleShowDomain(domain);
+          }}
         >
           <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}"> </ha-icon>
 
@@ -195,8 +198,10 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
             </div>
           </div>
           <ha-switch
-            @click=${(ev: Event) => { ev.stopPropagation() }}
-            @change=${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}}
+            @click=${(ev: Event) => {
+              ev.stopPropagation();
+            }}
+            @change="${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}}"
             ?checked=${includedDomains.includes(domain)}
           >
           </ha-switch>
@@ -217,7 +222,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     const includedEntities = this._config.include ? [...this._config.include] : [];
     return Object.entries(this.hass.states)
       .filter(([e]) => computeDomain(e) == domain)
-      .filter(([e]) => domain != "switch" || !this.scheduleEntities.includes(e))
+      .filter(([e]) => domain != 'switch' || !this.scheduleEntities.includes(e))
       .map(([entity_id, cfg]) => {
         const name = cfg.attributes.friendly_name || computeEntity(entity_id);
         const enabled = includedEntities.includes(entity_id) || includedEntities.includes(computeDomain(entity_id));
@@ -230,10 +235,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 ${entity_id}
               </div>
             </div>
-            <ha-switch
-              ?checked=${enabled}
-              ?disabled=${includedEntities.includes(computeDomain(entity_id))}
-            ></ha-switch>
+            <ha-switch ?checked=${enabled} ?disabled=${includedEntities.includes(computeDomain(entity_id))}></ha-switch>
           </div>
         `;
       });
@@ -254,8 +256,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!includedEntities.includes(domain) && enabled) {
       includedEntities = includedEntities.filter(e => !e.startsWith(domain));
       includedEntities.push(domain);
-    }
-    else if (includedEntities.includes(domain) && !enabled) includedEntities = includedEntities.filter(e => e != domain);
+    } else if (includedEntities.includes(domain) && !enabled)
+      includedEntities = includedEntities.filter(e => e != domain);
     else return;
     includedEntities.sort();
     this._config = Object.assign({ ...this._config }, { include: includedEntities });

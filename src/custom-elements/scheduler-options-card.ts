@@ -1,7 +1,19 @@
 import { LitElement, html, customElement, property, css } from 'lit-element';
 import { localize } from '../localize/localize';
 //import { Config } from '../config';
-import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot } from '../types';
+import {
+  EConditionType,
+  CardConfig,
+  Entry,
+  EntityElement,
+  Condition,
+  EConditionMatchType,
+  ScheduleConfig,
+  ListVariableOption,
+  Dictionary,
+  ERepeatType,
+  Timeslot,
+} from '../types';
 
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { entityGroups } from '../data/entity_group';
@@ -32,30 +44,26 @@ export class SchedulerOptionsCard extends LitElement {
 
   firstUpdated() {
     this.matchTypes = {
-      [EConditionMatchType.Above]:
-      {
+      [EConditionMatchType.Above]: {
         value: EConditionMatchType.Above,
         name: this.hass!.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.above'),
-        icon: "hass:greater-than"
+        icon: 'hass:greater-than',
       },
-      [EConditionMatchType.Below]:
-      {
+      [EConditionMatchType.Below]: {
         value: EConditionMatchType.Below,
         name: this.hass!.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.below'),
-        icon: "hass:less-than"
+        icon: 'hass:less-than',
       },
-      [EConditionMatchType.Equal]:
-      {
+      [EConditionMatchType.Equal]: {
         value: EConditionMatchType.Equal,
         name: localize('ui.panel.conditions.equal_to', this.hass!.language),
-        icon: "hass:equal"
+        icon: 'hass:equal',
       },
-      [EConditionMatchType.Unequal]:
-      {
+      [EConditionMatchType.Unequal]: {
         value: EConditionMatchType.Unequal,
         name: localize('ui.panel.conditions.unequal_to', this.hass!.language),
-        icon: "hass:not-equal-variant"
-      }
+        icon: 'hass:not-equal-variant',
+      },
     };
   }
 
@@ -85,78 +93,82 @@ export class SchedulerOptionsCard extends LitElement {
         <div class="card-header">
           <div class="name">
             ${this.config.title !== undefined
-        ? typeof this.config.title == 'string'
-          ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this.hass.language)}
+              ? typeof this.config.title == 'string'
+                ? this.config.title
+                : ''
+              : localize('ui.panel.common.title', this.hass.language)}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
           ${!this.addCondition
-        ? html`
+            ? html`
+                <div class="header">
+                  ${this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.conditions')}
+                  ${!this.schedule.timeslots[0].conditions || this.schedule.timeslots[0].conditions.length < 2
+                    ? ''
+                    : html`
+                        <div class="switch">
+                          ${localize('ui.panel.conditions.any', this.hass.language)}
+                          <ha-switch
+                            style="margin: 0px 10px"
+                            @change=${this.conditionTypeSwitchClick}
+                            ?checked=${this.schedule.timeslots[0].condition_type == EConditionType.All}
+                          ></ha-switch>
+                          ${localize('ui.panel.conditions.all', this.hass.language)}
+                        </div>
+                      `}
+                </div>
+                ${this.renderConditions()}
 
-          <div class="header">
-            ${this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.conditions')}
-          ${
-          !this.schedule.timeslots[0].conditions || this.schedule.timeslots[0].conditions.length < 2
-            ? ''
-            : html`
-            <div class="switch">
-            ${localize('ui.panel.conditions.any', this.hass.language)}
-            <ha-switch
-              style="margin: 0px 10px"
-              @change=${this.conditionTypeSwitchClick}
-              ?checked=${this.schedule.timeslots[0].condition_type == EConditionType.All}
-            ></ha-switch>
-            ${localize('ui.panel.conditions.all', this.hass.language)}         
-            </div>`
-          }
-          </div>
-          ${this.renderConditions()}
-          
-          <div style="margin-top: 10px">
-            <mwc-button @click=${this.addConditionClick}>
-              <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
-              ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
-            </mwc-button>
-          </div>
+                <div style="margin-top: 10px">
+                  <mwc-button @click=${this.addConditionClick}>
+                    <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+                    ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
+                  </mwc-button>
+                </div>
 
-          <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
-          <paper-input no-label-float
-            value=${this.schedule.name || ''}
-            placeholder=${this.schedule.name ? "" : this.hass.localize('ui.components.area-picker.add_dialog.name')}
-            @value-changed=${this.updateName}
-          ></paper-input>
+                <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
+                <paper-input
+                  no-label-float
+                  value=${this.schedule.name || ''}
+                  placeholder=${this.schedule.name
+                    ? ''
+                    : this.hass.localize('ui.components.area-picker.add_dialog.name')}
+                  @value-changed=${this.updateName}
+                ></paper-input>
 
-          <div class="header">${localize('ui.panel.options.repeat_type', this.hass.language)}</div>
-          <button-group
-            .items=${repeatTypes}
-            value="${this.schedule.repeat_type}"
-            @change=${this.updateRepeatType}>
-          </button-group>
-          
-        `
-        : this.renderAddCondition()}
+                <div class="header">${localize('ui.panel.options.repeat_type', this.hass.language)}</div>
+                <button-group
+                  .items=${repeatTypes}
+                  value="${this.schedule.repeat_type}"
+                  @change=${this.updateRepeatType}
+                >
+                </button-group>
+              `
+            : this.renderAddCondition()}
         </div>
         <div class="card-actions">
           ${!this.addCondition
-        ? html`
+            ? html`
                 <mwc-button @click=${this.saveClick}>${this.hass.localize('ui.common.save')}</mwc-button>
                 <mwc-button @click=${this.backClick} style="float: right"
                   >${this.hass.localize('ui.common.back')}</mwc-button
                 >
               `
-        : html`
-                <mwc-button @click=${this.confirmConditionClick}
+            : html`
+                <mwc-button
+                  @click=${this.confirmConditionClick}
                   ?disabled=${!this.selectedEntity || !this.conditionMatchType || !this.conditionValue}
                   >${this.hass.localize('ui.common.save')}</mwc-button
                 >
                 ${this.editItem !== undefined
-            ? html`
-                <mwc-button class="warning" @click=${this.deleteConditionClick}
-                    >${this.hass.localize('ui.common.delete')}</mwc-button>`
-            : ''}              
+                  ? html`
+                      <mwc-button class="warning" @click=${this.deleteConditionClick}
+                        >${this.hass.localize('ui.common.delete')}</mwc-button
+                      >
+                    `
+                  : ''}
                 <mwc-button @click=${this.cancelConditionClick} style="float: right"
                   >${this.hass.localize('ui.common.cancel')}</mwc-button
                 >
@@ -170,10 +182,12 @@ export class SchedulerOptionsCard extends LitElement {
     if (!this.addCondition || !this.hass || !this.config) return html``;
 
     if (!this.selectedEntity) {
-
       const hassEntities = Object.keys(this.hass.states)
         .filter(e => entityFilter(e, this.config!))
-        .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
+        .filter(
+          e =>
+            standardStates(e, this.hass!)?.length || ['sensor', 'proximity', 'input_number'].includes(computeDomain(e))
+        );
 
       const groups = entityGroups(hassEntities, this.config, this.hass);
       groups.sort((a, b) => (a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1));
@@ -188,73 +202,87 @@ export class SchedulerOptionsCard extends LitElement {
       }
 
       return html`
-      <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
-      
-      <button-group .items=${groups} value=${this.selectedGroup} @change=${this.selectGroup}>
-        ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
-      </button-group>
+        <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
 
-      <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
-      <button-group .items=${entities} value=${this.selectedEntity} @change=${this.selectEntity}>
-        ${!this.selectedGroup
-          ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
-          : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
-      </button-group>
-    `;
-    }
-    else {
+        <button-group .items=${groups} value=${this.selectedGroup} @change=${this.selectGroup}>
+          ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
+        </button-group>
+
+        <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
+        <button-group .items=${entities} value=${this.selectedEntity} @change=${this.selectEntity}>
+          ${!this.selectedGroup
+            ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
+            : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
+        </button-group>
+      `;
+    } else {
       const entity = parseEntity(this.selectedEntity, this.hass!, this.config!);
       const stateObj = this.hass!.states[this.selectedEntity];
       const states = standardStates(this.selectedEntity, this.hass);
 
-      const matchTypes = (computeDomain(this.selectedEntity) == "sensor" && !isNaN(Number(stateObj.state))) || ["proximity", "input_number"].includes(computeDomain(this.selectedEntity))
-        ? Object.entries(pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])).map(([k, v]) => Object.assign(v, { id: k }))
-        : Object.entries(pick(this.matchTypes, [EConditionMatchType.Equal, EConditionMatchType.Unequal])).map(([k, v]) => Object.assign(v, { id: k }));
+      const matchTypes =
+        (computeDomain(this.selectedEntity) == 'sensor' && !isNaN(Number(stateObj.state))) ||
+        ['proximity', 'input_number'].includes(computeDomain(this.selectedEntity))
+          ? Object.entries(
+              pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])
+            ).map(([k, v]) => Object.assign(v, { id: k }))
+          : Object.entries(
+              pick(this.matchTypes, [EConditionMatchType.Equal, EConditionMatchType.Unequal])
+            ).map(([k, v]) => Object.assign(v, { id: k }));
       return html`
-      <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
-      <div style="display: flex; flex-direction: row; align-items: center">
-        <mwc-button class="active" disabled style="--mdc-button-disabled-ink-color: var(--text-primary-color)"
-        >
-          <ha-icon icon="${PrettyPrintIcon(entity.icon || DefaultEntityIcon)}"></ha-icon>
-          ${PrettyPrintName(entity.name)}
-        </mwc-button>
-        <ha-icon-button
-          icon="hass:pencil"
-          style="margin-left: 10px"
-          @click=${() => { this.selectedEntity = undefined }}
-        >
-        </ha-icon-button>
-      </div>
+        <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <mwc-button class="active" disabled style="--mdc-button-disabled-ink-color: var(--text-primary-color)">
+            <ha-icon icon="${PrettyPrintIcon(entity.icon || DefaultEntityIcon)}"></ha-icon>
+            ${PrettyPrintName(entity.name)}
+          </mwc-button>
+          <ha-icon-button
+            icon="hass:pencil"
+            style="margin-left: 10px"
+            @click=${() => {
+              this.selectedEntity = undefined;
+            }}
+          >
+          </ha-icon-button>
+        </div>
 
-      <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.device.condition')}</div>
-      <button-group
-        .items=${matchTypes} 
-        value=${this.conditionMatchType}
-        @change=${(ev: Event) => this.conditionMatchType = (ev.target as HTMLInputElement).value as EConditionMatchType}
-      >
-      </button-group>
-      
-      <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
-        ${states && states.length
-          ?
-          html`
-      <button-group
-        .items=${states.map(e => Object.assign(e, { id: e.value }))}
-        value=${this.conditionValue}
-        @change=${(ev: Event) => { this.conditionValue = (ev.target as HTMLInputElement).value }}
+        <div class="header">
+          ${this.hass.localize('ui.panel.config.automation.editor.conditions.type.device.condition')}
+        </div>
+        <button-group
+          .items=${matchTypes}
+          value=${this.conditionMatchType}
+          @change=${(ev: Event) =>
+            (this.conditionMatchType = (ev.target as HTMLInputElement).value as EConditionMatchType)}
         >
-      </button-group>
-        `
-          :
-          html`
-            <paper-input
-              label="${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}${stateObj.attributes.unit_of_measurement ? ` [${stateObj.attributes.unit_of_measurement}]` : ''}"
-              value=${this.conditionValue ? this.conditionValue : ""}
-              @value-changed=${(ev: Event) => { const value = (ev.target as HTMLInputElement).value; this.conditionValue = isNaN(Number(value)) ? value : Number(value) }}
-            >
-            </paper-input>
-        `
-        }
+        </button-group>
+
+        <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
+        ${states && states.length
+          ? html`
+              <button-group
+                .items=${states.map(e => Object.assign(e, { id: e.value }))}
+                value=${this.conditionValue}
+                @change=${(ev: Event) => {
+                  this.conditionValue = (ev.target as HTMLInputElement).value;
+                }}
+              >
+              </button-group>
+            `
+          : html`
+              <paper-input
+                label="${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}${stateObj
+                  .attributes.unit_of_measurement
+                  ? ` [${stateObj.attributes.unit_of_measurement}]`
+                  : ''}"
+                value=${this.conditionValue ? this.conditionValue : ''}
+                @value-changed=${(ev: Event) => {
+                  const value = (ev.target as HTMLInputElement).value;
+                  this.conditionValue = isNaN(Number(value)) ? value : Number(value);
+                }}
+              >
+              </paper-input>
+            `}
       `;
     }
   }
@@ -285,15 +313,20 @@ export class SchedulerOptionsCard extends LitElement {
       const state = states?.find(e => e.value == item.value);
       return html`
         <div class="summary">
-            <ha-icon icon="${entity.icon || DefaultEntityIcon}"></ha-icon>
-            <span>
-              ${PrettyPrintName(entity.name)}
-              ${this.matchTypes[item.match_type].name!.toLowerCase()}
-              ${state ? state.name.toLowerCase() : stateObj.attributes.unit_of_measurement ? `${item.value}${stateObj.attributes.unit_of_measurement}` : item.value}
-            </span>
+          <ha-icon icon="${entity.icon || DefaultEntityIcon}"></ha-icon>
+          <span>
+            ${PrettyPrintName(entity.name)} ${this.matchTypes[item.match_type].name!.toLowerCase()}
+            ${state
+              ? state.name.toLowerCase()
+              : stateObj.attributes.unit_of_measurement
+              ? `${item.value}${stateObj.attributes.unit_of_measurement}`
+              : item.value}
+          </span>
           <ha-icon-button
             icon="hass:pencil"
-            @click=${() => { this.editConditionClick(num) }}}
+            @click="${() => {
+              this.editConditionClick(num);
+            }}}"
           >
           </ha-icon-button>
         </div>
@@ -305,19 +338,30 @@ export class SchedulerOptionsCard extends LitElement {
     this.addCondition = true;
     this.selectedEntity = undefined;
     this.selectedGroup = undefined;
-  } b
+  }
+  b;
 
   confirmConditionClick() {
-    if (!this.selectedEntity || !this.config || !this.hass || !this.schedule || !this.conditionMatchType || !this.conditionValue) return;
+    if (
+      !this.selectedEntity ||
+      !this.config ||
+      !this.hass ||
+      !this.schedule ||
+      !this.conditionMatchType ||
+      !this.conditionValue
+    )
+      return;
 
     const condition: Condition = {
       entity_id: this.selectedEntity,
       match_type: this.conditionMatchType,
       value: this.conditionValue,
-      attribute: "state"
+      attribute: 'state',
     };
     const conditions = this.schedule.timeslots[0].conditions?.length ? [...this.schedule.timeslots[0].conditions] : [];
-    const type = this.schedule.timeslots[0].condition_type ? this.schedule.timeslots[0].condition_type : EConditionType.Any;
+    const type = this.schedule.timeslots[0].condition_type
+      ? this.schedule.timeslots[0].condition_type
+      : EConditionType.Any;
 
     if (this.editItem === undefined) conditions.push(condition);
     else conditions.splice(this.editItem, 1, condition);
@@ -327,10 +371,10 @@ export class SchedulerOptionsCard extends LitElement {
       timeslots: this.schedule.timeslots.map(e =>
         Object.assign(e, {
           conditions: conditions,
-          condition_type: type
+          condition_type: type,
         })
-      )
-    }
+      ),
+    };
     this.addCondition = false;
     this.editItem = undefined;
   }
@@ -348,7 +392,9 @@ export class SchedulerOptionsCard extends LitElement {
 
     const hassEntities = Object.keys(this.hass.states)
       .filter(e => entityFilter(e, this.config!))
-      .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
+      .filter(
+        e => standardStates(e, this.hass!)?.length || ['sensor', 'proximity', 'input_number'].includes(computeDomain(e))
+      );
     const groups = entityGroups(hassEntities, this.config, this.hass);
     this.selectedGroup = groups.find(e => e.entities.includes(item.entity_id))?.id;
     this.selectedEntity = item.entity_id;
@@ -367,10 +413,10 @@ export class SchedulerOptionsCard extends LitElement {
       ...this.schedule,
       timeslots: this.schedule.timeslots.map(e =>
         Object.assign(e, {
-          conditions: conditions
+          conditions: conditions,
         })
-      )
-    }
+      ),
+    };
     this.addCondition = false;
     this.editItem = undefined;
   }
@@ -385,15 +431,15 @@ export class SchedulerOptionsCard extends LitElement {
         Object.assign(e, {
           condition_type: type,
         })
-      )
-    }
+      ),
+    };
   }
 
   updateName(e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.schedule = {
       ...this.schedule!,
-      name: value
+      name: value,
     };
   }
 
@@ -401,8 +447,8 @@ export class SchedulerOptionsCard extends LitElement {
     const value = (e.target as HTMLInputElement).value as ERepeatType;
     this.schedule = {
       ...this.schedule!,
-      repeat_type: value
-    }
+      repeat_type: value,
+    };
   }
 
   cancelClick() {
@@ -416,14 +462,14 @@ export class SchedulerOptionsCard extends LitElement {
 
   saveClick() {
     const myEvent = new CustomEvent('saveClick', {
-      detail: this.schedule
+      detail: this.schedule,
     });
     this.dispatchEvent(myEvent);
   }
 
   backClick() {
     const myEvent = new CustomEvent('backClick', {
-      detail: this.schedule
+      detail: this.schedule,
     });
     this.dispatchEvent(myEvent);
   }
@@ -454,5 +500,5 @@ export class SchedulerOptionsCard extends LitElement {
     div.summary ha-icon-button {
       margin: -8px 0px;
     }
-  `
+  `;
 }

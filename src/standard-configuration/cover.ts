@@ -45,7 +45,7 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     service: 'cover.open_cover',
     icon: coverIconOpen(stateObj),
     name: localize('services.cover.open_cover', hass.language),
-    supported_feature: 1
+    supported_feature: 1,
   },
   {
     service: 'cover.close_cover',
@@ -95,16 +95,15 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   },
 ];
 
-
 export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) => [
   {
-    value: "closed",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "closed" }, hass.language),
-    icon: stateIcon({ ...stateObj, state: "closed" })
+    value: 'closed',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'closed' }, hass.language),
+    icon: stateIcon({ ...stateObj, state: 'closed' }),
   },
   {
-    value: "open",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "open" }, hass.language),
-    icon: stateIcon({ ...stateObj, state: "open" })
-  }
+    value: 'open',
+    name: computeStateDisplay(hass.localize, { ...stateObj, state: 'open' }, hass.language),
+    icon: stateIcon({ ...stateObj, state: 'open' }),
+  },
 ];

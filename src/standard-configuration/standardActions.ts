@@ -32,7 +32,10 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
       case 'fan':
         return fanActions(hass, stateObj);
       case 'group':
-        const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
+        const entities: string[] =
+          stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id)
+            ? stateObj.attributes.entity_id
+            : [];
         const configs = entities.map(e => standardActions(e, hass));
         return groupActions(stateObj, configs);
       case 'humidifer':
@@ -63,9 +66,10 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
       default:
         return [];
     }
-  }
-  catch (e) {
-    console.error(`Scheduler-card failed to load actions for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`);
+  } catch (e) {
+    console.error(
+      `Scheduler-card failed to load actions for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`
+    );
     return [];
   }
 }
