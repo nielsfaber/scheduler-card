@@ -44,6 +44,7 @@ export type WeekdayType = (
   | 'workday'
   | 'weekend'
   | 'daily'
+  | 'once'  
 )[]
 
 
@@ -267,6 +268,7 @@ export enum EDayType {
   Workday = 'WORKDAY',
   Weekend = 'WEEKEND',
   Custom = 'CUSTOM',
+  Once = 'ONCE',
 }
 
 export interface Days {
