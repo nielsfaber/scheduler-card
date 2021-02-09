@@ -19,8 +19,19 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v2"
-      - name: Language validation
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.x'
+      - uses: actions/cache@v2
+        name: Load pip cache
+        with:
+          path: ~/.cache/pip
+          key: language-validate-pip-cache
+      - name: Install dependencies
         run: |
           python3 -m pip install colorama setuptools
           python3 -m pip install pyicu
+      - name: Language validation
+        run: |
           script -e -c "python3 .github/workflows/check.py"

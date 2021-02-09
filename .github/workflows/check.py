@@ -7,7 +7,36 @@ init()
 from icu import Locale
 
 # Crossvalidator
-english_file = json.load(open("./src/localize/languages/en.json"))
+try:
+    english_file = open("./src/localize/languages/en.json")
+except FileNotFoundError:
+    print(
+        "❗ The original",
+        Style.BRIGHT + "English file",
+        Style.DIM + Fore.RED + "was not found.",
+        Style.RESET_ALL + "It needs to be fixed before this PR can be merged.",
+    )
+    raise Exception("English file not found")
+
+try:
+    english_file = json.load(english_file)
+except json.decoder.JSONDecodeError as e:
+    print(
+        "❗ The original",
+        Style.BRIGHT + "English file",
+        Style.DIM + Fore.RED + "contains invalid JSON.",
+        Style.RESET_ALL + "It needs to be fixed before this PR can be merged.",
+    )
+    print(
+        "You may need to add a",
+        Fore.GREEN + "comma at the end of a line" + Style.RESET_ALL,
+        "before adding another line.",
+    )
+    print(
+        "The error is",
+        Style.BRIGHT + Fore.RED + str(e).replace("Expecting", "expecting"),
+    )
+    raise Exception("English file invalid JSON")
 english_lang = Locale("en_US")
 
 
@@ -33,15 +62,14 @@ def cross_validate(english_value, other_language_value, other_language, key_name
 # The thing
 for filename in glob.glob("./src/localize/languages/*.json"):
     try:
-        cross_validate(
-            english_file, json.load(open(filename, encoding="utf-8")), filename
-        )
+        file = json.load(open(filename, encoding="utf-8"))
+        cross_validate(english_file, file, filename)
     except json.decoder.JSONDecodeError as e:
         print(
             "❗ The file",
             Style.BRIGHT + filename,
             Style.DIM + Fore.RED + "contains invalid JSON.",
-            Style.RESET_ALL + "Please fix it before merging this PR.",
+            Style.RESET_ALL + "It needs to be fixed before this PR can be merged.",
         )
         print(
             "You may need to add a",
@@ -52,7 +80,7 @@ for filename in glob.glob("./src/localize/languages/*.json"):
             "The error is",
             Style.BRIGHT + Fore.RED + str(e).replace("Expecting", "expecting"),
         )
-        raise e
+        raise Exception(f"{filename} contains invalid JSON")
 print(
     "🎉 All JSON files in",
     Style.BRIGHT + Fore.BLUE + "src/localize/languages" + Style.RESET_ALL,
