@@ -171,6 +171,7 @@ export class SchedulerTimepickerCard extends LitElement {
     let weekdays = Array.from(Array(7).keys());
     const firstWeekday = startOfWeek(this.hass.language);
     const shiftCount = weekdays.length - weekdayArray.findIndex(e => e.substr(0, 3) == firstWeekday);
+    const todayDate = new Date().toISOString().slice(0, 10);
     weekdays = [...weekdays.slice(-shiftCount), ...weekdays.slice(0, -shiftCount)];
     const DayOptions = weekdays.map(e =>
       Object({ id: weekdayArray[e].substr(0, 3), name: formatWeekday(e, this.hass!.language, true) })
@@ -205,7 +206,7 @@ export class SchedulerTimepickerCard extends LitElement {
       ${weekdayType(this.schedule.weekdays) == EDayType.Once
         ? html`
             <div>
-              <vaadin-date-picker value="2021-04-27"></vaadin-date-picker>
+              <vaadin-date-picker value=${todayDate}></vaadin-date-picker>
             </div>
           `
         : ''}
@@ -389,6 +390,7 @@ export class SchedulerTimepickerCard extends LitElement {
   saveClick() {
     const myEvent = new CustomEvent('saveClick', { detail: this.schedule });
     this.dispatchEvent(myEvent);
+    console.log('Save Button clicked');
   }
 
   optionsClick() {

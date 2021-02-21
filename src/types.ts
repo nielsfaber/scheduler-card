@@ -28,6 +28,7 @@ export interface Action {
 export interface Timeslot {
   start: string,
   stop?: string,
+  date?: string,
   conditions?: Condition[],
   condition_type?: 'or' | 'and',
   actions: Action[]

@@ -14,6 +14,7 @@ export const fetchScheduleItem = (hass: HomeAssistant, schedule_id: string): Pro
   });
 
 export const saveSchedule = (hass: HomeAssistant, config: ScheduleConfig): Promise<boolean> => {
+  console.log('config1: ' + String(config)); //MB
   return hass.callApi('POST', 'scheduler/add', config);
 };
 
@@ -21,6 +22,7 @@ export const editSchedule = (
   hass: HomeAssistant,
   config: ScheduleConfig & { schedule_id: string }
 ): Promise<boolean> => {
+  console.log('config2: ' + String(config)); //MB
   return hass.callApi('POST', 'scheduler/edit', config);
 };
 
