@@ -1,6 +1,5 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
-import '@vaadin/vaadin-date-picker/theme/material/vaadin-date-picker';
 
 import {
   CardConfig,
