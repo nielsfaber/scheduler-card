@@ -18,6 +18,7 @@ import { PrettyPrintIcon, PrettyPrintName, capitalize, unique } from '../helpers
 import { DefaultTimeStep, DefaultActionIcon } from '../const';
 
 import './time-picker';
+//import './date-picker';
 import './timeslot-editor';
 import './variable-slider';
 import './dialog-delete-confirm';
@@ -28,7 +29,7 @@ import { weekdayArray, formatWeekday } from '../data/date-time/format_weekday';
 import { weekdayType } from '../data/date-time/weekday_type';
 import { equalAction } from '../data/compute_action_id';
 
-const VaadinDatePicker = customElements.get('vaadin-date-picker');
+//const VaadinDatePicker = customElements.get('vaadin-date-picker');
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
@@ -205,8 +206,11 @@ export class SchedulerTimepickerCard extends LitElement {
         : ''}
       ${weekdayType(this.schedule.weekdays) == EDayType.Once
         ? html`
-            <div>
-              <vaadin-date-picker value=${todayDate}></vaadin-date-picker>
+            <div id="date1">
+              <ha-date-input
+                .label=${'Date'}
+                @change=${(ev: Event) => this.updateActiveEntry({ date: (ev.target as HTMLInputElement).value })}
+              ></ha-date-input>
             </div>
           `
         : ''}
@@ -214,6 +218,7 @@ export class SchedulerTimepickerCard extends LitElement {
   }
 
   updateActiveEntry(data: Partial<Timeslot>) {
+    //MB here
     if (this.activeEntry === null) return;
     this.schedule = {
       ...this.schedule,
@@ -221,6 +226,7 @@ export class SchedulerTimepickerCard extends LitElement {
         [this.activeEntry]: { ...this.schedule.timeslots[this.activeEntry], ...data },
       }),
     };
+    console.log(data);
   }
 
   updateActiveEntryAction(data: Partial<Action> | null, num: number) {
