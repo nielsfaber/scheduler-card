@@ -209,6 +209,7 @@ export class SchedulerTimepickerCard extends LitElement {
             <div id="date1">
               <ha-date-input
                 .label=${'Date'}
+                .value=${this.schedule.timeslots[this.activeEntry].date}
                 @change=${(ev: Event) => this.updateActiveEntry({ date: (ev.target as HTMLInputElement).value })}
               ></ha-date-input>
             </div>
@@ -219,6 +220,7 @@ export class SchedulerTimepickerCard extends LitElement {
 
   updateActiveEntry(data: Partial<Timeslot>) {
     //MB here
+    console.log(data);
     if (this.activeEntry === null) return;
     this.schedule = {
       ...this.schedule,
@@ -226,7 +228,6 @@ export class SchedulerTimepickerCard extends LitElement {
         [this.activeEntry]: { ...this.schedule.timeslots[this.activeEntry], ...data },
       }),
     };
-    console.log(data);
   }
 
   updateActiveEntryAction(data: Partial<Action> | null, num: number) {
