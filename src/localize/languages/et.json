@@ -14,7 +14,8 @@
     "cover": {
       "close_cover": "sulge",
       "open_cover": "ava",
-      "set_cover_position": "sea asendisse[{position}]"
+      "set_cover_position": "sea asendisse[{position}]",
+      "set_cover_tilt_position": "sea ribide kalle [ asendisse {tilt_position}]"
     },
     "fan": {
       "set_speed": "vali kiirus[ @ {speed}]",
@@ -37,7 +38,7 @@
       "select_source": "vali sisend[ {source}]"
     },
     "script": {
-      "script": "käivitae"
+      "script": "käivita"
     },
     "vacuum": {
       "start_pause": "alusta/ootele"
@@ -98,6 +99,7 @@
       },
       "overview": {
         "no_entries": "Ajastused puuduvad",
+        "backend_error": "Ajastaja sidumine puudub. Sidumine tuleb luua enne selle kaardi kasutamist.",
         "excluded_items": "välja on jäetud {number}  {if number is 1} ajastus {else} ajastust",
         "hide_excluded": "peida välja jäetud ajastused",
         "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust"
@@ -108,7 +110,8 @@
         "no_entities_for_group": "Selles grupis puuduvad olemid",
         "no_entity_selected": "Vali alustuseks olem",
         "no_actions_for_entity": "Selle olemi jaoks pole tegevusi",
-        "make_scheme": "loo skeem"
+        "make_scheme": "loo skeem",
+        "multiple": "Mitu"
       },
       "time_picker": {
         "no_timeslot_selected": "Alustuseks vali ajavahemik"
