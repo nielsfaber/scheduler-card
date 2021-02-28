@@ -58,6 +58,7 @@ export interface Schedule {
   timestamps: string[],
   next_entries: number[],
   repeat_type: ERepeatType,
+  sdate: string,
   name?: string;
 }
 
@@ -65,6 +66,7 @@ export interface ScheduleConfig {
   weekdays: WeekdayType,
   timeslots: Timeslot[],
   repeat_type: ERepeatType,
+  sdate: string,
   name?: string;
 }
 

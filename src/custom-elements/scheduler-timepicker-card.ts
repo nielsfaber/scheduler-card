@@ -183,7 +183,7 @@ export class SchedulerTimepickerCard extends LitElement {
       { id: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
       { id: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
       { id: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
-      { id: EDayType.Once, name: 'Once' }, //TODO
+      { id: EDayType.Once, name: 'Unique' }, //TODO
     ];
 
     return html`
@@ -207,11 +207,8 @@ export class SchedulerTimepickerCard extends LitElement {
       ${weekdayType(this.schedule.weekdays) == EDayType.Once
         ? html`
             <div id="date1">
-              <ha-date-input
-                .label=${'Date'}
-                .value=${this.schedule.timeslots[this.activeEntry].date}
-                @change=${(ev: Event) => this.updateActiveEntry({ date: (ev.target as HTMLInputElement).value })}
-              ></ha-date-input>
+              <ha-date-input .label=${'Date'} .value=${this.schedule.sdate} @change=${this.selectSdate}>
+              </ha-date-input>
             </div>
           `
         : ''}
@@ -219,9 +216,10 @@ export class SchedulerTimepickerCard extends LitElement {
   }
 
   updateActiveEntry(data: Partial<Timeslot>) {
-    //MB here
-    console.log(data);
-    if (this.activeEntry === null) return;
+    if (this.activeEntry === null) {
+      return;
+    }
+    //console.log('active entry: ' + this.activeEntry);
     this.schedule = {
       ...this.schedule,
       timeslots: Object.assign([...this.schedule.timeslots], {
@@ -357,6 +355,15 @@ export class SchedulerTimepickerCard extends LitElement {
         `;
       }
     });
+  }
+  selectSdate(ev: Event) {
+    const value = (ev.target as HTMLInputElement).value;
+    //MB here
+    console.log('changed sdate: ' + value);
+    this.schedule = {
+      ...this.schedule,
+      sdate: value,
+    };
   }
 
   selectDays(ev: Event) {
