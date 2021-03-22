@@ -107,7 +107,7 @@
       "entity_picker": {
         "no_groups_defined": "לא הוגדרו קבוצות",
         "no_group_selected": "בחר קבוצה תחילה",
-        "no_entities_for_group": אין יישויות בקבוצה זו",
+        "no_entities_for_group": "אין יישויות בקבוצה זו",
         "no_entity_selected": "תחילה בחר יישות",
         "no_actions_for_entity": "אין פעולות עבור יישות זאת",
         "make_scheme": "בנה סכימה",
@@ -129,15 +129,3 @@
     }
   }
 }
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
