@@ -196,7 +196,7 @@ export class SchedulerCard extends LitElement {
             : [defaultTimeslot]
         }
         : {
-          weekdays: ['daily'],
+          weekdays: ['once'],
           timeslots: [defaultTimeslot],
           repeat_type: ERepeatType.Repeat,
           sdate: ''

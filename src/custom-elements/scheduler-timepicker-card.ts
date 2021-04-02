@@ -110,7 +110,12 @@ export class SchedulerTimepickerCard extends LitElement {
               `}
         </div>
         <div class="card-actions">
-          <mwc-button @click="${this.saveClick}">${this.hass.localize('ui.common.save')}</mwc-button>
+          <mwc-button
+            @click="${this.saveClick}"
+            ?disabled=${weekdayType(this.schedule.weekdays) == EDayType.Once && this.schedule.sdate == ''}
+          >
+            ${this.hass.localize('ui.common.save')}
+          </mwc-button>
           ${this.editItem
             ? html`
                 <mwc-button class="warning" @click=${this.deleteClick}
@@ -179,11 +184,11 @@ export class SchedulerTimepickerCard extends LitElement {
     );
 
     const DayTypeOptions = [
+      { id: EDayType.Once, name: 'Unique' }, //TODO
       { id: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
       { id: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
       { id: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
       { id: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
-      { id: EDayType.Once, name: 'Unique' }, //TODO
     ];
 
     return html`

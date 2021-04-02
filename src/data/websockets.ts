@@ -23,7 +23,7 @@ export const editSchedule = (
   hass: HomeAssistant,
   config: ScheduleConfig & { schedule_id: string }
 ): Promise<boolean> => {
-  console.log('config20: ' + String(config.timeslots[0].date)); //MB
+  //console.log('config20: ' + String(config.timeslots[0].date)); //MB
   return hass.callApi('POST', 'scheduler/edit', config);
 };
 
