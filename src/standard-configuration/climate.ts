@@ -105,8 +105,9 @@ export const climateActions = (
   stateObj?: HassEntity,
   filterCapabilities?: boolean
 ): ActionConfig[] => {
-  const hvac_modes: string[] = stateObj ? stateObj.attributes.hvac_modes : [];
-  let modeList = climateModes(hass.localize, stateObj);
+  let hvacModes = climateModes(hass.localize, stateObj);
+  if (hvacModes.length == 1) hvacModes = [];
+
   const tempVariable = levelVariable({
     field: 'temperature',
     name: hass.localize('ui.card.weather.attributes.temperature'),
@@ -130,16 +131,16 @@ export const climateActions = (
     },
   ];
 
-  if (!filterCapabilities || hvac_modes.includes('off')) {
+  if (!filterCapabilities || hvacModes.find(e => e.value == 'off')) {
     actions.push({
       service: 'climate.set_hvac_mode',
       service_data: { hvac_mode: 'off' },
       icon: 'hass:power',
       name: hass.localize('ui.card.media_player.turn_off'),
     });
-    if (filterCapabilities) modeList = modeList.filter(e => e.value != 'off');
+    if (filterCapabilities) hvacModes = hvacModes.filter(e => e.value != 'off');
   }
-  if (!filterCapabilities || !hvac_modes.includes('off')) {
+  if (!filterCapabilities || !hvacModes.find(e => e.value == 'off')) {
     actions.push({
       service: 'climate.turn_off',
       icon: 'hass:power',
@@ -147,7 +148,7 @@ export const climateActions = (
     });
   }
 
-  if (!filterCapabilities || (!hvac_modes.includes('cool') && !hvac_modes.includes('heat'))) {
+  if (!filterCapabilities || (!hvacModes.find(e => e.value == 'cool') && !hvacModes.find(e => e.value == 'heat'))) {
     actions.push({
       service: 'climate.set_temperature',
       variable: tempVariable,
@@ -157,7 +158,7 @@ export const climateActions = (
     });
   }
 
-  if (!filterCapabilities || hvac_modes.includes('heat')) {
+  if (!filterCapabilities || hvacModes.find(e => e.value == 'heat')) {
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'heat' },
@@ -166,10 +167,10 @@ export const climateActions = (
       name: localize('services.climate.set_temperature_hvac_mode_heat', hass.language),
       supported_feature: 1,
     });
-    if (filterCapabilities) modeList = modeList.filter(e => e.value != 'heat');
+    if (filterCapabilities) hvacModes = hvacModes.filter(e => e.value != 'heat');
   }
 
-  if (!filterCapabilities || hvac_modes.includes('cool')) {
+  if (!filterCapabilities || hvacModes.find(e => e.value == 'cool')) {
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'cool' },
@@ -178,7 +179,7 @@ export const climateActions = (
       name: localize('services.climate.set_temperature_hvac_mode_cool', hass.language),
       supported_feature: 1,
     });
-    if (filterCapabilities) modeList = modeList.filter(e => e.value != 'cool');
+    if (filterCapabilities) hvacModes = hvacModes.filter(e => e.value != 'cool');
   }
 
   actions.push({
@@ -186,7 +187,7 @@ export const climateActions = (
     variable: listVariable({
       field: 'hvac_mode',
       name: hass.localize('ui.card.climate.operation'),
-      options: modeList,
+      options: hvacModes,
     }),
     icon: 'hass:cog-transfer-outline',
     name: localize('services.climate.set_hvac_mode', hass.language),
