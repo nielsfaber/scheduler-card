@@ -3,6 +3,8 @@
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+      - [Note: Ensure you have a www folder created as in config/www or the installation will succeed but fails silently](#note-ensure-you-have-a-www-folder-created-as-in-configwww-or-the-installation-will-succeed-but-fails-silently)
+      - [Note: Ensure to install `https://github.com/nielsfaber/scheduler-component` and add the integration in order for the scheduler to work properly.](#note-ensure-to-install-httpsgithubcomnielsfaberscheduler-component-and-add-the-integration-in-order-for-the-scheduler-to-work-properly)
 - [Updating](#updating)
 - [Usage](#usage)
   - [Creating a schedule](#creating-a-schedule)
@@ -602,7 +604,7 @@ Supported options for `display_options`:
 | ---------------- | -------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
 | `primary_info`   | string or list | `- "{entity}: {action}"`<br>`- additional-tasks` | Displayed text on the first line.<br>Choose from the properties below. |
 | `secondary_info` | string or list | `relative-time`                                  | Displayed text on the second line<br>Choose from the properties below. |
-| `icon`           | string         | "action"                                         | Choose which icon is displayed (`action` or `entity`)                   |
+| `icon`           | string         | "action"                                         | Choose which icon is displayed (`action` or `entity`)                  |
 
 For creating multiple lines, enter a list of multiple properties. Empty items will be automatically skipped.
 
@@ -639,17 +641,15 @@ Currently the following languages are supported:
 | Eesti       | et         | v1.4.0         |                   |
 | Español     | es, es_419 | v1.2.8         |                   |
 | Français    | fr         | v1.2.3         |                   |
+| עִברִית       | he         | v2.1.0         |                   |
 | Italiano    | it         | v1.7.5         |                   |
 | Magyar      | hu         | v1.3.0         |                   |
 | Polski      | pl         | v1.2.6         |                   |
-| Português   | pt, pt-br  | v1.3.0         | Needs updating.   |
+| Português   | pt, pt-br  | v1.3.0         |                   |
 | Русский     | ru         | v1.2.8         |                   |
 | Română      | ro         | v1.7.3         |                   |
 | Nederlands  | nl         | v1.2.2         |                   |
 | Norsk       | no, nb, nn | v1.2.8         | Needs updating.   |
-
-
-
 
 
 The translations are maintained by users.
