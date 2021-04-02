@@ -78,8 +78,8 @@
           "workdays": "nei giorni lavorativi",
           "weekend": "nel weekend"
         },
-        "days": "days",
-        "tomorrow": "tomorrow",
+        "days": "giorni",
+        "tomorrow": "domani",
         "repeated_days": "ogni {days}",
         "repeated_days_except": "ogni giorno tranne {excludedDays}",
         "days_range": "{if startDay is domenica} dalla domenica {else} dal {startDay} {if endDay is domenica} alla domenica {else} al {endDay}"
