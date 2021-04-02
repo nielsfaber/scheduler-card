@@ -1,43 +1,30 @@
 
 
-
-
-function supportLocaleString() {
-  try {
-    new Date().toLocaleDateString("i");
-  } catch (e) {
-    return e.name === "RangeError";
-  }
-  return false;
-}
-
-
 export const weekdayArray = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-
-function getWeekday(dateObj: Date | number, _locales: string, short?: boolean) {
-  if (typeof dateObj !== "object") {
-    let date = new Date(2017, 1, 26);
-    date.setDate(date.getDate() + dateObj);
-    dateObj = date;
-  }
-  let weekday = dateObj.getDay();
-  return short ? weekdayArray[weekday].substr(0, 3) : weekdayArray[weekday];
-}
-
-
-export const formatWeekday = supportLocaleString()
-  ? (dateObj: Date | number, locales: string, short?: boolean) => {
-    if (typeof dateObj !== "object") {
-      let date = new Date(2017, 1, 26);
-      date.setDate(date.getDate() + dateObj);
-      dateObj = date;
+export const formatWeekday = (date: Date | number, locales: string, short?: boolean): string => {
+  const supportLocaleString = () => {
+    try {
+      new Date().toLocaleDateString("i");
+    } catch (e) {
+      return e.name === "RangeError";
     }
-    return dateObj.toLocaleDateString(locales, {
+    return false;
+  }
+
+  if (typeof date !== "object") {
+    let _date = new Date(2017, 1, 26);
+    _date.setDate(_date.getDate() + date);
+    date = _date;
+  }
+
+  if (supportLocaleString()) {
+    return date.toLocaleDateString(locales, {
       weekday: short ? "short" : "long",
     })
   }
-  : (dateObj: Date | number, locales: string, short?: boolean) => getWeekday(dateObj, locales, short);
-
-
-
+  else {
+    const weekday = date.getDay();
+    return short ? weekdayArray[weekday].substr(0, 3) : weekdayArray[weekday];
+  }
+}

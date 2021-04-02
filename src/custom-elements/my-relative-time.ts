@@ -1,8 +1,9 @@
 import { customElement, LitElement, property, html } from 'lit-element';
-import { HomeAssistant, formatTime } from 'custom-card-helpers';
+import { HomeAssistant } from 'custom-card-helpers';
 import { capitalize } from '../helpers';
 import { formatWeekday } from '../data/date-time/format_weekday';
 import { localize } from '../localize/localize';
+import { formatTime } from '../data/date-time/format_time';
 
 const secondsPerMinute = 60;
 const secondsPerHour = 3600;

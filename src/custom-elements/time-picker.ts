@@ -1,9 +1,10 @@
 import { LitElement, html, customElement, css, property } from 'lit-element';
-import { HomeAssistant, formatTime } from 'custom-card-helpers';
+import { HomeAssistant } from 'custom-card-helpers';
 import { DefaultTimeStep } from '../const';
 import { ETimeEvent } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
+import { formatTime } from '../data/date-time/format_time';
 
 
 

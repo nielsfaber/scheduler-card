@@ -10,7 +10,7 @@ import { parseAction } from '../data/parse_action';
 import { parseEntity } from '../data/parse_entity';
 import { computeActionDisplay } from '../data/compute_action_display';
 import { formatWeekday } from '../data/date-time/format_weekday';
-import { formatTime, formatTime24 } from '../data/date-time/format_time';
+import { formatTime } from '../data/date-time/format_time';
 import { weekdayType } from '../data/date-time/weekday_type';
 import { weekdayToList } from '../data/date-time/weekday_to_list';
 import { stringToTime, parseRelativeTime } from '../data/date-time/time';
@@ -236,7 +236,8 @@ export class ScheduleEntityRow extends LitElement {
               .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
               .slice(0, -1)
               .toLowerCase();
-        const timeStr = formatTime24(stringToDate(res.offset));
+
+        const timeStr = formatTime(stringToDate(res.offset), this.hass.language, { hour12: false });
 
         return `${timeStr} ${signString} ${eventString}`;
       }
