@@ -24,10 +24,8 @@ export class SchedulerEditorCard extends LitElement {
   @property() selectedAction?: string;
   @property() entities?: EntityElement[];
   @property() schedule?: ScheduleConfig;
-
   @property() multipleEntity = false;
-
-  scheduleEntities: string[] = [];
+  @property() scheduleEntities: string[] = [];
 
   async firstUpdated() {
     if (this.entities && this.entities.length) {
@@ -45,7 +43,6 @@ export class SchedulerEditorCard extends LitElement {
         if (actions.length == 1) this.selectedAction = actions[0];
       }
     }
-
     this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
   }
 
