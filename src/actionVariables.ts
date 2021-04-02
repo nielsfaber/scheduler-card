@@ -69,6 +69,7 @@ export function computeLevelVariableDisplay(value: number, config: LevelVariable
 
     let scaledValue = (value - scaleOffset) / scaleGain;
     scaledValue = Math.round(scaledValue / step) * step;
+    scaledValue = parseFloat(scaledValue.toPrecision(12));
     if (scaledValue < min) scaledValue = min;
     else if (scaledValue > max) scaledValue = max;
 
