@@ -224,7 +224,7 @@ export class ScheduleEntityRow extends LitElement {
           res.event == ETimeEvent.Sunrise
             ? this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
             : this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
-        if (Math.abs(stringToTime(res.offset)) < 5 * 60) return localize('ui.time.at_sun_event', '{sunEvent}', eventString);
+        if (Math.abs(stringToTime(res.offset)) < 5 * 60) return localize('ui.components.time.at_sun_event', this.hass.language, '{sunEvent}', eventString);
 
         const signString =
           res.sign == '-'
