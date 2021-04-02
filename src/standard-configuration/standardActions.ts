@@ -17,6 +17,7 @@ import { groupActions } from './group';
 import { inputBooleanActions } from './input_boolean';
 import { sceneActions } from './scene';
 import { switchActions } from './switch';
+import { automationActions } from './automation';
 
 export function standardActions(entity_id: string, hass: HomeAssistant, filterCapabilities = false): ActionConfig[] {
   try {
@@ -25,6 +26,8 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
     switch (domain) {
       case 'alarm_control_panel':
         return alarmControlPanelActions(hass, stateObj);
+      case 'automation':
+        return automationActions(hass, stateObj);
       case 'climate':
         return climateActions(hass, stateObj, filterCapabilities);
       case 'cover':
