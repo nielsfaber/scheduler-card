@@ -100,7 +100,7 @@
       "overview": {
         "no_entries": "Žiadne položky k zobrazeniu",
         "backend_error": "Nepodarilo sa pripojiť k Scheduler Component. Musí byť nainštalovaný ako integrácia pred použitím tejto karty.",
-        "excluded_items": "Vylúčené položky: {number},
+        "excluded_items": "Vylúčené položky: {number}",
         "hide_excluded": "skryť vylúčené položky",
         "additional_tasks": "Ďalšie úlohy: {number}"
       },
