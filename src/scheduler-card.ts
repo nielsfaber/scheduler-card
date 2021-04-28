@@ -1,31 +1,31 @@
 import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { fireEvent, HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
 
 import {
   CardConfig,
   EntityElement,
-  ActionElement,
   ScheduleConfig,
   Action,
   ERepeatType,
   Timeslot,
 } from './types';
-import { CARD_VERSION, EViews, CreateTimeScheme } from './const';
-import { calculateTimeline, flatten, unique, omit, IsDefaultName } from './helpers';
+import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
+import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined } from './helpers';
 import { ValidateConfig } from './config-validation';
 
-import './custom-elements/scheduler-entities-card';
-import './custom-elements/scheduler-entitypicker-card';
-import './custom-elements/scheduler-timepicker-card';
-import './custom-elements/scheduler-options-card';
-import './custom-elements/scheduler-card-editor';
-import './custom-elements/dialog-error';
-import './custom-elements/dialog-delete-defective';
-import { parseAction } from './data/parse_action';
-import { parseEntity } from './data/parse_entity';
-import { computeEntityActions } from './data/compute_entity_actions';
-import { equalAction } from './data/compute_action_id';
+import './views/scheduler-entities-card';
+import './views/scheduler-entitypicker-card';
+import './views/scheduler-timepicker-card';
+import './views/scheduler-options-card';
+import './views/scheduler-card-editor';
+
+import './components/dialog-error';
+import './components/dialog-delete-defective';
+import { parseEntity } from './data/entities/parse_entity';
 import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
+import { computeActions } from './data/actions/compute_actions';
+import { compareActions } from './data/actions/compare_actions';
+import { importAction } from './data/actions/import_action';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -46,16 +46,12 @@ export class SchedulerCard extends LitElement {
     return document.createElement('scheduler-card-editor');
   }
 
-  _config?: CardConfig;
-
-  @property()
-  private _hass?: HomeAssistant;
-
-  @property()
-  _view: EViews = EViews.Overview;
+  @property() _config?: CardConfig;
+  @property() private _hass?: HomeAssistant;
+  @property() _view: EViews = EViews.Overview;
 
   @property() entities?: EntityElement[];
-  @property() actions: ActionElement[] = [];
+  @property() actions: Action[] = [];
   @property() schedule?: ScheduleConfig;
 
   @property() translationsLoaded = false;
@@ -89,8 +85,12 @@ export class SchedulerCard extends LitElement {
     return true;
   }
 
-  setConfig(config: CardConfig) {
-    ValidateConfig(config);
+  setConfig(userConfig: Partial<CardConfig>) {
+    ValidateConfig(userConfig);
+    const config: CardConfig = {
+      ...DefaultCardConfig,
+      ...userConfig
+    };
     this._config = config;
   }
 
@@ -173,10 +173,11 @@ export class SchedulerCard extends LitElement {
     const entities: string[] = ev.detail.entities;
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
 
-    const action: string = ev.detail.action;
+    const timeSchemeSelected = Boolean(ev.detail.timeSchemeSelected);
+    const action: Action = ev.detail.action;
     const oldSchedule = this.schedule;
-    if (action != CreateTimeScheme) {
-      this.actions = [computeEntityActions(entities, this._hass, this._config).find(e => e.id == action)!];
+    if (!timeSchemeSelected) {
+      this.actions = [action];
       const defaultTimeslot: Timeslot = {
         start: '12:00:00',
         actions: flatten(entities.map(e =>
@@ -202,7 +203,7 @@ export class SchedulerCard extends LitElement {
         };
       this._view = EViews.TimePicker;
     } else {
-      this.actions = computeEntityActions(entities, this._hass, this._config);
+      this.actions = computeActions(entities, this._hass, this._config);
       const defaultTimeslots = [
         {
           start: '00:00:00',
@@ -249,11 +250,20 @@ export class SchedulerCard extends LitElement {
       ...schedule,
       timeslots: schedule.timeslots.map(slot => {
         if (!slot.actions || !slot.actions.length) return null;
-        if (!slot.stop) slot = omit(slot, ['stop']) as Timeslot;
-        if (!slot.conditions?.length) slot = omit(slot, ['conditions', 'condition_type']) as Timeslot;
+        if (slot.actions.some(e => !e.entity_id || computeDomain(e.entity_id || "") == "notify")) {
+          slot = {
+            ...slot,
+            actions: slot.actions.map(action => !action.entity_id || computeDomain(action.entity_id || "") == "notify"
+              ? omit(action, "entity_id")
+              : action
+            )
+          };
+        }
+        if (!slot.stop) slot = omit(slot, 'stop');
+        if (!slot.conditions?.length) slot = omit(slot, 'conditions', 'condition_type') as Timeslot;
         return slot;
       })
-        .filter(e => e) as Timeslot[]
+        .filter(isDefined)
     }
 
     if (this.editItem) {
@@ -290,16 +300,17 @@ export class SchedulerCard extends LitElement {
 
     const data = await fetchScheduleItem(this._hass, ev.detail);
     if (!data) return;
-    const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id))));
+    const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id || e.service))));
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
-    let actions = computeEntityActions(entities, this._hass, this._config);
+    let actions = computeActions(entities, this._hass, this._config);
     const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
 
-    usedActions
-      .forEach(e => {
-        if (!actions.find(a => equalAction(a, e)))
-          actions.push(parseAction(e, this._hass!, this._config!))
-      });
+    let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e)));
+    if (extraActions.length) {
+      //actions that are not in the card
+      extraActions.forEach(e => actions.push(importAction(e, this._hass!)));
+    }
+
     this.actions = actions;
 
     this.schedule = {
@@ -314,7 +325,7 @@ export class SchedulerCard extends LitElement {
       const result = await new Promise((resolve) => {
         fireEvent(this, 'show-dialog', {
           dialogTag: 'dialog-delete-defective',
-          dialogImport: () => import('./custom-elements/dialog-delete-defective'),
+          dialogImport: () => import('./components/dialog-delete-defective'),
           dialogParams: {
             cancel: () => {
               resolve(false);
@@ -335,7 +346,7 @@ export class SchedulerCard extends LitElement {
       this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots) };
     } else {
       this._view = EViews.TimePicker;
-      this.actions = this.actions.filter(e => usedActions.find(a => equalAction(e, a)));
+      this.actions = this.actions.filter(e => usedActions.find(a => compareActions(e, a)));
     }
   }
   _gotoOptionsClick(ev: CustomEvent): void {

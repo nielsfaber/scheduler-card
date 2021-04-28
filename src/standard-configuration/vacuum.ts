@@ -1,9 +1,9 @@
-import { ActionConfig } from '../types';
+import { Action } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
-export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): ActionConfig[] => [
+export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
     service: 'vacuum.turn_on',
     icon: 'hass:power',

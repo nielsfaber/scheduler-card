@@ -1,8 +1,8 @@
 import { HassEntity } from 'home-assistant-js-websocket';
-import { listVariable } from '../actionVariables';
-import { ActionConfig } from '../types';
+import { Action } from '../types';
 import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
+import { listVariable } from '../data/variables/list_variable';
 
 export const inputSelectOptions = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
   if (stateObj && stateObj.attributes.options && Array.isArray(stateObj.attributes.options)) {
@@ -13,19 +13,21 @@ export const inputSelectOptions = (_localize: LocalizeFunc, stateObj?: HassEntit
   return [];
 };
 
-export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
   {
     service: 'input_select.select_option',
-    variable: listVariable({
-      field: 'option',
-      name: hass.localize('ui.components.dialogs.input_select.options'),
-      options: inputSelectOptions(hass.localize, stateObj),
-    }),
+    variables: {
+      option: listVariable({
+        name: hass.localize('ui.components.dialogs.input_select.options'),
+        options: inputSelectOptions(hass.localize, stateObj),
+      })
+    },
     icon: 'counter',
     name: localize('services.input_select.select_option', hass.language),
   },
 ];
 
-export const inputSelectStates = (hass: HomeAssistant, stateObj: HassEntity) =>
-  inputSelectOptions(hass.localize, stateObj)
-    .map(e => Object.assign(e, { name: e.value }));
+export const inputSelectStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
+  options: inputSelectOptions(hass.localize, stateObj)
+    .map(e => Object.assign(e, { name: e.value }))
+});

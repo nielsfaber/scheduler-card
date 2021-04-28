@@ -1,9 +1,11 @@
-import { ActionConfig, ListVariableOption } from '../types';
+import { Action, Variable, EVariableType, ListVariable, LevelVariable } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { computeDomain, computeEntity, HomeAssistant } from 'custom-card-helpers';
-import { uniqueId } from '../data/compute_action_id';
+import { listVariable } from '../data/variables/list_variable';
+import { levelVariable } from '../data/variables/level_variable';
+import { computeCommonActions } from '../data/actions/compute_common_actions';
 
-export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]) {
+export function groupActions(entity: HassEntity, entityActions: Action[][]) {
   const entities: string[] =
     entity && entity.attributes.entity_id && Array.isArray(entity.attributes.entity_id)
       ? entity.attributes.entity_id
@@ -25,27 +27,14 @@ export function groupActions(entity: HassEntity, entityActions: ActionConfig[][]
     });
   }
   if (!entityActions.length) return [];
-
-  const actions = entityActions[0].filter(action => {
-    return entityActions.every(e => {
-      return e.map(el => uniqueId(el)).includes(uniqueId(action));
-    });
-  });
-  return actions;
+  let commonActions = computeCommonActions(entityActions);
+  return commonActions;
 }
 
-export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityStates: ListVariableOption[][]) => {
-  if (!entityStates.length || !Array.isArray(entityStates[0])) return [];
-  let states = [...entityStates[0]];
-  if (!states.length) return [];
-
-  entityStates
-    .filter(e => Array.isArray(e))
-    .forEach(entity => {
-      states = states.filter(e => {
-        return entity.find(el => el.value == e.value);
-      });
-    });
-
-  return states;
+export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityStates: Variable[]): Variable | null => {
+  if (!entityStates.length) return null;
+  if (!entityStates.every(e => e.type == entityStates[0].type)) return null;
+  if (entityStates[0].type == EVariableType.List) return listVariable(...entityStates as ListVariable[]);
+  else if (entityStates[0].type == EVariableType.Level) return levelVariable(...entityStates as LevelVariable[]);
+  else return null;
 }

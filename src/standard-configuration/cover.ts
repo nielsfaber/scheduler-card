@@ -1,8 +1,9 @@
-import { ActionConfig } from '../types';
-import { levelVariable } from '../actionVariables';
+import { Action } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
+import { levelVariable } from '../data/variables/level_variable';
+import { listVariable } from '../data/variables/list_variable';
 
 export const coverIcon = (stateObj?: HassEntity): string => {
   const deviceClass = stateObj && stateObj.attributes.device_class ? stateObj.attributes.device_class : null;
@@ -40,7 +41,7 @@ export const coverIconOpen = (stateObj?: HassEntity): string => {
   }
 };
 
-export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
   {
     service: 'cover.open_cover',
     icon: coverIconOpen(stateObj),
@@ -55,14 +56,15 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   },
   {
     service: 'cover.set_cover_position',
-    variable: levelVariable({
-      field: 'position',
-      name: hass.localize('ui.card.cover.position', hass.language),
-      min: 0,
-      max: 100,
-      step: 1,
-      unit: '%',
-    }),
+    variables: {
+      position: levelVariable({
+        name: hass.localize('ui.card.cover.position', hass.language),
+        min: 0,
+        max: 100,
+        step: 1,
+        unit: '%',
+      })
+    },
     supported_feature: 4,
     icon: 'hass:ray-vertex',
     name: localize('services.cover.set_cover_position', hass.language),
@@ -81,14 +83,15 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   // },
   {
     service: 'cover.set_cover_tilt_position',
-    variable: levelVariable({
-      field: 'tilt_position',
-      name: hass.localize('ui.card.cover.tilt_position', hass.language),
-      min: 0,
-      max: 100,
-      step: 1,
-      unit: '%',
-    }),
+    variables: {
+      tilt_position: levelVariable({
+        name: hass.localize('ui.card.cover.tilt_position', hass.language),
+        min: 0,
+        max: 100,
+        step: 1,
+        unit: '%',
+      })
+    },
     supported_feature: 128,
     icon: 'hass:valve',
     name: localize('services.cover.set_cover_tilt_position', hass.language),
@@ -96,15 +99,17 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
 ];
 
 
-export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) => [
-  {
-    value: "closed",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "closed" }, hass.language),
-    icon: stateIcon({ ...stateObj, state: "closed" })
-  },
-  {
-    value: "open",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "open" }, hass.language),
-    icon: stateIcon({ ...stateObj, state: "open" })
-  }
-];
+export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
+  options: [
+    {
+      value: "closed",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "closed" }, hass.language),
+      icon: stateIcon({ ...stateObj, state: "closed" })
+    },
+    {
+      value: "open",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "open" }, hass.language),
+      icon: stateIcon({ ...stateObj, state: "open" })
+    }
+  ]
+});

@@ -1,18 +1,21 @@
 import { LitElement, html, customElement, property, css } from 'lit-element';
 import { localize } from '../localize/localize';
 //import { Config } from '../config';
-import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot } from '../types';
+import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot, EVariableType, ListVariable, LevelVariable, Group } from '../types';
 
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
-import { parseEntity } from '../data/parse_entity';
-import { entityFilter } from '../data/filter_entity';
+import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, pick, IsDefaultName } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, pick, isEqual } from '../helpers';
 import { standardStates } from '../standard-configuration/standardStates';
 
-import './button-group';
+import '../components/button-group';
+import '../components/variable-picker';
+import { computeEntities } from '../data/entities/compute_entities';
+import { listVariableDisplay } from '../data/variables/list_variable';
+import { levelVariableDisplay } from '../data/variables/level_variable';
 
 @customElement('scheduler-options-card')
 export class SchedulerOptionsCard extends LitElement {
@@ -20,8 +23,8 @@ export class SchedulerOptionsCard extends LitElement {
   @property() config?: CardConfig;
   @property() schedule?: ScheduleConfig;
 
-  @property() selectedGroup?: string;
-  @property() selectedEntity?: string;
+  @property() selectedGroup?: Group;
+  @property() selectedEntity?: EntityElement;
   @property() conditionMatchType?: EConditionMatchType;
   @property() conditionValue?: string | number;
   @property() editItem?: number;
@@ -65,17 +68,17 @@ export class SchedulerOptionsCard extends LitElement {
     const repeatTypes = [
       {
         name: this.hass.localize('ui.panel.config.automation.editor.actions.type.repeat.label'),
-        id: ERepeatType.Repeat,
+        value: ERepeatType.Repeat,
         icon: 'refresh',
       },
       {
         name: this.hass.localize('ui.dialogs.more_info_control.vacuum.stop'),
-        id: ERepeatType.Pause,
+        value: ERepeatType.Pause,
         icon: 'stop',
       },
       {
         name: this.hass.localize('ui.common.delete'),
-        id: ERepeatType.Single,
+        value: ERepeatType.Single,
         icon: 'trash-can-outline',
       },
     ];
@@ -84,11 +87,11 @@ export class SchedulerOptionsCard extends LitElement {
       <ha-card>
         <div class="card-header">
           <div class="name">
-            ${this.config.title !== undefined
+            ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this.hass.language)}
+          : localize('ui.panel.common.title', this.hass.language)
+        : ''}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
         </div>
@@ -171,9 +174,7 @@ export class SchedulerOptionsCard extends LitElement {
 
     if (!this.selectedEntity) {
 
-      const hassEntities = Object.keys(this.hass.states)
-        .filter(e => entityFilter(e, this.config!))
-        .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
+      const hassEntities = computeEntities(this.hass, this.config, { filterActions: false, filterStates: true });
 
       const groups = entityGroups(hassEntities, this.config, this.hass);
       groups.sort((a, b) => (a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1));
@@ -181,21 +182,28 @@ export class SchedulerOptionsCard extends LitElement {
       let entities: EntityElement[] = [];
       if (this.selectedGroup) {
         entities = groups
-          .find(e => e.id == this.selectedGroup)!
+          .find(e => isEqual(e, this.selectedGroup!))!
           .entities.map(e => parseEntity(e, this.hass!, this.config!));
 
         entities.sort((a, b) => (a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1));
       }
-
       return html`
       <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
       
-      <button-group .items=${groups} value=${this.selectedGroup} @change=${this.selectGroup}>
+      <button-group
+        .items=${groups}
+        .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
+        @change=${this.selectGroup}
+      >
         ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
       </button-group>
 
       <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
-      <button-group .items=${entities} value=${this.selectedEntity} @change=${this.selectEntity}>
+      <button-group
+        .items=${entities}
+        .value=${entities.findIndex(e => isEqual(e, this.selectedEntity))}
+        @change=${this.selectEntity}
+      >
         ${!this.selectedGroup
           ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
           : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
@@ -203,11 +211,10 @@ export class SchedulerOptionsCard extends LitElement {
     `;
     }
     else {
-      const entity = parseEntity(this.selectedEntity, this.hass!, this.config!);
-      const stateObj = this.hass!.states[this.selectedEntity];
-      const states = standardStates(this.selectedEntity, this.hass);
+      const entity = this.selectedEntity;
+      const states = standardStates(entity.id, this.hass);
 
-      const matchTypes = (computeDomain(this.selectedEntity) == "sensor" && !isNaN(Number(stateObj.state))) || ["proximity", "input_number"].includes(computeDomain(this.selectedEntity))
+      const matchTypes = states?.type == EVariableType.Level
         ? Object.entries(pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])).map(([k, v]) => Object.assign(v, { id: k }))
         : Object.entries(pick(this.matchTypes, [EConditionMatchType.Equal, EConditionMatchType.Unequal])).map(([k, v]) => Object.assign(v, { id: k }));
       return html`
@@ -235,38 +242,23 @@ export class SchedulerOptionsCard extends LitElement {
       </button-group>
       
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
-        ${states && states.length
-          ?
-          html`
-      <button-group
-        .items=${states.map(e => Object.assign(e, { id: e.value }))}
-        value=${this.conditionValue}
-        @change=${(ev: Event) => { this.conditionValue = (ev.target as HTMLInputElement).value }}
-        >
-      </button-group>
-        `
-          :
-          html`
-            <paper-input
-              label="${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}${stateObj.attributes.unit_of_measurement ? ` [${stateObj.attributes.unit_of_measurement}]` : ''}"
-              value=${this.conditionValue ? this.conditionValue : ""}
-              @value-changed=${(ev: Event) => { const value = (ev.target as HTMLInputElement).value; this.conditionValue = isNaN(Number(value)) ? value : Number(value) }}
-            >
-            </paper-input>
-        `
-        }
+      <scheduler-variable-picker
+        .variable=${states}
+        .value=${this.conditionValue}
+        @change=${(ev: CustomEvent) => this.conditionValue = (ev.target as HTMLInputElement).value}}
+      >
+      </scheduler-variable-picker> 
       `;
     }
   }
 
-  selectGroup(ev: Event) {
-    this.selectedGroup = (ev.target as HTMLInputElement).value;
+  selectGroup(ev: CustomEvent) {
+    this.selectedGroup = ev.detail as Group;
     this.selectedEntity = undefined;
   }
 
-  selectEntity(e: Event) {
-    const value = (e.target as HTMLInputElement).value;
-    this.selectedEntity = value;
+  selectEntity(ev: CustomEvent) {
+    this.selectedEntity = ev.detail as EntityElement;
     this.conditionMatchType = undefined;
     this.conditionValue = undefined;
   }
@@ -281,15 +273,21 @@ export class SchedulerOptionsCard extends LitElement {
     return conditions.map((item, num) => {
       const entity = parseEntity(item.entity_id, this.hass!, this.config!);
       const states = standardStates(item.entity_id, this.hass!);
-      const stateObj = this.hass!.states[item.entity_id];
-      const state = states?.find(e => e.value == item.value);
       return html`
         <div class="summary">
             <ha-icon icon="${entity.icon || DefaultEntityIcon}"></ha-icon>
             <span>
               ${PrettyPrintName(entity.name)}
               ${this.matchTypes[item.match_type].name!.toLowerCase()}
-              ${state ? state.name.toLowerCase() : stateObj.attributes.unit_of_measurement ? `${item.value}${stateObj.attributes.unit_of_measurement}` : item.value}
+              ${states
+          ?
+          states.type == EVariableType.List
+            ? listVariableDisplay(item.value, states as ListVariable)
+            : states.type == EVariableType.Level
+              ? levelVariableDisplay(item.value, states as LevelVariable)
+              : ''
+          : ''
+        }
             </span>
           <ha-icon-button
             icon="hass:pencil"
@@ -311,7 +309,7 @@ export class SchedulerOptionsCard extends LitElement {
     if (!this.selectedEntity || !this.config || !this.hass || !this.schedule || !this.conditionMatchType || !this.conditionValue) return;
 
     const condition: Condition = {
-      entity_id: this.selectedEntity,
+      entity_id: this.selectedEntity.id,
       match_type: this.conditionMatchType,
       value: this.conditionValue,
       attribute: "state"
@@ -346,12 +344,10 @@ export class SchedulerOptionsCard extends LitElement {
     if (!item) return;
     this.editItem = index;
 
-    const hassEntities = Object.keys(this.hass.states)
-      .filter(e => entityFilter(e, this.config!))
-      .filter(e => standardStates(e, this.hass!)?.length || ["sensor", "proximity", "input_number"].includes(computeDomain(e)));
+    const hassEntities = computeEntities(this.hass, this.config, { filterActions: false, filterStates: true });
     const groups = entityGroups(hassEntities, this.config, this.hass);
-    this.selectedGroup = groups.find(e => e.entities.includes(item.entity_id))?.id;
-    this.selectedEntity = item.entity_id;
+    this.selectedGroup = groups.find(e => e.entities.includes(item.entity_id));
+    this.selectedEntity = parseEntity(item.entity_id, this.hass, this.config);
 
     this.conditionMatchType = item.match_type;
     this.conditionValue = item.value;

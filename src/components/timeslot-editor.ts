@@ -1,13 +1,13 @@
 import { LitElement, html, customElement, css, property, TemplateResult, eventOptions } from 'lit-element';
 import { localize } from '../localize/localize';
-import { ActionElement, EVariableType, LevelVariableConfig, ListVariableConfig, Timeslot } from '../types';
+import { EVariableType, Timeslot, LevelVariable, ListVariable, Action } from '../types';
 import { PrettyPrintName, unique } from '../helpers';
 import { HomeAssistant } from 'custom-card-helpers';
-import { computeLevelVariableDisplay } from '../actionVariables';
 import { formatAmPm, formatTime } from '../data/date-time/format_time';
-import { equalAction } from '../data/compute_action_id';
 import { stringToTime, roundTime, timeToString } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
+import { levelVariableDisplay } from '../data/variables/level_variable';
+import { compareActions } from '../data/actions/compare_actions';
 
 const secondsPerDay = 86400;
 
@@ -25,7 +25,7 @@ export class TimeslotEditor extends LitElement {
   entries: Timeslot[] = [];
   shadowRoot: any;
 
-  @property({ type: Array }) actions: ActionElement[] = [];
+  @property({ type: Array }) actions: Action[] = [];
   @property({ type: Number }) stepSize = 10;
   @property({ type: Number }) _activeEntry: number | null = null;
   @property({ type: Number }) _activeThumb: number | null = null;
@@ -137,19 +137,26 @@ export class TimeslotEditor extends LitElement {
   getEntryAction(entry: Timeslot) {
     if (!this.hass) return;
     if (!entry.actions) return '';
+
     return unique(entry.actions.map(action => {
-      const actionConfig = this.actions.find(e => equalAction(e, action))!;
-      if (actionConfig.variable && actionConfig.variable.field in action.service_data) {
-        const value = action.service_data[actionConfig.variable.field];
-        if (actionConfig.variable.type == EVariableType.Level) {
-          const variableConfig = actionConfig.variable as LevelVariableConfig;
-          if (!isNaN(value))
-            return computeLevelVariableDisplay(Number(value), variableConfig);
-        } else if (actionConfig.variable.type == EVariableType.List) {
-          const config = actionConfig.variable as ListVariableConfig;
-          const listItem = config.options.find(e => e.value == value);
-          return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
-        }
+      const actionConfig = this.actions.find(e => compareActions(e, action));
+      if (!actionConfig) return '???';
+
+      if (actionConfig.variables && Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)) {
+        return Object.entries(actionConfig.variables)
+          .filter(([field,]) => action.service_data && field in action.service_data)
+          .map(([field, variable]) => {
+            const value = action.service_data![field];
+            if (variable.type == EVariableType.Level) {
+              variable = variable as LevelVariable;
+              return levelVariableDisplay(Number(value), variable);
+            } else if (variable.type == EVariableType.List) {
+              variable = variable as ListVariable;
+              const listItem = variable.options.find(e => e.value == value);
+              return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
+            }
+            else return "";
+          }).join(", ");
       }
       return PrettyPrintName(actionConfig.name || localize(`services.${action.service}`, this.hass!.language) || action.service);
     })).join(', ');
@@ -198,7 +205,7 @@ export class TimeslotEditor extends LitElement {
     });
 
     const t1 = stringToTime(this.entries[slotIndex].start);
-    const t2 = stringToTime(this.entries[slotIndex+1].stop!) || secondsPerDay;
+    const t2 = stringToTime(this.entries[slotIndex + 1].stop!) || secondsPerDay;
 
     const x1 = (t1 + this.stepSize * 60) / secondsPerDay * trackWidth;
     const x2 = (t2 - this.stepSize * 60) / secondsPerDay * trackWidth;
@@ -212,8 +219,8 @@ export class TimeslotEditor extends LitElement {
       } else startDragX = (e as MouseEvent).pageX;
 
       let x = startDragX - trackCoords.left;
-      if(x < x1) x = x1;
-      else if(x > x2) x = x2;
+      if (x < x1) x = x1;
+      else if (x > x2) x = x2;
 
       firstSlot.style.width = `${Math.round(x - xStart)}px`;
       secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;

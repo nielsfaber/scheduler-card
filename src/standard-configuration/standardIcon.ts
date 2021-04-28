@@ -1,4 +1,3 @@
-import { HassEntity } from 'home-assistant-js-websocket';
 import { computeDomain, HomeAssistant } from 'custom-card-helpers';
 import { binarySensorIcon } from './binary_sensor';
 import { coverIcon } from './cover';
@@ -22,7 +21,7 @@ export const domainIcons = {
   light: 'hass:lightbulb-outline',
   lock: 'hass:lock-open-outline',
   media_player: 'hass:cast-connected',
-  notify: 'hass:comment-alert',
+  notify: 'hass:message-text-outline',
   person: 'hass:account-outline',
   remote: 'hass:remote',
   scene: 'hass:palette-outline',

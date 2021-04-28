@@ -1,8 +1,9 @@
 import { HassEntity } from 'home-assistant-js-websocket';
-import { ActionConfig } from '../types';
+import { Action } from '../types';
 import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
-import { levelVariable, listVariable } from '../actionVariables';
+import { levelVariable } from '../data/variables/level_variable';
+import { listVariable } from '../data/variables/list_variable';
 
 export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
   const modeList = [
@@ -58,7 +59,7 @@ export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntit
   return modeList;
 };
 
-export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
   {
     service: 'humidifier.turn_on',
     icon: 'hass:power',
@@ -71,24 +72,26 @@ export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): A
   },
   {
     service: 'humidifier.set_humidity',
-    variable: levelVariable({
-      field: 'humidity',
-      name: hass.localize('ui.card.humidifier.humidity'),
-      min: stateObj?.attributes.min_humidity || 0,
-      max: stateObj?.attributes.max_humidity || 255,
-      step: 1,
-      unit: '%',
-    }),
+    variables: {
+      humidity: levelVariable({
+        name: hass.localize('ui.card.humidifier.humidity'),
+        min: stateObj?.attributes.min_humidity || 0,
+        max: stateObj?.attributes.max_humidity || 255,
+        step: 1,
+        unit: '%',
+      })
+    },
     icon: 'hass:water-percent',
     name: localize('services.humidifer.set_humidity', hass.language),
   },
   {
     service: 'humidifier.set_mode',
-    variable: listVariable({
-      field: 'mode',
-      name: hass.localize('ui.card.humidifier.mode'),
-      options: humidifierModes(hass.localize, stateObj),
-    }),
+    variables: {
+      mode: listVariable({
+        name: hass.localize('ui.card.humidifier.mode'),
+        options: humidifierModes(hass.localize, stateObj),
+      })
+    },
     icon: 'hass:cog-transfer-outline',
     name: localize('services.climate.set_mode', hass.language),
   },

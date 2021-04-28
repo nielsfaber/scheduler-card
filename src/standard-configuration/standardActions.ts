@@ -1,6 +1,6 @@
 import { computeDomain, HomeAssistant } from 'custom-card-helpers';
 import { alarmControlPanelActions } from './alarm_control_panel';
-import { ActionConfig } from '../types';
+import { Action } from '../types';
 import { climateActions } from './climate';
 import { coverActions } from './cover';
 import { fanActions } from './fan';
@@ -18,8 +18,9 @@ import { inputBooleanActions } from './input_boolean';
 import { sceneActions } from './scene';
 import { switchActions } from './switch';
 import { automationActions } from './automation';
+import { notifyActions } from './notify';
 
-export function standardActions(entity_id: string, hass: HomeAssistant, filterCapabilities = false): ActionConfig[] {
+export function standardActions(entity_id: string, hass: HomeAssistant): Action[] {
   try {
     const domain = computeDomain(entity_id);
     const stateObj = hass.states[entity_id];
@@ -29,7 +30,7 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
       case 'automation':
         return automationActions(hass, stateObj);
       case 'climate':
-        return climateActions(hass, stateObj, filterCapabilities);
+        return climateActions(hass, stateObj);
       case 'cover':
         return coverActions(hass, stateObj);
       case 'fan':
@@ -52,6 +53,8 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
         return lockActions(hass, stateObj);
       case 'media_player':
         return mediaPlayerActions(hass, stateObj);
+      case 'notify':
+        return notifyActions(hass, entity_id);
       case 'scene':
         return sceneActions(hass, stateObj);
       case 'script':
