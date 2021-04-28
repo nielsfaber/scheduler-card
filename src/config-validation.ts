@@ -99,6 +99,7 @@ export function ValidateConfig(config: any) {
   Optional(config, 'title', ['boolean', 'string']);
   Optional(config, 'time_step', 'number');
   Optional(config, 'show_header_toggle', 'boolean');
+  Optional(config, 'show_add_button', 'boolean');
 
   Optional(config, 'include', 'array');
   RequiredArrayType(config, 'include', 'string');

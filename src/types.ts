@@ -203,6 +203,7 @@ export interface CardConfig extends LovelaceCardConfig {
   title: boolean | string;
   time_step: number;
   show_header_toggle: boolean;
+  show_add_button?: boolean;
   display_options: {
     primary_info: string[] | string;
     secondary_info: string[] | string;

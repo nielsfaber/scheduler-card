@@ -99,7 +99,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         <div class="card-content">
           ${this.getRows()}
         </div>
-        ${this.hass.user.is_admin
+        ${this.hass.user.is_admin && this.config.show_add_button !== false
         ? html`
         <div class="card-actions">
           <mwc-button
