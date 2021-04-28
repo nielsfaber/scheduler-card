@@ -1,8 +1,8 @@
 import { HassEntity } from 'home-assistant-js-websocket';
-import { ActionConfig } from '../types';
+import { Action } from '../types';
 import { HomeAssistant } from 'custom-card-helpers';
 
-export const automationActions = (hass: HomeAssistant, _stateObj?: HassEntity): ActionConfig[] => [
+export const automationActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
     service: 'automation.turn_on',
     icon: 'hass:flash',

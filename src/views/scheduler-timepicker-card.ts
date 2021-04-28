@@ -3,37 +3,37 @@ import { HomeAssistant, computeEntity, fireEvent } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import {
   CardConfig,
-  ActionElement,
   EntityElement,
   EVariableType,
-  LevelVariableConfig,
-  ListVariableConfig,
   EDayType,
   ScheduleConfig,
   Timeslot,
   WeekdayType,
   Action,
+  LevelVariable,
+  ServiceCall,
 } from '../types';
-import { PrettyPrintIcon, PrettyPrintName, capitalize, unique } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, capitalize, sortAlphabetically, omit, isEqual } from '../helpers';
 import { DefaultTimeStep, DefaultActionIcon } from '../const';
 
-import './time-picker';
-import './timeslot-editor';
-import './variable-slider';
-import './dialog-delete-confirm';
+import '../components/time-picker';
+import '../components/timeslot-editor';
+import '../components/variable-picker';
+import '../components/dialog-delete-confirm';
 import { commonStyle } from '../styles';
-import { computeActionDisplay } from '../data/compute_action_display';
+import { computeActionDisplay } from '../data/actions/compute_action_display';
 import { startOfWeek } from '../data/date-time/start_of_week';
 import { weekdayArray, formatWeekday } from '../data/date-time/format_weekday';
 import { weekdayType } from '../data/date-time/weekday_type';
-import { equalAction } from '../data/compute_action_id';
+import { compareActions } from '../data/actions/compare_actions';
+import { importAction } from '../data/actions/import_action';
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
   @property() hass?: HomeAssistant;
   @property() config?: CardConfig;
   @property() schedule!: ScheduleConfig;
-  @property() actions?: ActionElement[];
+  @property() actions?: Action[];
   @property() entities?: EntityElement[];
   @property() activeEntry: number | null = null;
   @property({ type: Boolean }) timeslots = false;
@@ -44,7 +44,8 @@ export class SchedulerTimepickerCard extends LitElement {
     if (!this.timeslots) this.activeEntry = 0;
 
     const actions = this.actions.map(e => Object.assign(e, { name: computeActionDisplay(e) }));
-    actions.sort((a, b) => (a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1));
+    actions.sort(sortAlphabetically);
+
     this.actions = actions;
   }
 
@@ -54,11 +55,11 @@ export class SchedulerTimepickerCard extends LitElement {
         <ha-card>
           <div class="card-header">
             <div class="name">
-              ${this.config.title !== undefined
+            ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this.hass.language)}
+          : localize('ui.panel.common.title', this.hass.language)
+        : ''}
             </div>
             <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
           </div>
@@ -93,16 +94,7 @@ export class SchedulerTimepickerCard extends LitElement {
             >
             </timeslot-editor>
 
-            <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
-            <button-group
-              .items=${this.activeEntry !== null ? this.actions : []}
-              value=${this.activeEntry !== null ? this.schedule.timeslots[this.activeEntry].actions.map(a => this.actions!.find(e => equalAction(e, a))?.id) : ''}
-              optional="true"
-              @change=${this.selectAction}
-            >
-              ${localize('ui.panel.time_picker.no_timeslot_selected', this.hass.language)}
-            </button-group>
-
+            ${this.renderActions()}
             ${this.getVariableEditor()}
             `
       }
@@ -178,14 +170,14 @@ export class SchedulerTimepickerCard extends LitElement {
     const shiftCount = weekdays.length - weekdayArray.findIndex(e => e.substr(0, 3) == firstWeekday);
     weekdays = [...weekdays.slice(-shiftCount), ...weekdays.slice(0, -shiftCount)];
     const DayOptions = weekdays.map(e =>
-      Object({ id: weekdayArray[e].substr(0, 3), name: formatWeekday(e, this.hass!.language, true) })
+      Object({ value: weekdayArray[e].substr(0, 3), name: formatWeekday(e, this.hass!.language, true) })
     );
 
     const DayTypeOptions = [
-      { id: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
-      { id: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
-      { id: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
-      { id: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
+      { value: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
+      { value: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
+      { value: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
+      { value: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
     ];
 
     return html`
@@ -209,6 +201,26 @@ export class SchedulerTimepickerCard extends LitElement {
     `;
   }
 
+  renderActions() {
+    if (!this.hass) return;
+
+    const selectedAction = this.activeEntry !== null
+      ? this.schedule.timeslots[this.activeEntry!].actions.map(e => importAction(e, this.hass!)).shift() || null
+      : null;
+
+    return html`
+      <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+      <button-group
+        .items=${this.activeEntry !== null ? this.actions : []}
+        .value=${selectedAction !== null ? this.actions?.findIndex(e => compareActions(e, selectedAction!)) : null}
+        optional="true"
+        @change=${this.selectAction}
+      >
+        ${localize('ui.panel.time_picker.no_timeslot_selected', this.hass.language)}
+      </button-group>
+    `;
+  }
+
   updateActiveEntry(data: Partial<Timeslot>) {
     if (this.activeEntry === null) return;
     this.schedule = {
@@ -220,13 +232,38 @@ export class SchedulerTimepickerCard extends LitElement {
     };
   }
 
-  updateActiveEntryAction(data: Partial<Action> | null, num: number) {
+  updateActiveEntryAction(data: Partial<ServiceCall> | null, num: number) {
     if (this.activeEntry === null) return;
-    if (data) {
+    if (data && 'service' in data) {
       this.updateActiveEntry({
         actions: Object.assign(
           [...this.schedule.timeslots[this.activeEntry].actions],
           { [num]: { ...this.schedule.timeslots[this.activeEntry].actions[num], ...data } })
+      });
+    }
+    else if (data) {
+      Object.entries(data).forEach(([key, val]) => {
+        if (typeof val == "object" && key in this.schedule.timeslots[this.activeEntry!].actions[num]) {
+          this.updateActiveEntry({
+            actions: Object.assign(
+              [...this.schedule.timeslots[this.activeEntry!].actions],
+              {
+                [num]: {
+                  ...this.schedule.timeslots[this.activeEntry!].actions[num], [key]: {
+                    ...this.schedule.timeslots[this.activeEntry!].actions[num][key],
+                    ...val
+                  }
+                }
+              })
+          });
+        }
+        else {
+          this.updateActiveEntry({
+            actions: Object.assign(
+              [...this.schedule.timeslots[this.activeEntry!].actions],
+              { [num]: { ...this.schedule.timeslots[this.activeEntry!].actions[num], [key]: val } })
+          });
+        }
       });
     }
     else {
@@ -255,18 +292,19 @@ export class SchedulerTimepickerCard extends LitElement {
     }
   }
 
-  selectAction(ev: Event) {
+  selectAction(ev: CustomEvent) {
     if (!this.actions || this.activeEntry === null) return;
-    const value = (ev.target as HTMLInputElement).value;
-    if (value) {
-      const action = this.actions.find(e => e.id == value)!;
+    const action: Action | null = ev.detail;
+    if (action) {
       this.entities!.map(e => e.id).forEach((entity_id, num) => {
-        let service_data = action.service_data || {}
-        if (action.variable && action.variable.type == EVariableType.Level) {
-          const config = action.variable as LevelVariableConfig;
-          if (!(config.field in service_data) && !config.optional)
-            service_data = { ...service_data, [config.field]: config.min };
-        }
+        let service_data = action.service_data || {};
+        Object.entries(action.variables || {}).forEach(([field, config]) => {
+          if (config.type == EVariableType.Level) {
+            config = config as LevelVariable;
+            if (!(field in service_data) && !config.optional)
+              service_data = { ...service_data, [field]: config.min };
+          }
+        });
         this.updateActiveEntryAction({
           entity_id: entity_id,
           service: action.service,
@@ -283,58 +321,34 @@ export class SchedulerTimepickerCard extends LitElement {
 
   getVariableEditor() {
     if (this.activeEntry === null || !this.actions) return html``;
-    const actions = unique(this.schedule.timeslots[this.activeEntry].actions.map(a => this.actions!.find(e => equalAction(e, a))));
 
-    return actions
-      .map(actionConfig => {
-        if (!actionConfig || !actionConfig.variable) return html``;
-        const action = this.schedule.timeslots[this.activeEntry!].actions[0];
+    const actions: ServiceCall[] = [];
+    this.schedule.timeslots[this.activeEntry].actions.forEach(action => {
+      action = omit(action, 'entity_id');
+      if (!this.actions!.find(e => compareActions(e, action) && Object.keys(e.variables || {}).length)) return;
+      if (!actions.some(e => isEqual(e, action))) actions.push(action);
+    });
 
-        if (actionConfig.variable.type == EVariableType.Level) {
-          const config = actionConfig.variable as LevelVariableConfig;
-          const value = Number(action.service_data[config.field]) || null;
-          return html`
+    return actions.map(action => {
+      return Object.entries(this.actions!.find(e => compareActions(e, action))!.variables!).map(([field, variable]) => {
+        return html`
           <div class="header">
-            ${config.name || PrettyPrintName(config.field)}
+            ${variable.name || PrettyPrintName(field)}
           </div>
-          <variable-slider
-            min=${config.min}
-            max=${config.max}
-            step=${config.step}
-            value=${value}
-            unit=${config.unit}
-            ?optional=${config.optional}
-            ?disabled=${value === null}
-            @change=${(ev: Event) => {
-              this.entities!.forEach((_, num) => {
-                this.updateActiveEntryAction({ service_data: { ...action.service_data, [config.field]: Number((ev.target as HTMLInputElement).value) } }, num);
-              });
-            }}
-          >
-          </variable-slider>
-        `;
-        } else {
-          const config = actionConfig.variable as ListVariableConfig;
-          const options = config.options.map(e => Object({ ...e, id: e.value }));
-          const value = String(action.service_data[config.field]) || null;
-          return html`
-          <div class="header">
-            ${config.name || PrettyPrintName(config.field)}
-          </div>
-          <button-group
-            .items=${options}
-            value=${value}
-            @change=${(ev: Event) => {
-              this.entities!.forEach((_, num) => {
-                this.updateActiveEntryAction({ service_data: { ...action.service_data, [config.field]: (ev.target as HTMLInputElement).value } }, num);
-              });
-            }}
+          <scheduler-variable-picker
+            .variable=${variable}
+            .value=${action.service_data ? action.service_data[field] : null}
+            @change=${(ev: CustomEvent) => this.entities!.forEach((_, num) => {
+          this.updateActiveEntryAction({
+            service_data: { [field]: (ev.target as HTMLInputElement).value }
+          }, num);
+        })}
           >
             ${this.hass!.localize('ui.dialogs.helper_settings.input_select.no_options')}
-          </button-group>
+          </scheduler-variable-picker>
         `;
-        }
-      });
+      })
+    });
   }
 
   selectDays(ev: Event) {
@@ -391,7 +405,7 @@ export class SchedulerTimepickerCard extends LitElement {
 
       fireEvent(element, 'show-dialog', {
         dialogTag: 'dialog-delete-confirm',
-        dialogImport: () => import('./dialog-delete-confirm'),
+        dialogImport: () => import('../components/dialog-delete-confirm'),
         dialogParams: {
           cancel: () => {
             resolve(false);

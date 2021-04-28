@@ -1,21 +1,21 @@
-import { GroupElement, CardConfig } from '../types';
+import { Group, CardConfig } from '../types';
 import { DefaultGroupIcon } from '../const';
 import { computeDomain, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { domainIcons } from '../standard-configuration/standardIcon';
-import { applyFilters } from './filter_entity';
+import { entityFilter } from './entities/entity_filter';
+import { sortAlphabetically } from '../helpers';
 
 export function entityGroups(entities: string[], config: Partial<CardConfig>, hass: HomeAssistant) {
-  const groups: GroupElement[] = [];
+  let groups: Group[] = [];
 
   //create groups from user config
   if (config.groups) {
     config.groups.forEach(el => {
-      const group: GroupElement = {
-        id: el.name,
+      const group: Group = {
         name: el.name,
         icon: el.icon || DefaultGroupIcon,
-        entities: entities.filter(e => applyFilters(e, el)),
+        entities: entities.filter(e => entityFilter(e, el)),
       };
 
       groups.push(group);
@@ -27,18 +27,16 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>, ha
 
   //automatically create groups for ungrouped entities
   domains.forEach(domain => {
-    const group: GroupElement = {
-      id: domain,
+    const group: Group = {
       name: localize(`domains.${domain}`, hass.language) || domain,
       icon:
         (config.standard_configuration === undefined || config.standard_configuration) && domain in domainIcons
           ? domainIcons[domain]
           : DefaultGroupIcon,
-      entities: ungroupedEntities.filter(e => applyFilters(e, { include: [domain] })),
+      entities: ungroupedEntities.filter(e => entityFilter(e, { include: [domain], exclude: [] })),
     };
 
     groups.push(group);
   });
-
   return groups;
 }

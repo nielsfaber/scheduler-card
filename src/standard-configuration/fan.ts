@@ -1,8 +1,8 @@
-import { listVariable } from '../actionVariables';
-import { ActionConfig } from '../types';
-import { LocalizeFunc, HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
+import { Action } from '../types';
+import { LocalizeFunc, HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { localize } from '../localize/localize';
+import { listVariable } from '../data/variables/list_variable';
 
 const fanSpeeds = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
   const speedList = [
@@ -33,7 +33,7 @@ const fanSpeeds = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
   return speedList;
 };
 
-export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionConfig[] => [
+export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
   {
     service: 'fan.turn_on',
     icon: 'hass:power',
@@ -46,70 +46,75 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): ActionCo
   },
   {
     service: 'fan.set_speed',
-    variable: listVariable({
-      field: 'speed',
-      name: hass.localize('ui.card.fan.speed'),
-      options: fanSpeeds(hass.localize, stateObj),
-    }),
+    variables: {
+      speed: listVariable({
+        name: hass.localize('ui.card.fan.speed'),
+        options: fanSpeeds(hass.localize, stateObj),
+      }),
+    },
     supported_feature: 1,
     icon: 'hass:weather-windy',
     name: localize('services.fan.set_speed', hass.language),
   },
   {
     service: 'fan.oscillate',
-    variable: listVariable({
-      field: 'oscillating',
-      name: hass.localize('ui.card.fan.oscillate'),
-      options: [
-        {
-          value: 'True',
-          name: hass.localize('state.default.on'),
-          icon: 'hass:flash',
-        },
-        {
-          value: 'False',
-          name: hass.localize('state.default.off'),
-          icon: 'hass:flash-off',
-        },
-      ],
-    }),
+    variables: {
+      oscillating: listVariable({
+        name: hass.localize('ui.card.fan.oscillate'),
+        options: [
+          {
+            value: 'True',
+            name: hass.localize('state.default.on'),
+            icon: 'hass:flash',
+          },
+          {
+            value: 'False',
+            name: hass.localize('state.default.off'),
+            icon: 'hass:flash-off',
+          }
+        ]
+      })
+    },
     supported_feature: 2,
     icon: 'hass:arrow-left-right',
     name: localize('services.fan.oscillate', hass.language),
   },
   {
     service: 'fan.set_direction',
-    variable: listVariable({
-      field: 'direction',
-      name: hass.localize('ui.card.fan.direction'),
-      options: [
-        {
-          value: 'forward',
-          name: hass.localize('ui.card.fan.forward'),
-          icon: 'hass:autorenw',
-        },
-        {
-          value: 'reverse',
-          name: hass.localize('ui.card.fan.reverse'),
-          icon: 'hass:sync',
-        },
-      ],
-    }),
+    variables: {
+      direction: listVariable({
+        name: hass.localize('ui.card.fan.direction'),
+        options: [
+          {
+            value: 'forward',
+            name: hass.localize('ui.card.fan.forward'),
+            icon: 'hass:autorenw',
+          },
+          {
+            value: 'reverse',
+            name: hass.localize('ui.card.fan.reverse'),
+            icon: 'hass:sync',
+          },
+        ],
+      })
+    },
     supported_feature: 4,
     icon: 'hass:cog-clockwise',
     name: localize('services.fan.set_direction', hass.language),
   },
 ];
 
-export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => [
-  {
-    value: "off",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
-    icon: "hass:power-off"
-  },
-  {
-    value: "on",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
-    icon: "hass:power"
-  }
-];
+export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
+  options: [
+    {
+      value: "off",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      icon: "hass:power-off"
+    },
+    {
+      value: "on",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+      icon: "hass:power"
+    }
+  ]
+});

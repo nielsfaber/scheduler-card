@@ -6,9 +6,8 @@ import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
 import './my-relative-time';
-import { parseAction } from '../data/parse_action';
-import { parseEntity } from '../data/parse_entity';
-import { computeActionDisplay } from '../data/compute_action_display';
+import { parseEntity } from '../data/entities/parse_entity';
+import { computeActionDisplay } from '../data/actions/compute_action_display';
 import { formatWeekday } from '../data/date-time/format_weekday';
 import { formatTime } from '../data/date-time/format_time';
 import { weekdayType } from '../data/date-time/weekday_type';
@@ -17,6 +16,7 @@ import { stringToTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { standardIcon } from '../standard-configuration/standardIcon';
 import { STATE_NOT_RUNNING } from 'home-assistant-js-websocket';
+import { importAction } from '../data/actions/import_action';
 
 @customElement('scheduler-entity-row')
 export class ScheduleEntityRow extends LitElement {
@@ -60,7 +60,7 @@ export class ScheduleEntityRow extends LitElement {
       `;
     }
     const nextEntry = this._schedule.timeslots[this._schedule.next_entries[0]];
-    const entities = unique(nextEntry.actions.map(e => e.entity_id)).map(e => parseEntity(e, this._hass, this.config));
+    const entities = unique(nextEntry.actions.map(e => e.entity_id || e.service)).map(e => parseEntity(e, this._hass, this.config));
     const entityIcon = unique(entities.map(e => e.icon)).length == 1
       ? entities[0].icon
       : standardIcon(entities[0].id, this._hass);
@@ -73,12 +73,12 @@ export class ScheduleEntityRow extends LitElement {
         ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, this._hass.language) || entityDomains[0]}`
         : `${entities.length}x entities`;
 
-    const actionConfig = parseAction(nextEntry.actions[0], this._hass, this.config, true);
+    const action = importAction(nextEntry.actions[0], this._hass);
 
     const icon =
       this.config.display_options && this.config.display_options.icon && this.config.display_options.icon == 'entity'
         ? entityIcon
-        : actionConfig.icon;
+        : action.icon;
 
     const computeDisplayItem = (displayItem: string): string => {
       switch (displayItem) {
@@ -103,7 +103,7 @@ export class ScheduleEntityRow extends LitElement {
         case 'entity':
           return entityName.length ? capitalize(PrettyPrintName(entityName)) : '';
         case 'action':
-          return capitalize(computeActionDisplay(actionConfig));
+          return capitalize(computeActionDisplay(action));
         default:
           const regex = /\{([^\}]+)\}/;
           let res;

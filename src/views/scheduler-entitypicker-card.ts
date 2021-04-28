@@ -1,45 +1,45 @@
 import { LitElement, html, customElement, property } from 'lit-element';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
-import { CardConfig, EntityElement, GroupElement, ActionElement, ScheduleConfig } from '../types';
+import { CardConfig, EntityElement, ScheduleConfig, Action, Group } from '../types';
 import { entityGroups } from '../data/entity_group';
-import { CreateTimeScheme } from '../const';
-import { PrettyPrintIcon, unique, flatten } from '../helpers';
+import { PrettyPrintIcon, unique, flatten, isEqual, sortAlphabetically } from '../helpers';
 
-import './button-group';
 import { commonStyle } from '../styles';
-import { parseEntity } from '../data/parse_entity';
-import { computeEntityActions } from '../data/compute_entity_actions';
-import { computeActionDisplay } from '../data/compute_action_display';
-import { entityFilter } from '../data/filter_entity';
+import { parseEntity } from '../data/entities/parse_entity';
+import { computeActionDisplay } from '../data/actions/compute_action_display';
 import { fetchSchedules } from '../data/websockets';
-import { uniqueId } from '../data/compute_action_id';
+import { computeEntities } from '../data/entities/compute_entities';
+import { computeActions } from '../data/actions/compute_actions';
+
+import '../components/button-group';
 
 @customElement('scheduler-editor-card')
 export class SchedulerEditorCard extends LitElement {
   @property() hass?: HomeAssistant;
   @property() config?: CardConfig;
-  @property() selectedGroup?: string;
+  @property() selectedGroup?: Group;
   @property() selectedEntities: string[] = [];
-  @property() selectedAction?: string;
+  @property() selectedAction?: Action | null;
   @property() entities?: EntityElement[];
   @property() schedule?: ScheduleConfig;
   @property() multipleEntity = false;
   @property() scheduleEntities: string[] = [];
+  @property() timeSchemeSelected = false;
 
   async firstUpdated() {
     if (this.entities && this.entities.length) {
       const group = this.getGroups().find(group => group.entities.find(e => e == this.entities![0].id));
       if (!group) return;
-      this.selectedGroup = group.id;
+      this.selectedGroup = group;
       this.selectedEntities = [...this.entities.map(e => e.id)];
       this.multipleEntity = this.selectedEntities.length > 1;
     }
 
     if (this.schedule) {
-      if (this.schedule.timeslots.every(e => e.stop)) this.selectedAction = CreateTimeScheme;
+      if (this.schedule.timeslots.every(e => e.stop)) this.timeSchemeSelected = true;
       else {
-        const actions = unique(flatten(this.schedule.timeslots.map(e => e.actions.map(e => uniqueId(e)))));
+        const actions = unique(flatten(this.schedule.timeslots.map(e => e.actions)));
         if (actions.length == 1) this.selectedAction = actions[0];
       }
     }
@@ -48,35 +48,26 @@ export class SchedulerEditorCard extends LitElement {
 
   getGroups() {
     if (!this.hass || !this.config) return [];
-
-    const entities = Object.keys(this.hass.states)
-      .filter(e => entityFilter(e, this.config!))
-      .filter(e => computeDomain(e) != "switch" || !this.scheduleEntities.includes(e))
-      .filter(e => computeEntityActions(e, this.hass!, this.config!).length)
-
-    const groups = entityGroups(entities, this.config, this.hass);
-    groups.sort((a, b) => (a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ? -1 : 1));
-
+    const entities = computeEntities(this.hass, this.config)
+      .filter(e => computeDomain(e) !== "switch" || !this.scheduleEntities.includes(e));
+    let groups = entityGroups(entities, this.config, this.hass);
+    groups.sort(sortAlphabetically);
     return groups;
   }
 
-  getEntitiesForGroup(groupConfig: GroupElement[]) {
+  getEntitiesForGroup() {
     if (!this.selectedGroup || !this.hass || !this.config) return [];
-    const entities = groupConfig
-      .find(e => e.id == this.selectedGroup)!
-      .entities.map(e => parseEntity(e, this.hass!, this.config!));
-
-    entities.sort((a, b) => (a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1));
+    let entities = this.selectedGroup.entities.map(e => parseEntity(e, this.hass!, this.config!));
+    entities.sort(sortAlphabetically);
     return entities;
   }
 
-  getActionsForEntity(_entityConfig: EntityElement[]) {
+  getActionsForEntity() {
     if (!this.hass || !this.config || !this.selectedEntities.length) return [];
-
-    const actions = computeEntityActions(this.selectedEntities, this.hass!, this.config!).map(e =>
+    let actions = computeActions(this.selectedEntities, this.hass!, this.config!).map(e =>
       Object.assign(e, { name: computeActionDisplay(e) })
     );
-    actions.sort((a, b) => (a.name!.trim().toLowerCase() < b.name!.trim().toLowerCase() ? -1 : 1));
+    actions.sort(sortAlphabetically);
     return actions;
   }
 
@@ -84,29 +75,33 @@ export class SchedulerEditorCard extends LitElement {
     if (!this.hass || !this.config) return html``;
 
     const groups = this.getGroups();
-    if (groups.length == 1 && this.selectedGroup !== groups[0].id) this.selectGroup(groups[0].id);
+    if (groups.length == 1 && this.selectedGroup !== groups[0]) this.selectGroup(groups[0]);
 
-    const entities = this.getEntitiesForGroup(groups);
+    const entities = this.getEntitiesForGroup();
     if (entities.length == 1 && this.selectedEntities[0] !== entities[0].id) this.selectEntity(entities[0].id);
 
-    const actions = this.getActionsForEntity(entities);
+    const actions = this.getActionsForEntity();
     //if (actions.length == 1 && this.selectedAction !== actions[0].id) this.selectAction(actions[0].id);
 
     return html`
       <ha-card>
         <div class="card-header">
           <div class="name">
-            ${this.config.title !== undefined
+            ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : ''
-        : localize('ui.panel.common.title', this.hass.language)}
+          : localize('ui.panel.common.title', this.hass.language)
+        : ''}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
           <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
-          <button-group .items=${groups} value=${this.selectedGroup} @change=${this.selectGroup}>
+          <button-group
+            .items=${groups}
+            .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
+            @change=${(ev: CustomEvent) => this.selectGroup(ev.detail)}
+          >
             ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
           </button-group>
 
@@ -130,7 +125,7 @@ export class SchedulerEditorCard extends LitElement {
           <button-group
             .items=${entities}
             .value=${this.selectedEntities}
-            @change=${this.selectEntity}
+            @change=${(ev: Event) => this.selectEntity((ev.target as HTMLInputElement).value)}
             ?multiple=${this.multipleEntity}
             ?optional=${true}
           >
@@ -140,7 +135,11 @@ export class SchedulerEditorCard extends LitElement {
           </button-group>
 
           <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
-          <button-group .items=${actions} value=${this.selectedAction} @change=${this.selectAction}>
+          <button-group
+            .items=${actions}
+            .value=${actions.findIndex(e => isEqual(e, this.selectedAction))}
+            @change=${(ev: CustomEvent) => this.selectAction(ev.detail)}
+          >
             ${!this.selectedEntities.length
         ? localize('ui.panel.entity_picker.no_entity_selected', this.hass.language)
         : localize('ui.panel.entity_picker.no_actions_for_entity', this.hass.language)}
@@ -148,7 +147,7 @@ export class SchedulerEditorCard extends LitElement {
           ${this.makeSchemeButton(actions)}
         </div>
         <div class="card-actions">
-          <mwc-button @click=${this.nextClick} ?disabled=${!this.selectedAction}
+          <mwc-button @click=${this.nextClick} ?disabled=${!this.selectedAction && !this.timeSchemeSelected}
             >${this.hass.localize('ui.common.next')}</mwc-button
           >
         </div>
@@ -156,16 +155,14 @@ export class SchedulerEditorCard extends LitElement {
     `;
   }
 
-  makeSchemeButton(actionConfig: ActionElement[]) {
+  makeSchemeButton(actionConfig: Action[]) {
     if (!actionConfig.length || !this.hass) return html``;
     return html`
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.or.label')}</div>
       <div class="option-list">
         <mwc-button
-          class="${this.selectedAction == CreateTimeScheme ? ' active' : ''}"
-          @click=${() => {
-        this.selectedAction = CreateTimeScheme;
-      }}>
+          class="${this.timeSchemeSelected ? ' active' : ''}"
+          @click=${() => this.selectTimeScheme()}>
           <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
           ${localize('ui.panel.entity_picker.make_scheme', this.hass.language)}
         </mwc-button>
@@ -174,22 +171,25 @@ export class SchedulerEditorCard extends LitElement {
     `;
   }
 
-  selectGroup(ev: Event | string) {
-    const value = typeof ev == 'string' ? ev : (ev.target as HTMLInputElement).value;
-    this.selectedGroup = value;
+  selectGroup(val: Group) {
+    this.selectedGroup = val;
     this.selectedEntities = [];
     this.selectedAction = undefined;
   }
 
-  selectEntity(ev: Event | string) {
-    const value: string[] = typeof ev == 'string' ? Array(ev) : (ev.target as HTMLInputElement).value as unknown as string[];
-    this.selectedEntities = value;
+  selectEntity(value: string | string[]) {
+    this.selectedEntities = Array.isArray(value) ? value : [value];
     this.selectedAction = undefined;
   }
 
-  selectAction(ev: Event | string) {
-    const value = typeof ev == 'string' ? ev : (ev.target as HTMLInputElement).value;
-    this.selectedAction = value;
+  selectAction(val: Action) {
+    this.selectedAction = val;
+    this.timeSchemeSelected = false;
+  }
+
+  selectTimeScheme() {
+    this.selectedAction = null;
+    this.timeSchemeSelected = true;
   }
 
   cancelClick() {
@@ -202,6 +202,7 @@ export class SchedulerEditorCard extends LitElement {
       detail: {
         entities: this.selectedEntities,
         action: this.selectedAction,
+        timeSchemeSelected: this.timeSchemeSelected
       },
     });
     this.dispatchEvent(myEvent);

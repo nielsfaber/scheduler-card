@@ -1,5 +1,4 @@
 import { LovelaceCardEditor, LovelaceCardConfig } from 'custom-card-helpers';
-import { HassEntity, HassEntityAttributeBase } from 'home-assistant-js-websocket';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -12,6 +11,42 @@ export interface Dictionary<TValue> {
 }
 export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
+
+export interface ServiceCall {
+  service: string,
+  entity_id?: string,
+  service_data?: Dictionary<any>,
+}
+
+export interface Action {
+  name?: string;
+  service: string;
+  service_data?: Dictionary<any>;
+  icon?: string;
+  variables?: VariableDictionary;
+  supported_feature?: number;
+}
+
+
+// //user configured action
+// export interface ActionConfig {
+//   name?: string;
+//   service: string;
+//   service_data?: Dictionary<any>;
+//   icon?: string;
+//   variables?: VariableDictionary;
+//   supported_feature?: number;
+// }
+
+// export interface ActionElement extends ActionConfig {
+//   id: string;
+//   name?: string;
+//   service: string;
+//   service_data: Dictionary<any>;
+//   icon?: string;
+//   variables: VariableDictionary;
+// }
+
 export interface Condition {
   entity_id: string;
   match_type: EConditionMatchType;
@@ -19,18 +54,12 @@ export interface Condition {
   attribute: string;
 }
 
-export interface Action {
-  entity_id: string,
-  service: string,
-  service_data: Dictionary<any>,
-}
-
 export interface Timeslot {
   start: string,
   stop?: string,
   conditions?: Condition[],
   condition_type?: 'or' | 'and',
-  actions: Action[]
+  actions: ServiceCall[]
 }
 
 export type WeekdayType = (
@@ -74,8 +103,7 @@ export enum ERepeatType {
 
 /* groups */
 
-export interface GroupElement {
-  id: string;
+export interface Group {
   entities: string[];
   name: string;
   icon: string;
@@ -85,7 +113,7 @@ export interface GroupConfig {
   name: string;
   icon?: string;
   include: string[];
-  exclude?: string[];
+  exclude: string[];
 }
 
 /* entities */
@@ -100,30 +128,8 @@ export interface EntityElement {
 export interface EntityConfig {
   name?: string;
   icon?: string;
-  actions?: ActionConfig[];
+  actions?: Action[];
   exclude_actions?: string[]
-}
-
-/* actions */
-
-//user configured action
-export interface ActionConfig {
-  name?: string;
-  service: string;
-  service_data?: Dictionary<any>;
-  icon?: string;
-  variable?: AtLeast<LevelVariableConfig | ListVariableConfig, 'field'>;
-  supported_feature?: number;
-}
-
-export interface ActionElement extends ActionConfig {
-  id: string;
-  name?: string;
-  service: string;
-  service_data: Dictionary<any>;
-  icon?: string;
-  variable?: LevelVariableConfig | ListVariableConfig;
-  supported_feature?: number;
 }
 
 /* action variables */
@@ -131,28 +137,13 @@ export interface ActionElement extends ActionConfig {
 export enum EVariableType {
   Level = 'LEVEL',
   List = 'LIST',
+  Text = 'TEXT',
 }
 
-export interface LevelVariable {
-  value: number | null;
-  enabled: boolean;
+export interface Variable {
+  name?: string;
   type: EVariableType;
-}
-
-export interface ListVariable {
-  value: string | null;
-  type: EVariableType;
-}
-
-export interface LevelVariableConfig {
-  field: string;
-  unit: string;
-  name: string;
-  min: number;
-  max: number;
-  step: number;
-  optional: boolean;
-  type: EVariableType;
+  supported_feature?: number;
 }
 
 export interface ListVariableOption {
@@ -161,13 +152,23 @@ export interface ListVariableOption {
   name?: string;
 }
 
-export interface ListVariableConfig {
-  field: string;
-  name: string;
+export interface ListVariable extends Variable {
   options: ListVariableOption[];
-  supported_feature?: number;
-  type: EVariableType;
 }
+
+export interface LevelVariable extends Variable {
+  unit?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  optional: boolean;
+}
+
+export interface TextVariable extends Variable {
+  multiline: boolean
+}
+
+export type VariableDictionary = Dictionary<LevelVariable | ListVariable | TextVariable>;
 
 /* entries */
 
@@ -177,7 +178,7 @@ export interface Entry {
   days: Days;
   action: string;
   entity: string;
-  variable?: LevelVariable | ListVariable;
+  variables: VariableDictionary;
   conditions?: ConditionConfig;
   options?: OptionConfig;
 }
@@ -197,22 +198,20 @@ export interface ImportedEntry {
 /* config */
 
 export interface CardConfig extends LovelaceCardConfig {
-  discover_existing?: boolean;
-  standard_configuration?: boolean;
-  title?: boolean | string;
-  time_step?: number;
-  show_header_toggle?: boolean;
-  display_options?: {
-    primary_info?: string[] | string;
-    secondary_info?: string[] | string;
-    icon?: string;
+  discover_existing: boolean;
+  standard_configuration: boolean;
+  title: boolean | string;
+  time_step: number;
+  show_header_toggle: boolean;
+  display_options: {
+    primary_info: string[] | string;
+    secondary_info: string[] | string;
+    icon: string;
   };
-  primary_info?: string;
-  secondary_info?: string;
-  include?: string[];
-  exclude?: string[];
-  groups?: GroupConfig[];
-  customize?: Dictionary<EntityConfig>;
+  include: string[];
+  exclude: string[];
+  groups: GroupConfig[];
+  customize: Dictionary<EntityConfig>;
 }
 
 /* interface */

@@ -1,13 +1,14 @@
 import { computeEntity } from 'custom-card-helpers';
-import { ActionElement, EVariableType, LevelVariableConfig } from '../types';
-import { computeLevelVariableDisplay } from '../actionVariables';
+import { Action, EVariableType, LevelVariable } from '../../types';
+import { levelVariableDisplay } from '../variables/level_variable';
+import { PrettyPrintName } from '../../helpers';
 
 const wildcardPattern = /\{([^\}]+)\}/;
 const parameterPattern = /\[([^\]]+)\]/;
 
-export function computeActionDisplay(action: ActionElement) {
+export function computeActionDisplay(action: Action) {
   let name = action.name;
-  if (!name) name = computeEntity(action.service);
+  if (!name) name = PrettyPrintName(computeEntity(action.service));
 
   const res = name.match(parameterPattern);
   if (res) {
@@ -15,10 +16,10 @@ export function computeActionDisplay(action: ActionElement) {
     const wildcard = res[1].match(wildcardPattern);
     if (wildcard && action.service_data && wildcard[1] in action.service_data) {
       let value = '';
-      if (action.variable && action.variable.field == wildcard[1] && action.variable.type == EVariableType.Level) {
-        value = computeLevelVariableDisplay(
-          action.service_data[action.variable.field],
-          action.variable as LevelVariableConfig
+      if (action.variables && wildcard[1] in action.variables && action.variables[wildcard[1]].type == EVariableType.Level) {
+        value = levelVariableDisplay(
+          action.service_data[wildcard[1]],
+          action.variables[wildcard[1]] as LevelVariable
         );
       } else {
         value = action.service_data[wildcard[1]];
@@ -32,3 +33,4 @@ export function computeActionDisplay(action: ActionElement) {
 
   return name || '';
 }
+

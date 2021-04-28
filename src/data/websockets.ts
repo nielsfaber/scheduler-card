@@ -31,7 +31,7 @@ export const deleteSchedule = (hass: HomeAssistant, schedule_id: string): Promis
 export function showErrorDialog(target: HTMLElement, error: string | TemplateResult) {
   fireEvent(target, 'show-dialog', {
     dialogTag: 'dialog-error',
-    dialogImport: () => import('../custom-elements/dialog-error'),
+    dialogImport: () => import('../components/dialog-error'),
     dialogParams: { error: error }
   });
 }

@@ -1,8 +1,9 @@
-import { ActionConfig } from '../types';
-import { HomeAssistant, stateIcon, computeStateDisplay } from 'custom-card-helpers';
+import { Action } from '../types';
+import { HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
+import { listVariable } from '../data/variables/list_variable';
 
-export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity): ActionConfig[] => [
+export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
     service: 'input_boolean.turn_on',
     icon: 'hass:flash',
@@ -16,15 +17,17 @@ export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity)
 ];
 
 
-export const inputBooleanStates = (hass: HomeAssistant, stateObj: HassEntity) => [
-  {
-    value: "off",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
-    icon: "hass:flash-off"
-  },
-  {
-    value: "on",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
-    icon: "hass:flash"
-  }
-];
+export const inputBooleanStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
+  options: [
+    {
+      value: "off",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      icon: "hass:flash-off"
+    },
+    {
+      value: "on",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+      icon: "hass:flash"
+    }
+  ]
+});

@@ -1,8 +1,9 @@
-import { ActionConfig } from '../types';
 import { HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
+import { listVariable } from '../data/variables/list_variable';
+import { Action } from '../types';
 
-export const alarmControlPanelActions = (hass: HomeAssistant, _stateObj: HassEntity): ActionConfig[] => [
+export const alarmControlPanelActions = (hass: HomeAssistant, _stateObj: HassEntity): Action[] => [
   {
     service: 'alarm_control_panel.alarm_disarm',
     icon: 'hass:lock-open-variant-outline',
@@ -34,33 +35,32 @@ export const alarmControlPanelActions = (hass: HomeAssistant, _stateObj: HassEnt
   },
 ];
 
-
-
-export const alarmControlPanelStates = (hass: HomeAssistant, stateObj: HassEntity) => [
-  {
-    value: "disarmed",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "disarmed" }, hass.language),
-    icon: 'hass:lock-open-variant-outline',
-  },
-  {
-    value: "armed_away",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_away" }, hass.language),
-    icon: 'hass:exit-run',
-  },
-  {
-    value: "armed_home",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_home" }, hass.language),
-    icon: 'hass:home-outline',
-  },
-  {
-    value: "armed_night",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_night" }, hass.language),
-    icon: 'hass:power-sleep',
-  },
-  {
-    value: "triggered",
-    name: computeStateDisplay(hass.localize, { ...stateObj, state: "triggered" }, hass.language),
-    icon: 'hass:alarm-light-outline',
-  },
-];
-
+export const alarmControlPanelStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
+  options: [
+    {
+      value: "disarmed",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "disarmed" }, hass.language),
+      icon: 'hass:lock-open-variant-outline',
+    },
+    {
+      value: "armed_away",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_away" }, hass.language),
+      icon: 'hass:exit-run',
+    },
+    {
+      value: "armed_home",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_home" }, hass.language),
+      icon: 'hass:home-outline',
+    },
+    {
+      value: "armed_night",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_night" }, hass.language),
+      icon: 'hass:power-sleep',
+    },
+    {
+      value: "triggered",
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "triggered" }, hass.language),
+      icon: 'hass:alarm-light-outline',
+    },
+  ]
+});

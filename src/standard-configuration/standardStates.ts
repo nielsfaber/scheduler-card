@@ -13,12 +13,17 @@ import { deviceTrackerStates } from './device_tracker';
 import { groupStates } from './group';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { inputSelectStates } from './input_select';
+import { Variable } from '../types';
+import { isDefined } from '../helpers';
+import { inputNumberStates } from './input_number';
+import { proximityStates } from './proximity';
+import { sensorStates } from './sensor';
 
-export function standardStates(entity_id: string, hass: HomeAssistant) {
+export function standardStates(entity_id: string, hass: HomeAssistant): Variable | null {
   try {
     const domain = computeDomain(entity_id);
     const stateObj: HassEntity | undefined = hass.states[entity_id];
-    if (!stateObj) return [];
+    if (!stateObj) return null;
 
     switch (domain) {
       case 'alarm_control_panel':
@@ -35,12 +40,18 @@ export function standardStates(entity_id: string, hass: HomeAssistant) {
         return fanStates(hass, stateObj);
       case 'group':
         const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
-        const configs = entities.map(e => standardStates(e, hass));
+        const configs = entities.map(e => standardStates(e, hass)).filter(isDefined);
         return groupStates(hass, stateObj, configs);
       case 'input_boolean':
         return inputBooleanStates(hass, stateObj);
+      case 'input_number':
+        return inputNumberStates(hass, stateObj);
       case 'input_select':
         return inputSelectStates(hass, stateObj);
+      case 'proximity':
+        return proximityStates(hass, stateObj);
+      case 'sensor':
+        return sensorStates(hass, stateObj);
       case 'switch':
         return switchStates(hass, stateObj);
       case 'light':
@@ -50,11 +61,11 @@ export function standardStates(entity_id: string, hass: HomeAssistant) {
       case 'person':
         return personStates(hass, stateObj);
       default:
-        return [];
+        return null;
     }
   }
   catch (e) {
     console.error(`Scheduler-card failed to load states for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`);
-    return [];
+    return null;
   }
 }

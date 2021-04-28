@@ -37,6 +37,9 @@
     "media_player": {
       "select_source": "select source[ {source}]"
     },
+    "notify": {
+      "notify": "send notification"
+    },
     "script": {
       "script": "execute"
     },
