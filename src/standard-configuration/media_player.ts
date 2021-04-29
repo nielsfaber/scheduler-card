@@ -18,13 +18,13 @@ export const mediaPlayerActions = (hass: HomeAssistant, stateObj?: HassEntity): 
   {
     service: 'media_player.turn_on',
     icon: 'hass:power',
-    name: hass.localize('ui.card.media_player.turn_on'),
+    name: hass.localize('ui.card.vacuum.actions.turn_on'),
     supported_feature: 128,
   },
   {
     service: 'media_player.turn_off',
     icon: 'hass:power-off',
-    name: hass.localize('ui.card.media_player.turn_off'),
+    name: hass.localize('ui.card.vacuum.actions.turn_off'),
     supported_feature: 256,
   },
   {

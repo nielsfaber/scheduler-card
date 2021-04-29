@@ -6,6 +6,6 @@ export const sceneActions = (hass: HomeAssistant, _stateObj?: HassEntity): Actio
   {
     service: 'scene.turn_on',
     icon: 'hass:play',
-    name: hass.localize('ui.card.media_player.turn_on'),
+    name: hass.localize('ui.card.vacuum.actions.turn_on'),
   },
 ];

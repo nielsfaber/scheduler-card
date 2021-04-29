@@ -63,12 +63,12 @@ export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): A
   {
     service: 'humidifier.turn_on',
     icon: 'hass:power',
-    name: hass.localize('ui.card.media_player.turn_on'),
+    name: hass.localize('ui.card.vacuum.actions.turn_on'),
   },
   {
     service: 'turn_off',
     icon: 'hass:power-off',
-    name: hass.localize('ui.card.media_player.turn_off'),
+    name: hass.localize('ui.card.vacuum.actions.turn_off'),
   },
   {
     service: 'humidifier.set_humidity',

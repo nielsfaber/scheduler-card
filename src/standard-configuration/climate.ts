@@ -135,7 +135,7 @@ export const climateActions = (
       service: 'climate.set_hvac_mode',
       service_data: { hvac_mode: 'off' },
       icon: 'hass:power',
-      name: hass.localize('ui.card.media_player.turn_off'),
+      name: hass.localize('ui.card.vacuum.actions.turn_off'),
     });
     hvacModes = hvacModes.filter(e => e.value != 'off');
   }
@@ -143,7 +143,7 @@ export const climateActions = (
     actions.push({
       service: 'climate.turn_off',
       icon: 'hass:power',
-      name: hass.localize('ui.card.media_player.turn_off'),
+      name: hass.localize('ui.card.vacuum.actions.turn_off'),
     });
   }
 

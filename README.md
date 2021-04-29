@@ -650,6 +650,7 @@ Currently the following languages are supported:
 | Português   | pt, pt-br  |                   |
 | Русский     | ru         |                   |
 | Română      | ro         |                   |
+| Slovenčina  | sk         |                   |
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn | Needs updating.   |
 

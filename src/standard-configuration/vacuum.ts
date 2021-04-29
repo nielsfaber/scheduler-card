@@ -7,7 +7,7 @@ export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): Acti
   {
     service: 'vacuum.turn_on',
     icon: 'hass:power',
-    name: hass.localize('ui.card.media_player.turn_on'),
+    name: hass.localize('ui.card.vacuum.actions.turn_on'),
     supported_feature: 1,
   },
   {

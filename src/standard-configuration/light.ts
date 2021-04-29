@@ -10,7 +10,7 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     {
       service: 'light.turn_off',
       icon: 'hass:lightbulb-off',
-      name: hass.localize('ui.card.media_player.turn_off'),
+      name: hass.localize('ui.card.vacuum.actions.turn_off'),
     },
   ];
 
@@ -18,7 +18,7 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     actions.push({
       service: 'light.turn_on',
       icon: 'hass:lightbulb-on',
-      name: hass.localize('ui.card.media_player.turn_on'),
+      name: hass.localize('ui.card.vacuum.actions.turn_on'),
     });
   } else {
     actions.push({

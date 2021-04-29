@@ -7,12 +7,12 @@ export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity)
   {
     service: 'input_boolean.turn_on',
     icon: 'hass:flash',
-    name: hass.localize('ui.card.media_player.turn_on'),
+    name: hass.localize('ui.card.vacuum.actions.turn_on'),
   },
   {
     service: 'input_boolean.turn_off',
     icon: 'hass:flash-off',
-    name: hass.localize('ui.card.media_player.turn_off'),
+    name: hass.localize('ui.card.vacuum.actions.turn_off'),
   },
 ];
 
