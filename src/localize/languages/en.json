@@ -8,6 +8,7 @@
       "set_temperature": "set temperature[ to {temperature}]",
       "set_temperature_hvac_mode_heat": "heat[ to {temperature}]",
       "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "set mode[ to {hvac_mode}]",
       "set_preset_mode": "set preset[ to {preset_mode}]"
     },

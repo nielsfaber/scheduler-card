@@ -30,15 +30,15 @@ export function importAction(action: ServiceCall, hass: HomeAssistant): Action {
       const overlapB = serviceArgs.filter(e => serviceDataB.includes(e)).length;
 
       //if one of the services has more serviceArgs in common, it is preferred
-      if (overlapA > overlapB) return 1;
-      if (overlapA < overlapB) return -1;
+      if (overlapA > overlapB) return -1;
+      if (overlapA < overlapB) return 1;
 
       const extraKeysA = serviceDataA.filter(e => !serviceArgs.includes(e)).length;
       const extraKeysB = serviceDataB.filter(e => !serviceArgs.includes(e)).length;
 
       //if one of the services has less extra serviceArgs, it is preferred
-      if (extraKeysA > extraKeysB) return -1;
-      if (extraKeysA < extraKeysB) return 1;
+      if (extraKeysA > extraKeysB) return 1;
+      if (extraKeysA < extraKeysB) return -1;
       return 0;
     });
   }

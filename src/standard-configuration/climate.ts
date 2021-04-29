@@ -187,6 +187,21 @@ export const climateActions = (
     hvacModes = hvacModes.filter(e => e.value != 'cool');
   }
 
+  if (hvacModes.find(e => e.value == 'heat_cool')) {
+    actions.push({
+      service: 'climate.set_temperature',
+      service_data: { hvac_mode: 'heat_cool' },
+      variables: {
+        target_temp_low: levelVariable(tempVariable, { name: hass.localize('ui.panel.lovelace.editor.card.generic.minimum') }),
+        target_temp_high: levelVariable(tempVariable, { name: hass.localize('ui.panel.lovelace.editor.card.generic.maximum') }),
+      },
+      icon: 'hass:fire',
+      name: localize('services.climate.set_temperature_hvac_mode_heat_cool', hass.language),
+      supported_feature: 2,
+    });
+    hvacModes = hvacModes.filter(e => e.value != 'heat_cool');
+  }
+
   if (hvacModes.length) {
     actions.push({
       service: 'climate.set_hvac_mode',
