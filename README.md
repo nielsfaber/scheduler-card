@@ -438,7 +438,7 @@ Actions are linked to their entities, so the entity ID is sent together with the
 | ------------ | ------ | ----------------- | ------------------------------------------------------- |
 | service      | string | **Required**      | Service to be executed                                  |
 | service_data | map    | none              | Additional parameters to use for the service call       |
-| variable     | map    | none              | Add a variable. See [action variable](#action-variable) |
+| variables    | map    | none              | Add variables. See [action variable](#action-variable)  |
 | name         | string | (same as service) | Displayed name for action                               |
 | icon         | string | "flash"           | Displayed icon for action                               |
 
