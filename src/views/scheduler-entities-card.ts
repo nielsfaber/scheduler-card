@@ -69,9 +69,12 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
+    const oldConfig = changedProps.get('config') as CardConfig | undefined;
     if (oldHass && changedProps.size == 1 && this.schedules)
       return this.schedules!.some(e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id]));
-    else return true;
+    else if (oldConfig && this.config && oldConfig.discover_existing !== this.config.discover_existing)
+      (async () => await this.loadSchedules())();
+    return true;
   }
 
   render() {
