@@ -23,13 +23,20 @@ export function importAction(action: ServiceCall, hass: HomeAssistant): Action {
     //the match is ambiguous, check service_data to find the action with best overlap
 
     actions.sort((a, b) => {
+      const fixedArgsOverlapA = Object.entries(a.service_data || {}).filter(([k, v]) => k in serviceData && serviceData[k] == v);
+      const fixedArgsOverlapB = Object.entries(b.service_data || {}).filter(([k, v]) => k in serviceData && serviceData[k] == v);
+
+      //if one of the services has more fixed serviceArgs in common, it is preferred
+      if (fixedArgsOverlapA > fixedArgsOverlapB) return -1;
+      if (fixedArgsOverlapA < fixedArgsOverlapB) return 1;
+
       const serviceDataA = unique([...Object.keys(a.service_data || {}), ...Object.keys(a.variables || {})]);
       const serviceDataB = unique([...Object.keys(b.service_data || {}), ...Object.keys(b.variables || {})]);
 
       const overlapA = serviceArgs.filter(e => serviceDataA.includes(e)).length;
       const overlapB = serviceArgs.filter(e => serviceDataB.includes(e)).length;
 
-      //if one of the services has more serviceArgs in common, it is preferred
+      //if one of the services has more variable serviceArgs in common, it is preferred
       if (overlapA > overlapB) return -1;
       if (overlapA < overlapB) return 1;
 
