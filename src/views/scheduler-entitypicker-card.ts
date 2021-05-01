@@ -75,7 +75,7 @@ export class SchedulerEditorCard extends LitElement {
     if (!this.hass || !this.config) return html``;
 
     const groups = this.getGroups();
-    if (groups.length == 1 && this.selectedGroup !== groups[0]) this.selectGroup(groups[0]);
+    if (groups.length == 1 && !isEqual(this.selectedGroup, groups[0])) this.selectGroup(groups[0]);
 
     const entities = this.getEntitiesForGroup();
     if (entities.length == 1 && this.selectedEntities[0] !== entities[0].id) this.selectEntity(entities[0].id);
