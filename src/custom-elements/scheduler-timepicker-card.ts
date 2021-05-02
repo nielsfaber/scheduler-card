@@ -184,7 +184,7 @@ export class SchedulerTimepickerCard extends LitElement {
     );
 
     const DayTypeOptions = [
-      { id: EDayType.Once, name: 'Unique' }, //TODO
+      { id: EDayType.Once, name: 'Single' }, //TODO
       { id: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
       { id: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
       { id: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
