@@ -112,8 +112,8 @@ export interface Group {
 export interface GroupConfig {
   name: string;
   icon?: string;
-  include: string[];
-  exclude: string[];
+  include?: string[];
+  exclude?: string[];
 }
 
 /* entities */
