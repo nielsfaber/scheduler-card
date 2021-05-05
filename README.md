@@ -542,15 +542,16 @@ customize:
       - service: set_hvac_mode
         name: Set mode
         icon: "hass:settings"
-        variables: hvac_mode
-          name: Operation mode
-          options:
-            - value: heat
-              icon: "hass:fire"
-            - value: cool
-              icon: "hass:snowflake"
-            - value: "off"
-              icon: "hass:power"
+        variables: 
+          hvac_mode:
+            name: Operation mode
+            options:
+              - value: heat
+                icon: "hass:fire"
+              - value: cool
+                icon: "hass:snowflake"
+              - value: "off"
+                icon: "hass:power"
 ```
 Now the list of options become visible when you set up the action:
 
