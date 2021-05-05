@@ -42,19 +42,17 @@ const climateModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
       name: localizeFunc('state_attributes.climate.hvac_action.fan'),
     },
   ];
-  if (stateObj && stateObj.attributes.hvac_modes && Array.isArray(stateObj.attributes.hvac_modes)) {
-    return stateObj.attributes.hvac_modes.map(mode => modeList.find(el => el.value == mode) || { value: mode });
-  }
-  return modeList;
+  const supportedModes: string[] = stateObj && Array.isArray(stateObj.attributes.hvac_modes) ? stateObj.attributes.hvac_modes : [];
+  return modeList.filter(e => supportedModes.find(m => m === e.value));
 };
 
 const climatePresets = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
   const presetList = [
-    {
-      value: 'none',
-      name: localizeFunc('state_attributes.climate.preset_mode.none'),
-      icon: 'hass:cancel',
-    },
+    // {
+    //   value: 'none',
+    //   name: localizeFunc('state_attributes.climate.preset_mode.none'),
+    //   icon: 'hass:cancel',
+    // },
     {
       value: 'eco',
       name: localizeFunc('state_attributes.climate.preset_mode.eco'),
@@ -91,13 +89,8 @@ const climatePresets = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
       icon: 'hass:account-alert-outline',
     },
   ];
-
-  if (stateObj && stateObj.attributes.preset_modes && Array.isArray(stateObj.attributes.preset_modes)) {
-    return stateObj.attributes.preset_modes.map(
-      preset => presetList.find(el => el.value == preset) || { value: preset }
-    );
-  }
-  return presetList;
+  const supportedPresets: string[] = stateObj && Array.isArray(stateObj.attributes.preset_modes) ? stateObj.attributes.preset_modes : [];
+  return presetList.filter(e => supportedPresets.find(m => m === e.value));
 };
 
 export const climateActions = (
@@ -109,9 +102,21 @@ export const climateActions = (
 
   const tempVariable = levelVariable({
     name: hass.localize('ui.card.weather.attributes.temperature'),
-    min: stateObj?.attributes.min_temp,
-    max: stateObj?.attributes.max_temp,
-    step: stateObj?.attributes.target_temp_step ? stateObj?.attributes.target_temp_step : hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+    min: stateObj?.attributes.min_temp !== undefined
+      ? stateObj?.attributes.min_temp
+      : hass.config.unit_system.temperature.includes('F')
+        ? 50
+        : 10,
+    max: stateObj?.attributes.max_temp !== undefined
+      ? stateObj?.attributes.max_temp
+      : hass.config.unit_system.temperature.includes('F')
+        ? 90
+        : 30,
+    step: stateObj?.attributes.target_temp_step
+      ? stateObj?.attributes.target_temp_step
+      : hass.config.unit_system.temperature.includes('F')
+        ? 1
+        : 0.5,
     unit: hass.config.unit_system.temperature,
   });
 

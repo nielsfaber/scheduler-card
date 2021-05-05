@@ -47,7 +47,11 @@ export function flatten<U>(arr: U[][]): U[] {
 }
 
 export function unique<TValue>(arr: TValue[]) {
-  return arr.filter((v, i, a) => a.indexOf(v) === i);
+  let res: TValue[] = [];
+  arr.forEach(item => {
+    if (!res.find(e => typeof item === "object" ? isEqual(e, item) : e === item)) res.push(item);
+  });
+  return res;
 }
 
 export function isDefined<TValue>(value: TValue | null | undefined): value is TValue {
@@ -60,7 +64,7 @@ export function isEqual(...arr: any[]) {
 
 export function sortAlphabetically(a: any, b: any) {
   const stringVal = (a: any) => {
-    if(typeof a === "object") {
+    if (typeof a === "object") {
       return a.name !== undefined
         ? String(a.name).trim().toLowerCase()
         : JSON.stringify(a)

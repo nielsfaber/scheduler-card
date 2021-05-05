@@ -308,7 +308,7 @@ export class SchedulerCard extends LitElement {
     let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e)));
     if (extraActions.length) {
       //actions that are not in the card
-      extraActions.forEach(e => actions.push(importAction(e, this._hass!)));
+      unique(extraActions).forEach(e => actions.push(importAction(e, this._hass!)));
     }
 
     this.actions = actions;

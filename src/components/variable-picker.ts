@@ -27,32 +27,19 @@ export class SchedulerVariablePicker extends LitElement {
 
   renderLevelVariable() {
     const variable = this.variable as LevelVariable;
-    const value = this.value as number;
+    const value = Number(this.value);
 
-    if (
-      variable.min !== undefined &&
-      variable.max !== undefined &&
-      variable.step !== undefined
-    )
-      return html`
+    return html`
       <variable-slider
-        min=${variable.min}
-        max=${variable.max}
-        step=${variable.step}
+        min=${variable.min || 0}
+        max=${variable.max || 255}
+        step=${variable.step || 1}
         value=${value}
         .unit=${variable.unit}
         ?optional=${variable.optional}
         @change=${this.levelVariableUpdated} 
       >
       </variable-slider>
-    `;
-    else return html`
-      <paper-input
-      label="${variable.name || ""}${variable.unit ? ` [${variable.unit}]` : ''}"
-      value=${value || ""}
-      @value-changed=${this.levelVariableUpdated}
-    >
-    </paper-input>
     `;
   }
 

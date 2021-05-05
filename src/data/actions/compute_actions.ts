@@ -10,6 +10,7 @@ import { levelVariable } from "../variables/level_variable";
 import { textVariable } from "../variables/text_variable";
 import { computeVariables } from "../variables/compute_variables";
 import { computeMergedVariable } from "../variables/compute_merged_variable";
+import { HassEntity } from "home-assistant-js-websocket";
 
 
 function parseString(str: string) {
@@ -25,7 +26,7 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
     return computeCommonActions(actions);
   }
 
-  const stateObj = hass.states[entity_id];
+  const stateObj = hass.states[entity_id] as HassEntity | undefined;
 
   //fetch standard actions for entity
   let actions = config.standard_configuration ? standardActions(entity_id, hass) : [];
@@ -98,16 +99,15 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
         action = {
           ...action,
           variables: computeVariables(action.variables)
-        }
+        };
+        actions.push(action);
       }
     });
   };
 
   //filter by supported_features
-  if (stateObj && stateObj.attributes.supported_features !== undefined) {
-    const supportedFeatures = stateObj.attributes.supported_features;
-    actions = actions.filter(e => !e.supported_feature || e.supported_feature & supportedFeatures);
-  }
+  const supportedFeatures = stateObj?.attributes.supported_features || 0;
+  actions = actions.filter(e => !e.supported_feature || e.supported_feature & supportedFeatures);
 
   //list variable with 1 option is not really a variable
   actions = actions.map(action => {
