@@ -20,7 +20,7 @@ import { switchActions } from './switch';
 import { automationActions } from './automation';
 import { notifyActions } from './notify';
 
-export function standardActions(entity_id: string, hass: HomeAssistant): Action[] {
+export function standardActions(entity_id: string, hass: HomeAssistant, filterCapabilities: boolean = true): Action[] {
   try {
     const domain = computeDomain(entity_id);
     const stateObj = hass.states[entity_id];
@@ -30,17 +30,17 @@ export function standardActions(entity_id: string, hass: HomeAssistant): Action[
       case 'automation':
         return automationActions(hass, stateObj);
       case 'climate':
-        return climateActions(hass, stateObj);
+        return climateActions(hass, stateObj, filterCapabilities);
       case 'cover':
         return coverActions(hass, stateObj);
       case 'fan':
         return fanActions(hass, stateObj);
       case 'group':
         const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
-        const configs = entities.map(e => standardActions(e, hass));
+        const configs = entities.map(e => standardActions(e, hass, filterCapabilities));
         return groupActions(stateObj, configs);
       case 'humidifer':
-        return humidifierActions(hass, stateObj);
+        return humidifierActions(hass, stateObj, filterCapabilities);
       case 'input_boolean':
         return inputBooleanActions(hass, stateObj);
       case 'input_number':

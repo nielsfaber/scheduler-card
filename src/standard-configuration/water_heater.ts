@@ -20,9 +20,21 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
     variables: {
       temperature: levelVariable({
         name: hass.localize('ui.card.weather.attributes.temperature'),
-        min: stateObj?.attributes.min_temp,
-        max: stateObj?.attributes.max_temp,
-        step: stateObj?.attributes.target_temp_step ? stateObj?.attributes.target_temp_step : hass.config.unit_system.temperature.includes('F') ? 1 : 0.5,
+        min: stateObj?.attributes.min_temp !== undefined
+          ? stateObj?.attributes.min_temp
+          : hass.config.unit_system.temperature.includes('F')
+            ? 50
+            : 10,
+        max: stateObj?.attributes.max_temp !== undefined
+          ? stateObj?.attributes.max_temp
+          : hass.config.unit_system.temperature.includes('F')
+            ? 90
+            : 30,
+        step: stateObj?.attributes.target_temp_step
+          ? stateObj?.attributes.target_temp_step
+          : hass.config.unit_system.temperature.includes('F')
+            ? 1
+            : 0.5,
         unit: hass.config.unit_system.temperature,
       })
     },

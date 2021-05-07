@@ -6,7 +6,7 @@ import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 
-const climateModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
+const climateModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
   const modeList = [
     {
       value: 'off',
@@ -43,16 +43,18 @@ const climateModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
     },
   ];
   const supportedModes: string[] = stateObj && Array.isArray(stateObj.attributes.hvac_modes) ? stateObj.attributes.hvac_modes : [];
-  return modeList.filter(e => supportedModes.find(m => m === e.value));
+  return filterCapabilities
+    ? modeList.filter(e => supportedModes.find(m => m === e.value))
+    : modeList;
 };
 
-const climatePresets = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
+const climatePresets = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
   const presetList = [
-    // {
-    //   value: 'none',
-    //   name: localizeFunc('state_attributes.climate.preset_mode.none'),
-    //   icon: 'hass:cancel',
-    // },
+    {
+      value: 'none',
+      name: localizeFunc('state_attributes.climate.preset_mode.none'),
+      icon: 'hass:cancel',
+    },
     {
       value: 'eco',
       name: localizeFunc('state_attributes.climate.preset_mode.eco'),
@@ -90,14 +92,15 @@ const climatePresets = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
     },
   ];
   const supportedPresets: string[] = stateObj && Array.isArray(stateObj.attributes.preset_modes) ? stateObj.attributes.preset_modes : [];
-  return presetList.filter(e => supportedPresets.find(m => m === e.value));
+  return filterCapabilities
+    ? presetList.filter(e => supportedPresets.find(m => m === e.value) && e.value != 'none')
+    : presetList;
 };
 
-export const climateActions = (
-  hass: HomeAssistant,
-  stateObj?: HassEntity
-): Action[] => {
-  let hvacModes = climateModes(hass.localize, stateObj);
+export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean): Action[] => {
+  let hvacModes = climateModes(hass.localize, stateObj, filterCapabilities);
+  const supportedModes = hvacModes.map(e => e.value);
+
   if (hvacModes.length == 1) hvacModes = [];
 
   const tempVariable = levelVariable({
@@ -126,7 +129,7 @@ export const climateActions = (
       variables: {
         preset_mode: listVariable({
           name: hass.localize('ui.card.climate.preset_mode'),
-          options: climatePresets(hass.localize, stateObj),
+          options: climatePresets(hass.localize, stateObj, filterCapabilities),
         })
       },
       icon: 'hass:cloud-download-outline',
@@ -135,36 +138,22 @@ export const climateActions = (
     },
   ];
 
-  if (hvacModes.find(e => e.value == 'off')) {
+  if (supportedModes.includes('off') || !filterCapabilities)
     actions.push({
       service: 'climate.set_hvac_mode',
       service_data: { hvac_mode: 'off' },
       icon: 'hass:power',
       name: hass.localize('ui.card.vacuum.actions.turn_off'),
     });
-    hvacModes = hvacModes.filter(e => e.value != 'off');
-  }
-  else {
+
+  if (!supportedModes.includes('off') || !filterCapabilities)
     actions.push({
       service: 'climate.turn_off',
       icon: 'hass:power',
       name: hass.localize('ui.card.vacuum.actions.turn_off'),
     });
-  }
 
-  if (!hvacModes.find(e => e.value == 'cool') && !hvacModes.find(e => e.value == 'heat')) {
-    actions.push({
-      service: 'climate.set_temperature',
-      variables: {
-        temperature: tempVariable
-      },
-      icon: 'hass:thermometer',
-      name: localize('services.climate.set_temperature', hass.language),
-      supported_feature: 1,
-    });
-  }
-
-  if (hvacModes.find(e => e.value == 'heat')) {
+  if (supportedModes.includes('heat') || !filterCapabilities)
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'heat' },
@@ -175,10 +164,8 @@ export const climateActions = (
       name: localize('services.climate.set_temperature_hvac_mode_heat', hass.language),
       supported_feature: 1,
     });
-    hvacModes = hvacModes.filter(e => e.value != 'heat');
-  }
 
-  if (hvacModes.find(e => e.value == 'cool')) {
+  if (supportedModes.includes('cool') || !filterCapabilities)
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'cool' },
@@ -189,10 +176,19 @@ export const climateActions = (
       name: localize('services.climate.set_temperature_hvac_mode_cool', hass.language),
       supported_feature: 1,
     });
-    hvacModes = hvacModes.filter(e => e.value != 'cool');
-  }
 
-  if (hvacModes.find(e => e.value == 'heat_cool')) {
+  if ((!supportedModes.includes('cool') && !supportedModes.includes('heat')) || !filterCapabilities)
+    actions.push({
+      service: 'climate.set_temperature',
+      variables: {
+        temperature: tempVariable
+      },
+      icon: 'hass:thermometer',
+      name: localize('services.climate.set_temperature', hass.language),
+      supported_feature: 1,
+    });
+
+  if (supportedModes.includes('heat_cool') || !filterCapabilities)
     actions.push({
       service: 'climate.set_temperature',
       service_data: { hvac_mode: 'heat_cool' },
@@ -204,10 +200,9 @@ export const climateActions = (
       name: localize('services.climate.set_temperature_hvac_mode_heat_cool', hass.language),
       supported_feature: 2,
     });
-    hvacModes = hvacModes.filter(e => e.value != 'heat_cool');
-  }
 
-  if (hvacModes.length) {
+  if (filterCapabilities) hvacModes = hvacModes.filter(e => !['off', 'heat', 'cool', 'heat_cool'].includes(e.value));
+  if (hvacModes.length)
     actions.push({
       service: 'climate.set_hvac_mode',
       variables: {
@@ -219,11 +214,9 @@ export const climateActions = (
       icon: 'hass:cog-transfer-outline',
       name: localize('services.climate.set_hvac_mode', hass.language),
     });
-  }
 
   return actions;
 };
-
 
 export const climateStates = (hass: HomeAssistant, stateObj: HassEntity) => {
   const modeList = [

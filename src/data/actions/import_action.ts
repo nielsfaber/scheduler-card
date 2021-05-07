@@ -11,7 +11,7 @@ export function importAction(action: ServiceCall, hass: HomeAssistant): Action {
   const serviceData = action.service_data || {};
   const serviceArgs = Object.keys(serviceData);
 
-  let actions = standardActions(id, hass);
+  let actions = standardActions(id, hass, false);
 
   //only find actions with matching service name
   actions = actions.filter(e => e.service == service);

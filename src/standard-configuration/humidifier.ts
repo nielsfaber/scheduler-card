@@ -5,7 +5,7 @@ import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 
-export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntity) => {
+export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
   const modeList = [
     {
       value: 'normal',
@@ -53,13 +53,13 @@ export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj?: HassEntit
       icon: 'hass:baby-bottle-outline',
     },
   ];
-  if (stateObj && stateObj.attributes.available_modes && Array.isArray(stateObj.attributes.available_modes)) {
-    return stateObj.attributes.available_modes.map(mode => modeList.find(el => el.value == mode) || { value: mode });
-  }
-  return modeList;
+  const supportedModes: string[] = stateObj && Array.isArray(stateObj.attributes.available_modes) ? stateObj.attributes.available_modes : [];
+  return filterCapabilities
+    ? modeList.filter(e => supportedModes.find(m => m === e.value))
+    : modeList;
 };
 
-export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
+export const humidifierActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean): Action[] => [
   {
     service: 'humidifier.turn_on',
     icon: 'hass:power',
@@ -75,8 +75,12 @@ export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): A
     variables: {
       humidity: levelVariable({
         name: hass.localize('ui.card.humidifier.humidity'),
-        min: stateObj?.attributes.min_humidity || 0,
-        max: stateObj?.attributes.max_humidity || 255,
+        min: stateObj?.attributes.min_humidity !== undefined
+          ? stateObj?.attributes.min_humidity
+          : 0,
+        max: stateObj?.attributes.max_humidity !== undefined
+          ? stateObj?.attributes.max_humidity
+          : 100,
         step: 1,
         unit: '%',
       })
@@ -89,7 +93,7 @@ export const humidifierActions = (hass: HomeAssistant, stateObj?: HassEntity): A
     variables: {
       mode: listVariable({
         name: hass.localize('ui.card.humidifier.mode'),
-        options: humidifierModes(hass.localize, stateObj),
+        options: humidifierModes(hass.localize, stateObj, filterCapabilities),
       })
     },
     icon: 'hass:cog-transfer-outline',

@@ -5,7 +5,7 @@ import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 
-export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => {
+export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefined): Action[] => {
   const actions: Action[] = [
     {
       service: 'light.turn_off',
@@ -14,13 +14,11 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     },
   ];
 
-  if (stateObj && stateObj.attributes.supported_features !== undefined && !(stateObj.attributes.supported_features & 1)) {
-    actions.push({
-      service: 'light.turn_on',
-      icon: 'hass:lightbulb-on',
-      name: hass.localize('ui.card.vacuum.actions.turn_on'),
-    });
-  } else {
+  const supportedFeatures = stateObj && stateObj.attributes.supported_features !== undefined
+    ? Number(stateObj.attributes.supported_features)
+    : 0;
+
+  if (supportedFeatures & 1)
     actions.push({
       service: 'light.turn_on',
       variables: {
@@ -37,7 +35,12 @@ export const lightActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
       name: localize('services.light.turn_on', hass.language),
       supported_feature: 1,
     });
-  }
+  else
+    actions.push({
+      service: 'light.turn_on',
+      icon: 'hass:lightbulb-on',
+      name: hass.localize('ui.card.vacuum.actions.turn_on'),
+    });
 
   return actions;
 };

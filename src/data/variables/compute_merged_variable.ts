@@ -2,14 +2,14 @@ import { LevelVariable, ListVariable, TextVariable, EVariableType } from "../../
 import { levelVariable } from "./level_variable";
 import { listVariable } from "./list_variable";
 import { textVariable } from "./text_variable";
-import { isDefined } from "../../helpers";
+import { isDefined, unique } from "../../helpers";
 import { computeVariables } from "./compute_variables";
 
 
 
 export function computeMergedVariable(...variables: Partial<LevelVariable | ListVariable | TextVariable>[]): LevelVariable | ListVariable | TextVariable | undefined {
 
-  const types = variables.map(e => e.type).filter(isDefined);
+  const types = unique(variables.map(e => e.type).filter(isDefined));
   if (!types.length) {
     variables = Object.values(computeVariables(Object.assign({}, ...variables))!);
     return computeMergedVariable(...variables);

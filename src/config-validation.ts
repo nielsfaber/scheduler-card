@@ -14,6 +14,7 @@ export function ValidateConfig(config: any) {
   const Type = (input: any, type: string | string[]) => {
     if (Array.isArray(type)) return type.some(e => Type(input, e));
     else if (type == 'array') return Array.isArray(input);
+    else if (type == 'object') return typeof input === type && input !== null;
     else return typeof input === type;
   };
 

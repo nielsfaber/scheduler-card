@@ -60,9 +60,19 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       //ensure service call has no entity_id
       if (action.service_data) action = { ...action, service_data: omit(action.service_data, 'entity_id') };
 
-      const res = actions.findIndex(e => compareActions(e, action));
-      if (res >= 0) {
+      let res = actions.findIndex(e => compareActions(e, action));
 
+      if (res < 0) {
+        //try to find it in unfiltered list of built-in actions
+        let allActions = config.standard_configuration ? standardActions(entity_id, hass, false) : [];
+        const match = allActions.find(e => compareActions(e, action));
+        if (match) {
+          actions = [...actions, match];
+          res = actions.length - 1;
+        }
+      }
+
+      if (res >= 0) {
         //standard action should be overwritten
         Object.assign(actions, {
           [res]: { ...actions[res], ...omit(action, 'variables') }
@@ -96,6 +106,7 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       }
       else {
         //add a new action
+
         action = {
           ...action,
           variables: computeVariables(action.variables)
