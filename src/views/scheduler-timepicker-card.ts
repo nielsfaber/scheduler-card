@@ -18,6 +18,7 @@ import { DefaultTimeStep, DefaultActionIcon } from '../const';
 
 import '../components/time-picker';
 import '../components/timeslot-editor';
+import '../components/timeslot-editor-new';
 import '../components/variable-picker';
 import '../components/dialog-delete-confirm';
 import { commonStyle } from '../styles';
@@ -93,7 +94,14 @@ export class SchedulerTimepickerCard extends LitElement {
               @update=${this.handlePlannerUpdate}
             >
             </timeslot-editor>
-
+            <timeslot-editor-new
+              .hass=${this.hass}
+              .actions=${this.actions}
+              .slots=${this.schedule.timeslots}
+              stepSize=${this.config.time_step || DefaultTimeStep}
+              @update=${this.handlePlannerUpdate}
+            >
+            </timeslot-editor-new>
             ${this.renderActions()}
             ${this.getVariableEditor()}
             `

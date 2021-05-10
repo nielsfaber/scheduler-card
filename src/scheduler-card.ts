@@ -70,6 +70,9 @@ export class SchedulerCard extends LitElement {
         this._hass!.localize;
       });
     }
+
+    const myEvent = new CustomEvent('editClick', { detail: "e6f89d" });
+    this._editItemClick(myEvent);
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
