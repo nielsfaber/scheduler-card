@@ -8,13 +8,15 @@
       "set_temperature": "Temperatur einstellen[ auf {temperature}]",
       "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
       "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulieren[ auf {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
       "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]"
     },
     "cover": {
       "close_cover": "schließen",
       "open_cover": "öffnen",
-      "set_cover_position": "Position setzen[ auf {position}]"
+      "set_cover_position": "Position setzen[ auf {position}]",
+      "set_cover_tilt_position": "Tilt Position setzen[ auf {tilt_position}]"
     },
     "fan": {
       "set_speed": "Geschwindigkeit speed[ auf {speed}]",
@@ -35,6 +37,9 @@
     },
     "media_player": {
       "select_source": "Quelle[ {source}] auswählen"
+    },
+    "notify": {
+      "notify": "Nachricht senden"
     },
     "script": {
       "script": "ausführen"
@@ -98,6 +103,7 @@
       },
       "overview": {
         "no_entries": "Es gibt keine Einträge, die angezeigt werden können",
+        "backend_error": "Es konnte keine Verbindung mit der Schedulerkomponente hergestellt werden. Es muss als Integration installiert werden, bevor diese Karte verwendet werden kann.",
         "excluded_items": "{number}{if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
         "hide_excluded": "Verstecke ausgeschlossene Einträge",
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
@@ -108,7 +114,8 @@
         "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
         "no_entity_selected": "Wähle zuerst eine Entity aus",
         "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
-        "make_scheme": "Erstelle Zeitplan"
+        "make_scheme": "Erstelle Zeitplan",
+        "multiple": "mehrere"
       },
       "time_picker": {
         "no_timeslot_selected": "Wähle zuerst ein Zeitfenster aus"

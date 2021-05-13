@@ -8,13 +8,15 @@
       "set_temperature": "встановити температуру[ to {temperature}]",
       "set_temperature_hvac_mode_heat": "нагрів[ to {temperature}]",
       "set_temperature_hvac_mode_cool": "охолодження[ to {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "встановити режим[ to {hvac_mode}]",
       "set_preset_mode": "вибрати пресет[ to {preset_mode}]"
     },
     "cover": {
       "close_cover": "закрити",
       "open_cover": "відкрити",
-      "set_cover_position": "встановити позицію[ to {position}]"
+      "set_cover_position": "встановити позицію[ to {position}]",
+      "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
       "set_speed": "встановити швидкість[ to {speed}]",
@@ -35,6 +37,9 @@
     },
     "media_player": {
       "select_source": "вибрати джерело[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
     },
     "script": {
       "script": "виконати"

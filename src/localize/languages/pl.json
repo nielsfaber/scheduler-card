@@ -8,6 +8,7 @@
       "set_temperature": "ustaw temperaturę[ na {temperature}]",
       "set_temperature_hvac_mode_heat": "grzej[ do {temperature}]",
       "set_temperature_hvac_mode_cool": "chłodź[ do {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "ustaw tryb[ na {hvac_mode}]",
       "set_preset_mode": "ustaw preset[ {preset_mode}]"
     },
@@ -36,6 +37,9 @@
     },
     "media_player": {
       "select_source": "wybierz źródło[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
     },
     "script": {
       "script": "wykonaj"
@@ -99,6 +103,7 @@
       },
       "overview": {
         "no_entries": "Nie ma elementów do pokazania",
+        "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{number} wykluczona {if number is 1} pozycja {else} pozycje",
         "hide_excluded": "ukryj wykluczone pozycje",
         "additional_tasks": "{number} dodatkowe {if number is 1} zadanie {else} zadań(nia)"
@@ -109,7 +114,8 @@
         "no_entities_for_group": "Nie ma encji w tej grupie",
         "no_entity_selected": "Najpierw wybierz encję",
         "no_actions_for_entity": "Nie ma akcji dla tej encji",
-        "make_scheme": "stwórz schemat"
+        "make_scheme": "stwórz schemat",
+        "multiple": "Multiple"
       },
       "time_picker": {
         "no_timeslot_selected": "Najpierw wybierz przedział czasowy"

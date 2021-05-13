@@ -8,6 +8,7 @@
       "set_temperature": "קבע טמפרטורה[ ל {temperature}]",
       "set_temperature_hvac_mode_heat": "חימום[ ל {temperature}]",
       "set_temperature_hvac_mode_cool": "קירור[ ל {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "קבע מצב עבודה[ ל {hvac_mode}]",
       "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]"
     },
@@ -36,6 +37,9 @@
     },
     "media_player": {
       "select_source": "select source[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
     },
     "script": {
       "script": "בצע"

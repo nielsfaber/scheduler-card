@@ -8,6 +8,7 @@
       "set_temperature": "vali temperatuur [{temperature}]",
       "set_temperature_hvac_mode_heat": "küte[ @ {temperature}]",
       "set_temperature_hvac_mode_cool": "jahutus [ @ {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "vali režiim [{hvac_mode}]",
       "set_preset_mode": "eelseade[ {preset_mode}]"
     },
@@ -36,6 +37,9 @@
     },
     "media_player": {
       "select_source": "vali sisend[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
     },
     "script": {
       "script": "käivita"

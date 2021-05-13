@@ -434,13 +434,13 @@ An action is similar to a [service call](https://www.home-assistant.io/docs/scri
 
 Actions are linked to their entities, so the entity ID is sent together with the service call, it is not needed to add it to the `service_data`).
 
-| Name         | Type   | Default           | Description                                             |
-| ------------ | ------ | ----------------- | ------------------------------------------------------- |
-| service      | string | **Required**      | Service to be executed                                  |
-| service_data | map    | none              | Additional parameters to use for the service call       |
-| variables    | map    | none              | Add variables. See [action variable](#action-variable)  |
-| name         | string | (same as service) | Displayed name for action                               |
-| icon         | string | "flash"           | Displayed icon for action                               |
+| Name         | Type   | Default           | Description                                            |
+| ------------ | ------ | ----------------- | ------------------------------------------------------ |
+| service      | string | **Required**      | Service to be executed                                 |
+| service_data | map    | none              | Additional parameters to use for the service call      |
+| variables    | map    | none              | Add variables. See [action variable](#action-variable) |
+| name         | string | (same as service) | Displayed name for action                              |
+| icon         | string | "flash"           | Displayed icon for action                              |
 
 :warning: **Note**: Templates (jinja code) are not supported at this point.
 
@@ -653,7 +653,7 @@ Currently the following languages are supported:
 | Română      | ro         |                   |
 | Slovenčina  | sk         |                   |
 | Nederlands  | nl         |                   |
-| Norsk       | no, nb, nn | Needs updating.   |
+| Norsk       | no, nb, nn |                   |
 
 
 The translations are maintained by users.
