@@ -10,7 +10,7 @@ export function computeCommonActions(actionLists: Action[][]) {
   if (actionLists.length == 1) return actionLists[0];
 
   let commonActions = actionLists[0].filter(action =>
-    actionLists.every(list => list.some(e => compareActions(action, e)))
+    actionLists.slice(1).every(list => list.some(e => compareActions(action, e)))
   );
 
   commonActions = commonActions.map(action => {
@@ -19,7 +19,9 @@ export function computeCommonActions(actionLists: Action[][]) {
       const actions = actionLists.map(e => e.find(k => compareActions(k, action)));
 
       //remove the variable if it is not in common
-      if (!actions.every(e => e && e.variables && field in e.variables)) return [field, undefined];
+      if (!actions.every(e => e && e.variables && field in e.variables)) {
+        return [field, undefined];
+      }
 
       const variables = actions.map(e => e!.variables![field]);
 

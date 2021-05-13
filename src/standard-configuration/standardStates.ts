@@ -18,6 +18,7 @@ import { isDefined } from '../helpers';
 import { inputNumberStates } from './input_number';
 import { proximityStates } from './proximity';
 import { sensorStates } from './sensor';
+import { sunStates } from './sun';
 
 export function standardStates(entity_id: string, hass: HomeAssistant): Variable | null {
   try {
@@ -52,6 +53,8 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
         return proximityStates(hass, stateObj);
       case 'sensor':
         return sensorStates(hass, stateObj);
+      case 'sun':
+        return sunStates(hass, stateObj);
       case 'switch':
         return switchStates(hass, stateObj);
       case 'light':

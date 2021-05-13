@@ -1,33 +1,78 @@
-import { Action, EVariableType, LevelVariable } from "../../types";
+import { Action, EVariableType, LevelVariable, ListVariable } from "../../types";
 
 
-export function compareActions(...actions: Action[]) {
-  const serviceArgs = (a: Action) => {
-    return Object.keys(a.service_data || {})
-      .filter(e => !Object.keys(a.variables || {}).includes(e))
+export function compareActions(actionA: Action, actionB: Action, allowVars: boolean = false) {
+
+  const isOptional = (variable: string, action: Action) => {
+    return (
+      Object.keys(action.variables || {}).includes(variable) &&
+      action.variables![variable].type == EVariableType.Level &&
+      (action.variables![variable] as LevelVariable).optional
+    );
   };
-  const variableArgs = (a: Action) => {
-    return Object.keys(a.variables || {})
-      .filter(e => !(a.variables![e].type == EVariableType.Level && (a.variables![e] as LevelVariable).optional))
-  };
 
-  const baseService = actions[0].service;
-  const baseArgs = serviceArgs(actions[0]);
-  const baseVars = variableArgs(actions[0]);
+  //actions should have the same service
+  if (actionA.service !== actionB.service) return false;
 
-  return actions.every(e => {
-    //actions should have the same service
-    if (e.service !== baseService) return false;
+  const serviceDataA = Object.keys(actionA.service_data || {});
+  const variablesA = Object.keys(actionA.variables || {});
 
-    //actions should have all fixed service_data in common
-    if (!baseArgs.every(v => serviceArgs(e).includes(v) && actions[0].service_data![v] == e.service_data![v])) return false;
+  const serviceDataB = Object.keys(actionB.service_data || {});
+  const variablesB = Object.keys(actionB.variables || {});
 
-    const remainingArgs = variableArgs(e).filter(e => !baseVars.includes(e));
+  const argsA = [
+    ...new Set([...serviceDataA, ...variablesA])
+  ];
+  const argsB = [
+    ...new Set([...serviceDataB, ...variablesB])
+  ];
+  const allArgs = [
+    ...new Set([...argsA, ...argsB])
+  ];
 
-    //actions should have same number of service_data
-    if (remainingArgs.length) return false;
+  return allArgs.every(arg => {
+    // both actions must have the parameter in common
+    if (!argsA.includes(arg)) return isOptional(arg, actionB);
+    if (!argsB.includes(arg)) return isOptional(arg, actionA);
 
-    return true;
-  }
-  );
+    // if its a fixed parameter it must be equal
+    if (
+      serviceDataA
+        .filter(e => !variablesA.includes(e))
+        .includes(arg) &&
+      serviceDataB
+        .filter(e => !variablesB.includes(e))
+        .includes(arg)
+    )
+      return actionA.service_data![arg] === actionB.service_data![arg];
+
+    // if both are variables they are assumed to be equal
+    if (
+      variablesA.includes(arg) &&
+      variablesB.includes(arg)
+    )
+      return true;
+
+    if (!allowVars) return false;
+
+    // compare a fixed value with variable
+    const value = serviceDataA.includes(arg)
+      ? actionA.service_data![arg]
+      : actionB.service_data![arg];
+
+    const variable = variablesA.includes(arg)
+      ? actionA.variables![arg]
+      : actionB.variables![arg];
+
+    if (variable.type === EVariableType.List) {
+      return (variable as ListVariable).options.some(e => e.value === value);
+    }
+    else if (variable.type === EVariableType.Level)
+      return !isNaN(value);
+
+    else if (variable.type == EVariableType.Text)
+      return true;
+
+    return false;
+  });
 }

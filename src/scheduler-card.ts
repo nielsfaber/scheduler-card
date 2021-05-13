@@ -26,6 +26,7 @@ import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSched
 import { computeActions } from './data/actions/compute_actions';
 import { compareActions } from './data/actions/compare_actions';
 import { importAction } from './data/actions/import_action';
+import { assignAction } from './data/actions/assign_action';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -180,13 +181,7 @@ export class SchedulerCard extends LitElement {
       this.actions = [action];
       const defaultTimeslot: Timeslot = {
         start: '12:00:00',
-        actions: flatten(entities.map(e =>
-          Object({
-            service: this.actions[0].service,
-            entity_id: e,
-            service_data: this.actions[0].service_data
-          })
-        ))
+        actions: entities.map(e => assignAction(e, this.actions[0]))
       };
 
       this.schedule = oldSchedule
@@ -304,8 +299,7 @@ export class SchedulerCard extends LitElement {
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
     let actions = computeActions(entities, this._hass, this._config);
     const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
-
-    let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e)));
+    let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e, true)));
     if (extraActions.length) {
       //actions that are not in the card
       unique(extraActions).forEach(e => actions.push(importAction(e, this._hass!)));
@@ -342,11 +336,15 @@ export class SchedulerCard extends LitElement {
     }
 
     if (this.schedule.timeslots.every(e => e.stop)) {
-      this._view = EViews.TimeScheme;
       this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots) };
+      if (!this.actions.length) handleError({ error: '', body: { message: `Could not compute actions for the schedule #${ev.detail}.` } }, this);
+      else this._view = EViews.TimeScheme;
     } else {
-      this._view = EViews.TimePicker;
-      this.actions = this.actions.filter(e => usedActions.find(a => compareActions(e, a)));
+      this.actions = this.actions
+        .filter(e => usedActions.find(a => compareActions(e, a, true)))
+        .reduce((_acc: Action[], e) => [e], []);
+      if (!this.actions.length) handleError({ error: '', body: { message: `Could not compute actions for schedule #${ev.detail}.` } }, this);
+      else this._view = EViews.TimePicker;
     }
   }
   _gotoOptionsClick(ev: CustomEvent): void {

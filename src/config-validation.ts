@@ -1,3 +1,5 @@
+import { listVariable } from "./data/variables/list_variable";
+
 export function ValidateConfig(config: any) {
   const errors: string[] = [];
   let tree: string[] = [];
@@ -151,6 +153,17 @@ export function ValidateConfig(config: any) {
             tree = ['customize', key, index];
             validateActionConfig(action);
           });
+        }
+
+        Optional(entryObj, 'states', ['object', 'array']);
+        if (Has(entryObj, 'states') && Type(entryObj.states, 'array')) {
+          RequiredArrayType(entryObj, 'states', 'string');
+        }
+        else if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
+          Required(entryObj.states, 'min', 'number');
+          Required(entryObj.states, 'max', 'number');
+          Optional(entryObj.states, 'step', 'number');
+          Optional(entryObj.states, 'unit', 'string');
         }
       }
     });

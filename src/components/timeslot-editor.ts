@@ -139,7 +139,7 @@ export class TimeslotEditor extends LitElement {
     if (!entry.actions) return '';
 
     return unique(entry.actions.map(action => {
-      const actionConfig = this.actions.find(e => compareActions(e, action));
+      const actionConfig = this.actions.find(e => compareActions(e, action, true));
       if (!actionConfig) return '???';
 
       if (actionConfig.variables && Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)) {

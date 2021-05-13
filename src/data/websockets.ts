@@ -36,7 +36,7 @@ export function showErrorDialog(target: HTMLElement, error: string | TemplateRes
   });
 }
 
-export function handleError(err: any, el: HTMLElement) {
+export function handleError(err: { body: { message: string }, error: string }, el: HTMLElement) {
   let errorMessage = html`
     <b>Something went wrong!</b><br>
     ${err.body.message}<br><br>

@@ -1,13 +1,10 @@
 import { HomeAssistant, computeDomain, computeEntity } from "custom-card-helpers";
-import { CardConfig, Action, LevelVariable, ListVariable, TextVariable, EVariableType } from "../../types";
+import { CardConfig, Action, ListVariable, EVariableType } from "../../types";
 import { standardActions } from "../../standard-configuration/standardActions";
 import { matchPattern } from "../match_pattern";
 import { isDefined, flatten, omit, pick } from "../../helpers";
 import { compareActions } from "./compare_actions";
 import { computeCommonActions } from "./compute_common_actions";
-import { listVariable } from "../variables/list_variable";
-import { levelVariable } from "../variables/level_variable";
-import { textVariable } from "../variables/text_variable";
 import { computeVariables } from "../variables/compute_variables";
 import { computeMergedVariable } from "../variables/compute_merged_variable";
 import { HassEntity } from "home-assistant-js-websocket";
@@ -53,15 +50,14 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
   );
   if (customizedActions.length) {
     customizedActions.forEach(action => {
+
       //ensure services have domain prefixed
       if (!computeDomain(action.service).length)
         action = { ...action, service: computeDomain(entity_id) + '.' + computeEntity(action.service) };
 
       //ensure service call has no entity_id
       if (action.service_data) action = { ...action, service_data: omit(action.service_data, 'entity_id') };
-
       let res = actions.findIndex(e => compareActions(e, action));
-
       if (res < 0) {
         //try to find it in unfiltered list of built-in actions
         let allActions = config.standard_configuration ? standardActions(entity_id, hass, false) : [];
@@ -106,7 +102,6 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       }
       else {
         //add a new action
-
         action = {
           ...action,
           variables: computeVariables(action.variables)
@@ -134,7 +129,7 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       })
     }
     return action;
-  });
+  })
 
   return actions;
 }

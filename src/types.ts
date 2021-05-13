@@ -129,7 +129,8 @@ export interface EntityConfig {
   name?: string;
   icon?: string;
   actions?: Action[];
-  exclude_actions?: string[]
+  exclude_actions?: string[],
+  states?: string[] | { min: number, max: number, step?: number, unit?: string }
 }
 
 /* action variables */

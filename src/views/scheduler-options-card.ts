@@ -1,21 +1,21 @@
 import { LitElement, html, customElement, property, css } from 'lit-element';
 import { localize } from '../localize/localize';
 //import { Config } from '../config';
-import { EConditionType, CardConfig, Entry, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot, EVariableType, ListVariable, LevelVariable, Group } from '../types';
+import { EConditionType, CardConfig, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot, EVariableType, ListVariable, LevelVariable, Group } from '../types';
 
-import { HomeAssistant, computeDomain } from 'custom-card-helpers';
+import { HomeAssistant } from 'custom-card-helpers';
 import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
 import { PrettyPrintIcon, PrettyPrintName, pick, isEqual } from '../helpers';
-import { standardStates } from '../standard-configuration/standardStates';
 
 import '../components/button-group';
 import '../components/variable-picker';
 import { computeEntities } from '../data/entities/compute_entities';
 import { listVariableDisplay } from '../data/variables/list_variable';
 import { levelVariableDisplay } from '../data/variables/level_variable';
+import { computeStates } from '../data/compute_states';
 
 @customElement('scheduler-options-card')
 export class SchedulerOptionsCard extends LitElement {
@@ -212,7 +212,7 @@ export class SchedulerOptionsCard extends LitElement {
     }
     else {
       const entity = this.selectedEntity;
-      const states = standardStates(entity.id, this.hass);
+      const states = computeStates(entity.id, this.hass, this.config);
 
       const matchTypes = states?.type == EVariableType.Level
         ? Object.entries(pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])).map(([k, v]) => Object.assign(v, { id: k }))
@@ -272,7 +272,7 @@ export class SchedulerOptionsCard extends LitElement {
       `;
     return conditions.map((item, num) => {
       const entity = parseEntity(item.entity_id, this.hass!, this.config!);
-      const states = standardStates(item.entity_id, this.hass!);
+      const states = computeStates(item.entity_id, this.hass!, this.config!);
       return html`
         <div class="summary">
             <ha-icon icon="${entity.icon || DefaultEntityIcon}"></ha-icon>

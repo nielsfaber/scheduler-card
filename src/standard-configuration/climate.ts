@@ -48,7 +48,7 @@ const climateModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefin
     : modeList;
 };
 
-const climatePresets = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
+const climatePresets = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined) => {
   const presetList = [
     {
       value: 'none',
@@ -92,17 +92,14 @@ const climatePresets = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undef
     },
   ];
   const supportedPresets: string[] = stateObj && Array.isArray(stateObj.attributes.preset_modes) ? stateObj.attributes.preset_modes : [];
-  return filterCapabilities
-    ? presetList.filter(e => supportedPresets.find(m => m === e.value) && e.value != 'none')
-    : presetList;
+  return supportedPresets.map(e => presetList.find(m => m.value === e) || { value: e });
 };
 
 export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean): Action[] => {
   let hvacModes = climateModes(hass.localize, stateObj, filterCapabilities);
+  if (hvacModes.length == 1 && filterCapabilities) hvacModes = [];
   const supportedModes = hvacModes.map(e => e.value);
-
-  if (hvacModes.length == 1) hvacModes = [];
-
+  const supportedPresets = climatePresets(hass.localize, stateObj);
   const tempVariable = levelVariable({
     name: hass.localize('ui.card.weather.attributes.temperature'),
     min: stateObj?.attributes.min_temp !== undefined
@@ -124,19 +121,21 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
   });
 
   const actions: Action[] = [
-    {
+  ];
+
+  if (supportedPresets.length)
+    actions.push({
       service: 'climate.set_preset_mode',
       variables: {
         preset_mode: listVariable({
           name: hass.localize('ui.card.climate.preset_mode'),
-          options: climatePresets(hass.localize, stateObj, filterCapabilities),
+          options: supportedPresets,
         })
       },
       icon: 'hass:cloud-download-outline',
       name: localize('services.climate.set_preset_mode', hass.language),
       supported_feature: 16,
-    },
-  ];
+    });
 
   if (supportedModes.includes('off') || !filterCapabilities)
     actions.push({

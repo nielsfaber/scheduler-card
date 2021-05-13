@@ -1,6 +1,6 @@
 import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import { CardConfig, ETimeEvent, EDayType, Schedule, Timeslot, WeekdayType } from '../types';
+import { CardConfig, ETimeEvent, EDayType, Schedule, Timeslot, WeekdayType, Action } from '../types';
 import { PrettyPrintName, capitalize, PrettyPrintIcon, unique } from '../helpers';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
@@ -17,6 +17,8 @@ import { stringToDate } from '../data/date-time/string_to_date';
 import { standardIcon } from '../standard-configuration/standardIcon';
 import { STATE_NOT_RUNNING } from 'home-assistant-js-websocket';
 import { importAction } from '../data/actions/import_action';
+import { computeActions } from '../data/actions/compute_actions';
+import { compareActions } from '../data/actions/compare_actions';
 
 @customElement('scheduler-entity-row')
 export class ScheduleEntityRow extends LitElement {
@@ -73,7 +75,20 @@ export class ScheduleEntityRow extends LitElement {
         ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, this._hass.language) || entityDomains[0]}`
         : `${entities.length}x entities`;
 
-    const action = importAction(nextEntry.actions[0], this._hass);
+    const match = computeActions(nextEntry.actions[0].entity_id || nextEntry.actions[0].service, this._hass, this.config)
+      .filter(e => compareActions(e, nextEntry.actions[0], true))
+      .reduce((_acc: Action | undefined, e) => e, undefined);
+
+    const action = match
+      ? {
+        ...match, service_data: {
+          ...match.service_data,
+          ...Object.entries(nextEntry.actions[0].service_data || {})
+            .filter(([k,]) => Object.keys(match.variables || {}).includes(k))
+            .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {})
+        }
+      }
+      : importAction(nextEntry.actions[0], this._hass);
 
     const icon =
       this.config.display_options && this.config.display_options.icon && this.config.display_options.icon == 'entity'

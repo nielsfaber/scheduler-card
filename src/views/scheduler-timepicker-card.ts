@@ -27,6 +27,7 @@ import { weekdayArray, formatWeekday } from '../data/date-time/format_weekday';
 import { weekdayType } from '../data/date-time/weekday_type';
 import { compareActions } from '../data/actions/compare_actions';
 import { importAction } from '../data/actions/import_action';
+import { assignAction } from '../data/actions/assign_action';
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
@@ -43,9 +44,16 @@ export class SchedulerTimepickerCard extends LitElement {
     if (!this.actions || !this.hass) return;
     if (!this.timeslots) this.activeEntry = 0;
 
-    const actions = this.actions.map(e => Object.assign(e, { name: computeActionDisplay(e) }));
+    const actions = this.actions.map(e => {
+      let action = {
+        ...e,
+        service_data: omit(e.service_data || {}, ...Object.keys(e.variables || {}))
+      };
+      return Object.assign(e, {
+        name: computeActionDisplay(action)
+      });
+    });
     actions.sort(sortAlphabetically);
-
     this.actions = actions;
   }
 
@@ -297,19 +305,10 @@ export class SchedulerTimepickerCard extends LitElement {
     const action: Action | null = ev.detail;
     if (action) {
       this.entities!.map(e => e.id).forEach((entity_id, num) => {
-        let service_data = action.service_data || {};
-        Object.entries(action.variables || {}).forEach(([field, config]) => {
-          if (config.type == EVariableType.Level) {
-            config = config as LevelVariable;
-            if (!(field in service_data) && !config.optional)
-              service_data = { ...service_data, [field]: config.min };
-          }
-        });
-        this.updateActiveEntryAction({
-          entity_id: entity_id,
-          service: action.service,
-          service_data: service_data
-        }, num);
+        this.updateActiveEntryAction(
+          assignAction(entity_id, action),
+          num
+        );
       });
     }
     else {
@@ -325,12 +324,12 @@ export class SchedulerTimepickerCard extends LitElement {
     const actions: ServiceCall[] = [];
     this.schedule.timeslots[this.activeEntry].actions.forEach(action => {
       action = omit(action, 'entity_id');
-      if (!this.actions!.find(e => compareActions(e, action) && Object.keys(e.variables || {}).length)) return;
+      if (!this.actions!.find(e => compareActions(e, action, true) && Object.keys(e.variables || {}).length)) return;
       if (!actions.some(e => isEqual(e, action))) actions.push(action);
     });
 
     return actions.map(action => {
-      return Object.entries(this.actions!.find(e => compareActions(e, action))!.variables!).map(([field, variable]) => {
+      return Object.entries(this.actions!.find(e => compareActions(e, action, true))!.variables!).map(([field, variable]) => {
         return html`
           <div class="header">
             ${variable.name || PrettyPrintName(field)}
