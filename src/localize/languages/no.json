@@ -1,69 +1,69 @@
 {
   "services": {
     "generic": {
-      "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "parameter_to_value": "{parameter} til {value}",
+      "action_with_parameter": "{action} med {parameter}"
     },
     "climate": {
-      "set_temperature": "sett temperatur[ to {temperature}]",
-      "set_temperature_hvac_mode_heat": "sett temperatur[ to {temperature}]",
-      "set_temperature_hvac_mode_cool": "sett temperatur[ to {temperature}]",
-      "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ {preset_mode}]"
+      "set_temperature": "sett temperatur[ til {temperature}]",
+      "set_temperature_hvac_mode_heat": "sett temperatur[ til {temperature}]",
+      "set_temperature_hvac_mode_cool": "sett temperatur[ til {temperature}]",
+      "set_hvac_mode": "sett modus[ til {hvac_mode}]",
+      "set_preset_mode": "sett forhåndsvalg[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "lukk",
       "open_cover": "åpne",
-      "set_cover_position": "sett posisjon[ to {position}]"
+      "set_cover_position": "sett posisjon[ til {position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "sett hastighet[ til {speed}]",
+      "set_direction": "sett retning[ til {direction}]",
+      "oscillate": "sett svingning[ til {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "sett luftfuktighet[ til {humidity}]"
     },
     "input_number": {
-      "set_value": "set value[ to {value}]"
+      "set_value": "sett verdi[ til {value}]"
     },
     "input_select": {
-      "select_option": "select option[ {option}]"
+      "select_option": "velg[ {option}]"
     },
     "light": {
-      "turn_on": "slå på[ with {brightness} brightness]"
+      "turn_on": "slå på[ med {brightness} lysstyrke]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "velg kilde[ {source}]"
     },
     "script": {
-      "script": "execute"
+      "script": "utfør"
     },
     "vacuum": {
       "start_pause": "start / pause"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_away_mode": "sett bortemodus"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
+    "alarm_control_panel": "alarmpanel",
     "climate": "klima",
-    "cover": "covers",
+    "cover": "solskjerming",
     "fan": "vifter",
-    "group": "groups",
-    "humidifier": "humidifiers",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
+    "group": "grupper",
+    "humidifier": "luftfuktere",
+    "input_boolean": "input boolsk",
+    "input_number": "input nummer",
+    "input_select": "input valg",
     "light": "lys",
-    "lock": "locks",
-    "media_player": "media players",
-    "scene": "scenes",
-    "script": "scripts",
+    "lock": "låser",
+    "media_player": "mediaspillere",
+    "scene": "scener",
+    "script": "skript",
     "switch": "brytere",
     "vacuum": "støvsugere",
-    "water_heater": "water heaters"
+    "water_heater": "varmtvannsberedere"
   },
   "ui": {
     "components": {
@@ -71,25 +71,25 @@
         "day_types_short": {
           "daily": "hver dag",
           "workdays": "ukedager",
-          "weekend": "weekend"
+          "weekend": "helg"
         },
         "day_types_long": {
           "daily": "hver dag",
           "workdays": "ukedager",
-          "weekend": "weekend"
+          "weekend": "helg"
         },
         "days": "Dager",
-        "tomorrow": "tomorrow",
-        "repeated_days": "every {days}",
-        "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "tomorrow": "imorgen",
+        "repeated_days": "hver {days}",
+        "repeated_days_except": "hver dag unntatt {excludedDays}",
+        "days_range": "fra {startDay} til {endDay}"
       },
       "time": {
         "absolute": "at {time}",
-        "interval": "from {startTime} to {endTime}",
-        "at_midnight": "at midnight",
-        "at_noon": "at noon",
-        "at_sun_event": "at {sunEvent}"
+        "interval": "fra {startTime} til {endTime}",
+        "at_midnight": "ved midnatt",
+        "at_noon": "kl. 12.00",
+        "at_sun_event": "ved {sunEvent}"
       }
     },
     "panel": {
@@ -98,9 +98,9 @@
       },
       "overview": {
         "no_entries": "Det er ingen definerte tidsplaner å vise",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "excluded_items": "{number} ekskludert {if number is 1} element {else} elementer",
+        "hide_excluded": "skjul ekslkuderte elementer",
+        "additional_tasks": "{number} flere {if number is 1} oppgaver {else} oppgaver"
       },
       "entity_picker": {
         "no_groups_defined": "Ingen grupper definert",
@@ -108,20 +108,20 @@
         "no_entities_for_group": "Det finnes ingen entiteter i denne gruppen",
         "no_entity_selected": "Velg en entitet først",
         "no_actions_for_entity": "Det finnes ingen handlinger for denne entiteten",
-        "make_scheme": "make scheme"
+        "make_scheme": "lag tidsplan"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "Velg tidsluke først"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
+        "equal_to": "er",
+        "unequal_to": "er ikke",
+        "all": "alle",
         "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "no_conditions_defined": "Ingen vilkår definert"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "oppførsel når utløst"
       }
     }
   }
