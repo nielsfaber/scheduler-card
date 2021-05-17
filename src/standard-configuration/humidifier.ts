@@ -59,44 +59,54 @@ export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity
     : modeList;
 };
 
-export const humidifierActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean): Action[] => [
-  {
-    service: 'humidifier.turn_on',
-    icon: 'hass:power',
-    name: hass.localize('ui.card.vacuum.actions.turn_on'),
-  },
-  {
-    service: 'turn_off',
-    icon: 'hass:power-off',
-    name: hass.localize('ui.card.vacuum.actions.turn_off'),
-  },
-  {
-    service: 'humidifier.set_humidity',
-    variables: {
-      humidity: levelVariable({
-        name: hass.localize('ui.card.humidifier.humidity'),
-        min: stateObj?.attributes.min_humidity !== undefined
-          ? stateObj?.attributes.min_humidity
-          : 0,
-        max: stateObj?.attributes.max_humidity !== undefined
-          ? stateObj?.attributes.max_humidity
-          : 100,
-        step: 1,
-        unit: '%',
-      })
+export const humidifierActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
+  const supportedModes = humidifierModes(hass.localize, stateObj, filterCapabilities);
+
+  let actions: Action[] = [
+    {
+      service: 'humidifier.turn_on',
+      icon: 'hass:power',
+      name: hass.localize('ui.card.vacuum.actions.turn_on'),
     },
-    icon: 'hass:water-percent',
-    name: localize('services.humidifer.set_humidity', hass.language),
-  },
-  {
-    service: 'humidifier.set_mode',
-    variables: {
-      mode: listVariable({
-        name: hass.localize('ui.card.humidifier.mode'),
-        options: humidifierModes(hass.localize, stateObj, filterCapabilities),
-      })
+    {
+      service: 'turn_off',
+      icon: 'hass:power-off',
+      name: hass.localize('ui.card.vacuum.actions.turn_off'),
     },
-    icon: 'hass:cog-transfer-outline',
-    name: localize('services.climate.set_mode', hass.language),
-  },
-];
+    {
+      service: 'humidifier.set_humidity',
+      variables: {
+        humidity: levelVariable({
+          name: hass.localize('ui.card.humidifier.humidity'),
+          min: stateObj?.attributes.min_humidity !== undefined
+            ? stateObj?.attributes.min_humidity
+            : 0,
+          max: stateObj?.attributes.max_humidity !== undefined
+            ? stateObj?.attributes.max_humidity
+            : 100,
+          step: 1,
+          unit: '%',
+        }),
+      },
+      icon: 'hass:water-percent',
+      name: localize('services.humidifer.set_humidity', hass.language),
+    }
+  ];
+
+  if (supportedModes.length > 1) {
+    actions.push(
+      {
+        service: 'humidifier.set_mode',
+        variables: {
+          mode: listVariable({
+            name: hass.localize('ui.card.humidifier.mode'),
+            options: supportedModes,
+          })
+        },
+        icon: 'hass:cog-transfer-outline',
+        name: localize('services.climate.set_mode', hass.language),
+      }
+    );
+  }
+  return actions;
+}

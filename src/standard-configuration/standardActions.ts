@@ -39,7 +39,7 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
         const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
         const configs = entities.map(e => standardActions(e, hass, filterCapabilities));
         return groupActions(hass, stateObj, configs);
-      case 'humidifer':
+      case 'humidifier':
         return humidifierActions(hass, stateObj, filterCapabilities);
       case 'input_boolean':
         return inputBooleanActions(hass, stateObj);
