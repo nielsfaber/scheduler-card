@@ -6,7 +6,6 @@ import { isDefined, flatten, omit, pick } from "../../helpers";
 import { compareActions } from "./compare_actions";
 import { computeCommonActions } from "./compute_common_actions";
 import { computeVariables } from "../variables/compute_variables";
-import { computeMergedVariable } from "../variables/compute_merged_variable";
 import { HassEntity } from "home-assistant-js-websocket";
 
 
@@ -82,8 +81,8 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
           variableConfig = Object.entries(variableConfig)
             .map(([field, variable]) => {
               return Object.keys(action.variables!).includes(field)
-                ? [field, computeMergedVariable(variable, action.variables![field])]
-                : [field, config];
+                ? [field, { ...variable, ...action.variables![field] }]
+                : [field, action.variables![field]]
             })
             .reduce((obj, [key, val]) => val ? Object.assign(obj, { [key as string]: val }) : obj, {})
 

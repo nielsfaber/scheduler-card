@@ -19,7 +19,7 @@ export const assignAction = (entity_id: string, action: Action) => {
         ...output,
         service_data: {
           ...output.service_data,
-          [key]: config.min || 0
+          [key]: parseFloat((config.min * config.scale_factor).toPrecision(12)) || 0
         }
       };
     }

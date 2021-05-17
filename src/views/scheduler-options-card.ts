@@ -245,7 +245,7 @@ export class SchedulerOptionsCard extends LitElement {
       <scheduler-variable-picker
         .variable=${states}
         .value=${this.conditionValue}
-        @change=${(ev: CustomEvent) => this.conditionValue = (ev.target as HTMLInputElement).value}}
+        @value-changed=${(ev: CustomEvent) => this.conditionValue = ev.detail.value}}
       >
       </scheduler-variable-picker> 
       `;

@@ -11,7 +11,6 @@ export const DeadEntityName = '(unknown entity)';
 export const DeadEntityIcon = 'help-circle-outline';
 
 export const FieldTemperature = 'temperature';
-export const UnitPercent = '%';
 export const WorkdaySensor = 'binary_sensor.workday_sensor';
 
 export const NotifyDomain = 'notify';

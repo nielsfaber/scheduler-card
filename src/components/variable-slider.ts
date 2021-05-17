@@ -1,35 +1,58 @@
-import { LitElement, html, customElement, css, property } from 'lit-element';
+import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
 
 import { loadHaForm } from '../load-ha-form';
-import { UnitPercent } from '../const';
 import { commonStyle } from '../styles';
+import { fireEvent } from 'custom-card-helpers';
 
 @customElement('variable-slider')
 export class VariableSlider extends LitElement {
-  @property({ type: Number }) min = 0;
-  @property({ type: Number }) max = 100;
-  @property({ type: Number }) step = 1;
-  @property({ type: Number }) value = 0;
-  @property({ type: String }) unit = '';
-  @property({ type: Boolean }) optional = false;
-  @property({ type: Boolean }) disabled = false;
+  @property({ type: Number })
+  min = 0;
 
-  scaleGain = 1;
-  scaleOffset = 0;
+  @property({ type: Number })
+  max = 255;
+
+  @property({ type: Number })
+  step = 1;
+
+  //raw value
+  @property({ type: Number })
+  get value(): number {
+    return this._value;
+  }
+  set value(value: number) {
+    if (isNaN(value)) value = this.min;
+    value = value / this.scaleFactor;
+    value = Math.round(value / this.step) * this.step;
+    value = parseFloat(value.toPrecision(12));
+    if (value > this.max) value = this.max;
+    else if (value < this.min) value = this.min;
+    this._value = value;
+  }
+
+  @property({ type: Number })
+  scaleFactor = 1;
+
+  @property({ type: String })
+  unit = '';
+
+  @property({ type: Boolean })
+  optional = false;
+
+  @property({ type: Boolean })
+  disabled = false;
+
+  //displayed value
+  @property({ type: Number })
+  _value: number = 0;
 
   firstUpdated() {
     (async () => await loadHaForm())();
 
-    if (this.unit == UnitPercent) {
-      this.scaleOffset = this.min;
-      this.scaleGain = (this.max - this.min) / 100;
-      this.min = 0;
-      this.max = 100;
+    if (this.disabled && !this.optional) {
+      this.disabled = false;
+      this.requestUpdate();
     }
-    if (this.disabled && !this.optional) this.disabled = false;
-    if (isNaN(this.value)) this.value = this.min;
-
-    this.requestUpdate();
   }
 
   render() {
@@ -42,20 +65,10 @@ export class VariableSlider extends LitElement {
           ${this.getSlider()}
         </div>
         <div class="value${this.disabled ? ' disabled' : ''}">
-          ${this.getScaledValue()}${this.unit}
+          ${this._value}${this.unit}
         </div>
       </div>
     `;
-  }
-
-  getScaledValue() {
-    const value = this.value;
-    let scaledValue = (value - this.scaleOffset) / this.scaleGain;
-    scaledValue = Math.round(scaledValue / this.step) * this.step;
-    scaledValue = parseFloat(scaledValue.toPrecision(12));
-    if (scaledValue < this.min) scaledValue = this.min;
-    else if (scaledValue > this.max) scaledValue = this.max;
-    return scaledValue;
   }
 
   getSlider() {
@@ -66,8 +79,8 @@ export class VariableSlider extends LitElement {
           min=${this.min}
           max=${this.max}
           step=${this.step}
-          value=${this.getScaledValue()}
-          @change=${this.updateValue}
+          value=${this._value}
+          @change=${this._updateValue}
         ></ha-slider>
       `;
     } else {
@@ -77,7 +90,7 @@ export class VariableSlider extends LitElement {
           min=${this.min}
           max=${this.max}
           step=${this.step}
-          value=${this.getScaledValue()}
+          value=${this._value}
           disabled
         ></ha-slider>
       `;
@@ -94,16 +107,17 @@ export class VariableSlider extends LitElement {
   toggleChecked(e: Event) {
     const checked = (e.target as HTMLInputElement).checked;
     this.disabled = !checked;
-    const myEvent = new CustomEvent('change');
-    this.dispatchEvent(myEvent);
+    let value = this.disabled
+      ? null
+      : Math.round(this._value * this.scaleFactor);
+    fireEvent(this, 'value-changed', { value: value });
   }
 
-  updateValue(e: Event) {
-    const value = Number((e.target as HTMLInputElement).value);
-    let unscaledValue = value * this.scaleGain + this.scaleOffset;
-    unscaledValue = Math.round(unscaledValue / this.step) * this.step;
-    unscaledValue = parseFloat(unscaledValue.toPrecision(12));
-    this.value = unscaledValue;
+  private _updateValue(e: Event) {
+    let value = Number((e.target as HTMLInputElement).value);
+    this._value = value;
+    value = Math.round(value * this.scaleFactor);
+    fireEvent(this, 'value-changed', { value: value });
   }
 
   static styles = css`

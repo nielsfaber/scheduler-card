@@ -25,7 +25,8 @@ export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefin
         brightness: levelVariable({
           name: hass.localize('ui.card.light.brightness'),
           min: 0,
-          max: 255,
+          max: 100,
+          scale_factor: 2.55,
           step: 1,
           unit: '%',
           optional: true,

@@ -158,10 +158,11 @@ export interface ListVariable extends Variable {
 }
 
 export interface LevelVariable extends Variable {
-  unit?: string;
-  min?: number;
-  max?: number;
-  step?: number;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  scale_factor: number;
   optional: boolean;
 }
 

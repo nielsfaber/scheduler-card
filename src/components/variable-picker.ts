@@ -3,6 +3,7 @@ import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable } fr
 
 import './variable-slider';
 import './button-group';
+import { fireEvent } from 'custom-card-helpers';
 
 @customElement('scheduler-variable-picker')
 export class SchedulerVariablePicker extends LitElement {
@@ -18,11 +19,9 @@ export class SchedulerVariablePicker extends LitElement {
     else return html``;
   }
 
-  private levelVariableUpdated(ev: Event) {
-    const value = Number((ev.target as HTMLInputElement).value);
-    this.value = value;
-    const myEvent = new CustomEvent('change');
-    this.dispatchEvent(myEvent);
+  private levelVariableUpdated(ev: CustomEvent) {
+    this.value = ev.detail.value;
+    fireEvent(this, 'value-changed', { value: ev.detail.value });
   }
 
   renderLevelVariable() {
@@ -31,13 +30,15 @@ export class SchedulerVariablePicker extends LitElement {
 
     return html`
       <variable-slider
-        min=${variable.min || 0}
-        max=${variable.max || 255}
-        step=${variable.step || 1}
+        min=${variable.min}
+        max=${variable.max}
+        step=${variable.step}
+        scaleFactor=${variable.scale_factor}
         value=${value}
         .unit=${variable.unit}
         ?optional=${variable.optional}
-        @change=${this.levelVariableUpdated} 
+        ?disabled=${isNaN(value)}
+        @value-changed=${this.levelVariableUpdated} 
       >
       </variable-slider>
     `;
@@ -46,8 +47,7 @@ export class SchedulerVariablePicker extends LitElement {
   private listVariableUpdated(ev: Event | string) {
     const value = typeof ev == 'string' ? ev : String((ev.target as HTMLInputElement).value);
     this.value = value;
-    const myEvent = new CustomEvent('change');
-    this.dispatchEvent(myEvent);
+    fireEvent(this, 'value-changed', { value: value });
   }
 
   renderListVariable() {

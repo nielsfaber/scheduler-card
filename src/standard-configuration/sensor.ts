@@ -1,7 +1,6 @@
 import { HassEntity } from 'home-assistant-js-websocket';
 import { HomeAssistant } from 'custom-card-helpers';
 import { levelVariable } from '../data/variables/level_variable';
-import { UnitPercent } from '../const';
 import { textVariable } from '../data/variables/text_variable';
 
 export const sensorIcon = (stateObj: HassEntity) => {
@@ -31,9 +30,9 @@ export const sensorStates = (_hass: HomeAssistant, stateObj: HassEntity) => {
     const unit = stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : '';
     return levelVariable({
       unit: unit,
-      min: unit == UnitPercent ? 0 : undefined,
-      max: unit == UnitPercent ? 100 : undefined,
-      step: unit == UnitPercent ? 1 : undefined,
+      min: unit == '%' ? 0 : undefined,
+      max: unit == '%' ? 100 : undefined,
+      step: unit == '%' ? 1 : undefined,
     });
   }
   else {

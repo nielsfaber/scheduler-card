@@ -84,6 +84,7 @@ export function ValidateConfig(config: any) {
             Optional(variableCfg, 'min', 'number');
             Optional(variableCfg, 'max', 'number');
             Optional(variableCfg, 'step', 'number');
+            Optional(variableCfg, 'scale_factor', 'number');
             Optional(variableCfg, 'optional', 'boolean');
             Optional(variableCfg, 'unit', 'string');
           }
@@ -163,6 +164,7 @@ export function ValidateConfig(config: any) {
           Required(entryObj.states, 'min', 'number');
           Required(entryObj.states, 'max', 'number');
           Optional(entryObj.states, 'step', 'number');
+          Optional(entryObj.states, 'scale_factor', 'number');
           Optional(entryObj.states, 'unit', 'string');
         }
       }

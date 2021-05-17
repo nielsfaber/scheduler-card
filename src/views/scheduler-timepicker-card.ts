@@ -250,28 +250,19 @@ export class SchedulerTimepickerCard extends LitElement {
       });
     }
     else if (data) {
+      //update service_data
       Object.entries(data).forEach(([key, val]) => {
-        if (typeof val == "object" && key in this.schedule.timeslots[this.activeEntry!].actions[num]) {
-          this.updateActiveEntry({
-            actions: Object.assign(
-              [...this.schedule.timeslots[this.activeEntry!].actions],
-              {
-                [num]: {
-                  ...this.schedule.timeslots[this.activeEntry!].actions[num], [key]: {
-                    ...this.schedule.timeslots[this.activeEntry!].actions[num][key],
-                    ...val
-                  }
-                }
-              })
-          });
-        }
-        else {
-          this.updateActiveEntry({
-            actions: Object.assign(
-              [...this.schedule.timeslots[this.activeEntry!].actions],
-              { [num]: { ...this.schedule.timeslots[this.activeEntry!].actions[num], [key]: val } })
-          });
-        }
+        let actionConfig = [...this.schedule.timeslots[this.activeEntry!].actions];
+        let serviceData = typeof val == "object" && key in this.schedule.timeslots[this.activeEntry!].actions[num]
+          ? { ...actionConfig[num][key], ...val }
+          : val;
+        const invalidParams = Object.keys(serviceData).filter(e => serviceData[e] === null);
+        if (invalidParams.length) serviceData = omit(serviceData, ...invalidParams);
+
+        actionConfig = Object.assign(actionConfig, {
+          [num]: { ...actionConfig[num], [key]: serviceData }
+        });
+        this.updateActiveEntry({ actions: actionConfig });
       });
     }
     else {
@@ -337,9 +328,9 @@ export class SchedulerTimepickerCard extends LitElement {
           <scheduler-variable-picker
             .variable=${variable}
             .value=${action.service_data ? action.service_data[field] : null}
-            @change=${(ev: CustomEvent) => this.entities!.forEach((_, num) => {
+            @value-changed=${(ev: CustomEvent) => this.entities!.forEach((_, num) => {
           this.updateActiveEntryAction({
-            service_data: { [field]: (ev.target as HTMLInputElement).value }
+            service_data: { [field]: ev.detail.value }
           }, num);
         })}
           >
