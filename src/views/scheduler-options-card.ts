@@ -214,10 +214,28 @@ export class SchedulerOptionsCard extends LitElement {
       const entity = this.selectedEntity;
       const states = computeStates(entity.id, this.hass, this.config);
 
-      const matchTypes = states?.type == EVariableType.Level
-        ? Object.entries(pick(this.matchTypes, [EConditionMatchType.Above, EConditionMatchType.Below])).map(([k, v]) => Object.assign(v, { id: k }))
-        : Object.entries(pick(this.matchTypes, [EConditionMatchType.Equal, EConditionMatchType.Unequal])).map(([k, v]) => Object.assign(v, { id: k }));
-      return html`
+
+      let availableMatchTypes: EConditionMatchType[];
+      if(states?.type == EVariableType.Level)
+        availableMatchTypes = [EConditionMatchType.Above, EConditionMatchType.Below];
+      else if(states?.type == EVariableType.List)
+        availableMatchTypes = [EConditionMatchType.Equal, EConditionMatchType.Unequal];
+      else {
+        const currentState = entity.id in this.hass.states
+        ? this.hass.states[entity.id].state
+        : null;
+        if(!currentState || ['unavailable','unknown'].includes(currentState))
+          availableMatchTypes = [EConditionMatchType.Equal, EConditionMatchType.Unequal, EConditionMatchType.Above, EConditionMatchType.Below];
+        else if(!isNaN(Number(currentState)))
+          availableMatchTypes = [EConditionMatchType.Above, EConditionMatchType.Below];
+        else
+          availableMatchTypes = [EConditionMatchType.Equal, EConditionMatchType.Unequal];
+      }
+
+      const matchTypes = Object.entries(pick(this.matchTypes, availableMatchTypes))
+        .map(([k, v]) => Object.assign(v, { id: k }))
+
+        return html`
       <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
       <div style="display: flex; flex-direction: row; align-items: center">
         <mwc-button class="active" disabled style="--mdc-button-disabled-ink-color: var(--text-primary-color)"
