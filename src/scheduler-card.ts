@@ -298,7 +298,7 @@ export class SchedulerCard extends LitElement {
     const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id || e.service))));
     this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
     let actions = computeActions(entities, this._hass, this._config);
-    const usedActions: Action[] = unique(flatten(data.timeslots.map(e => e.actions)));
+    const usedActions = unique(flatten(data.timeslots.map(e => e.actions)));
     let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e, true)));
     if (extraActions.length) {
       //actions that are not in the card

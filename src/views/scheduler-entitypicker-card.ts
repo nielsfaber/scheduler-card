@@ -1,4 +1,4 @@
-import { LitElement, html, customElement, property } from 'lit-element';
+import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, ScheduleConfig, Action, Group } from '../types';
@@ -13,21 +13,42 @@ import { computeEntities } from '../data/entities/compute_entities';
 import { computeActions } from '../data/actions/compute_actions';
 
 import '../components/button-group';
+import { compareActions } from '../data/actions/compare_actions';
 
 @customElement('scheduler-editor-card')
 export class SchedulerEditorCard extends LitElement {
-  @property() hass?: HomeAssistant;
-  @property() config?: CardConfig;
-  @property() selectedGroup?: Group;
-  @property() selectedEntities: string[] = [];
-  @property() selectedAction?: Action | null;
-  @property() entities?: EntityElement[];
-  @property() schedule?: ScheduleConfig;
-  @property() multipleEntity = false;
-  @property() scheduleEntities: string[] = [];
-  @property() timeSchemeSelected = false;
+  @property()
+  hass?: HomeAssistant;
+
+  @property()
+  config?: CardConfig;
+
+  @property() 
+  selectedGroup?: Group;
+
+  @property()
+  selectedEntities: string[] = [];
+
+  @property()
+  selectedAction?: Action | null;
+
+  @property()
+  entities?: EntityElement[];
+
+  @property()
+  schedule?: ScheduleConfig;
+
+  @property()
+  multipleEntity = false;
+
+  @property()
+  scheduleEntities: string[] = [];
+
+  @property()
+  timeSchemeSelected = false;
 
   async firstUpdated() {
+    this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
     if (this.entities && this.entities.length) {
       const group = this.getGroups().find(group => group.entities.find(e => e == this.entities![0].id));
       if (!group) return;
@@ -40,10 +61,11 @@ export class SchedulerEditorCard extends LitElement {
       if (this.schedule.timeslots.every(e => e.stop)) this.timeSchemeSelected = true;
       else {
         const actions = unique(flatten(this.schedule.timeslots.map(e => e.actions)));
-        if (actions.length == 1) this.selectedAction = actions[0];
+        const matchedActions = this.getActionsForEntity()
+          .filter(e => actions.some(a => compareActions(a, e, true)));
+        if (matchedActions.length == 1) this.selectedAction = matchedActions[0];
       }
     }
-    this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
   }
 
   getGroups() {
@@ -73,10 +95,8 @@ export class SchedulerEditorCard extends LitElement {
 
   render() {
     if (!this.hass || !this.config) return html``;
-
     const groups = this.getGroups();
     if (groups.length == 1 && !isEqual(this.selectedGroup, groups[0])) this.selectGroup(groups[0]);
-
     const entities = this.getEntitiesForGroup();
     if (entities.length == 1 && this.selectedEntities[0] !== entities[0].id) this.selectEntity(entities[0].id);
 
@@ -179,7 +199,12 @@ export class SchedulerEditorCard extends LitElement {
 
   selectEntity(value: string | string[]) {
     this.selectedEntities = Array.isArray(value) ? value : [value];
-    this.selectedAction = undefined;
+    if(this.selectedAction) {
+      const availableActions = this.getActionsForEntity();
+      if(!availableActions.find(e => compareActions(e, this.selectedAction!)))
+        this.selectedAction = undefined;
+    }
+    else this.selectedAction = undefined;
   }
 
   selectAction(val: Action) {
