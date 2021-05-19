@@ -212,15 +212,15 @@ export class SchedulerTimepickerCard extends LitElement {
   renderActions() {
     if (!this.hass) return;
 
-    const selectedAction = this.activeEntry !== null
-      ? this.schedule.timeslots[this.activeEntry!].actions.map(e => importAction(e, this.hass!)).shift() || null
+    const selectedAction = this.activeEntry !== null && this.schedule.timeslots[this.activeEntry!].actions.length
+      ? this.schedule.timeslots[this.activeEntry!].actions[0]
       : null;
 
     return html`
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
       <button-group
         .items=${this.activeEntry !== null ? this.actions : []}
-        .value=${selectedAction !== null ? this.actions?.findIndex(e => compareActions(e, selectedAction!)) : null}
+        .value=${selectedAction !== null ? this.actions?.findIndex(e => compareActions(e, selectedAction!, true)) : null}
         optional="true"
         @change=${this.selectAction}
       >
