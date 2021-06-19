@@ -282,6 +282,7 @@ export class TimeslotEditor extends LitElement {
       ...this.entries.slice(0, this._activeEntry!),
       { ...this.entries[this._activeEntry!], stop: timeToString(newStop) },
       {
+        ...this.entries[this._activeEntry!],
         start: timeToString(newStop),
         stop: timeToString(endTime),
         actions: []
