@@ -33,6 +33,8 @@
     - [Conditions](#conditions)
   - [Display options](#display-options)
 - [Translations](#translations)
+- [Tips & Tricks](#tips--tricks)
+  - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
 - [Troubleshooting](#troubleshooting)
 - [Say thank you](#say-thank-you)
 
@@ -659,6 +661,94 @@ Currently the following languages are supported:
 
 The translations are maintained by users.
 If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/main/src/localize/languages/en.json) file as a starting point.
+
+---
+
+## Tips & Tricks
+
+### Triggering multiple actions on a schedule
+
+The scheduler-card can only be used to create schedules to trigger a single action at a certain point in time.
+
+Recently, support has been added to trigger an action on a [group](https://www.home-assistant.io/integrations/group/) and for targeting multiple entities for the action (but they have to be of the same type).
+
+If you want to trigger a sequence of actions (e.g. *"set fan mode + temperature setpoint for my airconditioner"*), the recommended way to do so, is by creating a script.
+Scripts can be combined with variables to pass some settings which can be configured through the card.
+
+<u>Example</u>
+
+*Setting fan mode + heating/cooling to a certain temperature.*
+
+scheduler-card configuration:
+
+(note that `customize` is only available in YAML editing mode):
+
+
+
+```yaml
+customize:
+  script.set_climate_livingroom:
+    actions:
+      - service: script.set_climate_livingroom
+        name: Set climate
+        icon: mdi:air-conditioner
+        variables:
+          hvac_mode:
+            name: HVAC mode
+            options:
+              - value: heat
+                icon: mdi:fire
+              - value: cool
+                icon: mdi:snowflake
+              - value: 'off'
+                icon: mdi:power
+          temperature:
+            name: Temperature
+            min: 12
+            max: 30
+          fan_mode:
+            name: Fan mode
+            options:
+              - value: auto
+                icon: mdi:fan-auto
+              - value: high
+                icon: mdi:fan-speed-3
+              - value: quiet
+                icon: mdi:fan-speed-1
+
+```
+
+In `scripts.yaml`:
+```yaml
+set_climate_livingroom:
+  alias: Set climate livingroom
+  description: "Sets climate parameters for scheduler-card"
+  variables:
+    target_entity: climate.my_airconditioner
+  sequence:
+    - service: climate.set_temperature
+      data:
+        temperature: "{{ temperature }}" # match with variable in the card config
+      target:
+        entity_id: "{{ target_entity }}"
+    - delay: # wait a bit, otherwise the next service call may fail
+        seconds: 1
+    - service: climate.set_fan_mode
+      target:
+        entity_id: "{{ target_entity }}"
+      data:
+        fan_mode: "{{ fan_mode }}" # match with variable in the card config
+    - delay: # wait a bit, otherwise the next service call may fail
+        seconds: 1
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: "{{ target_entity }}"
+      data:
+        hvac_mode: "{{ hvac_mode }}" # match with variable in the card config
+  mode: single
+  icon: mdi:air-conditioner
+
+```
 
 ---
 
