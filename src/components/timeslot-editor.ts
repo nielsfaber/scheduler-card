@@ -131,7 +131,7 @@ export class TimeslotEditor extends LitElement {
 
   updated() {
     this.shadowRoot.querySelectorAll('.slider-thumb-tooltip').forEach((el, i) => {
-      //cannot assign text to element directly in Lit 3
+      //cannot assign text to element directly in Lit 2
       //el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
       el.childNodes[2].textContent = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
     });
@@ -272,7 +272,7 @@ export class TimeslotEditor extends LitElement {
     startOfDay.setHours(0, 0, 0, 0);
     const ts = new Date(startOfDay.getTime() + this._currentTime! * 1000);
     const target = ev.target as HTMLElement;
-    //cannot assign text to element directly in Lit 3
+    //cannot assign text to element directly in Lit 2
     //target.innerText = formatTime(ts, this.hass!.language);
     target.childNodes[2].textContent = formatTime(ts, this.hass!.language);
   }
