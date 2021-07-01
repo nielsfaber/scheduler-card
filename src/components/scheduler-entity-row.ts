@@ -1,5 +1,6 @@
-import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { LitElement, html, css, PropertyValues } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { CardConfig, ETimeEvent, EDayType, Schedule, Timeslot, WeekdayType, Action } from '../types';
 import { PrettyPrintName, capitalize, PrettyPrintIcon, unique } from '../helpers';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';

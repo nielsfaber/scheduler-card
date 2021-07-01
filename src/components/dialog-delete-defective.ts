@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, property, CSSResult, css, internalProperty } from 'lit-element';
+import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant, fireEvent } from 'custom-card-helpers';
 import { commonStyle } from '../styles';
 
@@ -6,7 +7,7 @@ import { commonStyle } from '../styles';
 export class DialogDeleteDefective extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @internalProperty() private _params?: any;
+  @state() private _params?: any;
 
   public async showDialog(params: any): Promise<void> {
     this._params = params;
@@ -78,7 +79,7 @@ export class DialogDeleteDefective extends LitElement {
 
 
 
-  static get styles(): CSSResult {
+  static get styles(): CSSResultGroup {
     return css`
       div.wrapper {
         color: var(--primary-text-color);

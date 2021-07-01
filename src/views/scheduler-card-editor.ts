@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
+import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, computeEntity } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from '../types';
 import { PrettyPrintIcon } from '../helpers';
@@ -261,7 +262,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     fireEvent(this, 'config-changed', { config: this._config });
   }
 
-  static get styles(): CSSResult {
+  static get styles(): CSSResultGroup {
     return css`
       ${commonStyle}
       div.row {

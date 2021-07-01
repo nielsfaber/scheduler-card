@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, property, PropertyValues, internalProperty } from 'lit-element';
+import { LitElement, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { PrettyPrintIcon, PrettyPrintName } from '../helpers';
 import { commonStyle } from '../styles';
 

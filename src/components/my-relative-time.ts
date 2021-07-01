@@ -1,4 +1,5 @@
-import { customElement, LitElement, property, html } from 'lit-element';
+import { LitElement, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
 import { capitalize } from '../helpers';
 import { formatWeekday } from '../data/date-time/format_weekday';

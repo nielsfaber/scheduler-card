@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, property, PropertyValues } from 'lit-element';
+import { LitElement, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, ScheduleConfig, Action, Group } from '../types';
@@ -23,7 +24,7 @@ export class SchedulerEditorCard extends LitElement {
   @property()
   config?: CardConfig;
 
-  @property() 
+  @property()
   selectedGroup?: Group;
 
   @property()
@@ -199,9 +200,9 @@ export class SchedulerEditorCard extends LitElement {
 
   selectEntity(value: string | string[]) {
     this.selectedEntities = Array.isArray(value) ? value : [value];
-    if(this.selectedAction) {
+    if (this.selectedAction) {
       const availableActions = this.getActionsForEntity();
-      if(!availableActions.find(e => compareActions(e, this.selectedAction!)))
+      if (!availableActions.find(e => compareActions(e, this.selectedAction!)))
         this.selectedAction = undefined;
     }
     else this.selectedAction = undefined;

@@ -1,5 +1,5 @@
-import { LitElement, html, customElement, css, property, PropertyValues } from 'lit-element';
-
+import { LitElement, html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { loadHaForm } from '../load-ha-form';
 import { commonStyle } from '../styles';
 import { fireEvent } from 'custom-card-helpers';

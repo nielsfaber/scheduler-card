@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, css, property } from 'lit-element';
+import { LitElement, html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
 import { DefaultTimeStep } from '../const';
 import { ETimeEvent } from '../types';

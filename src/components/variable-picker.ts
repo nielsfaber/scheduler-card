@@ -1,4 +1,5 @@
-import { LitElement, customElement, property, html } from 'lit-element';
+import { LitElement, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable } from '../types';
 
 import './variable-slider';

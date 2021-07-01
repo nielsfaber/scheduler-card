@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, css, property, TemplateResult, eventOptions } from 'lit-element';
+import { LitElement, html, css, TemplateResult } from 'lit';
+import { property, customElement, eventOptions } from 'lit/decorators.js';
 import { localize } from '../localize/localize';
 import { EVariableType, Timeslot, LevelVariable, ListVariable, Action } from '../types';
 import { PrettyPrintName, unique } from '../helpers';
@@ -130,7 +131,9 @@ export class TimeslotEditor extends LitElement {
 
   updated() {
     this.shadowRoot.querySelectorAll('.slider-thumb-tooltip').forEach((el, i) => {
-      el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
+      //cannot assign text to element directly in Lit 3
+      //el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
+      el.childNodes[2].textContent = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
     });
   }
 
@@ -269,7 +272,9 @@ export class TimeslotEditor extends LitElement {
     startOfDay.setHours(0, 0, 0, 0);
     const ts = new Date(startOfDay.getTime() + this._currentTime! * 1000);
     const target = ev.target as HTMLElement;
-    target.innerText = formatTime(ts, this.hass!.language);
+    //cannot assign text to element directly in Lit 3
+    //target.innerText = formatTime(ts, this.hass!.language);
+    target.childNodes[2].textContent = formatTime(ts, this.hass!.language);
   }
 
   private _addSlot() {

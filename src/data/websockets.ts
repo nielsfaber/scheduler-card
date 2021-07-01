@@ -1,6 +1,6 @@
 import { HomeAssistant, fireEvent } from "custom-card-helpers";
 import { Schedule, ScheduleConfig } from "../types";
-import { TemplateResult, html } from "lit-element";
+import { html, TemplateResult } from 'lit';
 
 export const fetchSchedules = (hass: HomeAssistant): Promise<Schedule[]> =>
   hass.callWS({
