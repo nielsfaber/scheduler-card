@@ -64,6 +64,7 @@
     "light": "luces",
     "lock": "cerraduras",
     "media_player": "reproductores",
+    "automation": "automatizaciones",
     "scene": "escenas",
     "script": "scripts",
     "switch": "interruptores",
