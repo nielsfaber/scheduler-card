@@ -1,0 +1,135 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} 至 {value}",
+      "action_with_parameter": "{action} 使用 {parameter}"
+    },
+    "climate": {
+      "set_temperature": "设定温度[ 至 {temperature}]",
+      "set_temperature_hvac_mode_heat": "制热模式[ 至 {temperature}]",
+      "set_temperature_hvac_mode_cool": "制冷模式[ 至 {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "调节[ 至 {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "设定模式[ 为 {hvac_mode}]",
+      "set_preset_mode": "设定预设模式[ 为 {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "关闭",
+      "open_cover": "打开",
+      "set_cover_position": "设定位置[ 至 {position}]",
+      "set_cover_tilt_position": "设定倾斜位置[ 至 {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "设定风速[ 至 {speed}]",
+      "set_direction": "设定方向[ 至 {direction}]",
+      "oscillate": "设置摇摆[ 至 {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "设定湿度[ 至 {humidity}]"
+    },
+    "input_number": {
+      "set_value": "设定数值[ 至 {value}]"
+    },
+    "input_select": {
+      "select_option": "选择选项[ {option}]"
+    },
+    "light": {
+      "turn_on": "打开[ 并设定亮度为 {brightness}]"
+    },
+    "media_player": {
+      "select_source": "选择播放源[ {source}]"
+    },
+    "notify": {
+      "notify": "发送通知"
+    },
+    "script": {
+      "script": "执行"
+    },
+    "vacuum": {
+      "start_pause": "开始 / 暂停"
+    },
+    "water_heater": {
+      "set_away_mode": "设定离开模式"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "警戒控制面板",
+    "climate": "空调/地暖",
+    "cover": "窗帘",
+    "fan": "风扇/空气净化器",
+    "group": "实体组",
+    "humidifier": "空气加湿器",
+    "input_boolean": "输入二元选择器",
+    "input_number": "输入数值",
+    "input_select": "输入选择",
+    "light": "灯具",
+    "lock": "门锁",
+    "media_player": "媒体播放器",
+    "scene": "场景",
+    "script": "脚本",
+    "switch": "开关",
+    "vacuum": "扫地机/吸尘器",
+    "water_heater": "热水器"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "每日",
+          "workdays": "工作日",
+          "weekend": "周末"
+        },
+        "day_types_long": {
+          "daily": "每一天",
+          "workdays": "在工作日",
+          "weekend": "在周末"
+        },
+        "days": "天",
+        "tomorrow": "明天",
+        "repeated_days": "每 {days}",
+        "repeated_days_except": "每天，除了 {excludedDays}",
+        "days_range": "从 {startDay} 至 {endDay}"
+      },
+      "time": {
+        "absolute": "在 {time}",
+        "interval": "从 {startTime} 至 {endTime}",
+        "at_midnight": "在午夜",
+        "at_noon": "在正午",
+        "at_sun_event": "在 {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "计划任务"
+      },
+      "overview": {
+        "no_entries": "无事项",
+        "backend_error": "计划任务组件关联失败。本卡片使用前，需先安装计划任务组件和集成.",
+        "excluded_items": "{number} 除外 {if number is 1} 事项 {else} 事项",
+        "hide_excluded": "隐藏除外事项",
+        "additional_tasks": "{number} 更多 {if number is 1} 任务 {else} 任务"
+      },
+      "entity_picker": {
+        "no_groups_defined": "未添加需执行计划任务的群组",
+        "no_group_selected": "请选择群组",
+        "no_entities_for_group": "群组不含实体",
+        "no_entity_selected": "请选择实体",
+        "no_actions_for_entity": "该实体不含可执行的动作",
+        "make_scheme": "制定计划",
+        "multiple": "多选"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "请选择时间段"
+      },
+      "conditions": {
+        "equal_to": "是",
+        "unequal_to": "非",
+        "all": "全部",
+        "any": "任一",
+        "no_conditions_defined": "未定义条件"
+      },
+      "options": {
+        "repeat_type": "触发后的行为"
+      }
+    }
+  }
+}
