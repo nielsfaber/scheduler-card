@@ -71,7 +71,7 @@ export class SchedulerCard extends LitElement {
       });
     }
 
-    const myEvent = new CustomEvent('editClick', { detail: "e6f89d" });
+    const myEvent = new CustomEvent('editClick', { detail: "248fa4" });
     this._editItemClick(myEvent);
   }
 

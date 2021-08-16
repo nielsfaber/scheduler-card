@@ -1,4 +1,4 @@
-import { LitElement, html, customElement, property, eventOptions, CSSResult, css } from 'lit-element';
+import { LitElement, html, customElement, property, eventOptions, CSSResult, css, PropertyValues } from 'lit-element';
 import { Timeslot, Action, EVariableType, LevelVariable, ListVariable } from '../types';
 import { HomeAssistant } from 'custom-card-helpers';
 import { stringToTime, timeToString, roundTime } from '../data/date-time/time';
@@ -39,14 +39,23 @@ export class TimeslotEditorNew extends LitElement {
 
   currentTime: number = 0;
 
-  @property() rangeMin: number = 0;
-  @property() rangeMax: number = SEC_PER_DAY;
-  @property() activeSlot: number | null = null;
+  @property()
+  rangeMin: number = 0; //lower bound of zoomed timeframe
 
+  @property()
+  rangeMax: number = SEC_PER_DAY; //upper bound of zoomed timeframe
+
+  @property()
+  activeSlot: number | null = null;
+
+  @property()
+  activeMarker: number | null = null;
+
+  previousSlot: number | null = null;
   timer: number = 0;
+  timeout: number = 0;
 
-  firstUpdated() {
-  }
+  zoomFactor: number = 1;
 
   render() {
     if (!this.hass) return html``;
@@ -56,6 +65,18 @@ export class TimeslotEditorNew extends LitElement {
     const left = (-this.rangeMin / (this.rangeMax - this.rangeMin)) * fullWidth;
 
     return html`
+    <div style="float: right">
+    <ha-icon-button
+      icon="hass:magnify-minus-outline"
+      @click=${this._zoomOut}
+      ?disabled=${this.zoomFactor == 1}
+    ></ha-icon-button>
+    <ha-icon-button
+      icon="hass:magnify-plus-outline"
+      @click=${this._zoomIn}
+      ?disabled=${this.zoomFactor == 4}
+    ></ha-icon-button>
+    </div>
     <div class="outer">
     <div
       class="wrapper ${this.isDragging ? "" : "selectable"}"
@@ -98,17 +119,12 @@ export class TimeslotEditorNew extends LitElement {
         const leftMargin =
           start < 0 && start + w * width > 0
             ? -start + 5
-            : this.activeSlot !== null && ((i == this.activeSlot && i > 0) || i == this.activeSlot + 1)
-              ? 15
-              : 5;
+            : 15;
 
         const rightMargin =
           start + w * width > fullWidth && start < fullWidth
             ? w * width - (fullWidth - start) + 5
-            : this.activeSlot !== null &&
-              ((i == this.activeSlot && i < this.slots.length - 1) || i == this.activeSlot - 1)
-              ? 15
-              : 5;
+            : 15;
 
         const availableWidth = w * width - leftMargin - rightMargin;
 
@@ -118,40 +134,56 @@ export class TimeslotEditorNew extends LitElement {
         <div
           class="slot${this.activeSlot == i ? ' active' : ''} ${w * width < 2 ? "noborder" : ""}"
           style="width: ${Math.floor(w * 10000) / 100}%"
-          @click=${this._handleSlotClick}
-          .slot="${i}"
+          @click=${this._selectSlot}
+          slot="${i}"
         >
           ${i > 0 && (this.activeSlot === i || this.activeSlot === i - 1)
             ? html`
+              <div class="handle">
+                <div class="button-holder">
                 <ha-icon-button
                   icon="hass:unfold-more-vertical"
                   @mousedown=${this._handleTouchStart}
                   @touchstart=${this._handleTouchStart}
+                  @focus=${this._selectMarker}
+                  @blur=${(ev: Event) => this._selectMarker(ev, false)}
                 >
-                </ha-icon-button>
+                </ha-icon-button></div>
+              </div>
               `
             : ''}
 
 
           ${i > 0
-            ? html`
-              <div
-                class="tooltip ${i == this.activeSlot ? 'left' : (i - 1) == this.activeSlot ? 'right' : 'hidden'}"
-              >
-                ${formatTime(stringToDate(this.slots[i].start), this.hass!.language)}
-              </div>
-            `
+            ? this.renderTooltip(i)
             : ''}
 
           <span style="margin-left: ${leftMargin.toFixed(2)}px; margin-right: ${rightMargin.toFixed(2)}px">
-            ${actionText && (availableWidth > textWidth || availableWidth > 50) ? actionText : ''}
+            ${actionText && (availableWidth > textWidth / 3 || availableWidth > 50) && availableWidth > 30 ? actionText : ''}
           </span>
         </div>
       `;
       });
   }
 
+  renderTooltip(i: number) {
+
+    const entry = i != this.previousSlot && (i - 1) != this.previousSlot;
+    const leftSide = this.activeSlot == i;
+    const rightSide = this.activeSlot == (i - 1);
+
+    return html`
+      <div
+        class="tooltip"
+        @click=${this._selectMarker}
+      >
+        ${formatTime(stringToDate(this.slots[i].start), this.hass!.language)}
+      </div>
+    `;
+  }
+
   renderTimes() {
+    this._updateTooltips();
     const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
     const width = (SEC_PER_DAY / (this.rangeMax - this.rangeMin)) * fullWidth;
     let prevWidth = fullWidth;
@@ -161,7 +193,7 @@ export class TimeslotEditorNew extends LitElement {
       prevWidth = (w / 100) * width;
       return html`
         <div style="width: ${Math.floor(w * 100) / 100}%">
-          ${show ? `${e.start}` : ''}
+          ${show ? `${formatTime(stringToDate(e.start), this.hass!.language)}` : ''}
         </div>
       `;
     });
@@ -197,14 +229,16 @@ export class TimeslotEditorNew extends LitElement {
 
   @eventOptions({ passive: true })
   private _handleTouchStart(ev: MouseEvent | TouchEvent) {
-    const target = ev.target as HTMLElement;
 
     const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
     const width = (SEC_PER_DAY / (this.rangeMax - this.rangeMin)) * fullWidth;
     const left = (-this.rangeMin / (this.rangeMax - this.rangeMin)) * fullWidth;
     const Toffset = -left / width * SEC_PER_DAY;
 
-    const rightSlot = (ev.target as HTMLElement).parentElement as HTMLElement;
+    let el = ev.target as HTMLElement;
+    while (!el.classList.contains("slot")) el = el.parentElement as HTMLElement;
+
+    const rightSlot = el;
     const leftSlot = rightSlot.previousElementSibling as HTMLElement;
 
     const i = Number(leftSlot.getAttribute("slot"));
@@ -249,10 +283,6 @@ export class TimeslotEditorNew extends LitElement {
         }
       });
       this.requestUpdate();
-      // let w1 = (time - Tmin) / SEC_PER_DAY * width;
-      // let w2 = (Tmax - time ) / SEC_PER_DAY * width;
-      // leftSlot.style.width = `${w1}px`;
-      // rightSlot.style.width = `${w2}px`;
     };
 
     const mouseUpHandler = () => {
@@ -262,8 +292,7 @@ export class TimeslotEditorNew extends LitElement {
       window.removeEventListener('touchend', mouseUpHandler);
       mouseMoveHandler = () => {
         /**/
-      };
-
+      }
       setTimeout(() => {
         this.isDragging = false;
       }, 100);
@@ -278,42 +307,59 @@ export class TimeslotEditorNew extends LitElement {
     window.addEventListener('touchmove', mouseMoveHandler);
   }
 
-  _handleSlotClick(ev: Event) {
+  _selectSlot(ev: Event) {
     if (this.isDragging) return;
     let el = (ev.target as HTMLElement);
     if (el.tagName.toLowerCase() == "span") el = el.parentElement as HTMLElement;
-
+    if (el.classList.contains("handle")) el = el.parentElement as HTMLElement;
     const slot = Number(el.getAttribute("slot"));
     if (this.activeSlot == slot) {
       this.activeSlot = null;
-      this.rangeMin = 0;
-      this.rangeMax = SEC_PER_DAY;
-      return;
+      // this.rangeMin = 0;
+      // this.rangeMax = SEC_PER_DAY;
+      this.previousSlot = null;
     }
+    else {
+      this.previousSlot = this.activeSlot;
+      this.activeSlot = slot;
+      //this._calculateZoom();
+    }
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entry: this.activeSlot } });
+    this.dispatchEvent(myEvent);
+  }
 
-    this.activeSlot = slot;
-    let min = stringToTime(this.slots[slot].start) - SEC_PER_HOUR;
-    let max = (stringToTime(this.slots[slot].stop!) || SEC_PER_DAY) + SEC_PER_HOUR;
+  _calculateZoom() {
+    const slot = Number(this.activeSlot);
+    let min = stringToTime(this.slots[slot].start);
+    let max = (stringToTime(this.slots[slot].stop!) || SEC_PER_DAY);
 
     const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+
+    min -= (max - min) / 3;
+    max += (max - min) / 3;
+
     if ((max - min) / SEC_PER_DAY * fullWidth >= 100) {
       min = 0;
       max = SEC_PER_DAY;
     } else {
-      if (min < 0) {
-        max -= min;
-        min = 0;
-      }
-      if (max > SEC_PER_DAY) {
-        min -= max - SEC_PER_DAY;
-        max = SEC_PER_DAY;
-      }
+      if (min < 0) max -= min;
+      if (max > SEC_PER_DAY) min -= max - SEC_PER_DAY;
     }
-    this.rangeMin = min;
-    this.rangeMax = max;
+    this.rangeMin = min > 0 ? min : 0;
+    this.rangeMax = max < SEC_PER_DAY ? max : SEC_PER_DAY;
 
-    const myEvent = new CustomEvent('update', { detail: { entry: this.activeSlot } });
-    this.dispatchEvent(myEvent);
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+
+    this.timer = window.setInterval(() => {
+      this._updateTooltips();
+    }, 50);
+
+    this.timeout = window.setTimeout(() => {
+      clearInterval(this.timer);
+      this._updateTooltips();
+    }, 230);
   }
 
   private _addSlot() {
@@ -323,7 +369,7 @@ export class TimeslotEditorNew extends LitElement {
     const endTime = stringToTime(activeSlot.stop!);
     const newStop = roundTime(startTime + Duration(activeSlot) / 2, this.stepSize);
 
-    const slots: Timeslot[] = [
+    this.slots = [
       ...this.slots.slice(0, this.activeSlot),
       { ...this.slots[this.activeSlot], stop: timeToString(newStop) },
       {
@@ -333,8 +379,8 @@ export class TimeslotEditorNew extends LitElement {
       },
       ...this.slots.slice(this.activeSlot + 1)
     ];
-
-    const myEvent = new CustomEvent('update', { detail: { entries: slots } });
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entries: this.slots } });
     this.dispatchEvent(myEvent);
   }
 
@@ -342,7 +388,7 @@ export class TimeslotEditorNew extends LitElement {
     if (this.activeSlot === null) return;
     const cutIndex = this.activeSlot == this.slots.length - 1 ? this.activeSlot - 1 : this.activeSlot;
 
-    const entries: Timeslot[] = [
+    this.slots = [
       ...this.slots.slice(0, cutIndex),
       {
         ...this.slots[cutIndex! + 1],
@@ -353,8 +399,157 @@ export class TimeslotEditorNew extends LitElement {
     ];
 
     if (this.activeSlot == this.slots.length) this.activeSlot--;
-    const myEvent = new CustomEvent('update', { detail: { entries: entries } });
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entries: this.slots } });
     this.dispatchEvent(myEvent);
+  }
+
+  private _updateTooltips() {
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    let tooltips = this.shadowRoot?.querySelectorAll(".tooltip") as unknown as HTMLElement[];
+
+    const getBounds = (el: HTMLElement) => {
+      const width = el.offsetWidth;
+      const left = el.offsetLeft - 15;
+      if (el.classList.contains("left")) return [left + width / 2, left + width * 3 / 2];
+      else if (el.classList.contains("right")) return [left - width / 2, left + width / 2];
+      else return [left, left + width];
+    };
+
+    tooltips?.forEach((tooltip, i) => {
+      const visible = tooltip.classList.contains("visible");
+      const slot = Number(tooltip.parentElement!.getAttribute("slot"));
+      if (slot != this.activeSlot && (slot - 1) != this.activeSlot) {
+        if (visible) tooltip.classList.remove("visible");
+      }
+      else {
+        const left = tooltip.parentElement!.offsetLeft;
+        if (left < 0 || left > (fullWidth + 15)) {
+          if (visible) tooltip.classList.remove("visible");
+        }
+        else {
+          if (!visible) tooltip.classList.add("visible");
+          const width = tooltip.offsetWidth;
+          const center = tooltip.classList.contains("center");
+          let marginLeft = 0, marginRight = 0;
+          const paddingL = 15;
+
+          if (slot == this.activeSlot && (i + 1) < tooltips.length) { //left marker of active slot
+            const nextTooltip = tooltips[i + 1];
+            marginLeft = getBounds(tooltip)[0];
+            marginRight = nextTooltip.offsetWidth
+              ? getBounds(nextTooltip)[0] - getBounds(tooltip)[1]
+              : fullWidth - getBounds(tooltip)[1];
+          } else if (slot == this.activeSlot) {
+            marginLeft = getBounds(tooltip)[0];
+            marginRight = fullWidth - getBounds(tooltip)[1];
+          } else if ((slot - 1) == this.activeSlot && i > 0) { //right marker of active slot
+            const prevTooltip = tooltips[i - 1];
+            marginLeft = getBounds(tooltip)[0] - getBounds(prevTooltip)[1]
+            marginRight = fullWidth - getBounds(tooltip)[1];
+          } else if ((slot - 1) == this.activeSlot) {
+            marginLeft = getBounds(tooltip)[0];
+            marginRight = fullWidth - getBounds(tooltip)[1];
+          }
+          //console.log(`slot ${slot} left ${marginLeft} right ${marginRight}`);
+
+          if (marginLeft < marginRight) {
+            if (marginLeft < 0) {
+              if (center && marginRight > width / 2) {
+                tooltip.classList.add("right");
+                tooltip.classList.remove("center");
+                tooltip.classList.remove("left");
+                //console.log(`slot ${slot} right`);
+              }
+            }
+            else {
+              tooltip.classList.add("center");
+              tooltip.classList.remove("right");
+              tooltip.classList.remove("left");
+              //console.log(`slot ${slot} center`);
+            }
+          }
+          else {
+            if (marginRight < 0) {
+              if (center && marginLeft > width / 2) {
+                tooltip.classList.add("left");
+                tooltip.classList.remove("center");
+                tooltip.classList.remove("right");
+                //console.log(`slot ${slot} left`);
+              }
+            }
+            else {
+              tooltip.classList.add("center");
+              tooltip.classList.remove("left");
+              tooltip.classList.remove("right");
+              //console.log(`slot ${slot} center`);
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private _updateZoom() {
+    let center = SEC_PER_DAY / 2;
+    if (this.activeSlot !== null) {
+      const activeSlot = this.slots[this.activeSlot];
+      let min = stringToTime(activeSlot.start);
+      let max = (stringToTime(activeSlot.stop!) || SEC_PER_DAY);
+      center = Math.round((max + min) / 2);
+    }
+
+    let timeSpan = SEC_PER_DAY;
+    if (this.zoomFactor == 2) timeSpan = SEC_PER_DAY / 2;
+    else if (this.zoomFactor == 3) timeSpan = SEC_PER_DAY / 4;
+    else if (this.zoomFactor == 4) timeSpan = SEC_PER_DAY / 8;
+
+    let min = center - Math.round(timeSpan / 2);
+    let max = center + Math.round(timeSpan / 2);
+
+    if (min < 0) {
+      max += -min;
+      min = 0;
+      if (max > SEC_PER_DAY) max = SEC_PER_DAY;
+    }
+    else if (max > SEC_PER_DAY) {
+      min -= (max - SEC_PER_DAY);
+      max = SEC_PER_DAY;
+      if (min < 0) min = 0;
+    }
+
+    this.rangeMin = min;
+    this.rangeMax = max;
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+
+    this.timer = window.setInterval(() => {
+      this._updateTooltips();
+    }, 50);
+
+    this.timeout = window.setTimeout(() => {
+      clearInterval(this.timer);
+      this._updateTooltips();
+    }, 230);
+  }
+
+  private _zoomIn() {
+    this.zoomFactor++;
+    this._updateZoom();
+  }
+
+  private _zoomOut() {
+    this.zoomFactor--;
+    this._updateZoom();
+
+  }
+
+  private _selectMarker(ev: Event, enable = true) {
+    let el = ev.target as HTMLElement;
+    while (!el.classList.contains("slot")) el = el.parentElement as HTMLElement;
+    const slot = Number(el.getAttribute("slot"));
+    if (enable && this.activeMarker === slot) return;
+    this.activeMarker = enable ? slot : null;
   }
 
 
@@ -418,26 +613,36 @@ export class TimeslotEditorNew extends LitElement {
             align-content: center;
             align-items: center;
             justify-content: center;
-            transition: margin 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67), margin 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            transition: margin 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            word-break: break-all;
+            white-space: normal;
+            overflow: hidden;
+            line-height: 1em;
+        }
+        div.handle {
+          display: flex;
+          height: 100%;
+          width: 36px;
+          margin-left: -19px;
+          margin-bottom: -60px;
+          align-content: center;
+          align-items: center;
+          justify-content: center;
+        }
+        div.button-holder {
+          background: var(--card-background-color);
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          visibility: hidden;
+          animation: 0.2s fadeIn;
+          animation-fill-mode: forwards;
         }
         ha-icon-button {
-            position: absolute;
-            margin-left: -19px;
-            margin-top: 12px;
             --mdc-icon-button-size: 36px;
-            visibility: hidden;
-            animation: 0.2s fadeIn;
-            animation-fill-mode: forwards;
-        }
-        ha-icon-button:before {
-            background: var(--card-background-color);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            content: ' ';
-            position: absolute;
-            left: 6px;
-            top: 6px;
+            margin-top: -6px;
+            margin-left: -6px;
         }
         @keyframes fadeIn {
           99% {
@@ -459,9 +664,30 @@ export class TimeslotEditorNew extends LitElement {
           margin-left: -25px;
           text-align: center;
           line-height: 26px;
+          display: none;
           z-index: 1;
-          transition: all 0.1s ease-in-out;
+          transition: all 0.1s ease-in;
           transform-origin: center bottom;
+        }
+        div.tooltip.active {
+          background: var(--accent-color);
+        }
+        div.tooltip.visible {
+          display: block;
+        }
+        div.tooltip.center:before {
+          content: ' ';
+          width: 0px;
+          height: 0px;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 10px solid var(--primary-color);
+          position: absolute;
+          margin-top: 25px;
+          margin-left: 19px;
+          top: 0px;
+          left: 0px;
+          z-index: -1;
         }
         div.tooltip.left {
           margin-left: -49px;
