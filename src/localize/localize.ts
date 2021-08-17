@@ -16,6 +16,7 @@ import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
 import * as uk from './languages/uk.json';
+import * as zh_Hans from './languages/zh-Hans.json';
 import { FrontendTranslationData } from 'custom-card-helpers';
 
 const languages: any = {
@@ -40,6 +41,7 @@ const languages: any = {
   sk: sk,
   ru: ru,
   uk: uk,
+  'zh-Hans': zh_Hans,
 };
 
 export function localize(
