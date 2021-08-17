@@ -275,3 +275,16 @@ export interface Days {
   type: EDayType;
   custom_days?: number[];
 }
+
+enum SchedulerEvent {
+  ItemCreated = 'scheduler_item_created',
+  ItemUpdated = 'scheduler_item_updated',
+  ItemRemoved = 'scheduler_item_removed',
+  TimerFinished = 'scheduler_timer_finished',
+  TimerUpdated = 'scheduler_timer_updated'
+}
+
+export interface SchedulerEventData {
+  schedule_id: string,
+  event: SchedulerEvent
+}

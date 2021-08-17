@@ -40,3 +40,5 @@ export const DefaultCardConfig: CardConfig = {
     icon: "action"
   }
 };
+
+export const WebsocketEvent = "scheduler_updated";

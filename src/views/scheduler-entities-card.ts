@@ -3,64 +3,104 @@ import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
-import { CardConfig, Schedule } from '../types';
+import { CardConfig, Schedule, SchedulerEventData } from '../types';
 import { commonStyle } from '../styles';
 import { UnsubscribeFunc } from 'home-assistant-js-websocket';
 import { SubscribeMixin } from '../components/subscribe-mixin';
 
 import '../components/scheduler-entity-row';
 import { capitalize, getLocale } from '../helpers';
-import { fetchSchedules } from '../data/websockets';
+import { fetchSchedules, fetchScheduleItem } from '../data/websockets';
 import { entityFilter } from '../data/entities/entity_filter';
+import { WebsocketEvent } from '../const';
+
+const computeScheduleTimestamp = (schedule: Schedule) =>
+  new Date(schedule.timestamps[schedule.next_entries[0]]).valueOf()
+
+const sortSchedules = (schedules: Schedule[]) => {
+  let output = [...schedules];
+  output.sort((a, b) => {
+    const remainingA = computeScheduleTimestamp(a);
+    const remainingB = computeScheduleTimestamp(b);
+
+    if (remainingA !== null && remainingB !== null) {
+      if (remainingA > remainingB) return 1;
+      else if (remainingA < remainingB) return -1;
+      else return a.entity_id < b.entity_id ? 1 : -1;
+    } else if (remainingB !== null) return 1;
+    else if (remainingA !== null) return -1;
+    else return a.entity_id < b.entity_id ? 1 : -1;
+  });
+  return output;
+}
+
+
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
 
-  @property() config?: CardConfig;
-  @property() showDiscovered = false;
-  @property() schedules?: Schedule[];
+  @property()
+  config?: CardConfig;
+
+  @property()
+  showDiscovered = false;
+
+  @property()
+  schedules?: Schedule[];
 
   connectionError = false;
 
   public hassSubscribe(): Promise<UnsubscribeFunc>[] {
     this.loadSchedules();
-    return this.hass!.user.is_admin ? [
-      this.hass!.connection.subscribeEvents(
-        () => this.loadSchedules(),
-        "scheduler_updated"
+    return [
+      this.hass!.connection.subscribeMessage(
+        (ev: SchedulerEventData) => this.updateScheduleItem(ev),
+        { type: WebsocketEvent }
       )
-    ] : [];
+    ];
+  }
+
+  private async updateScheduleItem(ev: SchedulerEventData): Promise<void> {
+    //only update single schedule
+    fetchScheduleItem(this.hass!, ev.schedule_id)
+      .then(schedule => {
+        const oldSchedule = this.schedules?.find(e => e.schedule_id == ev.schedule_id);
+        let schedules = [...this.schedules || []];
+
+        if (!schedule || !this.filterIncludedSchedule(schedule)) {
+          //schedule is not in the list, remove if it was in the list
+          if (oldSchedule) {
+            schedules = schedules.filter(e => e.schedule_id != ev.schedule_id);
+          }
+        }
+        else if (!oldSchedule) {
+          //add a new schedule and sort the list
+          schedules = sortSchedules([...schedules, schedule]);
+        }
+        else if (
+          oldSchedule.enabled == schedule.enabled &&
+          computeScheduleTimestamp(oldSchedule) == computeScheduleTimestamp(schedule)
+        ) {
+          //only overwrite the existing schedule
+          schedules = schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e);
+        }
+        else {
+          //overwrite the existing schedule and sort
+          schedules = sortSchedules(schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e));
+        }
+        this.schedules = schedules;
+      });
   }
 
   private async loadSchedules(): Promise<void> {
+    //load all schedules
+
     fetchSchedules(this.hass!)
       .then(res => {
         let schedules = res;
 
-        if (this.config!.discover_existing !== undefined && !this.config!.discover_existing) {
-          schedules = schedules.filter(item =>
-            item.timeslots.every(slot =>
-              slot.actions.every(action =>
-                entityFilter(action.entity_id || action.service, this.config!)
-              )
-            )
-          );
-        }
-
-        schedules.sort((a, b) => {
-          const remainingA = new Date(a.timestamps[a.next_entries[0]]).valueOf();
-          const remainingB = new Date(b.timestamps[b.next_entries[0]]).valueOf();
-
-          if (remainingA !== null && remainingB !== null) {
-            if (remainingA > remainingB) return 1;
-            else if (remainingA < remainingB) return -1;
-            else return a.entity_id < b.entity_id ? 1 : -1;
-          } else if (remainingB !== null) return 1;
-          else if (remainingA !== null) return -1;
-          else return a.entity_id < b.entity_id ? 1 : -1;
-        });
-
-        this.schedules = schedules;
+        schedules = schedules.filter(e => this.filterIncludedSchedule(e));
+        this.schedules = sortSchedules(schedules);
       })
       .catch(_e => {
         this.schedules = [];
@@ -103,7 +143,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         <div class="card-content">
           ${this.getRows()}
         </div>
-        ${this.hass.user.is_admin && this.config.show_add_button !== false
+        ${this.config.show_add_button !== false
         ? html`
         <div class="card-actions">
           <mwc-button
@@ -150,7 +190,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       const state = this.hass!.states[schedule.entity_id]?.state || '';
       return html`
           <scheduler-entity-row
-            class="${["on", "triggered"].includes(state) ? '' : 'disabled'} ${this.hass!.user.is_admin ? '' : 'readonly'}"
+            class="${["on", "triggered"].includes(state) ? '' : 'disabled'}"
             .hass=${this.hass}
             .schedule=${schedule}
             .config=${this.config}
@@ -178,7 +218,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
             const state = this.hass!.states[schedule.entity_id]?.state || '';
             return html`
                   <scheduler-entity-row
-                    class="${["on", "triggered"].includes(state) ? '' : 'disabled'} ${this.hass!.user.is_admin ? '' : 'readonly'}"
+                    class="${["on", "triggered"].includes(state) ? '' : 'disabled'}"
                     .hass=${this.hass}
                     .schedule=${schedule}
                     .config=${this.config}
@@ -211,7 +251,6 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   }
 
   editItemClick(entity_id: string) {
-    if (!this.hass!.user.is_admin) return;
     const myEvent = new CustomEvent('editClick', { detail: entity_id });
     this.dispatchEvent(myEvent);
   }
@@ -219,6 +258,22 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   newItemClick() {
     const myEvent = new CustomEvent('newClick');
     this.dispatchEvent(myEvent);
+  }
+
+  filterIncludedSchedule(schedule: Schedule) {
+    if (this.config!.discover_existing) {
+      return true;
+    }
+    else if (!schedule) {
+      return false;
+    }
+    else {
+      return schedule.timeslots.every(slot =>
+        slot.actions.every(action =>
+          entityFilter(action.entity_id || action.service, this.config!)
+        )
+      );
+    }
   }
 
   static styles = css`
@@ -231,9 +286,6 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       --primary-text-color: var(--disabled-text-color);
       --secondary-text-color: var(--disabled-text-color);
       --paper-item-icon-color: var(--disabled-text-color);
-    }
-    scheduler-entity-row.readonly {
-      cursor: default;
     }
     hui-warning {
       padding: 10px 0px;
