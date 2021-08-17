@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
-import { capitalize } from '../helpers';
+import { capitalize, getLocale } from '../helpers';
 import { formatWeekday } from '../data/date-time/format_weekday';
 import { localize } from '../localize/localize';
 import { formatTime } from '../data/date-time/format_time';
@@ -54,14 +54,14 @@ export class MyRelativeTime extends LitElement {
         );
         let day = '';
         if (daysFromNow == 1)
-          day = localize('ui.components.date.tomorrow', this._hass.language);
+          day = localize('ui.components.date.tomorrow', getLocale(this._hass));
         else if (daysFromNow > 0)
-          day = formatWeekday(dateObj, this._hass.language);
-        let time = localize('ui.components.time.absolute', this._hass.language, '{time}', formatTime(dateObj, this._hass.language));
+          day = formatWeekday(dateObj, getLocale(this._hass));
+        let time = localize('ui.components.time.absolute', getLocale(this._hass), '{time}', formatTime(dateObj, getLocale(this._hass)));
         if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0)
-          time = localize('ui.components.time.at_noon', this._hass.language);
+          time = localize('ui.components.time.at_noon', getLocale(this._hass));
         else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0)
-          time = localize('ui.components.time.at_midnight', this._hass.language);
+          time = localize('ui.components.time.at_midnight', getLocale(this._hass));
         return String(day + ' ' + time).trim();
       } else if (Math.round(delta / secondsPerMinute) > 60 && Math.round(delta / secondsPerMinute) < 120) {
         const mins = Math.round(delta / secondsPerMinute - 60);

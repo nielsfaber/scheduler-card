@@ -2,6 +2,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { Action } from '../types';
 import { computeEntity, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
+import { getLocale } from '../helpers';
 
 export const scriptActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => {
   const actions: Action[] = [
@@ -21,7 +22,7 @@ export const scriptActions = (hass: HomeAssistant, stateObj?: HassEntity): Actio
     actions.push({
       service: 'script' + '.' + computeEntity(stateObj.entity_id),
       icon: 'hass:play',
-      name: localize('services.script.script', hass.language),
+      name: localize('services.script.script', getLocale(hass)),
     });
   }
 

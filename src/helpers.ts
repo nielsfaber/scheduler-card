@@ -1,5 +1,7 @@
 import { Dictionary, Timeslot } from './types';
 import { stringToTime, timeToString } from './data/date-time/time';
+import { FrontendTranslationData, HomeAssistant, NumberFormat } from 'custom-card-helpers';
+import { formatAmPm } from './data/date-time/format_time';
 
 export function pick(obj: Dictionary<any> | null | undefined, keys: string[]): Dictionary<any> {
   if (!obj) return {};
@@ -145,3 +147,9 @@ export function IsDefaultName(name?: string) {
   if (!name) return false;
   return name.match(/^Schedule\ #[a-f0-9]{6}/) !== null;
 }
+
+export const getLocale = (hass: HomeAssistant): FrontendTranslationData =>
+  hass.locale || {
+    language: hass.language,
+    number_format: NumberFormat.system
+  }

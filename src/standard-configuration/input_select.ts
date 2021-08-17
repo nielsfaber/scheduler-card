@@ -3,6 +3,7 @@ import { Action } from '../types';
 import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const inputSelectOptions = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
   if (stateObj && stateObj.attributes.options && Array.isArray(stateObj.attributes.options)) {
@@ -23,7 +24,7 @@ export const inputSelectActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'counter',
-    name: localize('services.input_select.select_option', hass.language),
+    name: localize('services.input_select.select_option', getLocale(hass)),
   },
 ];
 

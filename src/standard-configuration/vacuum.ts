@@ -2,6 +2,7 @@ import { Action } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
+import { getLocale } from '../helpers';
 
 export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
@@ -19,7 +20,7 @@ export const vacuumActions = (hass: HomeAssistant, _stateObj?: HassEntity): Acti
   {
     service: 'vacuum.start_pause',
     icon: 'hass:play-circle-outline',
-    name: localize('services.vacuum.start_pause', hass.language),
+    name: localize('services.vacuum.start_pause', getLocale(hass)),
     supported_feature: 4,
   },
 ];

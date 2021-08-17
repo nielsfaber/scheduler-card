@@ -9,7 +9,7 @@ import { UnsubscribeFunc } from 'home-assistant-js-websocket';
 import { SubscribeMixin } from '../components/subscribe-mixin';
 
 import '../components/scheduler-entity-row';
-import { capitalize } from '../helpers';
+import { capitalize, getLocale } from '../helpers';
 import { fetchSchedules } from '../data/websockets';
 import { entityFilter } from '../data/entities/entity_filter';
 
@@ -87,7 +87,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
             ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : localize('ui.panel.common.title', this.hass.language)
+          : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
           </div>
           ${this.schedules.length && this.config.show_header_toggle
@@ -121,7 +121,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       return html`
         <div>
           <hui-warning>
-           ${localize('ui.panel.overview.backend_error', this.hass.language)}
+           ${localize('ui.panel.overview.backend_error', getLocale(this.hass))}
           </hui-warning>
         </div>
       `;
@@ -129,7 +129,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     else if (!Object.keys(this.schedules).length) {
       return html`
         <div>
-          ${localize('ui.panel.overview.no_entries', this.hass.language)}
+          ${localize('ui.panel.overview.no_entries', getLocale(this.hass))}
         </div>
       `;
     }
@@ -169,13 +169,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
               this.showDiscovered = true;
             }}
                 >
-                  +
-                  ${localize(
-              'ui.panel.overview.excluded_items',
-              this.hass.language,
-              '{number}',
-              excludedEntities.length
-            )}
+                  + ${localize('ui.panel.overview.excluded_items', getLocale(this.hass), '{number}', excludedEntities.length)}
                 </button>
               </div>
             `
@@ -200,7 +194,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
               this.showDiscovered = false;
             }}
                 >
-                  ${capitalize(localize('ui.panel.overview.hide_excluded', this.hass.language))}
+                  ${capitalize(localize('ui.panel.overview.hide_excluded', getLocale(this.hass)))}
                 </button>
               </div>
             `

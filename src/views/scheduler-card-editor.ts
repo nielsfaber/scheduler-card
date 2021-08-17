@@ -2,7 +2,7 @@ import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, computeEntity } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from '../types';
-import { PrettyPrintIcon } from '../helpers';
+import { PrettyPrintIcon, getLocale } from '../helpers';
 import { localize } from '../localize/localize';
 import { DefaultTimeStep, DefaultCardConfig } from '../const';
 import { commonStyle } from '../styles';
@@ -99,11 +99,11 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   private getTitle() {
     if (!this.hass) return '';
-    if (!this._config || !this.hass) return localize('ui.panel.common.title', this.hass.language);
-    if (this._config.title === undefined) return localize('ui.panel.common.title', this.hass.language);
+    if (!this._config || !this.hass) return localize('ui.panel.common.title', getLocale(this.hass));
+    if (this._config.title === undefined) return localize('ui.panel.common.title', getLocale(this.hass));
     if (typeof this._config.title == 'string') return this._config.title;
     if (this._config.title == false) return '';
-    else return localize('ui.panel.common.title', this.hass.language);
+    else return localize('ui.panel.common.title', getLocale(this.hass));
   }
 
   private updateTitleOption(e: Event) {

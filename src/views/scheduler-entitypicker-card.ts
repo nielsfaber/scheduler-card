@@ -4,7 +4,7 @@ import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, ScheduleConfig, Action, Group } from '../types';
 import { entityGroups } from '../data/entity_group';
-import { PrettyPrintIcon, unique, flatten, isEqual, sortAlphabetically } from '../helpers';
+import { PrettyPrintIcon, unique, flatten, isEqual, sortAlphabetically, getLocale } from '../helpers';
 
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
@@ -111,7 +111,7 @@ export class SchedulerEditorCard extends LitElement {
             ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : localize('ui.panel.common.title', this.hass.language)
+          : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
@@ -123,7 +123,7 @@ export class SchedulerEditorCard extends LitElement {
             .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
             @change=${(ev: CustomEvent) => this.selectGroup(ev.detail)}
           >
-            ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
+            ${localize('ui.panel.entity_picker.no_groups_defined', getLocale(this.hass))}
           </button-group>
 
           <div class="header">
@@ -137,7 +137,7 @@ export class SchedulerEditorCard extends LitElement {
                     @change=${(ev: Event) => { this.multipleEntity = (ev.target as HTMLInputElement).checked }}
                   >
                   </ha-switch>
-                  ${localize('ui.panel.entity_picker.multiple', this.hass.language)}          
+                  ${localize('ui.panel.entity_picker.multiple', getLocale(this.hass))}          
                 </div>
               `
         : ''
@@ -151,8 +151,8 @@ export class SchedulerEditorCard extends LitElement {
             ?optional=${true}
           >
             ${!this.selectedGroup
-        ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
-        : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
+        ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
+        : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
           </button-group>
 
           <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
@@ -162,8 +162,8 @@ export class SchedulerEditorCard extends LitElement {
             @change=${(ev: CustomEvent) => this.selectAction(ev.detail)}
           >
             ${!this.selectedEntities.length
-        ? localize('ui.panel.entity_picker.no_entity_selected', this.hass.language)
-        : localize('ui.panel.entity_picker.no_actions_for_entity', this.hass.language)}
+        ? localize('ui.panel.entity_picker.no_entity_selected', getLocale(this.hass))
+        : localize('ui.panel.entity_picker.no_actions_for_entity', getLocale(this.hass))}
           </button-group>
           ${this.makeSchemeButton(actions)}
         </div>
@@ -185,7 +185,7 @@ export class SchedulerEditorCard extends LitElement {
           class="${this.timeSchemeSelected ? ' active' : ''}"
           @click=${() => this.selectTimeScheme()}>
           <ha-icon icon="${PrettyPrintIcon('chart-timeline')}" class="padded-right"></ha-icon>
-          ${localize('ui.panel.entity_picker.make_scheme', this.hass.language)}
+          ${localize('ui.panel.entity_picker.make_scheme', getLocale(this.hass))}
         </mwc-button>
       </div>
     </div>

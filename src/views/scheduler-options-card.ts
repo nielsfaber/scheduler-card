@@ -9,7 +9,7 @@ import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, pick, isEqual } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, pick, isEqual, getLocale } from '../helpers';
 
 import '../components/button-group';
 import '../components/variable-picker';
@@ -51,13 +51,13 @@ export class SchedulerOptionsCard extends LitElement {
       [EConditionMatchType.Equal]:
       {
         value: EConditionMatchType.Equal,
-        name: localize('ui.panel.conditions.equal_to', this.hass!.language),
+        name: localize('ui.panel.conditions.equal_to', getLocale(this.hass!)),
         icon: "hass:equal"
       },
       [EConditionMatchType.Unequal]:
       {
         value: EConditionMatchType.Unequal,
-        name: localize('ui.panel.conditions.unequal_to', this.hass!.language),
+        name: localize('ui.panel.conditions.unequal_to', getLocale(this.hass!)),
         icon: "hass:not-equal-variant"
       }
     };
@@ -91,7 +91,7 @@ export class SchedulerOptionsCard extends LitElement {
             ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : localize('ui.panel.common.title', this.hass.language)
+          : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
           </div>
           <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
@@ -107,13 +107,13 @@ export class SchedulerOptionsCard extends LitElement {
             ? ''
             : html`
             <div class="switch">
-            ${localize('ui.panel.conditions.any', this.hass.language)}
+            ${localize('ui.panel.conditions.any', getLocale(this.hass))}
             <ha-switch
               style="margin: 0px 10px"
               @change=${this.conditionTypeSwitchClick}
               ?checked=${this.schedule.timeslots[0].condition_type == EConditionType.All}
             ></ha-switch>
-            ${localize('ui.panel.conditions.all', this.hass.language)}         
+            ${localize('ui.panel.conditions.all', getLocale(this.hass))}         
             </div>`
           }
           </div>
@@ -133,7 +133,7 @@ export class SchedulerOptionsCard extends LitElement {
             @value-changed=${this.updateName}
           ></paper-input>
 
-          <div class="header">${localize('ui.panel.options.repeat_type', this.hass.language)}</div>
+          <div class="header">${localize('ui.panel.options.repeat_type', getLocale(this.hass))}</div>
           <button-group
             .items=${repeatTypes}
             value="${this.schedule.repeat_type}"
@@ -196,7 +196,7 @@ export class SchedulerOptionsCard extends LitElement {
         .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
         @change=${this.selectGroup}
       >
-        ${localize('ui.panel.entity_picker.no_groups_defined', this.hass.language)}
+        ${localize('ui.panel.entity_picker.no_groups_defined', getLocale(this.hass))}
       </button-group>
 
       <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
@@ -206,8 +206,8 @@ export class SchedulerOptionsCard extends LitElement {
         @change=${this.selectEntity}
       >
         ${!this.selectedGroup
-          ? localize('ui.panel.entity_picker.no_group_selected', this.hass.language)
-          : localize('ui.panel.entity_picker.no_entities_for_group', this.hass.language)}
+          ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
+          : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
       </button-group>
     `;
     }
@@ -287,7 +287,7 @@ export class SchedulerOptionsCard extends LitElement {
     const conditions = this.schedule.timeslots[0].conditions || [];
     if (!conditions.length)
       return html`
-        <div class="text-field">${localize('ui.panel.conditions.no_conditions_defined', this.hass.language)}</div>
+        <div class="text-field">${localize('ui.panel.conditions.no_conditions_defined', getLocale(this.hass))}</div>
       `;
     return conditions.map((item, num) => {
       const entity = parseEntity(item.entity_id, this.hass!, this.config!);

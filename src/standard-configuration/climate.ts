@@ -5,6 +5,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 const climateModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
   const modeList = [
@@ -133,7 +134,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         })
       },
       icon: 'hass:cloud-download-outline',
-      name: localize('services.climate.set_preset_mode', hass.language),
+      name: localize('services.climate.set_preset_mode', getLocale(hass)),
       supported_feature: 16,
     });
 
@@ -160,7 +161,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         temperature: tempVariable,
       },
       icon: 'hass:fire',
-      name: localize('services.climate.set_temperature_hvac_mode_heat', hass.language),
+      name: localize('services.climate.set_temperature_hvac_mode_heat', getLocale(hass)),
       supported_feature: 1,
     });
 
@@ -172,7 +173,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         temperature: tempVariable,
       },
       icon: 'hass:snowflake',
-      name: localize('services.climate.set_temperature_hvac_mode_cool', hass.language),
+      name: localize('services.climate.set_temperature_hvac_mode_cool', getLocale(hass)),
       supported_feature: 1,
     });
 
@@ -183,7 +184,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         temperature: tempVariable
       },
       icon: 'hass:thermometer',
-      name: localize('services.climate.set_temperature', hass.language),
+      name: localize('services.climate.set_temperature', getLocale(hass)),
       supported_feature: 1,
     });
 
@@ -196,7 +197,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         target_temp_high: levelVariable(tempVariable, { name: hass.localize('ui.panel.lovelace.editor.card.generic.maximum') }),
       },
       icon: 'hass:fire',
-      name: localize('services.climate.set_temperature_hvac_mode_heat_cool', hass.language),
+      name: localize('services.climate.set_temperature_hvac_mode_heat_cool', getLocale(hass)),
       supported_feature: 2,
     });
 
@@ -211,7 +212,7 @@ export const climateActions = (hass: HomeAssistant, stateObj: HassEntity | undef
         })
       },
       icon: 'hass:cog-transfer-outline',
-      name: localize('services.climate.set_hvac_mode', hass.language),
+      name: localize('services.climate.set_hvac_mode', getLocale(hass)),
     });
 
   return actions;
@@ -222,37 +223,37 @@ export const climateStates = (hass: HomeAssistant, stateObj: HassEntity) => {
     {
       value: 'off',
       icon: 'hass:power-off',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
     },
     {
       value: 'heat',
       icon: 'hass:fire',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat" }, getLocale(hass)),
     },
     {
       value: 'cool',
       icon: 'hass:snowflake',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "cool" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "cool" }, getLocale(hass)),
     },
     {
       value: 'heat_cool',
       icon: 'hass:thermometer',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat_cool" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat_cool" }, getLocale(hass)),
     },
     {
       value: 'auto',
       icon: 'hass:autorenew',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "auto" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "auto" }, getLocale(hass)),
     },
     {
       value: 'dry',
       icon: 'hass:water-percent',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "dry" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "dry" }, getLocale(hass)),
     },
     {
       value: 'fan_only',
       icon: 'hass:fan',
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "fan_only" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "fan_only" }, getLocale(hass)),
     },
   ];
   return listVariable({

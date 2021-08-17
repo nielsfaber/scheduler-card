@@ -4,6 +4,7 @@ import { computeStateDisplay, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefined): Action[] => {
   const actions: Action[] = [
@@ -33,7 +34,7 @@ export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefin
         })
       },
       icon: 'hass:lightbulb-on',
-      name: localize('services.light.turn_on', hass.language),
+      name: localize('services.light.turn_on', getLocale(hass)),
       supported_feature: 1,
     });
   else
@@ -51,12 +52,12 @@ export const lightStates = (hass: HomeAssistant, stateObj: HassEntity) => listVa
   options: [
     {
       value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
       icon: "hass:lightbulb-off"
     },
     {
       value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
       icon: "hass:lightbulb"
     }
   ]

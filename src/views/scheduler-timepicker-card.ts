@@ -14,7 +14,7 @@ import {
   LevelVariable,
   ServiceCall,
 } from '../types';
-import { PrettyPrintIcon, PrettyPrintName, capitalize, sortAlphabetically, omit, isEqual } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, capitalize, sortAlphabetically, omit, isEqual, getLocale } from '../helpers';
 import { DefaultTimeStep, DefaultActionIcon } from '../const';
 
 import '../components/time-picker';
@@ -67,7 +67,7 @@ export class SchedulerTimepickerCard extends LitElement {
             ${this.config.title
         ? typeof this.config.title == 'string'
           ? this.config.title
-          : localize('ui.panel.common.title', this.hass.language)
+          : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
             </div>
             <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
@@ -158,7 +158,7 @@ export class SchedulerTimepickerCard extends LitElement {
         html`
     <div>
       <ha-icon icon="${PrettyPrintIcon('chart-timeline')}"> </ha-icon>
-      ${capitalize(localize('ui.panel.entity_picker.make_scheme', this.hass!.language))}
+      ${capitalize(localize('ui.panel.entity_picker.make_scheme', getLocale(this.hass!)))}
     </div>
   ` : html`
     <div>
@@ -179,18 +179,18 @@ export class SchedulerTimepickerCard extends LitElement {
     const shiftCount = weekdays.length - weekdayArray.findIndex(e => e.substr(0, 3) == firstWeekday);
     weekdays = [...weekdays.slice(-shiftCount), ...weekdays.slice(0, -shiftCount)];
     const DayOptions = weekdays.map(e =>
-      Object({ value: weekdayArray[e].substr(0, 3), name: formatWeekday(e, this.hass!.language, true) })
+      Object({ value: weekdayArray[e].substr(0, 3), name: formatWeekday(e, getLocale(this.hass!), true) })
     );
 
     const DayTypeOptions = [
-      { value: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', this.hass.language) },
-      { value: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', this.hass.language) },
-      { value: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', this.hass.language) },
+      { value: EDayType.Daily, name: localize('ui.components.date.day_types_short.daily', getLocale(this.hass)) },
+      { value: EDayType.Workday, name: localize('ui.components.date.day_types_short.workdays', getLocale(this.hass)) },
+      { value: EDayType.Weekend, name: localize('ui.components.date.day_types_short.weekend', getLocale(this.hass)) },
       { value: EDayType.Custom, name: this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.label') },
     ];
 
     return html`
-      <div class="header">${localize('ui.components.date.days', this.hass.language)}</div>
+      <div class="header">${localize('ui.components.date.days', getLocale(this.hass))}</div>
       <button-group .items=${DayTypeOptions} value=${weekdayType(this.schedule.weekdays)} @change=${this.selectDays}>
       </button-group>
       ${weekdayType(this.schedule.weekdays) == EDayType.Custom
@@ -225,7 +225,7 @@ export class SchedulerTimepickerCard extends LitElement {
         optional="true"
         @change=${this.selectAction}
       >
-        ${localize('ui.panel.time_picker.no_timeslot_selected', this.hass.language)}
+        ${localize('ui.panel.time_picker.no_timeslot_selected', getLocale(this.hass))}
       </button-group>
     `;
   }

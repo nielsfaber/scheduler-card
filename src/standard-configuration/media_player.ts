@@ -4,6 +4,7 @@ import { localize } from '../localize/localize';
 import { HomeAssistant } from 'custom-card-helpers';
 import { LocalizeFunc } from 'custom-card-helpers/dist/translations/localize';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const mediaPlayerSources = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
   if (stateObj && stateObj.attributes.source_list && Array.isArray(stateObj.attributes.source_list)) {
@@ -36,7 +37,7 @@ export const mediaPlayerActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:music-box-multiple-outline',
-    name: localize('services.media_player.select_source', hass.language),
+    name: localize('services.media_player.select_source', getLocale(hass)),
     supported_feature: 2048,
   },
 ];

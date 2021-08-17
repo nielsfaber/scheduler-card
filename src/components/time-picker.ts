@@ -6,6 +6,7 @@ import { ETimeEvent } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { formatTime } from '../data/date-time/format_time';
+import { getLocale } from '../helpers';
 
 
 
@@ -61,7 +62,7 @@ export class TimePicker extends LitElement {
   render() {
     const timeString = this.relativeMode
       ? timeToString(this.time)
-      : formatTime(stringToDate(timeToString(this.time)), this.hass!.language);
+      : formatTime(stringToDate(timeToString(this.time)), getLocale(this.hass!));
 
     const timeParts = timeString.split(/:|\ /);
 

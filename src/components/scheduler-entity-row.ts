@@ -2,7 +2,7 @@ import { LitElement, html, css, PropertyValues } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { CardConfig, ETimeEvent, EDayType, Schedule, Timeslot, WeekdayType, Action } from '../types';
-import { PrettyPrintName, capitalize, PrettyPrintIcon, unique } from '../helpers';
+import { PrettyPrintName, capitalize, PrettyPrintIcon, unique, getLocale } from '../helpers';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 
@@ -10,7 +10,7 @@ import './my-relative-time';
 import { parseEntity } from '../data/entities/parse_entity';
 import { computeActionDisplay } from '../data/actions/compute_action_display';
 import { formatWeekday } from '../data/date-time/format_weekday';
-import { formatTime } from '../data/date-time/format_time';
+import { formatTime, TimeFormat } from '../data/date-time/format_time';
 import { weekdayType } from '../data/date-time/weekday_type';
 import { weekdayToList } from '../data/date-time/weekday_to_list';
 import { stringToTime, parseRelativeTime } from '../data/date-time/time';
@@ -73,7 +73,7 @@ export class ScheduleEntityRow extends LitElement {
     const entityName = entities.length == 1
       ? entities[0].name
       : entityDomains.length == 1
-        ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, this._hass.language) || entityDomains[0]}`
+        ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, getLocale(this._hass)) || entityDomains[0]}`
         : `${entities.length}x entities`;
 
     const match = computeActions(nextEntry.actions[0].entity_id || nextEntry.actions[0].service, this._hass, this.config)
@@ -104,13 +104,7 @@ export class ScheduleEntityRow extends LitElement {
           return `<my-relative-time></my-relative-time>`;
         case 'additional-tasks':
           return this._schedule.timeslots.length > 1
-            ? '+' +
-            localize(
-              'ui.panel.overview.additional_tasks',
-              this._hass!.language,
-              '{number}',
-              String(this._schedule.timeslots.length - 1)
-            )
+            ? '+' + localize('ui.panel.overview.additional_tasks', getLocale(this._hass), '{number}', String(this._schedule.timeslots.length - 1))
             : '';
         case 'time':
           return capitalize(this.computeTime(this._schedule.timeslots[this._schedule.next_entries[0]]));
@@ -188,43 +182,33 @@ export class ScheduleEntityRow extends LitElement {
     if (!this._hass) return '';
     switch (weekdayType(weekdays)) {
       case EDayType.Daily:
-        return localize('ui.components.date.day_types_long.daily', this._hass.language);
+        return localize('ui.components.date.day_types_long.daily', getLocale(this._hass));
       case EDayType.Workday:
-        return localize('ui.components.date.day_types_long.workdays', this._hass.language);
+        return localize('ui.components.date.day_types_long.workdays', getLocale(this._hass));
       case EDayType.Weekend:
-        return localize('ui.components.date.day_types_long.weekend', this._hass.language);
+        return localize('ui.components.date.day_types_long.weekend', getLocale(this._hass));
       case EDayType.Custom:
         const list = weekdayToList(weekdays);
         const seq = findSequence(list);
         const len = Math.max(...seq);
         if (list.length == 6) {
           const missing = [1, 2, 3, 4, 5, 6, 7].filter(e => !list.includes(e));
-          return localize(
-            'ui.components.date.repeated_days_except',
-            this._hass.language,
-            '{excludedDays}',
-            formatWeekday(missing.pop()!, this._hass!.language)
-          );
+          return localize('ui.components.date.repeated_days_except', getLocale(this._hass), '{excludedDays}', formatWeekday(missing.pop()!, getLocale(this._hass)));
         }
-        const dayNames = list.map(e => formatWeekday(e, this._hass!.language));
+        const dayNames = list.map(e => formatWeekday(e, getLocale(this._hass)));
         if (list.length >= 3 && len >= 3) {
           const start = seq.reduce((obj, e, i) => (e == len ? i : obj), 0);
           dayNames.splice(
             start,
             len,
-            localize(
-              'ui.components.date.days_range',
-              this._hass.language,
-              ['{startDay}', '{endDay}'],
-              [dayNames[start], dayNames[start + len - 1]]
-            )
+            localize('ui.components.date.days_range', getLocale(this._hass), ['{startDay}', '{endDay}'], [dayNames[start], dayNames[start + len - 1]])
           );
         }
         const daysString =
           dayNames.length > 1
             ? `${dayNames.slice(0, -1).join(', ')} ${this._hass.localize('ui.common.and')} ${dayNames.pop()}`
             : `${dayNames.pop()}`;
-        return localize('ui.components.date.repeated_days', this._hass!.language, '{days}', daysString);
+        return localize('ui.components.date.repeated_days', getLocale(this._hass), '{days}', daysString);
       default:
         return '';
     }
@@ -240,7 +224,7 @@ export class ScheduleEntityRow extends LitElement {
           res.event == ETimeEvent.Sunrise
             ? this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
             : this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
-        if (Math.abs(stringToTime(res.offset)) < 5 * 60) return localize('ui.components.time.at_sun_event', this.hass.language, '{sunEvent}', eventString);
+        if (Math.abs(stringToTime(res.offset)) < 5 * 60) return localize('ui.components.time.at_sun_event', getLocale(this.hass), '{sunEvent}', eventString);
 
         const signString =
           res.sign == '-'
@@ -253,23 +237,18 @@ export class ScheduleEntityRow extends LitElement {
               .slice(0, -1)
               .toLowerCase();
 
-        const timeStr = formatTime(stringToDate(res.offset), this.hass.language, { hour12: false });
+        const timeStr = formatTime(stringToDate(res.offset), getLocale(this.hass), TimeFormat.twenty_four);
 
         return `${timeStr} ${signString} ${eventString}`;
       }
       else {
         const time = stringToDate(timeString);
-        return localize(
-          'ui.components.time.absolute',
-          this._hass.language,
-          '{time}',
-          formatTime(time, this._hass.language)
-        );
+        return localize('ui.components.time.absolute', getLocale(this.hass), '{time}', formatTime(time, getLocale(this.hass)));
       }
     } else {
-      const start = formatTime(stringToDate(entry.start), this._hass.language)
-      const end = formatTime(stringToDate(entry.stop), this._hass.language)
-      return localize('ui.components.time.interval', this._hass!.language, ['{startTime}', '{endTime}'], [start, end]);
+      const start = formatTime(stringToDate(entry.start), getLocale(this.hass))
+      const end = formatTime(stringToDate(entry.stop), getLocale(this.hass))
+      return localize('ui.components.time.interval', getLocale(this.hass), ['{startTime}', '{endTime}'], [start, end]);
     }
   }
 

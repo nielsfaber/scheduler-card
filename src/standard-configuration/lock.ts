@@ -2,6 +2,7 @@ import { Action } from '../types';
 import { HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const lockActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
@@ -20,12 +21,12 @@ export const lockStates = (hass: HomeAssistant, stateObj: HassEntity) => listVar
   options: [
     {
       value: "unlocked",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "unlocked" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "unlocked" }, getLocale(hass)),
       icon: 'hass:lock-open-variant-outline',
     },
     {
       value: "locked",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "locked" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "locked" }, getLocale(hass)),
       icon: 'hass:lock-outline'
     }
   ]

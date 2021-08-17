@@ -4,6 +4,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { localize } from '../localize/localize';
 import { listVariable } from '../data/variables/list_variable';
 import { levelVariable } from '../data/variables/level_variable';
+import { getLocale } from '../helpers';
 
 export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => {
   let actions: Action[] = [
@@ -30,7 +31,7 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
       },
       supported_feature: 1,
       icon: 'hass:weather-windy',
-      name: localize('services.fan.set_speed', hass.language),
+      name: localize('services.fan.set_speed', getLocale(hass)),
     },
     {
       service: 'fan.oscillate',
@@ -53,7 +54,7 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
       },
       supported_feature: 2,
       icon: 'hass:arrow-left-right',
-      name: localize('services.fan.oscillate', hass.language),
+      name: localize('services.fan.oscillate', getLocale(hass)),
     },
     {
       service: 'fan.set_direction',
@@ -76,7 +77,7 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
       },
       supported_feature: 4,
       icon: 'hass:cog-clockwise',
-      name: localize('services.fan.set_direction', hass.language),
+      name: localize('services.fan.set_direction', getLocale(hass)),
     }
   ];
 
@@ -95,7 +96,7 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
       },
       supported_feature: 8,
       icon: 'hass:cloud-download-outline',
-      name: localize('services.climate.set_preset_mode', hass.language),
+      name: localize('services.climate.set_preset_mode', getLocale(hass)),
     });
   return actions;
 };
@@ -104,12 +105,12 @@ export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => listVari
   options: [
     {
       value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
       icon: "hass:power-off"
     },
     {
       value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
       icon: "hass:power"
     }
   ]

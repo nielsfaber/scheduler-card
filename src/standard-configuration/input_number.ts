@@ -3,6 +3,7 @@ import { Action } from '../types';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from 'custom-card-helpers';
 import { levelVariable } from '../data/variables/level_variable';
+import { getLocale } from '../helpers';
 
 export const inputNumberActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
   {
@@ -17,7 +18,7 @@ export const inputNumberActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:counter',
-    name: localize('services.input_number.set_value', hass.language),
+    name: localize('services.input_number.set_value', getLocale(hass)),
   },
 ];
 

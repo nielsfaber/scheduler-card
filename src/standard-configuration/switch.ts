@@ -2,6 +2,7 @@ import { Action } from '../types';
 import { HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const switchActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action[] => [
   {
@@ -22,12 +23,12 @@ export const switchStates = (hass: HomeAssistant, stateObj: HassEntity) => listV
   options: [
     {
       value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
       icon: "hass:flash-off"
     },
     {
       value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, hass.language),
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
       icon: "hass:flash"
     }
   ]

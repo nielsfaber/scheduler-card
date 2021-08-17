@@ -2,7 +2,7 @@ import { LitElement, html, css, TemplateResult } from 'lit';
 import { property, customElement, eventOptions } from 'lit/decorators.js';
 import { localize } from '../localize/localize';
 import { EVariableType, Timeslot, LevelVariable, ListVariable, Action } from '../types';
-import { PrettyPrintName, unique } from '../helpers';
+import { PrettyPrintName, unique, getLocale } from '../helpers';
 import { HomeAssistant } from 'custom-card-helpers';
 import { formatAmPm, formatTime } from '../data/date-time/format_time';
 import { stringToTime, roundTime, timeToString } from '../data/date-time/time';
@@ -36,7 +36,7 @@ export class TimeslotEditor extends LitElement {
   _activeEntryMem: number | null = null;
 
   firstUpdated() {
-    this.formatAmPm = formatAmPm(this.hass!.language);
+    this.formatAmPm = formatAmPm(getLocale(this.hass!));
   }
 
   render() {
@@ -120,7 +120,7 @@ export class TimeslotEditor extends LitElement {
               value="time"
               @update="${this._updateMarker}"
             >
-              ${formatTime(stringToDate(this.entries[i].stop!), this.hass!.language)}
+              ${formatTime(stringToDate(this.entries[i].stop!), getLocale(this.hass!))}
             </div>
           </div>
         `);
@@ -133,7 +133,7 @@ export class TimeslotEditor extends LitElement {
     this.shadowRoot.querySelectorAll('.slider-thumb-tooltip').forEach((el, i) => {
       //cannot assign text to element directly in Lit 2
       //el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
-      el.childNodes[2].textContent = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
+      el.childNodes[2].textContent = formatTime(stringToDate(this.entries[i].stop!), getLocale(this.hass!));
     });
   }
 
@@ -161,7 +161,7 @@ export class TimeslotEditor extends LitElement {
             else return "";
           }).join(", ");
       }
-      return PrettyPrintName(actionConfig.name || localize(`services.${action.service}`, this.hass!.language) || action.service);
+      return PrettyPrintName(actionConfig.name || localize(`services.${action.service}`, getLocale(this.hass!)) || action.service);
     })).join(', ');
   }
 
@@ -274,7 +274,7 @@ export class TimeslotEditor extends LitElement {
     const target = ev.target as HTMLElement;
     //cannot assign text to element directly in Lit 2
     //target.innerText = formatTime(ts, this.hass!.language);
-    target.childNodes[2].textContent = formatTime(ts, this.hass!.language);
+    target.childNodes[2].textContent = formatTime(ts, getLocale(this.hass!));
   }
 
   private _addSlot() {

@@ -16,6 +16,7 @@ import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
 import * as uk from './languages/uk.json';
+import { FrontendTranslationData } from 'custom-card-helpers';
 
 const languages: any = {
   cs: cs,
@@ -43,14 +44,14 @@ const languages: any = {
 
 export function localize(
   string: string,
-  lang: string,
+  locale: FrontendTranslationData,
   search: string | (string | number)[] | number = '',
   replace: string | (string | number)[] | number = ''
 ) {
   let translated: string;
   try {
-    if (lang == 'test') return 'TRANSLATED';
-    translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
+    if (locale.language == 'test') return 'TRANSLATED';
+    translated = string.split('.').reduce((o, i) => o[i], languages[locale.language]);
     if (!translated) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   } catch (e) {
     try {

@@ -4,6 +4,7 @@ import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const humidifierModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
   const modeList = [
@@ -89,7 +90,7 @@ export const humidifierActions = (hass: HomeAssistant, stateObj: HassEntity | un
         }),
       },
       icon: 'hass:water-percent',
-      name: localize('services.humidifer.set_humidity', hass.language),
+      name: localize('services.humidifer.set_humidity', getLocale(hass)),
     }
   ];
 
@@ -104,7 +105,7 @@ export const humidifierActions = (hass: HomeAssistant, stateObj: HassEntity | un
           })
         },
         icon: 'hass:cog-transfer-outline',
-        name: localize('services.climate.set_mode', hass.language),
+        name: localize('services.climate.set_mode', getLocale(hass)),
       }
     );
   }

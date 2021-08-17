@@ -1,8 +1,9 @@
+import { FrontendTranslationData } from "custom-card-helpers";
 
 
 export const weekdayArray = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-export const formatWeekday = (date: Date | number, locales: string, short?: boolean): string => {
+export const formatWeekday = (date: Date | number, locale: FrontendTranslationData, short?: boolean): string => {
   const supportLocaleString = () => {
     try {
       new Date().toLocaleDateString("i");
@@ -19,7 +20,7 @@ export const formatWeekday = (date: Date | number, locales: string, short?: bool
   }
 
   if (supportLocaleString()) {
-    return date.toLocaleDateString(locales, {
+    return date.toLocaleDateString(locale.language, {
       weekday: short ? "short" : "long",
     })
   }

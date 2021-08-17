@@ -4,6 +4,7 @@ import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
+import { getLocale } from '../helpers';
 
 export const waterHeaterModes = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
   if (stateObj && stateObj.attributes.options && Array.isArray(stateObj.attributes.options)) {
@@ -39,7 +40,7 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:thermometer',
-    name: localize('services.climate.set_temperature', hass.language),
+    name: localize('services.climate.set_temperature', getLocale(hass)),
     supported_feature: 1,
   },
   {
@@ -51,7 +52,7 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:cog-transfer-outline',
-    name: localize('services.climate.set_mode', hass.language),
+    name: localize('services.climate.set_mode', getLocale(hass)),
     supported_feature: 2,
   },
   {
@@ -74,7 +75,7 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:car-traction-control',
-    name: localize('services.water_heater.set_away_mode', hass.language),
+    name: localize('services.water_heater.set_away_mode', getLocale(hass)),
     supported_feature: 4,
   },
 ];
