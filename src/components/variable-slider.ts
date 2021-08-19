@@ -115,9 +115,9 @@ export class VariableSlider extends LitElement {
 
   private _updateValue(e: Event) {
     let value = Number((e.target as HTMLInputElement).value);
-    this._value = value;
-    value = Math.round(value * this.scaleFactor);
-    fireEvent(this, 'value-changed', { value: value });
+    // rely on the code in set value(), above, rather than duplicating it here
+    this.value = value;
+    fireEvent(this, 'value-changed', { value: this.value });
   }
 
   static styles = css`
