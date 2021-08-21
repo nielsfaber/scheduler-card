@@ -181,8 +181,9 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         const included = schedule.timeslots
           .every(timeslot => timeslot.actions
             .every(action => entityFilter(action.entity_id || action.service, this.config!)))
-        if (included) includedSchedules.push(schedule)
-        else excludedEntities.push(schedule)
+        if (!included) excludedEntities.push(schedule);
+        else if(!this.filterByTags(schedule))  excludedEntities.push(schedule);
+        else includedSchedules.push(schedule);
       });
 
     return html`
@@ -267,13 +268,24 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     else if (!schedule) {
       return false;
     }
-    else {
-      return schedule.timeslots.every(slot =>
+    else if(!schedule.timeslots.every(slot =>
         slot.actions.every(action =>
           entityFilter(action.entity_id || action.service, this.config!)
         )
-      );
+    )) {
+      return false;
     }
+    else return this.filterByTags(schedule);
+  }
+
+  filterByTags(schedule: Schedule) {
+    if(this.config!.tag_filter !== undefined) {
+      let filters = Array.isArray(this.config!.tag_filter) ? this.config!.tag_filter : [this.config!.tag_filter];
+      if((schedule.tags || []).some(e => filters.includes(e))) return true;
+      else if(filters.includes('none') && !schedule.tags?.length) return true;
+      else return false;
+    }
+    return true;
   }
 
   static styles = css`

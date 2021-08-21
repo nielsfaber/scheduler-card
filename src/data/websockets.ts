@@ -1,5 +1,5 @@
 import { HomeAssistant, fireEvent } from "custom-card-helpers";
-import { Schedule, ScheduleConfig } from "../types";
+import { Schedule, ScheduleConfig, TagEntry } from "../types";
 import { html, TemplateResult } from 'lit';
 
 export const fetchSchedules = (hass: HomeAssistant): Promise<Schedule[]> =>
@@ -27,6 +27,11 @@ export const deleteSchedule = (hass: HomeAssistant, schedule_id: string): Promis
   return hass
     .callApi("POST", "scheduler/remove", { schedule_id: schedule_id })
 };
+
+export const fetchTags = (hass: HomeAssistant): Promise<TagEntry[]> =>
+  hass.callWS({
+    type: "scheduler/tags",
+  });
 
 export function showErrorDialog(target: HTMLElement, error: string | TemplateResult) {
   fireEvent(target, 'show-dialog', {

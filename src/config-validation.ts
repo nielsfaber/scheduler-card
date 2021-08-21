@@ -170,6 +170,7 @@ export function ValidateConfig(config: any) {
       }
     });
   }
+  Optional(config, 'tag_filter', ['string', 'array']);
 
   if (errors.length) {
     throw new Error(

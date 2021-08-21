@@ -9,58 +9,107 @@ import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, pick, isEqual, getLocale } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, isEqual, getLocale, sortAlphabetically } from '../helpers';
 
 import '../components/button-group';
 import '../components/variable-picker';
+import '../components/scheduler-selector';
 import { computeEntities } from '../data/entities/compute_entities';
 import { listVariableDisplay } from '../data/variables/list_variable';
 import { levelVariableDisplay } from '../data/variables/level_variable';
 import { computeStates } from '../data/compute_states';
+import { fetchTags } from '../data/websockets';
+import { loadHaForm } from '../load-ha-form';
 
-@customElement('scheduler-options-card')
-export class SchedulerOptionsCard extends LitElement {
-  @property() hass?: HomeAssistant;
-  @property() config?: CardConfig;
-  @property() schedule?: ScheduleConfig;
 
-  @property() selectedGroup?: Group;
-  @property() selectedEntity?: EntityElement;
-  @property() conditionMatchType?: EConditionMatchType;
-  @property() conditionValue?: string | number;
-  @property() editItem?: number;
 
-  @property() addCondition = false;
+const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
+  let output: Dictionary<ListVariableOption> = {};
 
-  matchTypes: Dictionary<ListVariableOption> = {};
-
-  firstUpdated() {
-    this.matchTypes = {
-      [EConditionMatchType.Above]:
+  if (!filter?.length || filter.includes(EConditionMatchType.Above))
+    output = {
+      ...output, [EConditionMatchType.Above]:
       {
         value: EConditionMatchType.Above,
-        name: this.hass!.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.above'),
+        name: hass.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.above'),
         icon: "hass:greater-than"
-      },
-      [EConditionMatchType.Below]:
+      }
+    };
+
+  if (!filter?.length || filter.includes(EConditionMatchType.Below))
+    output = {
+      ...output, [EConditionMatchType.Below]:
       {
         value: EConditionMatchType.Below,
-        name: this.hass!.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.below'),
+        name: hass.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.below'),
         icon: "hass:less-than"
-      },
-      [EConditionMatchType.Equal]:
+      }
+    };
+
+  if (!filter?.length || filter.includes(EConditionMatchType.Equal))
+    output = {
+      ...output, [EConditionMatchType.Equal]:
       {
         value: EConditionMatchType.Equal,
-        name: localize('ui.panel.conditions.equal_to', getLocale(this.hass!)),
+        name: localize('ui.panel.conditions.equal_to', getLocale(hass)),
         icon: "hass:equal"
-      },
-      [EConditionMatchType.Unequal]:
+      }
+    };
+
+  if (!filter?.length || filter.includes(EConditionMatchType.Unequal))
+    output = {
+      ...output, [EConditionMatchType.Unequal]:
       {
         value: EConditionMatchType.Unequal,
-        name: localize('ui.panel.conditions.unequal_to', getLocale(this.hass!)),
+        name: localize('ui.panel.conditions.unequal_to', getLocale(hass)),
         icon: "hass:not-equal-variant"
       }
     };
+
+  return output;
+};
+
+
+@customElement('scheduler-options-card')
+export class SchedulerOptionsCard extends LitElement {
+  @property()
+  hass?: HomeAssistant;
+
+  @property()
+  config?: CardConfig;
+
+  @property()
+  schedule?: ScheduleConfig;
+
+  @property()
+  selectedGroup?: Group;
+
+  @property()
+  selectedEntity?: EntityElement;
+
+  @property()
+  conditionMatchType?: EConditionMatchType;
+
+  @property()
+  conditionValue?: string | number;
+
+  @property()
+  editItem?: number;
+
+  @property()
+  addCondition = false;
+
+  @property()
+  tags: string[] = [];
+
+  async firstUpdated() {
+    if (this.config?.tag_filter) {
+      (async () => await loadHaForm())();
+      const tagEntries = await fetchTags(this.hass!);
+      const existingTags = tagEntries.map(e => e.name);
+      const configTags = Array.isArray(this.config.tag_filter) ? this.config.tag_filter : [this.config.tag_filter];
+      this.tags = [...existingTags, ...configTags.filter(e => !existingTags.includes(e) && e != 'none')];
+    }
   }
 
   render() {
@@ -132,6 +181,17 @@ export class SchedulerOptionsCard extends LitElement {
             placeholder=${this.schedule.name ? "" : this.hass.localize('ui.components.area-picker.add_dialog.name')}
             @value-changed=${this.updateName}
           ></paper-input>
+
+          ${this.config.tag_filter ? html`          
+          <div class="header">${this.hass.localize('ui.panel.config.tag.caption')}</div>
+          <scheduler-selector
+            .items=${this.getTagOptions()}
+            .value=${this.schedule.tags || []}
+            @value-changed=${this.updateTags}
+            label=${this.hass.localize('ui.panel.config.tag.add_tag')}
+          >
+          </scheduler-selector>
+          ` : ''}
 
           <div class="header">${localize('ui.panel.options.repeat_type', getLocale(this.hass))}</div>
           <button-group
@@ -233,8 +293,7 @@ export class SchedulerOptionsCard extends LitElement {
           availableMatchTypes = [EConditionMatchType.Equal, EConditionMatchType.Unequal];
       }
 
-      const matchTypes = Object.entries(pick(this.matchTypes, availableMatchTypes))
-        .map(([k, v]) => Object.assign(v, { id: k }))
+      const matchTypes = getMatchTypes(this.hass, availableMatchTypes);
 
       return html`
       <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
@@ -283,7 +342,7 @@ export class SchedulerOptionsCard extends LitElement {
   }
 
   renderConditions() {
-    if (!this.hass || !this.schedule || !Object.keys(this.matchTypes).length) return html``;
+    if (!this.hass || !this.schedule) return html``;
     const conditions = this.schedule.timeslots[0].conditions || [];
     if (!conditions.length)
       return html`
@@ -297,7 +356,7 @@ export class SchedulerOptionsCard extends LitElement {
             <ha-icon icon="${entity.icon || DefaultEntityIcon}"></ha-icon>
             <span>
               ${PrettyPrintName(entity.name)}
-              ${this.matchTypes[item.match_type].name!.toLowerCase()}
+              ${getMatchTypes(this.hass!)[item.match_type].name!.toLowerCase()}
               ${states
           ?
           states.type == EVariableType.List
@@ -322,7 +381,7 @@ export class SchedulerOptionsCard extends LitElement {
     this.addCondition = true;
     this.selectedEntity = undefined;
     this.selectedGroup = undefined;
-  } b
+  }
 
   confirmConditionClick() {
     if (!this.selectedEntity || !this.config || !this.hass || !this.schedule || !this.conditionMatchType || !this.conditionValue) return;
@@ -417,6 +476,25 @@ export class SchedulerOptionsCard extends LitElement {
     this.schedule = {
       ...this.schedule!,
       repeat_type: value
+    }
+  }
+
+  getTagOptions() {
+    let output = [...this.tags];
+    if(this.schedule?.tags.length) output = [...output, ...this.schedule.tags.filter(e => !output.includes(e))];
+    output.sort(sortAlphabetically);
+    return output.map(e => Object({ name: e, value: e}));
+  }
+
+  updateTags(ev: Event) {
+    let value = (ev.target as HTMLInputElement).value as unknown as string[];
+    value = value.map(e => e.trim()); 
+    value = value.filter(e => e != 'none');
+    value.sort(sortAlphabetically);
+
+    this.schedule = {
+      ...this.schedule!,
+      tags: value
     }
   }
 

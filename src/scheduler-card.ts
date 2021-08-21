@@ -195,7 +195,8 @@ export class SchedulerCard extends LitElement {
         : {
           weekdays: ['daily'],
           timeslots: [defaultTimeslot],
-          repeat_type: ERepeatType.Repeat
+          repeat_type: ERepeatType.Repeat,
+          tags: typeof this._config.tag_filter == 'string' ? [this._config.tag_filter] : []
         };
       this._view = EViews.TimePicker;
     } else {
@@ -228,7 +229,8 @@ export class SchedulerCard extends LitElement {
         : {
           weekdays: ['daily'],
           timeslots: defaultTimeslots,
-          repeat_type: ERepeatType.Repeat
+          repeat_type: ERepeatType.Repeat,
+          tags: this._config.tag ? [this._config.tag] : []
         };
       this._view = EViews.TimeScheme;
     }
@@ -312,7 +314,8 @@ export class SchedulerCard extends LitElement {
       weekdays: data.weekdays,
       timeslots: data.timeslots,
       repeat_type: data.repeat_type,
-      name: data.name
+      name: data.name,
+      tags: data.tags || []
     }
     this.editItem = data.schedule_id!;
 

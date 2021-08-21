@@ -86,6 +86,7 @@ export interface Schedule {
   next_entries: number[],
   repeat_type: ERepeatType,
   name?: string;
+  tags?: string[];
 }
 
 export interface ScheduleConfig {
@@ -93,6 +94,7 @@ export interface ScheduleConfig {
   timeslots: Timeslot[],
   repeat_type: ERepeatType,
   name?: string;
+  tags: string[];
 }
 
 export enum ERepeatType {
@@ -215,6 +217,7 @@ export interface CardConfig extends LovelaceCardConfig {
   exclude: string[];
   groups: GroupConfig[];
   customize: Dictionary<EntityConfig>;
+  tag_filter?: string[] | string;
 }
 
 /* interface */
@@ -287,4 +290,9 @@ enum SchedulerEvent {
 export interface SchedulerEventData {
   schedule_id: string,
   event: SchedulerEvent
+}
+
+export interface TagEntry {
+  name: string,
+  schedules: string[]
 }

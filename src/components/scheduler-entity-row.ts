@@ -114,6 +114,8 @@ export class ScheduleEntityRow extends LitElement {
           return entityName.length ? capitalize(PrettyPrintName(entityName)) : '';
         case 'action':
           return capitalize(computeActionDisplay(action));
+        case 'tags':
+          return (this._schedule.tags || []).map(e => `<tag>${e}</tag>`).join('');
         default:
           const regex = /\{([^\}]+)\}/;
           let res;
@@ -127,12 +129,17 @@ export class ScheduleEntityRow extends LitElement {
     const renderDisplayItems = (displayItem: string | string[]) => {
       const replaceRelativeTime = (input: string) => {
         const parts = input.split('<my-relative-time></my-relative-time>');
-        if (parts.length == 1) return unsafeHTML(input);
-        return html`
+        if (parts.length > 1) return html`
           ${parts[0] ? unsafeHTML(parts[0]) : ''}
           <my-relative-time .hass=${this._hass} .datetime=${new Date(this._schedule.timestamps[this._schedule.next_entries[0]])}> </my-relative-time>
           ${parts[1] ? unsafeHTML(parts[1]) : ''}
         `;
+        const parts2 = input.split(/<tag>(.*?)<\/tag>/g);
+        if (parts2.length > 1) {
+          return parts2.filter(e => e.length).map(e => unsafeHTML(`<span class="filter-tag">${e}</span>`))
+        }
+        return unsafeHTML(input);
+      
       };
 
       return typeof displayItem == 'string'
@@ -288,6 +295,20 @@ export class ScheduleEntityRow extends LitElement {
     }
     hui-warning {
       flex: 1 0 40px;
+    }
+    span.filter-tag {
+      background: rgba(var(--rgb-primary-color), 0.54);
+      color: var(--primary-text-color);
+      height: 24px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 18px;
+      padding: 0px 10px;
+      display: inline-flex;  
+      align-items: center;
+      box-sizing: border-box;
+      margin: 4px 2px 0px 2px;
     }
   `;
 }

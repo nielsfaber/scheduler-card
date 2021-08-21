@@ -1,26 +1,40 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, computeEntity } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from '../types';
-import { PrettyPrintIcon, getLocale } from '../helpers';
+import { PrettyPrintIcon, getLocale, sortAlphabetically } from '../helpers';
 import { localize } from '../localize/localize';
 import { DefaultTimeStep, DefaultCardConfig } from '../const';
 import { commonStyle } from '../styles';
-import { domainIcons, standardIcon } from '../standard-configuration/standardIcon';
+import { domainIcons } from '../standard-configuration/standardIcon';
 import { parseEntity } from '../data/entities/parse_entity';
-import { fetchSchedules } from '../data/websockets';
+import { fetchSchedules, fetchTags } from '../data/websockets';
 import { standardStates } from '../standard-configuration/standardStates';
 import { computeEntities } from '../data/entities/compute_entities';
 import { computeActions } from '../data/actions/compute_actions';
 
+import { loadHaForm } from '../load-ha-form';
+
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
-  @property() public hass?: HomeAssistant;
-  @property() private _config?: CardConfig;
-  @property() selectedDomain = '';
-  @property() titleOption = 'standard';
 
-  @property() scheduleEntities: string[] = [];
+  @property()
+  public hass?: HomeAssistant;
+
+  @property()
+  private _config?: CardConfig;
+
+  @property()
+  selectedDomain = '';
+
+  @property()
+  titleOption = 'standard';
+
+  @property()
+  scheduleEntities: string[] = [];
+
+  @property()
+  tagOptions: { name: string, value: string }[] = [];
 
   public setConfig(config: CardConfig): void {
     this._config = config;
@@ -28,7 +42,11 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   }
 
   async firstUpdated() {
+    await loadHaForm();
     this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
+    const tagOptions = (await fetchTags(this.hass!)).map(e => e.name);
+    tagOptions.sort(sortAlphabetically);
+    this.tagOptions = tagOptions.map(e => Object({ name: e, value: e }));
   }
 
   protected render(): TemplateResult | void {
@@ -59,7 +77,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         <div class="header">Show all schedules</div>
         <div class="text-field">
           This sets the 'discover existing' parameter.<br />
-          Disable if you want to use multiple scheduler-cards.
+          Previously created schedules will be automatically added to the card. 
         </div>
         <button-group
           .items=${[{ value: 'on' }, { value: 'off' }]}
@@ -81,6 +99,16 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
           @change=${this.updateTimeStepOption}
         >
         </variable-slider>
+
+        <div class="header">Tags</div>
+        <div class="text-field">Use tags to divide schedules between multiple cards</div>
+        <scheduler-selector
+          .items=${this.tagOptions}
+          .value=${this.getTagValue()}
+          @value-changed=${this.updateTags}
+          label=${this.hass.localize('ui.panel.config.tag.add_tag')}
+        >
+        </scheduler-selector>
 
         <div class="header">Included entities</div>
         <div class="text-field">Select the entities that you want to control using the scheduler. You can click on a group to open it.<br> Note that some entities (such as sensors) can only be used for conditions, not for actions.</div>
@@ -156,6 +184,23 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     fireEvent(this, 'config-changed', { config: this._config });
   }
 
+  getTagValue() {
+    return Array.isArray(this._config!.tag_filter)
+      ? this._config!.tag_filter
+      : typeof this._config!.tag_filter == 'string'
+        ? [this._config!.tag_filter]
+        : [];
+  }
+
+  private updateTags(ev: Event) {
+    if (!this._config || !this.hass) return;
+    let value = (ev.target as HTMLInputElement).value as unknown as string[];
+    value = value.map(e => e.trim());
+    value.sort(sortAlphabetically);
+    this._config = { ...this._config, tag_filter: value };
+    fireEvent(this, 'config-changed', { config: this._config });
+  }
+
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
 
@@ -175,9 +220,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       return html`
         <div
           class="row"
-          @click=${() => {
-          this.toggleShowDomain(domain);
-        }}
+          @click=${() => { this.toggleShowDomain(domain); }}
         >
           <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}"> </ha-icon>
 
@@ -189,7 +232,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
           </div>
           <ha-switch
             @click=${(ev: Event) => { ev.stopPropagation() }}
-            @change=${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}}
+            @change=${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}
             ?checked=${includedDomains.includes(domain)}
           >
           </ha-switch>
@@ -242,7 +285,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return;
     let includedEntities = this._config.include ? [...this._config.include] : [];
     if (!includedEntities.includes(domain) && enabled) {
-      includedEntities = includedEntities.filter(e => !e.startsWith(domain));
+      includedEntities = includedEntities.filter(e => computeDomain(e) != domain);
       includedEntities.push(domain);
     }
     else if (includedEntities.includes(domain) && !enabled) includedEntities = includedEntities.filter(e => e != domain);
