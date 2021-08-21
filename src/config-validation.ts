@@ -1,4 +1,3 @@
-import { listVariable } from "./data/variables/list_variable";
 
 export function ValidateConfig(config: any) {
   const errors: string[] = [];
@@ -170,7 +169,7 @@ export function ValidateConfig(config: any) {
       }
     });
   }
-  Optional(config, 'tag_filter', ['string', 'array']);
+  Optional(config, 'tags', ['string', 'array']);
 
   if (errors.length) {
     throw new Error(

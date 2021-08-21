@@ -103,11 +103,11 @@ export class SchedulerOptionsCard extends LitElement {
   tags: string[] = [];
 
   async firstUpdated() {
-    if (this.config?.tag_filter) {
+    if (this.config?.tags) {
       (async () => await loadHaForm())();
       const tagEntries = await fetchTags(this.hass!);
       const existingTags = tagEntries.map(e => e.name);
-      const configTags = Array.isArray(this.config.tag_filter) ? this.config.tag_filter : [this.config.tag_filter];
+      const configTags = Array.isArray(this.config.tags) ? this.config.tags : [this.config.tags];
       this.tags = [...existingTags, ...configTags.filter(e => !existingTags.includes(e) && e != 'none')];
     }
   }
@@ -182,7 +182,7 @@ export class SchedulerOptionsCard extends LitElement {
             @value-changed=${this.updateName}
           ></paper-input>
 
-          ${this.config.tag_filter ? html`          
+          ${this.config.tags ? html`          
           <div class="header">${this.hass.localize('ui.panel.config.tag.caption')}</div>
           <scheduler-selector
             .items=${this.getTagOptions()}
@@ -481,14 +481,14 @@ export class SchedulerOptionsCard extends LitElement {
 
   getTagOptions() {
     let output = [...this.tags];
-    if(this.schedule?.tags.length) output = [...output, ...this.schedule.tags.filter(e => !output.includes(e))];
+    if (this.schedule?.tags.length) output = [...output, ...this.schedule.tags.filter(e => !output.includes(e))];
     output.sort(sortAlphabetically);
-    return output.map(e => Object({ name: e, value: e}));
+    return output.map(e => Object({ name: e, value: e }));
   }
 
   updateTags(ev: Event) {
     let value = (ev.target as HTMLInputElement).value as unknown as string[];
-    value = value.map(e => e.trim()); 
+    value = value.map(e => e.trim());
     value = value.filter(e => e != 'none');
     value.sort(sortAlphabetically);
 

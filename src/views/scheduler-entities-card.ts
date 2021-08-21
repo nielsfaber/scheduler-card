@@ -113,7 +113,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     const oldConfig = changedProps.get('config') as CardConfig | undefined;
     if (oldHass && changedProps.size == 1 && this.schedules)
       return this.schedules!.some(e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id]));
-    else if (oldConfig && this.config && oldConfig.discover_existing !== this.config.discover_existing)
+    else if (oldConfig && this.config && (oldConfig.discover_existing !== this.config.discover_existing || oldConfig.tags !== this.config.tags))
       (async () => await this.loadSchedules())();
     return true;
   }
@@ -182,7 +182,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
           .every(timeslot => timeslot.actions
             .every(action => entityFilter(action.entity_id || action.service, this.config!)))
         if (!included) excludedEntities.push(schedule);
-        else if(!this.filterByTags(schedule))  excludedEntities.push(schedule);
+        else if (!this.filterByTags(schedule)) excludedEntities.push(schedule);
         else includedSchedules.push(schedule);
       });
 
@@ -268,10 +268,10 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     else if (!schedule) {
       return false;
     }
-    else if(!schedule.timeslots.every(slot =>
-        slot.actions.every(action =>
-          entityFilter(action.entity_id || action.service, this.config!)
-        )
+    else if (!schedule.timeslots.every(slot =>
+      slot.actions.every(action =>
+        entityFilter(action.entity_id || action.service, this.config!)
+      )
     )) {
       return false;
     }
@@ -279,10 +279,10 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   }
 
   filterByTags(schedule: Schedule) {
-    if(this.config!.tag_filter !== undefined) {
-      let filters = Array.isArray(this.config!.tag_filter) ? this.config!.tag_filter : [this.config!.tag_filter];
-      if((schedule.tags || []).some(e => filters.includes(e))) return true;
-      else if(filters.includes('none') && !schedule.tags?.length) return true;
+    if (this.config!.tags !== undefined) {
+      let filters = Array.isArray(this.config!.tags) ? this.config!.tags : [this.config!.tags];
+      if ((schedule.tags || []).some(e => filters.includes(e))) return true;
+      else if (filters.includes('none') && !schedule.tags?.length) return true;
       else return false;
     }
     return true;

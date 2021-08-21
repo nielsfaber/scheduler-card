@@ -217,7 +217,7 @@ export interface CardConfig extends LovelaceCardConfig {
   exclude: string[];
   groups: GroupConfig[];
   customize: Dictionary<EntityConfig>;
-  tag_filter?: string[] | string;
+  tags?: string[] | string;
 }
 
 /* interface */

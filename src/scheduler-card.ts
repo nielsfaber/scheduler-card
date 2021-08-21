@@ -196,7 +196,7 @@ export class SchedulerCard extends LitElement {
           weekdays: ['daily'],
           timeslots: [defaultTimeslot],
           repeat_type: ERepeatType.Repeat,
-          tags: typeof this._config.tag_filter == 'string' ? [this._config.tag_filter] : []
+          tags: typeof this._config.tags == 'string' ? [this._config.tags] : []
         };
       this._view = EViews.TimePicker;
     } else {

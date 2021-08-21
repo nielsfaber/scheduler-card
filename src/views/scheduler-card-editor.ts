@@ -34,7 +34,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   scheduleEntities: string[] = [];
 
   @property()
-  tagOptions: { name: string, value: string }[] = [];
+  tagOptions?: string[];
 
   public setConfig(config: CardConfig): void {
     this._config = config;
@@ -46,11 +46,11 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
     const tagOptions = (await fetchTags(this.hass!)).map(e => e.name);
     tagOptions.sort(sortAlphabetically);
-    this.tagOptions = tagOptions.map(e => Object({ name: e, value: e }));
+    this.tagOptions = tagOptions;
   }
 
   protected render(): TemplateResult | void {
-    if (!this.hass) {
+    if (!this.hass || !this._config) {
       return html``;
     }
 
@@ -100,15 +100,16 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
         >
         </variable-slider>
 
+        ${this.tagOptions !== undefined ? html`
         <div class="header">Tags</div>
-        <div class="text-field">Use tags to divide schedules between multiple cards</div>
+        <div class="text-field">Use tags to sort schedules between multiple cards</div>
         <scheduler-selector
-          .items=${this.tagOptions}
+          .items=${this.getTagOptions()}
           .value=${this.getTagValue()}
           @value-changed=${this.updateTags}
           label=${this.hass.localize('ui.panel.config.tag.add_tag')}
         >
-        </scheduler-selector>
+        </scheduler-selector>` : ''}
 
         <div class="header">Included entities</div>
         <div class="text-field">Select the entities that you want to control using the scheduler. You can click on a group to open it.<br> Note that some entities (such as sensors) can only be used for conditions, not for actions.</div>
@@ -185,10 +186,10 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   }
 
   getTagValue() {
-    return Array.isArray(this._config!.tag_filter)
-      ? this._config!.tag_filter
-      : typeof this._config!.tag_filter == 'string'
-        ? [this._config!.tag_filter]
+    return Array.isArray(this._config!.tags)
+      ? this._config!.tags
+      : typeof this._config!.tags == 'string'
+        ? [this._config!.tags]
         : [];
   }
 
@@ -197,8 +198,18 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     let value = (ev.target as HTMLInputElement).value as unknown as string[];
     value = value.map(e => e.trim());
     value.sort(sortAlphabetically);
-    this._config = { ...this._config, tag_filter: value };
+    this._config = { ...this._config, tags: value };
     fireEvent(this, 'config-changed', { config: this._config });
+  }
+
+  getTagOptions() {
+    if (!this._config || !this.hass) return [];
+    let options = this.tagOptions || [];
+    if (this._config.tags) {
+      const configTags = Array.isArray(this._config.tags) ? this._config.tags : [this._config.tags];
+      options = [...options, ...configTags.filter(e => !options.includes(e))];
+    }
+    return options.map(e => Object({ name: e, value: e }));
   }
 
   getDomainSwitches() {

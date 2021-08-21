@@ -32,6 +32,7 @@
     - [List action variable](#list-action-variable)
     - [Conditions](#conditions)
   - [Display options](#display-options)
+  - [Tags](#tags)
 - [Translations](#translations)
 - [Tips & Tricks](#tips--tricks)
   - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
@@ -313,7 +314,8 @@ The standard configuration consists of the following:
 | `time_step`              | number         | 10           | Set the time step (in minutes) for the time picker                                                                                                                                                                                         |
 | `show_header_toggle`     | boolean        | *false*      | Show a switch at the top of the card that can be used to enable/disable the complete list.                                                                                                                                                 |
 | `show_add_button`        | boolean        | *true*       | Show button for creating new schedules.                                                                                                                                                                                                    |
-| `display_options`        | dictionary     | none         | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info. list.                                                                                                                  |
+| `display_options`        | dictionary     | none         | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                        |
+| `tags`                   | string/list    | none         | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                  |
 ### Standard configuration
 
 The card includes a _standard configuration_.
@@ -618,6 +620,7 @@ The following properties are available:
 | `time`             | Configured time for the schedule.<sup>1</sup>                                                                                                      |
 | `days`             | Configured days for the schedule.                                                                                                                  |
 | `additional-tasks` | The amount of remaining tasks/actions (other than the displayed one).<br>Only for time schemes, otherwise this property is skipped.                |
+| `tags`             | Show tags assigned to schedule. See [tags](#tags).                                                                                                 |
 
 <sup>1</sup> For *time schemes*, the displayed value corresponds to the closest timeslot.
 
@@ -632,6 +635,66 @@ display_options:
 ```
 
 
+### Tags
+If you want to use multiple scheduler-cards in your Lovelace dashboard, it can be difficult to separate the schedules which show up in each card (with [include](#include) you can only control which <u>entities</u> are controlled by which cards).
+With `tags` you can filter out schedules and assign them to their own cards.
+
+
+To start using tags, edit the card configuration and assign `tags` to the scheduler card.
+
+*Example:*
+```yaml
+type: custom:scheduler-card
+#...rest of card configuration
+tags: holiday
+```
+
+The effect of assigning tags:
+- Only schedules with a matching tag will show up (unless `discover_existing` is set to *true*.
+- All schedules created with this card will be automatically assigned with this tag.
+- You can modify tags of a schedule by clicking 'Options' when editing/creating a schedule.
+
+**Notes:**
+- You can also assign multiple tags to the card. In this case they will not be automatically applied to newly created  (you should choose this via 'options'). 
+- You can also assign multiple tags to a schedule. This allows you to make them appear in multiple cards (each with card having its own tag).
+- You can assign `tags: none` to a card if you want to have only schedules without a tag showing up here.
+- The option to assign tags on schedules is only available on cards which have the `tags` option set.
+
+:warning: **Tip**: If you want to start using tags you will have to go through your current schedules and assign them with tags.
+ You can  temporarily set `discover_existing: true` to make also schedules accessible which don't have the correct tag (yet).
+You can also make the tags for schedules show up in the overview through `display_options`.
+
+**Example usage**:
+
+Consider the following situation:
+- Card A should contain all normal (everyday) schedules.
+- Card B should contain only holiday schedules.
+- The normal schedules contain tasks to turn on the garden lights at 19:00 and turn them off again at 23:00.
+- The holiday schedules contain tasks to turn on the dining lights at 17:00 and turn them off again at 22:00.
+
+Since both cards have the light domain [included](#include), the created schedules would normally show up in both cards, which is not desirable.
+
+Now by assigning `tags` to the card configurations, you can filter them. 
+
+
+Config for card A:
+```yaml
+type: custom:scheduler-card
+title: Normal schedule
+#...rest of card configuration
+tags: none
+```
+Config for card B:
+```yaml
+type: custom:scheduler-card
+title: Holiday schedule
+#...rest of card configuration
+tags: holiday
+```
+
+Result:
+
+![tags example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/tags_example.png?raw=true)
 
 ## Translations
 
@@ -657,7 +720,7 @@ Currently the following languages are supported:
 | Slovenčina  | sk         |                   |
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn |                   |
-
+| 简体中文    | zh-Hans    |                   |
 
 The translations are maintained by users.
 If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/main/src/localize/languages/en.json) file as a starting point.
