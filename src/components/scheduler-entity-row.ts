@@ -139,7 +139,6 @@ export class ScheduleEntityRow extends LitElement {
           return parts2.filter(e => e.length).map(e => unsafeHTML(`<span class="filter-tag">${e}</span>`))
         }
         return unsafeHTML(input);
-      
       };
 
       return typeof displayItem == 'string'
@@ -289,6 +288,7 @@ export class ScheduleEntityRow extends LitElement {
     ha-icon {
       flex: 0 0 40px;
       color: var(--state-icon-color);
+      transition: color 0.2s ease-in-out;
     }
     ha-switch {
       padding: 13px 5px;
@@ -309,6 +309,16 @@ export class ScheduleEntityRow extends LitElement {
       align-items: center;
       box-sizing: border-box;
       margin: 4px 2px 0px 2px;
+      transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+    }
+    :host([disabled]) {
+      --primary-text-color: var(--disabled-text-color);
+      --secondary-text-color: var(--disabled-text-color);
+      --paper-item-icon-color: var(--disabled-text-color);
+      --state-icon-color: var(--disabled-text-color);
+    }
+    :host([disabled]) span.filter-tag {
+      background: rgba(var(--rgb-primary-color), 0.30);
     }
   `;
 }

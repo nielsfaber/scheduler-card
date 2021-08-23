@@ -191,7 +191,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       const state = this.hass!.states[schedule.entity_id]?.state || '';
       return html`
           <scheduler-entity-row
-            class="${["on", "triggered"].includes(state) ? '' : 'disabled'}"
+            ?disabled=${!["on", "triggered"].includes(state)}
             .hass=${this.hass}
             .schedule=${schedule}
             .config=${this.config}
@@ -219,7 +219,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
             const state = this.hass!.states[schedule.entity_id]?.state || '';
             return html`
                   <scheduler-entity-row
-                    class="${["on", "triggered"].includes(state) ? '' : 'disabled'}"
+                    ?disabled=${!["on", "triggered"].includes(state)}
                     .hass=${this.hass}
                     .schedule=${schedule}
                     .config=${this.config}
@@ -293,11 +293,6 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     scheduler-entity-row {
       cursor: pointer;
       margin: 20px 0px;
-    }
-    scheduler-entity-row.disabled {
-      --primary-text-color: var(--disabled-text-color);
-      --secondary-text-color: var(--disabled-text-color);
-      --paper-item-icon-color: var(--disabled-text-color);
     }
     hui-warning {
       padding: 10px 0px;
