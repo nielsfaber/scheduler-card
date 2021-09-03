@@ -5,6 +5,7 @@ import { listVariable } from '../data/variables/list_variable';
 import { levelVariable } from '../data/variables/level_variable';
 import { computeCommonActions } from '../data/actions/compute_common_actions';
 import { omit } from '../helpers';
+import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
 
 export function groupActions(hass: HomeAssistant, entity: HassEntity, entityActions: Action[][]) {
   const entities: string[] =
@@ -15,7 +16,7 @@ export function groupActions(hass: HomeAssistant, entity: HassEntity, entityActi
   entityActions = entityActions.map((actions, i) => {
     //filter by supported_features
     const stateObj: HassEntity | undefined = hass.states[entities[i]];
-    const supportedFeatures = stateObj?.attributes.supported_features || 0;
+    const supportedFeatures = computeSupportedFeatures(stateObj);
     actions = actions
       .filter(e => !e.supported_feature || e.supported_feature & supportedFeatures)
       .map(action => omit(action, 'supported_feature'));

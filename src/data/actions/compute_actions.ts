@@ -7,6 +7,7 @@ import { compareActions } from "./compare_actions";
 import { computeCommonActions } from "./compute_common_actions";
 import { computeVariables } from "../variables/compute_variables";
 import { HassEntity } from "home-assistant-js-websocket";
+import { computeSupportedFeatures } from "../entities/compute_supported_features";
 
 
 function parseString(str: string) {
@@ -111,7 +112,7 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
   };
 
   //filter by supported_features
-  const supportedFeatures = stateObj?.attributes.supported_features || 0;
+  const supportedFeatures = computeSupportedFeatures(stateObj);
   actions = actions.filter(e => !e.supported_feature || e.supported_feature & supportedFeatures);
 
   //list variable with 1 option is not really a variable

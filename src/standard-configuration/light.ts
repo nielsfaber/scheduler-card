@@ -5,6 +5,8 @@ import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 import { getLocale } from '../helpers';
+import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
+
 
 export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefined): Action[] => {
   const actions: Action[] = [
@@ -15,9 +17,7 @@ export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefin
     },
   ];
 
-  const supportedFeatures = stateObj && stateObj.attributes.supported_features !== undefined
-    ? Number(stateObj.attributes.supported_features)
-    : 0;
+  const supportedFeatures = computeSupportedFeatures(stateObj);
 
   if (supportedFeatures & 1)
     actions.push({
