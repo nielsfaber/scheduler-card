@@ -313,7 +313,7 @@ export class SchedulerOptionsCard extends LitElement {
 
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.device.condition')}</div>
       <button-group
-        .items=${matchTypes} 
+        .items=${Object.values(matchTypes)} 
         value=${this.conditionMatchType}
         @change=${(ev: Event) => this.conditionMatchType = (ev.target as HTMLInputElement).value as EConditionMatchType}
       >
@@ -323,7 +323,7 @@ export class SchedulerOptionsCard extends LitElement {
       <scheduler-variable-picker
         .variable=${states}
         .value=${this.conditionValue}
-        @value-changed=${(ev: CustomEvent) => this.conditionValue = ev.detail.value}}
+        @value-changed=${(ev: CustomEvent) => this.conditionValue = ev.detail.value}
       >
       </scheduler-variable-picker> 
       `;
