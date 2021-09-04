@@ -9,7 +9,7 @@ import { UnsubscribeFunc } from 'home-assistant-js-websocket';
 import { SubscribeMixin } from '../components/subscribe-mixin';
 
 import '../components/scheduler-entity-row';
-import { capitalize, getLocale } from '../helpers';
+import { capitalize, getLocale, AsArray } from '../helpers';
 import { fetchSchedules, fetchScheduleItem } from '../data/websockets';
 import { entityFilter } from '../data/entities/entity_filter';
 import { WebsocketEvent } from '../const';
@@ -279,11 +279,11 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   }
 
   filterByTags(schedule: Schedule) {
-    if (this.config!.tags !== undefined) {
-      let filters = Array.isArray(this.config!.tags) ? this.config!.tags : [this.config!.tags];
+    const filters = AsArray(this.config!.tags);
+    if (filters.length) {
       if ((schedule.tags || []).some(e => filters.includes(e))) return true;
       else if (filters.includes('none') && !schedule.tags?.length) return true;
-      else return false;
+      return false;
     }
     return true;
   }

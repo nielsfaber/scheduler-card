@@ -153,3 +153,9 @@ export const getLocale = (hass: HomeAssistant): FrontendTranslationData =>
     language: hass.language,
     number_format: NumberFormat.system
   }
+
+export function AsArray<TValue>(value: TValue | TValue[] | null | undefined): TValue[] {
+  if (Array.isArray(value)) return value;
+  else if (value !== null && value !== undefined) return [value];
+  else return [];
+}

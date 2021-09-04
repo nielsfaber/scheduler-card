@@ -9,7 +9,7 @@ import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, isEqual, getLocale, sortAlphabetically } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, isEqual, getLocale, sortAlphabetically, AsArray } from '../helpers';
 
 import '../components/button-group';
 import '../components/variable-picker';
@@ -107,7 +107,7 @@ export class SchedulerOptionsCard extends LitElement {
       (async () => await loadHaForm())();
       const tagEntries = await fetchTags(this.hass!);
       const existingTags = tagEntries.map(e => e.name);
-      const configTags = Array.isArray(this.config.tags) ? this.config.tags : [this.config.tags];
+      const configTags = AsArray(this.config.tags);
       this.tags = [...existingTags, ...configTags.filter(e => !existingTags.includes(e) && e != 'none')];
     }
   }
@@ -206,7 +206,12 @@ export class SchedulerOptionsCard extends LitElement {
         <div class="card-actions">
           ${!this.addCondition
         ? html`
-                <mwc-button @click=${this.saveClick}>${this.hass.localize('ui.common.save')}</mwc-button>
+                <mwc-button
+                  @click=${this.saveClick}
+                  ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
+                >
+                  ${this.hass.localize('ui.common.save')}
+                </mwc-button>
                 <mwc-button @click=${this.backClick} style="float: right"
                   >${this.hass.localize('ui.common.back')}</mwc-button
                 >

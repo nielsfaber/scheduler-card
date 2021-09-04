@@ -102,7 +102,6 @@ export class SchedulerEditorCard extends LitElement {
     if (entities.length == 1 && this.selectedEntities[0] !== entities[0].id) this.selectEntity(entities[0].id);
 
     const actions = this.getActionsForEntity();
-    //if (actions.length == 1 && this.selectedAction !== actions[0].id) this.selectAction(actions[0].id);
 
     return html`
       <ha-card>
@@ -202,8 +201,7 @@ export class SchedulerEditorCard extends LitElement {
     this.selectedEntities = Array.isArray(value) ? value : [value];
     if (this.selectedAction) {
       const availableActions = this.getActionsForEntity();
-      if (!availableActions.find(e => compareActions(e, this.selectedAction!)))
-        this.selectedAction = undefined;
+      this.selectedAction = availableActions.find(e => compareActions(e, this.selectedAction!));
     }
     else this.selectedAction = undefined;
   }

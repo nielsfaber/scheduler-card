@@ -109,7 +109,12 @@ export class SchedulerTimepickerCard extends LitElement {
       }
           </div>
           <div class="card-actions">
-            <mwc-button @click="${this.saveClick}">${this.hass.localize('ui.common.save')}</mwc-button>
+            <mwc-button
+              @click=${this.saveClick}
+              ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
+            >
+              ${this.hass.localize('ui.common.save')}
+            </mwc-button>
             ${this.editItem
         ? html`
                   <mwc-button class="warning" @click=${this.deleteClick}

@@ -5,7 +5,7 @@
 export function stringToTime(string: string) {
   if (string.match(/^([0-9:]+)$/)) {
     const parts = string.split(':').map(Number);
-    return parts[0] * 3600 + parts[1] * 60 + parts[2] || 0;
+    return parts[0] * 3600 + parts[1] * 60 + (parts[2] || 0);
   }
   else {
     const ts = new Date(string);

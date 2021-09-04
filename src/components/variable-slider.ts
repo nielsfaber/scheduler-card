@@ -17,17 +17,11 @@ export class VariableSlider extends LitElement {
 
   //raw value
   @property({ type: Number })
-  get value(): number {
-    return this._value;
-  }
   set value(value: number) {
-    if (isNaN(value)) value = this.min;
-    value = value / this.scaleFactor;
-    value = Math.round(value / this.step) * this.step;
-    value = parseFloat(value.toPrecision(12));
-    if (value > this.max) value = this.max;
-    else if (value < this.min) value = this.min;
-    this._value = value;
+    value = isNaN(value)
+      ? this.min
+      : this._roundedValue(value / this.scaleFactor);
+    this._displayedValue = value;
   }
 
   @property({ type: Number })
@@ -42,9 +36,8 @@ export class VariableSlider extends LitElement {
   @property({ type: Boolean })
   disabled = false;
 
-  //displayed value
   @property({ type: Number })
-  _value: number = 0;
+  _displayedValue: number = 0;
 
   firstUpdated() {
     (async () => await loadHaForm())();
@@ -65,7 +58,7 @@ export class VariableSlider extends LitElement {
           ${this.getSlider()}
         </div>
         <div class="value${this.disabled ? ' disabled' : ''}">
-          ${this._value}${this.unit}
+          ${this._displayedValue}${this.unit}
         </div>
       </div>
     `;
@@ -79,7 +72,7 @@ export class VariableSlider extends LitElement {
           min=${this.min}
           max=${this.max}
           step=${this.step}
-          value=${this._value}
+          value=${this._displayedValue}
           @change=${this._updateValue}
         ></ha-slider>
       `;
@@ -90,7 +83,7 @@ export class VariableSlider extends LitElement {
           min=${this.min}
           max=${this.max}
           step=${this.step}
-          value=${this._value}
+          value=${this._displayedValue}
           disabled
         ></ha-slider>
       `;
@@ -100,7 +93,10 @@ export class VariableSlider extends LitElement {
   getCheckbox() {
     if (!this.optional) return html``;
     return html`
-      <ha-checkbox @change="${this.toggleChecked}" ?checked=${!this.disabled}> </ha-checkbox>
+      <ha-checkbox
+        @change=${this.toggleChecked}
+        ?checked=${!this.disabled}
+      ></ha-checkbox>
     `;
   }
 
@@ -109,15 +105,30 @@ export class VariableSlider extends LitElement {
     this.disabled = !checked;
     let value = this.disabled
       ? null
-      : Math.round(this._value * this.scaleFactor);
+      : this._scaledValue(this._displayedValue);
     fireEvent(this, 'value-changed', { value: value });
   }
 
   private _updateValue(e: Event) {
     let value = Number((e.target as HTMLInputElement).value);
-    // rely on the code in set value(), above, rather than duplicating it here
-    this.value = value;
-    fireEvent(this, 'value-changed', { value: this.value });
+    this._displayedValue = value;
+    value = this._scaledValue(this._displayedValue);
+    fireEvent(this, 'value-changed', { value: value });
+  }
+
+  private _roundedValue(value: number) {
+    value = Math.round(value / this.step) * this.step;
+    value = parseFloat(value.toPrecision(12));
+    if (value > this.max) value = this.max;
+    else if (value < this.min) value = this.min;
+    return value;
+  }
+
+  private _scaledValue(value: number) {
+    value = this._roundedValue(value);
+    value = value * this.scaleFactor;
+    value = parseFloat(value.toFixed(2));
+    return value;
   }
 
   static styles = css`

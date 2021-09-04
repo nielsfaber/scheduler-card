@@ -8,6 +8,7 @@ import { computeCommonActions } from "./compute_common_actions";
 import { computeVariables } from "../variables/compute_variables";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeSupportedFeatures } from "../entities/compute_supported_features";
+import { computeActionDisplay } from "./compute_action_display";
 
 
 function parseString(str: string) {
@@ -37,7 +38,7 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       .filter(isDefined)
   );
   if (excludedActions.length) {
-    actions = actions.filter(e => !e.name || !excludedActions.some(a => parseString(e.name!).includes(a)));
+    actions = actions.filter(e => !excludedActions.some(a => parseString(computeActionDisplay(e)).includes(a)));
   }
 
   //get customizations for entity

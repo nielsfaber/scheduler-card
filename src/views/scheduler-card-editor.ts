@@ -2,7 +2,7 @@ import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from '../types';
-import { PrettyPrintIcon, getLocale, sortAlphabetically } from '../helpers';
+import { PrettyPrintIcon, getLocale, sortAlphabetically, AsArray } from '../helpers';
 import { localize } from '../localize/localize';
 import { DefaultTimeStep, DefaultCardConfig } from '../const';
 import { commonStyle } from '../styles';
@@ -186,11 +186,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   }
 
   getTagValue() {
-    return Array.isArray(this._config!.tags)
-      ? this._config!.tags
-      : typeof this._config!.tags == 'string'
-        ? [this._config!.tags]
-        : [];
+    return AsArray(this._config!.tags);
   }
 
   private updateTags(ev: Event) {
@@ -206,7 +202,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     if (!this._config || !this.hass) return [];
     let options = this.tagOptions || [];
     if (this._config.tags) {
-      const configTags = Array.isArray(this._config.tags) ? this._config.tags : [this._config.tags];
+      const configTags = AsArray(this._config.tags);
       options = [...options, ...configTags.filter(e => !options.includes(e))];
     }
     return options.map(e => Object({ name: e, value: e }));

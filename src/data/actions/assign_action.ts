@@ -1,4 +1,5 @@
 import { Action, EVariableType, LevelVariable, ListVariable, ServiceCall, TextVariable } from "../../types";
+import { omit } from "../../helpers";
 
 
 
@@ -17,10 +18,12 @@ export const assignAction = (entity_id: string, action: Action) => {
       config = config as LevelVariable;
       output = {
         ...output,
-        service_data: {
-          ...output.service_data,
-          [key]: parseFloat((config.min * config.scale_factor).toPrecision(12)) || 0
-        }
+        service_data: config.optional
+          ? omit(output.service_data || {}, key)
+          : {
+            ...output.service_data,
+            [key]: parseFloat((config.min * config.scale_factor).toPrecision(12)) || 0
+          }
       };
     }
     else if (config.type == EVariableType.List) {

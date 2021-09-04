@@ -11,7 +11,7 @@ import {
   Timeslot,
 } from './types';
 import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
-import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined } from './helpers';
+import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray } from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './views/scheduler-entities-card';
@@ -28,6 +28,7 @@ import { computeActions } from './data/actions/compute_actions';
 import { compareActions } from './data/actions/compare_actions';
 import { importAction } from './data/actions/import_action';
 import { assignAction } from './data/actions/assign_action';
+import { migrateActionConfig } from './data/actions/migrate_action_config';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -178,6 +179,8 @@ export class SchedulerCard extends LitElement {
     const timeSchemeSelected = Boolean(ev.detail.timeSchemeSelected);
     const action: Action = ev.detail.action;
     const oldSchedule = this.schedule;
+    const defaultTags = AsArray(this._config.tags).length == 1 ? AsArray(this._config.tags).slice(0, 1) : [];
+
     if (!timeSchemeSelected) {
       this.actions = [action];
       const defaultTimeslot: Timeslot = {
@@ -189,14 +192,19 @@ export class SchedulerCard extends LitElement {
         ? {
           ...oldSchedule,
           timeslots: oldSchedule.timeslots.length == 1 && !oldSchedule.timeslots[0].stop
-            ? [{ ...oldSchedule.timeslots[0], actions: defaultTimeslot.actions }]
+            ? [
+              {
+                ...oldSchedule.timeslots[0],
+                actions: migrateActionConfig(oldSchedule.timeslots[0].actions[0], entities, this.actions, this._hass!) || defaultTimeslot.actions
+              }
+            ]
             : [defaultTimeslot]
         }
         : {
           weekdays: ['daily'],
           timeslots: [defaultTimeslot],
           repeat_type: ERepeatType.Repeat,
-          tags: typeof this._config.tags == 'string' ? [this._config.tags] : []
+          tags: defaultTags
         };
       this._view = EViews.TimePicker;
     } else {
@@ -219,19 +227,26 @@ export class SchedulerCard extends LitElement {
         }
       ];
 
-      this.schedule = oldSchedule
-        ? {
+      if (oldSchedule) {
+        //migrate existing schedule
+        const actions = oldSchedule.timeslots
+          .map(e => e.actions[0])
+          .map(v => migrateActionConfig(v, entities, this.actions, this._hass!));
+
+        this.schedule = {
           ...oldSchedule,
           timeslots: oldSchedule.timeslots.length > 1 && oldSchedule.timeslots.every(e => e.stop)
-            ? oldSchedule.timeslots.map(slot => Object.assign(slot, { actions: [] }))
+            ? oldSchedule.timeslots.map((slot, i) => Object.assign(slot, { actions: actions[i] || [] }))
             : defaultTimeslots
         }
-        : {
+      } else {
+        this.schedule = {
           weekdays: ['daily'],
           timeslots: defaultTimeslots,
           repeat_type: ERepeatType.Repeat,
-          tags: this._config.tag ? [this._config.tag] : []
+          tags: defaultTags
         };
+      }
       this._view = EViews.TimeScheme;
     }
   }
