@@ -9,7 +9,7 @@ import { entityGroups } from '../data/entity_group';
 import { commonStyle } from '../styles';
 import { parseEntity } from '../data/entities/parse_entity';
 import { DefaultEntityIcon } from '../const';
-import { PrettyPrintIcon, PrettyPrintName, isEqual, getLocale, sortAlphabetically, AsArray } from '../helpers';
+import { PrettyPrintIcon, PrettyPrintName, isEqual, getLocale, sortAlphabetically, AsArray, isDefined } from '../helpers';
 
 import '../components/button-group';
 import '../components/variable-picker';
@@ -20,8 +20,6 @@ import { levelVariableDisplay } from '../data/variables/level_variable';
 import { computeStates } from '../data/compute_states';
 import { fetchTags } from '../data/websockets';
 import { loadHaForm } from '../load-ha-form';
-
-
 
 const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
   let output: Dictionary<ListVariableOption> = {};
@@ -115,7 +113,7 @@ export class SchedulerOptionsCard extends LitElement {
   render() {
     if (!this.hass || !this.config || !this.schedule) return html``;
 
-    const repeatTypes = [
+    let repeatTypes = [
       {
         name: this.hass.localize('ui.panel.config.automation.editor.actions.type.repeat.label'),
         value: ERepeatType.Repeat,
@@ -132,6 +130,10 @@ export class SchedulerOptionsCard extends LitElement {
         icon: 'trash-can-outline',
       },
     ];
+
+    if (isDefined(this.schedule.start_date)) {
+      repeatTypes = repeatTypes.filter(e => e.value != ERepeatType.Repeat);
+    }
 
     return html`
       <ha-card>
@@ -173,6 +175,27 @@ export class SchedulerOptionsCard extends LitElement {
               <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
               ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
             </mwc-button>
+          </div>
+
+          <div class="header">${localize('ui.panel.options.period', getLocale(this.hass))}</div>
+          <div class="checkbox-container">
+            <div class="checkbox">
+              <ha-checkbox
+                ?checked=${isDefined(this.schedule.start_date)}
+                @change=${this.toggleEnableDateRange}
+              >
+              </ha-checkbox>
+            </div>
+            <div class="slider">
+              <scheduler-date-picker
+                .hass=${this.hass}
+                ?disabled=${!isDefined(this.schedule.start_date)}
+                startDate=${this.schedule.start_date}
+                endDate=${this.schedule.end_date}
+                @value-changed=${this.selectDateRange}
+              >
+              </scheduler-date-picker>
+            </div>
           </div>
 
           <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
@@ -374,7 +397,7 @@ export class SchedulerOptionsCard extends LitElement {
             </span>
           <ha-icon-button
             icon="hass:pencil"
-            @click=${() => { this.editConditionClick(num) }}}
+            @click=${() => { this.editConditionClick(num) }}
           >
           </ha-icon-button>
         </div>
@@ -466,6 +489,30 @@ export class SchedulerOptionsCard extends LitElement {
         })
       )
     }
+  }
+
+  selectDateRange(ev: CustomEvent) {
+    const value = ev.detail.value as { startDate: string, endDate: string };
+    this.schedule = {
+      ...this.schedule!,
+      start_date: value.startDate,
+      end_date: value.endDate
+    };
+  }
+
+  toggleEnableDateRange(ev: Event) {
+    const checked = (ev.target as HTMLInputElement).checked;
+    const dateRangePicker = this.shadowRoot!.querySelector("scheduler-date-picker") as any;
+    this.schedule = {
+      ...this.schedule!,
+      start_date: checked ? dateRangePicker.startDate : undefined,
+      end_date: checked ? dateRangePicker.endDate : undefined,
+      repeat_type: checked
+        ? this.schedule!.repeat_type == ERepeatType.Repeat ? ERepeatType.Pause : this.schedule!.repeat_type
+        : this.schedule!.repeat_type == ERepeatType.Pause ? ERepeatType.Repeat : this.schedule!.repeat_type
+    };
+
+
   }
 
   updateName(e: Event) {

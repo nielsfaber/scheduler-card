@@ -96,7 +96,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
           unit=" min"
           ?optional=${false}
           ?disabled=${false}
-          @change=${this.updateTimeStepOption}
+          @value-changed=${this.updateTimeStepOption}
         >
         </variable-slider>
 
@@ -174,13 +174,13 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   getTimeStepOption() {
     if (!this._config || !this.hass) return;
-    const time_step = this._config.hasOwnProperty('time_step') ? this._config.time_step : DefaultTimeStep;
+    const time_step = this._config.hasOwnProperty('time_step') && !isNaN(this._config.time_step) ? this._config.time_step : DefaultTimeStep;
     return Number(time_step);
   }
 
-  private updateTimeStepOption(e: Event) {
+  private updateTimeStepOption(ev: CustomEvent) {
     if (!this._config || !this.hass) return;
-    const value = Number((e.target as HTMLInputElement).value);
+    const value = Number(ev.detail.value);
     this._config = { ...this._config, time_step: value };
     fireEvent(this, 'config-changed', { config: this._config });
   }

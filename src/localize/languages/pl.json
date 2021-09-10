@@ -87,7 +87,8 @@
         "tomorrow": "jutro",
         "repeated_days": "co {days} dni",
         "repeated_days_except": "coddziennie z wyjątkiem {excludedDays}",
-        "days_range": "od {startDay} do {endDay}"
+        "days_range": "od {startDay} do {endDay}",
+        "next_week_day": "następna {weekday}"
       },
       "time": {
         "absolute": "o {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Nie ma zdefiniowanych warunków"
       },
       "options": {
-        "repeat_type": "zachowanie po wyzwoleniu"
+        "repeat_type": "zachowanie po zakończeniu",
+        "period": "okres"
       }
     }
   }

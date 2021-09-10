@@ -14,8 +14,9 @@
     - [Time scheme editor](#time-scheme-editor)
   - [Options panel](#options-panel)
     - [Condition editor](#condition-editor)
+    - [Period](#period)
+    - [Behaviour after completion](#behaviour-after-completion)
     - [Name](#name)
-    - [Behaviour after triggering](#behaviour-after-triggering)
 - [Configuration](#configuration)
   - [Introduction](#introduction-1)
   - [Overview](#overview)
@@ -264,6 +265,34 @@ For more information on this, see [conditions](#conditions).
 
 :warning: **Note**: Conditions are only evaluated at the time the actions should fire. This means that if the conditions are not met, the timer event will be skipped. It will not be re-evaluated when any of the entities involved in the conditions change.
 
+#### Period
+The *period* option allows you to define a range of dates (or a single date) for which the schedule needs to be active.
+
+If the *period* option:
+* is not used, a schedule will repeat on a daily/weekly basis as defined by the [days](#choosing-the-days) input (unless it is configured to do otherwise via [trigger behaviour](#behaviour-after-completion)).
+* Is used, a schedule will only be executed within the defined date range (which may be a single date). This can be combined with [days](#choosing-the-days) input to provide additional restrictions.
+
+If the combination of the defined end date + time(s) is in the past, the schedule becomes *completed*. 
+A completed schedule will:
+* Show up with grey text in the scheduler-card in the overview and appears in the bottom of the list with the time to the next triggering in the past.
+* Not perform any actions and needs to be manually editted to become useful again.
+
+#### Behaviour after completion
+
+The *behaviour after completion* option can be used to control repetition behaviour of a schedule.
+
+Completion of a schedule is defined as follows:
+* For a normal schedule (having a single time), completion is reached after the configured time has passed (and after the corresponding action(s) have been executed).
+* For a time scheme (having one or more timeslots), completion is reached after the last timeslot has passed.
+* In case a [period](#period) is assigned to a schedule, completion is reached when the configured time (or last timeslot) on the end date has passed. In this case the *repeat* option is not available (for more info see [period](#period)).
+
+| Selected Option  | Behaviour                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Repeat (default) | Schedule will repeat again on the next allowed day (as defined by the [days](#choosing-the-days)).                                         |
+| Stop             | Schedule will disable (turn off) itself after completion.<br>It has to be re-enabled by the user or through automation in order to repeat. |
+| Delete           | Schedule will remove itself after completion.                                                                                              |
+
+
 #### Name
 
 By default, all schedules will have an automatically generated entity ID and friendly name.
@@ -271,14 +300,6 @@ This means they could be hard to find back in the entity registry.
 
 By defining your own friendly name, this will assigned to the entity, and the entity ID of the entity will be based on this name as well.
 If you leave the field empty, the automatically generated name shall be used instead.
-
-#### Behaviour after triggering
-
-The *behaviour after triggering* option does exactly what it says.
-You can choose what to do after the schedule is triggered:
-* Repeat (default option): the schedule will reset the timer for next execution after it is triggered
-* Single: the schedule will remove itself after it has been triggered once
-* Pause: the schedule will disable itself after it has been triggered once, it can be reset by turning it back on
 
 ## Configuration
 

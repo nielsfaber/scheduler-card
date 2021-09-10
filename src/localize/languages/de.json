@@ -87,7 +87,8 @@
         "tomorrow": "morgen",
         "repeated_days": "jeden {days}",
         "repeated_days_except": "täglich außer {excludedDays}",
-        "days_range": "von {startDay} bis {endDay}"
+        "days_range": "von {startDay} bis {endDay}",
+        "next_week_day": "nächsten {weekday}"
       },
       "time": {
         "absolute": "um {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Es sind keine Bedingungen definiert"
       },
       "options": {
-        "repeat_type": "Verhalten im Anschluß"
+        "repeat_type": "Verhalten nach Abschluß",
+        "period": "Term"
       }
     }
   }

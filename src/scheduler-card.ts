@@ -11,7 +11,7 @@ import {
   Timeslot,
 } from './types';
 import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
-import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray } from './helpers';
+import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray, pick } from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './views/scheduler-entities-card';
@@ -22,6 +22,7 @@ import './views/scheduler-card-editor';
 
 import './components/dialog-error';
 import './components/dialog-delete-defective';
+import './components/scheduler-date-picker';
 import { parseEntity } from './data/entities/parse_entity';
 import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
 import { computeActions } from './data/actions/compute_actions';
@@ -330,7 +331,9 @@ export class SchedulerCard extends LitElement {
       timeslots: data.timeslots,
       repeat_type: data.repeat_type,
       name: data.name,
-      tags: data.tags || []
+      tags: data.tags || [],
+      start_date: data.start_date,
+      end_date: data.end_date,
     }
     this.editItem = data.schedule_id!;
 

@@ -87,7 +87,8 @@
         "tomorrow": "завтра",
         "repeated_days": "кожні {days}",
         "repeated_days_except": "кожного дня окрім {excludedDays}",
-        "days_range": "з {startDay} до {endDay}"
+        "days_range": "з {startDay} до {endDay}",
+        "next_week_day": "наступної {weekday}"
       },
       "time": {
         "absolute": "о {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Не визначені умови"
       },
       "options": {
-        "repeat_type": "поведінка після спрацювання"
+        "repeat_type": "поведінка після спрацювання",
+        "period": "період"
       }
     }
   }

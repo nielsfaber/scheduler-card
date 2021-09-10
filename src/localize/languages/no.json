@@ -87,7 +87,8 @@
         "tomorrow": "imorgen",
         "repeated_days": "hver {days}",
         "repeated_days_except": "hver dag unntatt {excludedDays}",
-        "days_range": "fra {startDay} til {endDay}"
+        "days_range": "fra {startDay} til {endDay}",
+        "next_week_day": "neste {weekday}"
       },
       "time": {
         "absolute": "kl. {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Ingen vilkår definert"
       },
       "options": {
-        "repeat_type": "oppførsel når utløst"
+        "repeat_type": "oppførsel etter fullføring",
+        "period": "periode"
       }
     }
   }

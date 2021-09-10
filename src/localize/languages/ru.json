@@ -87,7 +87,8 @@
         "tomorrow": "завтра",
         "repeated_days": "каждый {days}",
         "repeated_days_except": "каждый день кроме {excludedDays}",
-        "days_range": "с {startDay} до {endDay}"
+        "days_range": "с {startDay} до {endDay}",
+        "next_week_day": "в следующую {weekday}"
       },
       "time": {
         "absolute": "в {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Не определены условия"
       },
       "options": {
-        "repeat_type": "поведение после срабатывания"
+        "repeat_type": "поведение после срабатывания",
+        "period": "период"
       }
     }
   }

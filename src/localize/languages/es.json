@@ -88,7 +88,8 @@
         "tomorrow": "mañana",
         "repeated_days": "cada {days}",
         "repeated_days_except": "cada dia excepto {excludedDays}",
-        "days_range": "de {startDay} a {endDay}"
+        "days_range": "de {startDay} a {endDay}",
+        "next_week_day": "próximo {weekday}"
       },
       "time": {
         "absolute": "a las {time}",
@@ -129,7 +130,8 @@
         "no_conditions_defined": "no hay ninguna condición definida"
       },
       "options": {
-        "repeat_type": "acción después de ejecutar"
+        "repeat_type": "acción después de la finalización",
+        "period": "período"
       }
     }
   }

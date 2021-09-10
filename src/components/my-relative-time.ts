@@ -5,6 +5,8 @@ import { capitalize, getLocale } from '../helpers';
 import { formatWeekday } from '../data/date-time/format_weekday';
 import { localize } from '../localize/localize';
 import { formatTime } from '../data/date-time/format_time';
+import { relativeTime as haRelativeTime } from 'custom-card-helpers';
+import { formatDate } from '../data/date-time/format_date';
 
 const secondsPerMinute = 60;
 const secondsPerHour = 3600;
@@ -53,16 +55,33 @@ export class MyRelativeTime extends LitElement {
           (dateObj.valueOf() - startOfToday.valueOf()) / (hoursPerDay * secondsPerHour * 1000)
         );
         let day = '';
-        if (daysFromNow == 1)
+        if (daysFromNow > 14) {
+          //October 12
+          day = formatDate(dateObj, getLocale(this._hass));
+        }
+        else if (daysFromNow > 7) {
+          //Next Friday
+          day = localize('ui.components.date.next_week_day', getLocale(this._hass), '{weekday}', formatWeekday(dateObj, getLocale(this._hass)));
+        }
+        else if (daysFromNow == 1) {
+          //Tomorrow
           day = localize('ui.components.date.tomorrow', getLocale(this._hass));
-        else if (daysFromNow > 0)
+        }
+        else if (daysFromNow > 0) {
+          //Friday
           day = formatWeekday(dateObj, getLocale(this._hass));
+        }
+
         let time = localize('ui.components.time.absolute', getLocale(this._hass), '{time}', formatTime(dateObj, getLocale(this._hass)));
-        if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0)
+
+        if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0) {
           time = localize('ui.components.time.at_noon', getLocale(this._hass));
-        else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0)
+        }
+        else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0) {
           time = localize('ui.components.time.at_midnight', getLocale(this._hass));
+        }
         return String(day + ' ' + time).trim();
+
       } else if (Math.round(delta / secondsPerMinute) > 60 && Math.round(delta / secondsPerMinute) < 120) {
         const mins = Math.round(delta / secondsPerMinute - 60);
         const ts2 = this._hass.localize('ui.components.relative_time.duration.minute', 'count', mins);

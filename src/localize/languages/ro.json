@@ -87,7 +87,8 @@
         "tomorrow": "mâine",
         "repeated_days": "la fiecare {days} zile",
         "repeated_days_except": "zilnic cu excepția {excludedDays}",
-        "days_range": "din {startDay} până în {endDay}"
+        "days_range": "din {startDay} până în {endDay}",
+        "next_week_day": "{weekday} viitoare"
       },
       "time": {
         "absolute": "la {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Nu există condiții definite"
       },
       "options": {
-        "repeat_type": "comportament după declanșare"
+        "repeat_type": "comportament după declanșare",
+        "period": "perioadă"
       }
     }
   }

@@ -87,7 +87,8 @@
         "tomorrow": "tomorrow",
         "repeated_days": "every {days}",
         "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "days_range": "from {startDay} to {endDay}",
+        "next_week_day": "következő {weekday}"
       },
       "time": {
         "absolute": "{time}-kor",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "There are no conditions defined"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "behaviour after triggering",
+        "period": "időszak"
       }
     }
   }

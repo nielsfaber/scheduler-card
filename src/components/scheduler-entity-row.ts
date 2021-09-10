@@ -167,6 +167,7 @@ export class ScheduleEntityRow extends LitElement {
       </div>
       <ha-switch
         ?checked=${["on", "triggered"].includes(this.hass.states[this._schedule.entity_id]?.state || '')}
+        ?disabled=${this.hass.states[this._schedule.entity_id]?.state == "completed"}
         @click=${this.toggleDisabled}
       >
       </ha-switch>

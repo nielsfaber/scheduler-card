@@ -17,15 +17,27 @@ import { WebsocketEvent } from '../const';
 const computeScheduleTimestamp = (schedule: Schedule) =>
   new Date(schedule.timestamps[schedule.next_entries[0]]).valueOf()
 
-const sortSchedules = (schedules: Schedule[]) => {
+const sortSchedules = (schedules: Schedule[], hass: HomeAssistant) => {
   let output = [...schedules];
   output.sort((a, b) => {
+
+    const stateA = hass.states[a.entity_id]?.state;
+    const stateB = hass.states[b.entity_id]?.state;
+
+    if (['on', 'triggered', 'off'].includes(stateA) && !['on', 'triggered', 'off'].includes(stateB)) return -1;
+    else if (!['on', 'triggered', 'off'].includes(stateA) && ['on', 'triggered', 'off'].includes(stateB)) return 1;
+
     const remainingA = computeScheduleTimestamp(a);
     const remainingB = computeScheduleTimestamp(b);
+    const now = new Date().valueOf();
+
+    const reverse = remainingA < now && remainingB < now;
 
     if (remainingA !== null && remainingB !== null) {
-      if (remainingA > remainingB) return 1;
-      else if (remainingA < remainingB) return -1;
+      if (remainingA < now && remainingB >= now) return 1;
+      else if (remainingA >= now && remainingB < now) return -1;
+      else if (remainingA > remainingB) return reverse ? -1 : 1;
+      else if (remainingA < remainingB) return reverse ? 1 : -1;
       else return a.entity_id < b.entity_id ? 1 : -1;
     } else if (remainingB !== null) return 1;
     else if (remainingA !== null) return -1;
@@ -33,8 +45,6 @@ const sortSchedules = (schedules: Schedule[]) => {
   });
   return output;
 }
-
-
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
@@ -75,7 +85,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         }
         else if (!oldSchedule) {
           //add a new schedule and sort the list
-          schedules = sortSchedules([...schedules, schedule]);
+          schedules = sortSchedules([...schedules, schedule], this.hass!);
         }
         else if (
           oldSchedule.enabled == schedule.enabled &&
@@ -86,9 +96,9 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         }
         else {
           //overwrite the existing schedule and sort
-          schedules = sortSchedules(schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e));
+          schedules = sortSchedules(schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e), this.hass!);
         }
-        this.schedules = schedules;
+        this.schedules = [...schedules];
       });
   }
 
@@ -100,7 +110,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         let schedules = res;
 
         schedules = schedules.filter(e => this.filterIncludedSchedule(e));
-        this.schedules = sortSchedules(schedules);
+        this.schedules = sortSchedules(schedules, this.hass!);
       })
       .catch(_e => {
         this.schedules = [];

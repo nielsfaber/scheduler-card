@@ -87,7 +87,8 @@
         "tomorrow": "מחר",
         "repeated_days": "בכל {days}",
         "repeated_days_except": "בכל יום פרט ל  {excludedDays}",
-        "days_range": "מ- {startDay} ועד- {endDay}"
+        "days_range": "מ- {startDay} ועד- {endDay}",
+        "next_week_day": "הבא {weekday}"
       },
       "time": {
         "absolute": "בשעה {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "לא הוגדרו תנאים"
       },
       "options": {
-        "repeat_type": "התנהגות לאחר הפעלה"
+        "repeat_type": "התנהגות לאחר הפעלה",
+        "period": "פרק זמן"
       }
     }
   }

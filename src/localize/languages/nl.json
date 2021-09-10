@@ -87,7 +87,8 @@
         "tomorrow": "morgen",
         "repeated_days": "elke {days}",
         "repeated_days_except": "elke dag behalve {excludedDays}",
-        "days_range": "van {startDay} tot {endDay}"
+        "days_range": "van {startDay} tot {endDay}",
+        "next_week_day": "volgende week {weekday}"
       },
       "time": {
         "absolute": "om {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd"
       },
       "options": {
-        "repeat_type": "gedrag na activeren"
+        "repeat_type": "gedrag na voltooiing",
+        "period": "periode"
       }
     }
   }

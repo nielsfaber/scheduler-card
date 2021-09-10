@@ -87,7 +87,8 @@
         "tomorrow": "zajtra",
         "repeated_days": "každý {days}",
         "repeated_days_except": "každý deň okrem {excludedDays}",
-        "days_range": "od {startDay} do {endDay}"
+        "days_range": "od {startDay} do {endDay}",
+        "next_week_day": "budúcu {weekday}"
       },
       "time": {
         "absolute": "od {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "Nie sú definované žiadne podmienky"
       },
       "options": {
-        "repeat_type": "správanie sa po spustení"
+        "repeat_type": "správanie sa po spustení",
+        "period": "obdobie"
       }
     }
   }

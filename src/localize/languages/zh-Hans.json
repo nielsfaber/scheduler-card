@@ -87,7 +87,8 @@
         "tomorrow": "明天",
         "repeated_days": "每 {days}",
         "repeated_days_except": "每天，除了 {excludedDays}",
-        "days_range": "从 {startDay} 至 {endDay}"
+        "days_range": "从 {startDay} 至 {endDay}",
+        "next_week_day": "下{weekday}"
       },
       "time": {
         "absolute": "在 {time}",
@@ -128,7 +129,8 @@
         "no_conditions_defined": "未定义条件"
       },
       "options": {
-        "repeat_type": "触发后的行为"
+        "repeat_type": "触发后的行为",
+        "period": "时期"
       }
     }
   }

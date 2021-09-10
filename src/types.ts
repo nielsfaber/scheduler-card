@@ -85,16 +85,20 @@ export interface Schedule {
   timestamps: string[],
   next_entries: number[],
   repeat_type: ERepeatType,
-  name?: string;
-  tags?: string[];
+  name?: string,
+  tags?: string[],
+  start_date?: string,
+  end_date?: string,
 }
 
 export interface ScheduleConfig {
   weekdays: WeekdayType,
   timeslots: Timeslot[],
   repeat_type: ERepeatType,
-  name?: string;
-  tags: string[];
+  name?: string,
+  tags: string[],
+  start_date?: string,
+  end_date?: string,
 }
 
 export enum ERepeatType {
@@ -271,7 +275,7 @@ export enum EDayType {
   Daily = 'DAILY',
   Workday = 'WORKDAY',
   Weekend = 'WEEKEND',
-  Custom = 'CUSTOM',
+  Custom = 'CUSTOM'
 }
 
 export interface Days {
