@@ -34,7 +34,8 @@
     },
     "select": {
       "select_option": "valik[ {option}]"
-    },    "light": {
+    },
+    "light": {
       "turn_on": "lülita sisse[ heledusega {brightness}]"
     },
     "media_player": {
