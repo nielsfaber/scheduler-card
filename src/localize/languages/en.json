@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "select option[ {option}]"
     },
+    "select": {
+      "select_option": "select option[ {option}]"
+    },
     "light": {
       "turn_on": "turn on[ with {brightness} brightness]"
     },

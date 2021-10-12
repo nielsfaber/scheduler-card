@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "selectare opțiune[ {option}]"
     },
+    "select": {
+      "select_option": "selectare opțiune[ {option}]"
+    },
     "light": {
       "turn_on": "pornire[ cu luminozitate {brightness}]"
     },

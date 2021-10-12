@@ -32,7 +32,9 @@
     "input_select": {
       "select_option": "valik[ {option}]"
     },
-    "light": {
+    "select": {
+      "select_option": "valik[ {option}]"
+    },    "light": {
       "turn_on": "lülita sisse[ heledusega {brightness}]"
     },
     "media_player": {

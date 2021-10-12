@@ -13,6 +13,7 @@ import { deviceTrackerStates } from './device_tracker';
 import { groupStates } from './group';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { inputSelectStates } from './input_select';
+import { selectStates } from './select';
 import { Variable } from '../types';
 import { isDefined } from '../helpers';
 import { inputNumberStates } from './input_number';
@@ -49,6 +50,8 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
         return inputNumberStates(hass, stateObj);
       case 'input_select':
         return inputSelectStates(hass, stateObj);
+      case 'select':
+        return selectStates(hass, stateObj);
       case 'proximity':
         return proximityStates(hass, stateObj);
       case 'sensor':

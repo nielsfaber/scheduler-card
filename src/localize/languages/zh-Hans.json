@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "选择选项[ {option}]"
     },
+    "select": {
+      "select_option": "选择选项[ {option}]"
+    },
     "light": {
       "turn_on": "打开[ 并设定亮度为 {brightness}]"
     },

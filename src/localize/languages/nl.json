@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "selecteer optie[ {option}]"
     },
+    "select": {
+      "select_option": "selecteer optie[ {option}]"
+    },
     "light": {
       "turn_on": "inschakelen[ met {brightness} helderheid]"
     },
@@ -61,6 +64,7 @@
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
+    "select": "select",
     "light": "verlichting",
     "lock": "sloten",
     "media_player": "mediaspelers",

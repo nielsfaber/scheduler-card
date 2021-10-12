@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "velg[ {option}]"
     },
+    "select": {
+      "select_option": "velg[ {option}]"
+    },
     "light": {
       "turn_on": "slå på[ med {brightness} lysstyrke]"
     },

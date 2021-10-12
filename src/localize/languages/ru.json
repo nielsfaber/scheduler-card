@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "установить опцию[ {option}]"
     },
+    "select": {
+      "select_option": "установить опцию[ {option}]"
+    },
     "light": {
       "turn_on": "включить[ с {brightness} яркостью]"
     },

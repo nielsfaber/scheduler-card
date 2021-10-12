@@ -177,6 +177,13 @@ export class SchedulerOptionsCard extends LitElement {
             </mwc-button>
           </div>
 
+          <div style="margin-top: 10px">
+            <mwc-button @click=${this.addConditionClick}>
+              <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+              ${this.hass.localize('ui.dialogs.helper_settings.select.add')}
+            </mwc-button>
+          </div>
+
           <div class="header">${localize('ui.panel.options.period', getLocale(this.hass))}</div>
           <div class="checkbox-container">
             <div class="checkbox">

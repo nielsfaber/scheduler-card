@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "vybrat možnost[ {option}]"
     },
+    "select": {
+      "select_option": "vybrat možnost[ {option}]"
+    },
     "light": {
       "turn_on": "zapnout[ na {brightness} jas]"
     },
