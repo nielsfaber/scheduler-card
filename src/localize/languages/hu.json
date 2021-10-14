@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "opció kiválasztása[ {option}]"
     },
+    "select": {
+      "select_option": "opció kiválasztása[ {option}]"
+    },
     "light": {
       "turn_on": "bekapcsolás[ with {brightness} brightness]"
     },

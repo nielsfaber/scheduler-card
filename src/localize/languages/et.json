@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "valik[ {option}]"
     },
+    "select": {
+      "select_option": "valik[ {option}]"
+    },
     "light": {
       "turn_on": "lülita sisse[ heledusega {brightness}]"
     },

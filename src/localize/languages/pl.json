@@ -32,6 +32,9 @@
     "input_select": {
       "select_option": "wybierz opcję[ {option}]"
     },
+    "select": {
+      "select_option": "wybierz opcję[ {option}]"
+    },
     "light": {
       "turn_on": "zapal[ z jasnością {brightness}]"
     },

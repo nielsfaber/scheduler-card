@@ -17,6 +17,7 @@ export const domainIcons = {
   input_boolean: 'hass:drawing',
   input_number: 'hass:ray-vertex',
   input_select: 'hass:format-list-bulleted',
+  select: 'hass:format-list-bulleted',
   input_text: 'hass:textbox',
   light: 'hass:lightbulb-outline',
   lock: 'hass:lock-open-outline',

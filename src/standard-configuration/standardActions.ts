@@ -7,6 +7,7 @@ import { fanActions } from './fan';
 import { humidifierActions } from './humidifier';
 import { inputNumberActions } from './input_number';
 import { inputSelectActions } from './input_select';
+import { selectActions } from './select';
 import { lightActions } from './light';
 import { lockActions } from './lock';
 import { mediaPlayerActions } from './media_player';
@@ -47,6 +48,8 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
         return inputNumberActions(hass, stateObj);
       case 'input_select':
         return inputSelectActions(hass, stateObj);
+      case 'select':
+        return selectActions(hass, stateObj);
       case 'light':
         return lightActions(hass, stateObj);
       case 'lock':
