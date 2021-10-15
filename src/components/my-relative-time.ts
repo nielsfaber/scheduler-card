@@ -5,15 +5,12 @@ import { capitalize, getLocale } from '../helpers';
 import { formatWeekday } from '../data/date-time/format_weekday';
 import { localize } from '../localize/localize';
 import { formatTime } from '../data/date-time/format_time';
-import { relativeTime as haRelativeTime } from 'custom-card-helpers';
 import { formatDate } from '../data/date-time/format_date';
+import { selectUnit } from "@formatjs/intl-utils";
 
 const secondsPerMinute = 60;
 const secondsPerHour = 3600;
 const hoursPerDay = 24;
-
-const tests = [60, 60, 24, 7];
-const langKey = ['second', 'minute', 'hour', 'day'];
 
 @customElement('my-relative-time')
 export class MyRelativeTime extends LitElement {
@@ -44,11 +41,7 @@ export class MyRelativeTime extends LitElement {
     delta = Math.abs(delta);
     let roundedDelta = Math.round(delta);
 
-    if (roundedDelta === 0) {
-      return this._hass.localize('ui.components.relative_time.just_now');
-    }
-
-    if (tense == 'future') {
+    if (tense == 'future' && roundedDelta > 0) {
       if (delta / secondsPerHour >= 6) {
         const startOfToday = now.setHours(0, 0, 0, 0);
         const daysFromNow = Math.floor(
@@ -83,52 +76,34 @@ export class MyRelativeTime extends LitElement {
         return String(day + ' ' + time).trim();
 
       } else if (Math.round(delta / secondsPerMinute) > 60 && Math.round(delta / secondsPerMinute) < 120) {
+        // in 1 hour and 52 minutes
         const mins = Math.round(delta / secondsPerMinute - 60);
-        const ts2 = this._hass.localize('ui.components.relative_time.duration.minute', 'count', mins);
         const join = this._hass.localize('ui.common.and');
 
-        //workaround for missing translation in some languages
-        if (this._hass.localize('ui.components.relative_time.future')) {
-          const ts1 = this._hass.localize('ui.components.relative_time.duration.hour', 'count', 1);
-          return this._hass.localize('ui.components.relative_time.future', 'time', `${ts1} ${join} ${ts2}`);
-        }
-        else {
-          const ts1 = this._hass.localize('ui.components.relative_time.future_duration.hour', 'count', 1);
-          return `${ts1} ${join} ${ts2}`;
-        }
+        // @ts-expect-error
+        const text1 = new Intl.RelativeTimeFormat(getLocale(this._hass).language, { numeric: "auto" }).format(1, 'hour');
+        // @ts-expect-error
+        const text2 = Intl.NumberFormat(getLocale(this._hass).language, { style: "unit", unit: 'minute', unitDisplay: "long"}).format(mins);
+      
+        return `${text1} ${join} ${text2}`;
       } else if (Math.round(delta) > 60 && Math.round(delta) < 120) {
+        // in 1 minute and 52 seconds
         const seconds = Math.round(delta - 60);
-        const ts2 = this._hass.localize('ui.components.relative_time.duration.second', 'count', seconds);
         const join = this._hass.localize('ui.common.and');
-        if (this._hass.localize('ui.components.relative_time.future')) {
-          const ts1 = this._hass.localize('ui.components.relative_time.duration.minute', 'count', 1);
-          return this._hass.localize('ui.components.relative_time.future', 'time', `${ts1} ${join} ${ts2}`);
-        }
-        else {
-          const ts1 = this._hass.localize('ui.components.relative_time.future_duration.minute', 'count', 1);
-          return `${ts1} ${join} ${ts2}`;
-        }
+
+        // @ts-expect-error
+        const text1 = new Intl.RelativeTimeFormat(getLocale(this._hass).language, { numeric: "auto" }).format(1, 'minute');
+        // @ts-expect-error
+        const text2 = Intl.NumberFormat(getLocale(this._hass).language, { style: "unit", unit: 'second', unitDisplay: "long" }).format(seconds);
+
+        return `${text1} ${join} ${text2}`;
       }
     }
 
-    let unit = 'week';
-
-    for (let i = 0; i < tests.length; i++) {
-      if (roundedDelta < tests[i]) {
-        unit = langKey[i];
-        break;
-      }
-
-      delta /= tests[i];
-      roundedDelta = Math.round(delta);
-    }
-    if (this._hass.localize(`ui.components.relative_time.${tense}`)) {
-      const ts = this._hass.localize(`ui.components.relative_time.duration.${unit}`, 'count', roundedDelta);
-      return this._hass.localize(`ui.components.relative_time.${tense}`, 'time', ts);
-    }
-    else {
-      return this._hass.localize(`ui.components.relative_time.${tense}_duration.${unit}`, 'count', roundedDelta);
-    }
+    // in 5 minutes/hours/seconds (or now)
+    const diff = selectUnit(dateObj);
+       // @ts-expect-error
+    return new Intl.RelativeTimeFormat(getLocale(this._hass).language, { numeric: "auto" }).format(diff.value, diff.unit);
   }
 
   render() {
