@@ -18,10 +18,13 @@ export function computeEntities(hass: HomeAssistant, config: CardConfig, options
     ];
   }
 
-  if (options.filterActions)
+  if (options.filterActions && options.filterStates)
+  entities = entities.filter(e => computeActions(e, hass, config).length || computeStates(e, hass, config));
+
+  else if (options.filterActions)
     entities = entities.filter(e => computeActions(e, hass, config).length);
 
-  if (options.filterStates)
+  else if (options.filterStates)
     entities = entities.filter(e => computeStates(e, hass, config));
 
   return entities;
