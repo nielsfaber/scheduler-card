@@ -1,7 +1,7 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { HomeAssistant, fireEvent } from 'custom-card-helpers';
-import { commonStyle } from '../styles';
+import { HomeAssistant } from 'custom-card-helpers';
+import { mdiClose } from '@mdi/js';
 
 @customElement('dialog-delete-confirm')
 export class DialogDeleteConfirm extends LitElement {
@@ -34,7 +34,7 @@ export class DialogDeleteConfirm extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            icon="mdi:close"
+            .path=${mdiClose}
           >
           </ha-icon-button>
           <span slot="title">

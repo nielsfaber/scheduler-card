@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
+import { mdiClose, mdiPencil } from '@mdi/js';
+
 import { localize } from '../localize/localize';
 //import { Config } from '../config';
 import { EConditionType, CardConfig, EntityElement, Condition, EConditionMatchType, ScheduleConfig, ListVariableOption, Dictionary, ERepeatType, Timeslot, EVariableType, ListVariable, LevelVariable, Group } from '../types';
@@ -145,7 +147,7 @@ export class SchedulerOptionsCard extends LitElement {
           : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
           </div>
-          <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
+          <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
           ${!this.addCondition
@@ -332,7 +334,7 @@ export class SchedulerOptionsCard extends LitElement {
           ${PrettyPrintName(entity.name)}
         </mwc-button>
         <ha-icon-button
-          icon="hass:pencil"
+          .path=${mdiPencil}
           style="margin-left: 10px"
           @click=${() => { this.selectedEntity = undefined }}
         >
@@ -396,7 +398,7 @@ export class SchedulerOptionsCard extends LitElement {
         }
             </span>
           <ha-icon-button
-            icon="hass:pencil"
+            .path=${mdiPencil}
             @click=${() => { this.editConditionClick(num) }}
           >
           </ha-icon-button>

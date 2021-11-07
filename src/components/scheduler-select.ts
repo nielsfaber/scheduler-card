@@ -1,6 +1,8 @@
 import { LitElement, html, TemplateResult, css, PropertyValues, CSSResultGroup } from 'lit';
 import { property, customElement, state, query } from 'lit/decorators.js';
 import { fireEvent } from 'custom-card-helpers';
+import { mdiClose, mdiMenuUp, mdiMenuDown } from '@mdi/js';
+
 import { isEqual, isDefined } from '../helpers';
 import { loadHaForm } from '../load-ha-form';
 
@@ -102,7 +104,7 @@ export class SchedulerSelect extends LitElement {
             : ''}
                 ${this.clearable
             ? html`
-                      <ha-icon-button slot="suffix" class="clear-button" @click=${this._clearValue} icon="hass:close">
+                      <ha-icon-button slot="suffix" class="clear-button" @click=${this._clearValue} .path=${mdiClose}>
                       </ha-icon-button>
                     `
             : ''}
@@ -111,7 +113,7 @@ export class SchedulerSelect extends LitElement {
           <ha-icon-button
             slot="suffix"
             class="toggle-button"
-            icon="${this._opened ? 'hass:menu-up' : 'hass:menu-down'}"
+            .path=${this._opened ? mdiMenuUp : mdiMenuDown}
           >
           </ha-icon-button>
         </paper-input>

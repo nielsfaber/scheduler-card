@@ -1,6 +1,8 @@
 import { LitElement, html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant, computeDomain } from 'custom-card-helpers';
+import { mdiClose } from '@mdi/js';
+
 import { localize } from '../localize/localize';
 import { CardConfig, EntityElement, ScheduleConfig, Action, Group } from '../types';
 import { entityGroups } from '../data/entity_group';
@@ -113,7 +115,7 @@ export class SchedulerEditorCard extends LitElement {
           : localize('ui.panel.common.title', getLocale(this.hass))
         : ''}
           </div>
-          <ha-icon-button icon="hass:close" @click=${this.cancelClick}> </ha-icon-button>
+          <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
           <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>

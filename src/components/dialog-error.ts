@@ -1,6 +1,7 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
+import { mdiClose } from '@mdi/js';
 
 @customElement('dialog-error')
 export class DialogError extends LitElement {
@@ -31,7 +32,7 @@ export class DialogError extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            icon="mdi:close"
+            .path=${mdiClose}
           >
           </ha-icon-button>
           <span slot="title">
