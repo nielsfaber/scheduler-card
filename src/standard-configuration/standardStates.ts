@@ -20,6 +20,7 @@ import { inputNumberStates } from './input_number';
 import { proximityStates } from './proximity';
 import { sensorStates } from './sensor';
 import { sunStates } from './sun';
+import { waterHeaterStates } from './water_heater';
 
 export function standardStates(entity_id: string, hass: HomeAssistant): Variable | null {
   try {
@@ -50,22 +51,24 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
         return inputNumberStates(hass, stateObj);
       case 'input_select':
         return inputSelectStates(hass, stateObj);
-      case 'select':
-        return selectStates(hass, stateObj);
-      case 'proximity':
-        return proximityStates(hass, stateObj);
-      case 'sensor':
-        return sensorStates(hass, stateObj);
-      case 'sun':
-        return sunStates(hass, stateObj);
-      case 'switch':
-        return switchStates(hass, stateObj);
       case 'light':
         return lightStates(hass, stateObj);
       case 'lock':
         return lockStates(hass, stateObj);
       case 'person':
         return personStates(hass, stateObj);
+      case 'proximity':
+        return proximityStates(hass, stateObj);
+      case 'select':
+        return selectStates(hass, stateObj);
+      case 'sensor':
+        return sensorStates(hass, stateObj);
+      case 'sun':
+        return sunStates(hass, stateObj);
+      case 'switch':
+        return switchStates(hass, stateObj);
+      case 'water_heater':
+        return waterHeaterStates(hass, stateObj);
       default:
         return null;
     }

@@ -51,6 +51,7 @@
       "start_pause": "démarrer / pause"
     },
     "water_heater": {
+      "set_operation_mode": "ajuster le mode[ à {operation_mode}]",
       "set_away_mode": "choisir le mode absent"
     }
   },

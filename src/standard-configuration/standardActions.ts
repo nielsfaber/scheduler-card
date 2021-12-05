@@ -67,7 +67,7 @@ export function standardActions(entity_id: string, hass: HomeAssistant, filterCa
       case 'vacuum':
         return vacuumActions(hass, stateObj);
       case 'water_heater':
-        return waterHeaterActions(hass, stateObj);
+        return waterHeaterActions(hass, stateObj, filterCapabilities);
 
       default:
         return [];

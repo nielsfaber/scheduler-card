@@ -51,6 +51,7 @@
       "start_pause": "старт / пауза"
     },
     "water_heater": {
+      "set_operation_mode": "встановити режим[ to {operation_mode}]",
       "set_away_mode": "встановити режим Не вдома"
     }
   },

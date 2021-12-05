@@ -51,6 +51,7 @@
       "start_pause": "alusta/ootele"
     },
     "water_heater": {
+      "set_operation_mode": "vali režiim [{operation_mode}]",
       "set_away_mode": "kodust ära"
     }
   },

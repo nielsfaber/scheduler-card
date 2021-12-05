@@ -51,6 +51,7 @@
       "start_pause": "start / pauza"
     },
     "water_heater": {
+      "set_operation_mode": "nastavit režim[ na {operation_mode}]",
       "set_away_mode": "vypnout režim"
     }
   },

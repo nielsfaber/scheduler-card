@@ -51,6 +51,7 @@
       "start_pause": "开始 / 暂停"
     },
     "water_heater": {
+      "set_operation_mode": "设定模式[ 为 {operation_mode}]",
       "set_away_mode": "设定离开模式"
     }
   },

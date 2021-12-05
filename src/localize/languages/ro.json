@@ -51,6 +51,7 @@
       "start_pause": "start / pauză"
     },
     "water_heater": {
+      "set_operation_mode": "setare mod[ la {operation_mode}]",
       "set_away_mode": "setare mod plecat"
     }
   },

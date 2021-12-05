@@ -1,21 +1,56 @@
 import { HassEntity } from 'home-assistant-js-websocket';
 import { Action } from '../types';
-import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
+import { LocalizeFunc, HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 import { getLocale } from '../helpers';
 
-export const waterHeaterModes = (_localize: LocalizeFunc, stateObj?: HassEntity) => {
-  if (stateObj && stateObj.attributes.options && Array.isArray(stateObj.attributes.options)) {
-    return Array(stateObj.attributes.options).map(val => {
-      return { value: String(val) };
-    });
-  }
-  return [];
+const waterHeaterModes = (localizeFunc: LocalizeFunc, stateObj: HassEntity | undefined, filterCapabilities: boolean) => {
+  const modeList = [
+    {
+      value: 'off',
+      icon: 'hass:power-off',
+      name: localizeFunc('component.water_heater.state._.off'),
+    },
+    {
+      value: 'eco',
+      icon: 'hass:leaf',
+      name: localizeFunc('component.water_heater.state._.eco'),
+    },
+    {
+      value: 'electric',
+      icon: 'hass:lightning-bolt',
+      name: localizeFunc('component.water_heater.state._.electric'),
+    },
+    {
+      value: 'gas',
+      icon: 'hass:fire',
+      name: localizeFunc('component.water_heater.state._.gas'),
+    },
+    {
+      value: 'heat_pump',
+      icon: 'hass:hvac',
+      name: localizeFunc('component.water_heater.state._.heat_pump'),
+    },
+    {
+      value: 'high_demand',
+      icon: 'hass:water-plus-outline',
+      name: localizeFunc('component.water_heater.state._.high_demand'),
+    },
+    {
+      value: 'performance',
+      icon: 'hass:rocket-launch-outline',
+      name: localizeFunc('component.water_heater.state._.performance'),
+    }
+  ];
+  const supportedModes: string[] = stateObj && Array.isArray(stateObj.attributes.operation_list) ? stateObj.attributes.operation_list : [];
+  return filterCapabilities
+    ? modeList.filter(e => supportedModes.find(m => m === e.value))
+    : modeList;
 };
 
-export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => [
+export const waterHeaterActions = (hass: HomeAssistant, stateObj: HassEntity | undefined, filterCapabilities: boolean): Action[] => [
   {
     service: 'water_heater.set_temperature',
     variables: {
@@ -40,7 +75,7 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       })
     },
     icon: 'hass:thermometer',
-    name: localize('services.climate.set_temperature', getLocale(hass)),
+    name: localize('services.water_heater.set_operation_mode', getLocale(hass)),
     supported_feature: 1,
   },
   {
@@ -48,11 +83,11 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
     variables: {
       operation_mode: listVariable({
         name: hass.localize('ui.card.water_heater.operation'),
-        options: waterHeaterModes(hass.localize, stateObj),
+        options: waterHeaterModes(hass.localize, stateObj, filterCapabilities),
       })
     },
     icon: 'hass:cog-transfer-outline',
-    name: localize('services.climate.set_mode', getLocale(hass)),
+    name: localize('services.water_heater.set_operation_mode', getLocale(hass)),
     supported_feature: 2,
   },
   {
@@ -79,3 +114,48 @@ export const waterHeaterActions = (hass: HomeAssistant, stateObj?: HassEntity): 
     supported_feature: 4,
   },
 ];
+
+export const waterHeaterStates = (hass: HomeAssistant, stateObj: HassEntity) => {
+  const modeList = [
+    {
+      value: 'off',
+      icon: 'hass:power-off',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
+    },
+    {
+      value: 'eco',
+      icon: 'hass:leaf',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "eco" }, getLocale(hass)),
+    },
+    {
+      value: 'electric',
+      icon: 'hass:lightning-bolt',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "electric" }, getLocale(hass)),
+    },
+    {
+      value: 'gas',
+      icon: 'hass:fire',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "gas" }, getLocale(hass)),
+    },
+    {
+      value: 'heat_pump',
+      icon: 'hass:hvac',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "heat_pump" }, getLocale(hass)),
+    },
+    {
+      value: 'high_demand',
+      icon: 'hass:water-plus-outline',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "high_demand" }, getLocale(hass)),
+    },
+    {
+      value: 'performance',
+      icon: 'hass:rocket-launch-outline',
+      name: computeStateDisplay(hass.localize, { ...stateObj, state: "performance" }, getLocale(hass)),
+    },
+  ];
+  return listVariable({
+    options: stateObj && stateObj.attributes.hvac_modes && Array.isArray(stateObj.attributes.hvac_modes)
+      ? modeList.filter(e => stateObj.attributes.hvac_modes.includes(e.value))
+      : modeList
+  })
+};

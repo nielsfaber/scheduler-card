@@ -51,6 +51,7 @@
       "start_pause": "start / pauzeer"
     },
     "water_heater": {
+      "set_operation_mode": "modus aanpassen[ naar {operation_mode}]",
       "set_away_mode": "stel afwezigheidsmode in"
     }
   },

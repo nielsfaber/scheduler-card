@@ -51,6 +51,7 @@
       "start_pause": "start / pause"
     },
     "water_heater": {
+      "set_operation_mode": "set mode[ to {operation_mode}]",
       "set_away_mode": "set away mode"
     }
   },
