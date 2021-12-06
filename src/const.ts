@@ -1,4 +1,4 @@
-import { CardConfig } from "./types";
+import { CardConfig } from './types';
 
 export const CARD_VERSION = 'v2.2.2';
 
@@ -24,7 +24,7 @@ export enum EViews {
 }
 
 export const DefaultCardConfig: CardConfig = {
-  type: "scheduler-card",
+  type: 'scheduler-card',
   discover_existing: true,
   standard_configuration: true,
   include: [],
@@ -35,11 +35,11 @@ export const DefaultCardConfig: CardConfig = {
   time_step: 10,
   show_header_toggle: false,
   display_options: {
-    primary_info: "{entity}: {action}",
-    secondary_info: "relative-time",
-    icon: "action"
+    primary_info: 'default',
+    secondary_info: ['relative-time', 'additional-tasks'],
+    icon: 'action',
   },
-  tags: []
+  tags: [],
 };
 
-export const WebsocketEvent = "scheduler_updated";
+export const WebsocketEvent = 'scheduler_updated';

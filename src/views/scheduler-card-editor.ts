@@ -1,23 +1,23 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from '../types';
-import { PrettyPrintIcon, getLocale, sortAlphabetically, AsArray } from '../helpers';
+import { getLocale, sortAlphabetically, AsArray, PrettyPrintIcon, pick } from '../helpers';
 import { localize } from '../localize/localize';
-import { DefaultTimeStep, DefaultCardConfig } from '../const';
+import { DefaultCardConfig, DefaultTimeStep } from '../const';
 import { commonStyle } from '../styles';
-import { domainIcons } from '../standard-configuration/standardIcon';
-import { parseEntity } from '../data/entities/parse_entity';
 import { fetchSchedules, fetchTags } from '../data/websockets';
-import { standardStates } from '../standard-configuration/standardStates';
-import { computeEntities } from '../data/entities/compute_entities';
-import { computeActions } from '../data/actions/compute_actions';
 
 import { loadHaForm } from '../load-ha-form';
+import { computeActions } from '../data/actions/compute_actions';
+import { computeEntities } from '../data/entities/compute_entities';
+import { parseEntity } from '../data/entities/parse_entity';
+import { domainIcons } from '../standard-configuration/standardIcon';
+import { standardStates } from '../standard-configuration/standardStates';
+import { entityFilter } from '../data/entities/entity_filter';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {
-
   @property()
   public hass?: HomeAssistant;
 
@@ -25,20 +25,19 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   private _config?: CardConfig;
 
   @property()
-  selectedDomain = '';
-
-  @property()
-  titleOption = 'standard';
-
-  @property()
   scheduleEntities: string[] = [];
 
   @property()
   tagOptions?: string[];
 
+  @state()
+  private _cardTab = false;
+
+  @property()
+  selectedDomain = '';
+
   public setConfig(config: CardConfig): void {
     this._config = config;
-    this.titleOption = this.getTitleOption();
   }
 
   async firstUpdated() {
@@ -55,147 +54,249 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     }
 
     return html`
+      <mwc-tab-bar .activeIndex=${this._cardTab ? 1 : 0} @MDCTabBar:activated=${this._selectTab}>
+        <mwc-tab .label=${localize('ui.panel.card_editor.tabs.entities', getLocale(this.hass))}></mwc-tab>
+        <mwc-tab .label=${localize('ui.panel.card_editor.tabs.other', getLocale(this.hass))}></mwc-tab>
+      </mwc-tab-bar>
+
       <div class="card-config">
-        <div class="header">Title of the card</div>
-        <button-group
-          .items=${[{ value: 'standard' }, { value: 'hidden' }, { value: 'custom' }]}
-          value=${this.getTitleOption()}
-          @change=${this.updateTitleOption}
-        >
-        </button-group>
-        ${this.titleOption == 'custom'
-        ? html`
-              <paper-input
-                label="Custom title"
-                .value=${this.getTitle()}
-                .configValue=${'name'}
-                @value-changed=${this.updateTitle}
-              ></paper-input>
+        ${!this._cardTab
+          ? html`
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.entities.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.entities.description', getLocale(this.hass))}
+              </div>
+              ${this.getDomainSwitches()}
             `
-        : ''}
+          : html`
+              <div class="header">${localize('ui.panel.card_editor.fields.title.heading', getLocale(this.hass))}</div>
+              <button-group
+                .items=${[
+                  {
+                    name: localize('ui.panel.card_editor.fields.title.options.standard', getLocale(this.hass)),
+                    value: 'standard',
+                  },
+                  {
+                    name: localize('ui.panel.card_editor.fields.title.options.hidden', getLocale(this.hass)),
+                    value: 'hidden',
+                  },
+                  {
+                    name: localize('ui.panel.card_editor.fields.title.options.custom', getLocale(this.hass)),
+                    value: 'custom',
+                  },
+                ]}
+                value=${this.getTitleOption()}
+                @change=${(ev: Event) => this._setTitleFormatOption((ev.target as HTMLInputElement).value)}
+              >
+              </button-group>
+              ${typeof this._config.title == 'string'
+                ? html`
+                    <paper-input
+                      label=${localize('ui.panel.card_editor.fields.title.custom_title', getLocale(this.hass))}
+                      .value=${this._config.title}
+                      @value-changed=${(ev: Event) => {
+                        this._updateConfig({ title: String((ev.target as HTMLInputElement).value) });
+                      }}
+                    ></paper-input>
+                  `
+                : ''}
 
-        <div class="header">Show all schedules</div>
-        <div class="text-field">
-          This sets the 'discover existing' parameter.<br />
-          Previously created schedules will be automatically added to the card. 
-        </div>
-        <button-group
-          .items=${[{ value: 'on' }, { value: 'off' }]}
-          value=${this.getDiscoveryOption()}
-          @change=${this.updateDiscoveryOption}
-        >
-        </button-group>
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.discover_existing.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.discover_existing.description', getLocale(this.hass))}
+              </div>
+              <ha-switch
+                ?checked=${this._config.discover_existing !== false}
+                @change=${(ev: Event) => {
+                  this._updateConfig({ discover_existing: (ev.target as HTMLInputElement).checked });
+                }}
+              >
+              </ha-switch>
 
-        <div class="header">Time step</div>
-        <div class="text-field">Resolution (in minutes) for creating schedules</div>
-        <variable-slider
-          min="1"
-          max="30"
-          step="1"
-          value=${this.getTimeStepOption()}
-          unit=" min"
-          ?optional=${false}
-          ?disabled=${false}
-          @value-changed=${this.updateTimeStepOption}
-        >
-        </variable-slider>
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.time_step.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.time_step.description', getLocale(this.hass))}
+              </div>
+              <variable-slider
+                min="1"
+                max="30"
+                step="1"
+                value=${this._config.time_step || DefaultTimeStep}
+                unit=" min"
+                ?optional=${false}
+                ?disabled=${false}
+                @value-changed=${(ev: CustomEvent) => {
+                  this._updateConfig({ time_step: Number(ev.detail.value) });
+                }}
+              >
+              </variable-slider>
 
-        ${this.tagOptions !== undefined ? html`
-        <div class="header">Tags</div>
-        <div class="text-field">Use tags to sort schedules between multiple cards</div>
-        <scheduler-selector
-          .items=${this.getTagOptions()}
-          .value=${this.getTagValue()}
-          @value-changed=${this.updateTags}
-          label=${this.hass.localize('ui.panel.config.tag.add_tag')}
-        >
-        </scheduler-selector>` : ''}
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.display_format_primary.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.display_format_primary.description', getLocale(this.hass))}
+              </div>
 
-        <div class="header">Included entities</div>
-        <div class="text-field">Select the entities that you want to control using the scheduler. You can click on a group to open it.<br> Note that some entities (such as sensors) can only be used for conditions, not for actions.</div>
-        ${this.getDomainSwitches()}
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_primary.options.default',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-radio
+                  name="primary_info"
+                  ?checked=${(this._config.display_options || DefaultCardConfig.display_options).primary_info ==
+                    'default'}
+                  value="default"
+                  @change=${this._setDisplayOptionsPrimary}
+                ></ha-radio>
+              </ha-formfield>
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_primary.options.entity_action',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-radio
+                  name="primary_info"
+                  ?checked=${(this._config.display_options || DefaultCardConfig.display_options).primary_info ==
+                    '{entity}: {action}'}
+                  value="{entity}: {action}"
+                  @change=${this._setDisplayOptionsPrimary}
+                ></ha-radio>
+              </ha-formfield>
+
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.display_format_secondary.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.display_format_secondary.description', getLocale(this.hass))}
+              </div>
+
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_secondary.options.relative_time',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-checkbox
+                  ?checked=${AsArray(
+                    (this._config.display_options || DefaultCardConfig.display_options).secondary_info
+                  ).includes('relative-time')}
+                  value="relative-time"
+                  @change=${this._setDisplayOptionsSecondary}
+                ></ha-checkbox>
+              </ha-formfield>
+
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_secondary.options.time',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-checkbox
+                  ?checked=${AsArray(
+                    (this._config.display_options || DefaultCardConfig.display_options).secondary_info
+                  ).includes('time')}
+                  value="time"
+                  @change=${this._setDisplayOptionsSecondary}
+                ></ha-checkbox>
+              </ha-formfield>
+
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_secondary.options.days',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-checkbox
+                  ?checked=${AsArray(
+                    (this._config.display_options || DefaultCardConfig.display_options).secondary_info
+                  ).includes('days-tasks')}
+                  value="days"
+                  @change=${this._setDisplayOptionsSecondary}
+                ></ha-checkbox>
+              </ha-formfield>
+
+              <ha-formfield
+                label=${localize(
+                  'ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks',
+                  getLocale(this.hass)
+                )}
+              >
+                <ha-checkbox
+                  ?checked=${AsArray(
+                    (this._config.display_options || DefaultCardConfig.display_options).secondary_info
+                  ).includes('additional-tasks')}
+                  value="additional-tasks"
+                  @change=${this._setDisplayOptionsSecondary}
+                ></ha-checkbox>
+              </ha-formfield>
+
+              ${this.tagOptions !== undefined
+                ? html`
+                    <div class="header">
+                      ${localize('ui.panel.card_editor.fields.tags.heading', getLocale(this.hass))}
+                    </div>
+                    <div class="text-field">
+                      ${localize('ui.panel.card_editor.fields.tags.description', getLocale(this.hass))}
+                    </div>
+                    <scheduler-selector
+                      .items=${this.getTagOptions()}
+                      .value=${AsArray(this._config!.tags)}
+                      @value-changed=${this.updateTags}
+                      label=${this.hass.localize('ui.panel.config.tag.add_tag')}
+                    >
+                    </scheduler-selector>
+                  `
+                : ''}
+            `}
       </div>
     `;
   }
 
+  private _selectTab(ev: CustomEvent): void {
+    this._cardTab = ev.detail.index === 1;
+  }
+
+  private _updateConfig(changes: Partial<CardConfig>) {
+    if (!this._config) return;
+    this._config = { ...this._config, ...changes };
+    fireEvent(this, 'config-changed', { config: this._config });
+  }
+
+  private _setTitleFormatOption(option: string) {
+    if (!this.hass) return;
+    if (option == 'standard') this._updateConfig({ title: true });
+    else if (option == 'hidden') this._updateConfig({ title: false });
+    else
+      this._updateConfig({
+        title:
+          typeof this._config?.title === 'string'
+            ? this._config.title
+            : localize('ui.panel.common.title', getLocale(this.hass)),
+      });
+  }
+
   private getTitleOption() {
-    if (!this._config || !this.hass) return 'standard';
-    if (this._config.title === undefined) return 'standard';
+    if (!this.hass || !this._config) return '';
     if (typeof this._config.title == 'string') return 'custom';
-    if (this._config.title == false) return 'hidden';
-    else return 'standard';
-  }
-
-  private getTitle() {
-    if (!this.hass) return '';
-    if (!this._config || !this.hass) return localize('ui.panel.common.title', getLocale(this.hass));
-    if (this._config.title === undefined) return localize('ui.panel.common.title', getLocale(this.hass));
-    if (typeof this._config.title == 'string') return this._config.title;
-    if (this._config.title == false) return '';
-    else return localize('ui.panel.common.title', getLocale(this.hass));
-  }
-
-  private updateTitleOption(e: Event) {
-    const type = (e.target as HTMLInputElement).value;
-    if (!this._config || !this.hass) return;
-    this.titleOption = type;
-
-    this._config = {
-      ...this._config,
-      title:
-        type == 'standard'
-          ? true
-          : type == 'hidden'
-            ? false
-            : this._config.title
-    };
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  private updateTitle(ev: Event) {
-    if (!this._config || !this.hass) return;
-    const value = String((ev.target as HTMLInputElement).value);
-    this._config = { ...this._config, title: value };
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  getDiscoveryOption() {
-    if (!this._config || !this.hass) return;
-    const discover_existing = this._config.hasOwnProperty('discover_existing') ? this._config.discover_existing : true;
-    return discover_existing ? 'on' : 'off';
-  }
-
-  private updateDiscoveryOption(ev: Event) {
-    const value = (ev.target as HTMLInputElement).value == 'on';
-    if (!this._config || !this.hass) return;
-    this._config = { ...this._config, discover_existing: value };
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  getTimeStepOption() {
-    if (!this._config || !this.hass) return;
-    const time_step = this._config.hasOwnProperty('time_step') && !isNaN(this._config.time_step) ? this._config.time_step : DefaultTimeStep;
-    return Number(time_step);
-  }
-
-  private updateTimeStepOption(ev: CustomEvent) {
-    if (!this._config || !this.hass) return;
-    const value = Number(ev.detail.value);
-    this._config = { ...this._config, time_step: value };
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  getTagValue() {
-    return AsArray(this._config!.tags);
+    return this._config.title ? 'standard' : 'hidden';
   }
 
   private updateTags(ev: Event) {
     if (!this._config || !this.hass) return;
-    let value = (ev.target as HTMLInputElement).value as unknown as string[];
+    let value = ((ev.target as HTMLInputElement).value as unknown) as string[];
     value = value.map(e => e.trim());
     value.sort(sortAlphabetically);
-    this._config = { ...this._config, tags: value };
-    fireEvent(this, 'config-changed', { config: this._config });
+    this._updateConfig({ tags: value });
   }
 
   getTagOptions() {
@@ -208,75 +309,110 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     return options.map(e => Object({ name: e, value: e }));
   }
 
+  private _setDisplayOptionsPrimary(ev: Event) {
+    const value = (ev.target as HTMLInputElement).value;
+    let displayOptions = {
+      ...(this._config?.display_options || DefaultCardConfig.display_options),
+      primary_info: value,
+    };
+    this._updateConfig({ display_options: displayOptions });
+  }
+
+  private _setDisplayOptionsSecondary(ev: Event) {
+    const value = (ev.target as HTMLInputElement).value;
+    const checked = (ev.target as HTMLInputElement).checked;
+    let displayOptions = {
+      ...(this._config?.display_options || DefaultCardConfig.display_options),
+    };
+    let secondaryInfo = AsArray(displayOptions.secondary_info || []);
+    secondaryInfo = checked ? Array.from(new Set([...secondaryInfo, value])) : secondaryInfo.filter(e => e !== value);
+    secondaryInfo.sort((a, b) => {
+      const ranking = {
+        'relative-time': 1,
+        time: secondaryInfo.includes('relative-time') ? 3 : 2,
+        days: secondaryInfo.includes('relative-time') ? 2 : 3,
+        'additional-tasks': 4,
+      };
+      const rankA = Object.keys(ranking).includes(a) ? ranking[a] : 5;
+      const rankB = Object.keys(ranking).includes(b) ? ranking[b] : 5;
+      if (rankA > rankB) return 1;
+      if (rankA < rankB) return -1;
+      return 0;
+    });
+    displayOptions = { ...displayOptions, secondary_info: [...secondaryInfo] };
+    this._updateConfig({ display_options: displayOptions });
+  }
+
   getDomainSwitches() {
     if (!this._config || !this.hass) return;
 
-    const entities = computeEntities(this.hass, { ...DefaultCardConfig, include: ['*'] }, { filterActions: true, filterStates: true})
-      .filter(e => computeDomain(e) !== "switch" || !this.scheduleEntities.includes(e))
+    const entities = computeEntities(
+      this.hass,
+      { ...DefaultCardConfig, include: ['*'] },
+      { filterActions: true, filterStates: true }
+    )
+      .filter(e => computeDomain(e) !== 'switch' || !this.scheduleEntities.includes(e))
       .map(e => parseEntity(e, this.hass!, { include: ['*'] }))
       .filter(e => standardStates(e.id, this.hass!) || computeActions(e.id, this.hass!, DefaultCardConfig));
 
     const domainList = entities.map(e => computeDomain(e.id)).filter((v, k, arr) => arr.indexOf(v) === k);
     domainList.sort((a, b) => (a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1));
 
-    const includedDomains = this._config.include ? [...this._config.include] : [];
-
     return domainList.map(domain => {
       const count = entities.filter(e => computeDomain(e.id) == domain).length;
+      const domainEntities = entities.filter(e => computeDomain(e.id) == domain);
+      const includedCount = domainEntities.filter(e => entityFilter(e.id, this._config!)).length;
+
       if (!count) return ``;
       return html`
-        <div
-          class="row"
-          @click=${() => { this.toggleShowDomain(domain); }}
-        >
+        <div class="row" @click=${() => this.toggleShowDomain(domain)}>
           <ha-icon icon="${PrettyPrintIcon(domainIcons[domain])}"> </ha-icon>
 
           <div class="info">
             ${domain}
             <div class="secondary">
-              ${count} ${count == 1 ? 'entity' : 'entities'}
+              ${localize(
+                'ui.panel.card_editor.fields.entities.included_number',
+                getLocale(this.hass!),
+                ['{number}', '{total}'],
+                [includedCount, count]
+              )}
             </div>
           </div>
           <ha-switch
-            @click=${(ev: Event) => { ev.stopPropagation() }}
-            @change=${(ev: Event) => this.toggleSelectDomain(domain, (ev.target as HTMLInputElement).checked)}
-            ?checked=${includedDomains.includes(domain)}
+            @click=${(ev: Event) => ev.stopPropagation()}
+            @change=${(ev: Event) => this.toggleSelectEntity(domain, (ev.target as HTMLInputElement).checked)}
+            ?checked=${entityFilter(domain, this._config!)}
+            ?disabled=${entityFilter(domain, { groups: this._config?.groups })}
           >
           </ha-switch>
         </div>
         ${this.selectedDomain == domain
           ? html`
               <div class="divider"></div>
-              ${this.getEntitySwitches(entities.filter(e => computeDomain(e.id) == domain))}
+              ${domainEntities.map(entity => {
+                return html`
+                  <div class="row" @click=${() => this.toggleSelectEntity(entity.id)}>
+                    <ha-icon icon="${entity.icon}"></ha-icon>
+                    <div class="info">
+                      ${entity.name}
+                      <div class="secondary">
+                        ${entity.id}
+                      </div>
+                    </div>
+                    <ha-switch
+                      ?checked=${entityFilter(entity.id, this._config!)}
+                      ?disabled=${entityFilter(entity.id, { groups: this._config?.groups }) ||
+                        entityFilter(domain, { groups: this._config?.groups })}
+                    ></ha-switch>
+                  </div>
+                `;
+              })}
               <div class="divider"></div>
             `
           : ''}
       `;
     });
-  }
-
-  getEntitySwitches(entities: EntityElement[]) {
-    if (!this._config || !this.hass) return;
-    const includedEntities = this._config.include ? [...this._config.include] : [];
-    return entities
-      .map(entity => {
-        const enabled = includedEntities.includes(entity.id) || includedEntities.includes(computeDomain(entity.id));
-        return html`
-          <div class="row" @click=${() => this.toggleSelectEntity(entity.id)}>
-            <ha-icon icon="${entity.icon}"></ha-icon>
-            <div class="info">
-              ${entity.name}
-              <div class="secondary">
-                ${entity.id}
-              </div>
-            </div>
-            <ha-switch
-              ?checked=${enabled}
-              ?disabled=${includedEntities.includes(computeDomain(entity.id))}
-            ></ha-switch>
-          </div>
-        `;
-      });
   }
 
   toggleShowDomain(domain: string) {
@@ -288,28 +424,31 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     }
   }
 
-  toggleSelectDomain(domain: string, enabled: boolean) {
+  toggleSelectEntity(entity_id: string, newValue?: boolean) {
     if (!this._config || !this.hass) return;
-    let includedEntities = this._config.include ? [...this._config.include] : [];
-    if (!includedEntities.includes(domain) && enabled) {
-      includedEntities = includedEntities.filter(e => computeDomain(e) != domain);
-      includedEntities.push(domain);
-    }
-    else if (includedEntities.includes(domain) && !enabled) includedEntities = includedEntities.filter(e => e != domain);
-    else return;
-    includedEntities.sort();
-    this._config = Object.assign({ ...this._config }, { include: includedEntities });
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
+    const isIncluded = entityFilter(entity_id, this._config);
+    if (newValue === undefined) newValue = !isIncluded;
+    const entityDomain = computeDomain(entity_id);
 
-  toggleSelectEntity(entity_id: string) {
-    if (!this._config || !this.hass) return;
-    let includedEntities = this._config.include ? [...this._config.include] : [];
-    if (!includedEntities.includes(entity_id)) includedEntities.push(entity_id);
-    else includedEntities = includedEntities.filter(e => e != entity_id);
-    includedEntities.sort();
-    this._config = Object.assign({ ...this._config }, { include: includedEntities });
-    fireEvent(this, 'config-changed', { config: this._config });
+    let include = [...(this._config.include || [])];
+    let exclude = [...(this._config.exclude || [])];
+
+    if (!isIncluded && newValue) {
+      if (exclude.includes(entity_id)) exclude = exclude.filter(e => e != entity_id);
+      if (!include.includes(entity_id)) include = [...include, entity_id];
+    } else if (isIncluded && !newValue) {
+      if (
+        (entityDomain && include.includes(entityDomain)) ||
+        entityFilter(entity_id, { customize: this._config.customize }) ||
+        (entityDomain && entityFilter(entityDomain, { customize: this._config.customize }))
+      )
+        exclude = [...exclude, entity_id];
+      if (include.includes(entity_id)) include = include.filter(e => e != entity_id);
+    } else return;
+
+    include.sort(sortAlphabetically);
+    exclude.sort(sortAlphabetically);
+    this._updateConfig({ include: include, exclude: exclude });
   }
 
   static get styles(): CSSResultGroup {

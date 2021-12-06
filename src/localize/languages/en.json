@@ -135,6 +135,58 @@
       "options": {
         "repeat_type": "behaviour after completion",
         "period": "period"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entities",
+          "other": "Other"
+        },
+        "fields": {
+          "title": {
+            "heading": "Title of the card",
+            "options": {
+              "standard": "standard",
+              "hidden": "hidden",
+              "custom": "custom"
+            },
+            "custom_title": "Custom title"
+          },
+          "discover_existing": {
+            "heading": "Show all schedules",
+            "description": "This sets the 'discover existing' parameter. Previously created schedules will be automatically added to the card. "
+          },
+          "time_step": {
+            "heading": "Time step",
+            "description": "Resolution (in minutes) for creating schedules"
+          },
+          "display_format_primary": {
+            "heading": "Displayed primary info",
+            "description": "Configure which label is used for schedules in the overview",
+            "options": {
+              "default": "Schedule name",
+              "entity_action": "Summary of task"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Displayed secondary info",
+            "description": "Configure what additional properties are visible in the overview",
+            "options": {
+              "relative_time": "Time remaining until next action",
+              "time": "Configured time for next action",
+              "days": "Repeated days of the week",
+              "additional_tasks": "Number of additional tasks"
+            }
+          },
+          "tags": {
+            "heading": "Tags",
+            "description": "Use tags to divide schedules between multiple cards"
+          },
+          "entities": {
+            "heading": "Included entities",
+            "description": "Select the entities that you want to control using the scheduler. You can click on a group to open it. Note that some entities (such as sensors) can only be used for conditions, not for actions.",
+            "included_number": "{number}/{total} selected"
+          }
+        }
       }
     }
   }

@@ -31,64 +31,76 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   @property() private _hass!: HomeAssistant;
-  set hass(hass: HomeAssistant) { this._hass = hass; }
-  get hass() { return this._hass; }
+  set hass(hass: HomeAssistant) {
+    this._hass = hass;
+  }
+  get hass() {
+    return this._hass;
+  }
 
   shouldUpdate(changedProps: PropertyValues) {
     if (changedProps.size > 1) return true;
 
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
     if (oldHass && this._schedule)
-      return JSON.stringify(oldHass.states[this._schedule.entity_id]) !== JSON.stringify(this._hass.states[this._schedule.entity_id]);
+      return (
+        JSON.stringify(oldHass.states[this._schedule.entity_id]) !==
+        JSON.stringify(this._hass.states[this._schedule.entity_id])
+      );
 
-    const oldSchedule = changedProps.get("_schedule") as Schedule | undefined;
-    if (oldSchedule)
-      return JSON.stringify(oldSchedule) !== JSON.stringify(this._schedule);
-    else
-      return true;
+    const oldSchedule = changedProps.get('_schedule') as Schedule | undefined;
+    if (oldSchedule) return JSON.stringify(oldSchedule) !== JSON.stringify(this._schedule);
+    else return true;
   }
 
   render() {
     if (!this._schedule.next_entries.length) {
       return this._hass.config.state !== STATE_NOT_RUNNING
         ? html`
-        <hui-warning>
-          Defective schedule entity: ${this._schedule.entity_id}
-        </hui-warning>
-      `
+            <hui-warning>
+              Defective schedule entity: ${this._schedule.entity_id}
+            </hui-warning>
+          `
         : html`
-        <hui-warning>
-        ${this._hass.localize("ui.panel.lovelace.warning.starting")}
-        </hui-warning>
-      `;
+            <hui-warning>
+              ${this._hass.localize('ui.panel.lovelace.warning.starting')}
+            </hui-warning>
+          `;
     }
     const nextEntry = this._schedule.timeslots[this._schedule.next_entries[0]];
-    const entities = unique(nextEntry.actions.map(e => e.entity_id || e.service)).map(e => parseEntity(e, this._hass, this.config));
-    const entityIcon = unique(entities.map(e => e.icon)).length == 1
-      ? entities[0].icon
-      : standardIcon(entities[0].id, this._hass);
+    const entities = unique(nextEntry.actions.map(e => e.entity_id || e.service)).map(e =>
+      parseEntity(e, this._hass, this.config)
+    );
+    const entityIcon =
+      unique(entities.map(e => e.icon)).length == 1 ? entities[0].icon : standardIcon(entities[0].id, this._hass);
 
     const entityDomains = unique(entities.map(e => computeDomain(e.id)));
 
-    const entityName = entities.length == 1
-      ? entities[0].name
-      : entityDomains.length == 1
+    const entityName =
+      entities.length == 1
+        ? entities[0].name
+        : entityDomains.length == 1
         ? `${entities.length}x ${localize(`domains.${entityDomains[0]}`, getLocale(this._hass)) || entityDomains[0]}`
         : `${entities.length}x entities`;
 
-    const match = computeActions(nextEntry.actions[0].entity_id || nextEntry.actions[0].service, this._hass, this.config)
+    const match = computeActions(
+      nextEntry.actions[0].entity_id || nextEntry.actions[0].service,
+      this._hass,
+      this.config
+    )
       .filter(e => compareActions(e, nextEntry.actions[0], true))
       .reduce((_acc: Action | undefined, e) => e, undefined);
 
     const action = match
       ? {
-        ...match, service_data: {
-          ...match.service_data,
-          ...Object.entries(nextEntry.actions[0].service_data || {})
-            .filter(([k,]) => Object.keys(match.variables || {}).includes(k))
-            .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {})
+          ...match,
+          service_data: {
+            ...match.service_data,
+            ...Object.entries(nextEntry.actions[0].service_data || {})
+              .filter(([k]) => Object.keys(match.variables || {}).includes(k))
+              .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {}),
+          },
         }
-      }
       : importAction(nextEntry.actions[0], this._hass);
 
     const icon =
@@ -98,13 +110,21 @@ export class ScheduleEntityRow extends LitElement {
 
     const computeDisplayItem = (displayItem: string): string => {
       switch (displayItem) {
+        case 'default':
+          return computeDisplayItem('name') || `${computeDisplayItem('entity')}: ${computeDisplayItem('action')}`;
         case 'name':
           return this._schedule.name || '';
         case 'relative-time':
           return `<my-relative-time></my-relative-time>`;
         case 'additional-tasks':
           return this._schedule.timeslots.length > 1
-            ? '+' + localize('ui.panel.overview.additional_tasks', getLocale(this._hass), '{number}', String(this._schedule.timeslots.length - 1))
+            ? '+' +
+                localize(
+                  'ui.panel.overview.additional_tasks',
+                  getLocale(this._hass),
+                  '{number}',
+                  String(this._schedule.timeslots.length - 1)
+                )
             : '';
         case 'time':
           return capitalize(this.computeTime(this._schedule.timeslots[this._schedule.next_entries[0]]));
@@ -129,14 +149,19 @@ export class ScheduleEntityRow extends LitElement {
     const renderDisplayItems = (displayItem: string | string[]) => {
       const replaceRelativeTime = (input: string) => {
         const parts = input.split('<my-relative-time></my-relative-time>');
-        if (parts.length > 1) return html`
-          ${parts[0] ? unsafeHTML(parts[0]) : ''}
-          <my-relative-time .hass=${this._hass} .datetime=${new Date(this._schedule.timestamps[this._schedule.next_entries[0]])}> </my-relative-time>
-          ${parts[1] ? unsafeHTML(parts[1]) : ''}
-        `;
+        if (parts.length > 1)
+          return html`
+            ${parts[0] ? unsafeHTML(parts[0]) : ''}
+            <my-relative-time
+              .hass=${this._hass}
+              .datetime=${new Date(this._schedule.timestamps[this._schedule.next_entries[0]])}
+            >
+            </my-relative-time>
+            ${parts[1] ? unsafeHTML(parts[1]) : ''}
+          `;
         const parts2 = input.split(/<tag>(.*?)<\/tag>/g);
         if (parts2.length > 1) {
-          return parts2.filter(e => e.length).map(e => unsafeHTML(`<span class="filter-tag">${e}</span>`))
+          return parts2.filter(e => e.length).map(e => unsafeHTML(`<span class="filter-tag">${e}</span>`));
         }
         return unsafeHTML(input);
       };
@@ -144,36 +169,35 @@ export class ScheduleEntityRow extends LitElement {
       return typeof displayItem == 'string'
         ? replaceRelativeTime(computeDisplayItem(displayItem))
         : displayItem.map(e => {
-          const string = computeDisplayItem(e);
-          return string
-            ? html`
+            const string = computeDisplayItem(e);
+            return string
+              ? html`
                   ${replaceRelativeTime(string)}<br />
                 `
-            : '';
-        });
+              : '';
+          });
     };
 
     return html`
       <ha-icon icon="${PrettyPrintIcon(icon)}"></ha-icon>
       <div class="info">
         ${!this.config.display_options || !this.config.display_options.primary_info
-        ? renderDisplayItems('{entity}: {action}')
-        : renderDisplayItems(this.config.display_options.primary_info)}
+          ? renderDisplayItems('{entity}: {action}')
+          : renderDisplayItems(this.config.display_options.primary_info)}
         <div class="secondary">
           ${!this.config.display_options || !this.config.display_options.secondary_info
-        ? renderDisplayItems(['relative-time', 'additional-tasks'])
-        : renderDisplayItems(this.config.display_options.secondary_info)}
+            ? renderDisplayItems(['relative-time', 'additional-tasks'])
+            : renderDisplayItems(this.config.display_options.secondary_info)}
         </div>
       </div>
       <ha-switch
-        ?checked=${["on", "triggered"].includes(this.hass.states[this._schedule.entity_id]?.state || '')}
-        ?disabled=${this.hass.states[this._schedule.entity_id]?.state == "completed"}
+        ?checked=${['on', 'triggered'].includes(this.hass.states[this._schedule.entity_id]?.state || '')}
+        ?disabled=${this.hass.states[this._schedule.entity_id]?.state == 'completed'}
         @click=${this.toggleDisabled}
       >
       </ha-switch>
     `;
   }
-
 
   computeDays(weekdays: WeekdayType) {
     function findSequence(list: number[]): number[] {
@@ -200,7 +224,12 @@ export class ScheduleEntityRow extends LitElement {
         const len = Math.max(...seq);
         if (list.length == 6) {
           const missing = [1, 2, 3, 4, 5, 6, 7].filter(e => !list.includes(e));
-          return localize('ui.components.date.repeated_days_except', getLocale(this._hass), '{excludedDays}', formatWeekday(missing.pop()!, getLocale(this._hass)));
+          return localize(
+            'ui.components.date.repeated_days_except',
+            getLocale(this._hass),
+            '{excludedDays}',
+            formatWeekday(missing.pop()!, getLocale(this._hass))
+          );
         }
         const dayNames = list.map(e => formatWeekday(e, getLocale(this._hass)));
         if (list.length >= 3 && len >= 3) {
@@ -208,7 +237,12 @@ export class ScheduleEntityRow extends LitElement {
           dayNames.splice(
             start,
             len,
-            localize('ui.components.date.days_range', getLocale(this._hass), ['{startDay}', '{endDay}'], [dayNames[start], dayNames[start + len - 1]])
+            localize(
+              'ui.components.date.days_range',
+              getLocale(this._hass),
+              ['{startDay}', '{endDay}'],
+              [dayNames[start], dayNames[start + len - 1]]
+            )
           );
         }
         const daysString =
@@ -231,30 +265,35 @@ export class ScheduleEntityRow extends LitElement {
           res.event == ETimeEvent.Sunrise
             ? this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
             : this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
-        if (Math.abs(stringToTime(res.offset)) < 5 * 60) return localize('ui.components.time.at_sun_event', getLocale(this.hass), '{sunEvent}', eventString);
+        if (Math.abs(stringToTime(res.offset)) < 5 * 60)
+          return localize('ui.components.time.at_sun_event', getLocale(this.hass), '{sunEvent}', eventString);
 
         const signString =
           res.sign == '-'
             ? this._hass
-              .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
-              .slice(0, -1)
-              .toLowerCase()
+                .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
+                .slice(0, -1)
+                .toLowerCase()
             : this._hass
-              .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
-              .slice(0, -1)
-              .toLowerCase();
+                .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
+                .slice(0, -1)
+                .toLowerCase();
 
         const timeStr = formatTime(stringToDate(res.offset), getLocale(this.hass), TimeFormat.twenty_four);
 
         return `${timeStr} ${signString} ${eventString}`;
-      }
-      else {
+      } else {
         const time = stringToDate(timeString);
-        return localize('ui.components.time.absolute', getLocale(this.hass), '{time}', formatTime(time, getLocale(this.hass)));
+        return localize(
+          'ui.components.time.absolute',
+          getLocale(this.hass),
+          '{time}',
+          formatTime(time, getLocale(this.hass))
+        );
       }
     } else {
-      const start = formatTime(stringToDate(entry.start), getLocale(this.hass))
-      const end = formatTime(stringToDate(entry.stop), getLocale(this.hass))
+      const start = formatTime(stringToDate(entry.start), getLocale(this.hass));
+      const end = formatTime(stringToDate(entry.stop), getLocale(this.hass));
       return localize('ui.components.time.interval', getLocale(this.hass), ['{startTime}', '{endTime}'], [start, end]);
     }
   }
@@ -306,7 +345,7 @@ export class ScheduleEntityRow extends LitElement {
       font-weight: 500;
       line-height: 18px;
       padding: 0px 10px;
-      display: inline-flex;  
+      display: inline-flex;
       align-items: center;
       box-sizing: border-box;
       margin: 4px 2px 0px 2px;
@@ -319,7 +358,7 @@ export class ScheduleEntityRow extends LitElement {
       --state-icon-color: var(--disabled-text-color);
     }
     :host([disabled]) span.filter-tag {
-      background: rgba(var(--rgb-primary-color), 0.30);
+      background: rgba(var(--rgb-primary-color), 0.3);
     }
   `;
 }
