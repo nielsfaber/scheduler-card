@@ -15,7 +15,7 @@ import './views/scheduler-card-editor';
 
 import './components/dialog-error';
 import './components/dialog-delete-defective';
-import './components/scheduler-date-picker';
+
 import { parseEntity } from './data/entities/parse_entity';
 import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
 import { computeActions } from './data/actions/compute_actions';

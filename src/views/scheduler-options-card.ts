@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { mdiClose, mdiPencil } from '@mdi/js';
 
 import { localize } from '../localize/localize';
@@ -45,6 +45,8 @@ import { levelVariableDisplay } from '../data/variables/level_variable';
 import { computeStates } from '../data/compute_states';
 import { fetchTags } from '../data/websockets';
 import { loadHaForm } from '../load-ha-form';
+import { stringToDate } from '../data/date-time/string_to_date';
+import { formatDate } from '../data/date-time/format_date';
 
 const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
   let output: Dictionary<ListVariableOption> = {};
@@ -124,6 +126,12 @@ export class SchedulerOptionsCard extends LitElement {
   @property()
   tags: string[] = [];
 
+  @state()
+  startDate: string = '';
+
+  @state()
+  endDate: string = '';
+
   async firstUpdated() {
     if (this.config?.tags) {
       (async () => await loadHaForm())();
@@ -132,6 +140,10 @@ export class SchedulerOptionsCard extends LitElement {
       const configTags = AsArray(this.config.tags);
       this.tags = [...existingTags, ...configTags.filter(e => !existingTags.includes(e) && e != 'none')];
     }
+
+    (await (window as any).loadCardHelpers()).importMoreInfoControl('input_datetime');
+    this.startDate = this.schedule?.start_date || formatDate(new Date(), getLocale(this.hass!), true);
+    this.endDate = this.schedule?.end_date || formatDate(new Date(), getLocale(this.hass!), true);
   }
 
   render() {
@@ -205,15 +217,43 @@ export class SchedulerOptionsCard extends LitElement {
                     <ha-checkbox ?checked=${isDefined(this.schedule.start_date)} @change=${this.toggleEnableDateRange}>
                     </ha-checkbox>
                   </div>
-                  <div class="slider">
-                    <scheduler-date-picker
-                      .hass=${this.hass}
-                      ?disabled=${!isDefined(this.schedule.start_date)}
-                      startDate=${this.schedule.start_date}
-                      endDate=${this.schedule.end_date}
-                      @value-changed=${this.selectDateRange}
-                    >
-                    </scheduler-date-picker>
+                  <div class="slider date-range">
+                    <div>
+                      <span>
+                        ${PrettyPrintName(
+                          localize('ui.components.date.days_range', getLocale(this.hass))
+                            .split('{')
+                            .shift()
+                            ?.trim() || ''
+                        )}
+                      </span>
+                      <ha-date-input
+                        value=${this.startDate}
+                        .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
+                        @value-changed=${this._setStartDate}
+                        ?disabled=${!isDefined(this.schedule.start_date)}
+                      >
+                      </ha-date-input>
+                    </div>
+
+                    <div>
+                      <span>
+                        ${PrettyPrintName(
+                          localize('ui.components.date.days_range', getLocale(this.hass))
+                            .split('}')[1]
+                            .split('{')
+                            .shift()
+                            ?.trim() || ''
+                        )}
+                      </span>
+                      <ha-date-input
+                        value=${this.endDate}
+                        .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
+                        @value-changed=${this._setEndDate}
+                        ?disabled=${!isDefined(this.schedule.start_date)}
+                      >
+                      </ha-date-input>
+                    </div>
                   </div>
                 </div>
 
@@ -530,22 +570,39 @@ export class SchedulerOptionsCard extends LitElement {
     };
   }
 
-  selectDateRange(ev: CustomEvent) {
-    const value = ev.detail.value as { startDate: string; endDate: string };
-    this.schedule = {
-      ...this.schedule!,
-      start_date: value.startDate,
-      end_date: value.endDate,
-    };
+  private _setStartDate(ev: CustomEvent) {
+    const value = String(ev.detail.value);
+    const startDate = stringToDate(value);
+    const endDate = stringToDate(this.endDate);
+    if (startDate > endDate) {
+      this.schedule = { ...this.schedule!, end_date: value };
+      this.endDate = value;
+    }
+
+    this.schedule = { ...this.schedule!, start_date: value };
+    this.startDate = value;
+  }
+
+  private _setEndDate(ev: CustomEvent) {
+    const value = String(ev.detail.value);
+    const startDate = stringToDate(this.startDate);
+    const endDate = stringToDate(value);
+    if (startDate > endDate) {
+      this.schedule = { ...this.schedule!, start_date: value };
+      this.startDate = value;
+    }
+
+    this.schedule = { ...this.schedule!, end_date: value };
+    this.endDate = value;
   }
 
   toggleEnableDateRange(ev: Event) {
     const checked = (ev.target as HTMLInputElement).checked;
-    const dateRangePicker = this.shadowRoot!.querySelector('scheduler-date-picker') as any;
+    const datePickers = this.shadowRoot!.querySelectorAll('ha-date-input') as any;
     this.schedule = {
       ...this.schedule!,
-      start_date: checked ? dateRangePicker.startDate : undefined,
-      end_date: checked ? dateRangePicker.endDate : undefined,
+      start_date: checked ? this.startDate : undefined,
+      end_date: checked ? this.endDate : undefined,
       repeat_type: checked
         ? this.schedule!.repeat_type == ERepeatType.Repeat
           ? ERepeatType.Pause
@@ -639,6 +696,22 @@ export class SchedulerOptionsCard extends LitElement {
     }
     div.summary ha-icon-button {
       margin: -8px 0px;
+    }
+    div.date-range {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    div.date-range div {
+      display: flex;
+      align-items: center;
+    }
+    div.date-range div span {
+      display: inline-flex;
+      padding: 0px 10px;
+    }
+    div.date-range div:first-child span {
+      padding-left: 0px;
     }
   `;
 }
