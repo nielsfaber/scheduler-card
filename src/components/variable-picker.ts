@@ -8,7 +8,6 @@ import { fireEvent } from 'custom-card-helpers';
 
 @customElement('scheduler-variable-picker')
 export class SchedulerVariablePicker extends LitElement {
-
   @property() variable?: Variable | null;
   @property() value?: string | number | null;
 
@@ -39,7 +38,7 @@ export class SchedulerVariablePicker extends LitElement {
         .unit=${variable.unit}
         ?optional=${variable.optional}
         ?disabled=${isNaN(value)}
-        @value-changed=${this.levelVariableUpdated} 
+        @value-changed=${this.levelVariableUpdated}
       >
       </variable-slider>
     `;
@@ -58,12 +57,7 @@ export class SchedulerVariablePicker extends LitElement {
     if (options.length == 1 && value != options[0].value) this.listVariableUpdated(options[0].value);
 
     return html`
-      <button-group
-        .items=${options}
-        value=${value}
-        @change=${this.listVariableUpdated}
-      >
-      </button-group>
+      <button-group .items=${options} value=${value} @change=${this.listVariableUpdated}> </button-group>
     `;
   }
 
@@ -73,7 +67,7 @@ export class SchedulerVariablePicker extends LitElement {
 
     return html`
       <paper-input
-         no-label-float
+        no-label-float
         .value=${value || ''}
         @value-changed=${this.listVariableUpdated}
         .label=${variable.name}

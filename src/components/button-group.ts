@@ -11,7 +11,7 @@ export type ButtonItem = {
 };
 
 function name(item: ButtonItem) {
-  return item.name?.trim() || item.value || item.id || "";
+  return item.name?.trim() || item.value || item.id || '';
 }
 
 function value(item: ButtonItem, index: number) {
@@ -20,7 +20,6 @@ function value(item: ButtonItem, index: number) {
 
 @customElement('button-group')
 export class ButtonGroup extends LitElement {
-
   @property({ type: Array }) items: ButtonItem[] = [];
   @property() value: string | null | number | (string | number)[] = null;
   @property({ type: Number }) min?: number;
@@ -43,13 +42,12 @@ export class ButtonGroup extends LitElement {
     const id = value(item, index);
 
     return html`
-      <mwc-button
-        class="${selection.includes(id) ? 'active' : ''}"
-        @click=${() => this.selectItem(id)}
-      >
+      <mwc-button class="${selection.includes(id) ? 'active' : ''}" @click=${() => this.selectItem(id)}>
         ${item.icon
-        ? html`<ha-icon icon="${PrettyPrintIcon(item.icon)}" class="padded-right"></ha-icon>`
-        : ''}
+          ? html`
+              <ha-icon icon="${PrettyPrintIcon(item.icon)}" class="padded-right"></ha-icon>
+            `
+          : ''}
         ${PrettyPrintName(name(item))}
       </mwc-button>
     `;
@@ -75,8 +73,8 @@ export class ButtonGroup extends LitElement {
     const selection = Array.isArray(this.value)
       ? this.value.map(e => this.items.find((v, k) => value(v, k) == e))
       : this.value !== null
-        ? this.items.find((v, k) => value(v, k) == this.value)
-        : null;
+      ? this.items.find((v, k) => value(v, k) == this.value)
+      : null;
     const myEvent = new CustomEvent('change', { detail: selection });
     this.dispatchEvent(myEvent);
   }

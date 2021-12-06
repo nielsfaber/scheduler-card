@@ -11,11 +11,10 @@ export interface Dictionary<TValue> {
 }
 export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
-
 export interface ServiceCall {
-  service: string,
-  entity_id?: string,
-  service_data?: Dictionary<any>,
+  service: string;
+  entity_id?: string;
+  service_data?: Dictionary<any>;
 }
 
 export interface Action {
@@ -26,7 +25,6 @@ export interface Action {
   variables?: VariableDictionary;
   supported_feature?: number;
 }
-
 
 // //user configured action
 // export interface ActionConfig {
@@ -55,50 +53,38 @@ export interface Condition {
 }
 
 export interface Timeslot {
-  start: string,
-  stop?: string,
-  conditions?: Condition[],
-  condition_type?: 'or' | 'and',
-  actions: ServiceCall[]
+  start: string;
+  stop?: string;
+  conditions?: Condition[];
+  condition_type?: 'or' | 'and';
+  actions: ServiceCall[];
 }
 
-export type WeekdayType = (
-  'mon'
-  | 'tue'
-  | 'wed'
-  | 'thu'
-  | 'fri'
-  | 'sat'
-  | 'sun'
-  | 'workday'
-  | 'weekend'
-  | 'daily'
-)[]
-
+export type WeekdayType = ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun' | 'workday' | 'weekend' | 'daily')[];
 
 export interface Schedule {
-  schedule_id?: string,
-  weekdays: WeekdayType,
-  timeslots: Timeslot[],
-  enabled: boolean,
-  entity_id: string,
-  timestamps: string[],
-  next_entries: number[],
-  repeat_type: ERepeatType,
-  name?: string,
-  tags?: string[],
-  start_date?: string,
-  end_date?: string,
+  schedule_id?: string;
+  weekdays: WeekdayType;
+  timeslots: Timeslot[];
+  enabled: boolean;
+  entity_id: string;
+  timestamps: string[];
+  next_entries: number[];
+  repeat_type: ERepeatType;
+  name?: string;
+  tags?: string[];
+  start_date?: string;
+  end_date?: string;
 }
 
 export interface ScheduleConfig {
-  weekdays: WeekdayType,
-  timeslots: Timeslot[],
-  repeat_type: ERepeatType,
-  name?: string,
-  tags: string[],
-  start_date?: string,
-  end_date?: string,
+  weekdays: WeekdayType;
+  timeslots: Timeslot[];
+  repeat_type: ERepeatType;
+  name?: string;
+  tags: string[];
+  start_date?: string;
+  end_date?: string;
 }
 
 export enum ERepeatType {
@@ -135,8 +121,8 @@ export interface EntityConfig {
   name?: string;
   icon?: string;
   actions?: Action[];
-  exclude_actions?: string[],
-  states?: string[] | { min: number, max: number, step?: number, unit?: string }
+  exclude_actions?: string[];
+  states?: string[] | { min: number; max: number; step?: number; unit?: string };
 }
 
 /* action variables */
@@ -173,7 +159,7 @@ export interface LevelVariable extends Variable {
 }
 
 export interface TextVariable extends Variable {
-  multiline: boolean
+  multiline: boolean;
 }
 
 export type VariableDictionary = Dictionary<LevelVariable | ListVariable | TextVariable>;
@@ -246,7 +232,6 @@ export enum EConditionMatchType {
   Above = 'above',
 }
 
-
 export enum EConditionType {
   Any = 'or',
   All = 'and',
@@ -275,7 +260,7 @@ export enum EDayType {
   Daily = 'DAILY',
   Workday = 'WORKDAY',
   Weekend = 'WEEKEND',
-  Custom = 'CUSTOM'
+  Custom = 'CUSTOM',
 }
 
 export interface Days {
@@ -288,15 +273,15 @@ enum SchedulerEvent {
   ItemUpdated = 'scheduler_item_updated',
   ItemRemoved = 'scheduler_item_removed',
   TimerFinished = 'scheduler_timer_finished',
-  TimerUpdated = 'scheduler_timer_updated'
+  TimerUpdated = 'scheduler_timer_updated',
 }
 
 export interface SchedulerEventData {
-  schedule_id: string,
-  event: SchedulerEvent
+  schedule_id: string;
+  event: SchedulerEvent;
 }
 
 export interface TagEntry {
-  name: string,
-  schedules: string[]
+  name: string;
+  schedules: string[];
 }

@@ -50,7 +50,7 @@ export class TimeslotEditor extends LitElement {
         </div>
         <div class="slider-legend">
           ${this.formatAmPm
-        ? html`
+            ? html`
                 <div class="slider-legend-item wide empty"></div>
                 <div class="slider-legend-item wide">04:00 AM</div>
                 <div class="slider-legend-item wide">08:00 AM</div>
@@ -59,7 +59,7 @@ export class TimeslotEditor extends LitElement {
                 <div class="slider-legend-item wide">08:00 PM</div>
                 <div class="slider-legend-item wide empty"></div>
               `
-        : html`
+            : html`
                 <div class="slider-legend-item empty"></div>
                 <div class="slider-legend-item">03:00</div>
                 <div class="slider-legend-item">06:00</div>
@@ -91,7 +91,9 @@ export class TimeslotEditor extends LitElement {
       output.push(html`
         <div
           class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.actions ? ' filled' : ''}"
-          @click=${(ev: Event) => { this._handleSegmentClick(ev, i) }}
+          @click=${(ev: Event) => {
+            this._handleSegmentClick(ev, i);
+          }}
           style="width: ${(Duration(el) / secondsPerDay) * 100}%"
         >
           <span class="content">${this.getEntryAction(el)}</div>
@@ -101,8 +103,10 @@ export class TimeslotEditor extends LitElement {
         const ts = stringToTime(this.entries[i].stop!);
         output.push(html`
           <div
-            class="slider-thumb${this._activeThumb == i ? ' active' : ''} ${this._activeEntry == i || this._activeEntry == (i + 1) ? '' : 'hidden'}"
-            
+            class="slider-thumb${this._activeThumb == i ? ' active' : ''} ${this._activeEntry == i ||
+            this._activeEntry == i + 1
+              ? ''
+              : 'hidden'}"
           >
             <div
               class="slider-thumb-ripple"
@@ -110,13 +114,15 @@ export class TimeslotEditor extends LitElement {
               @mousedown=${this._handleTouchStart}
               @touchstart=${this._handleTouchStart}
             >
-              <ha-icon
-                icon="hass:unfold-more-vertical"
-              >
-              </ha-icon>
+              <ha-icon icon="hass:unfold-more-vertical"> </ha-icon>
             </div>
             <div
-              class="slider-thumb-tooltip ${this.formatAmPm ? 'wide' : ''} ${this._activeEntryMem == i && this._activeEntryMem != 0 ? 'right' : this._activeEntryMem == (i + 1) && (this._activeEntryMem + 1) != this.entries.length ? 'left' : 'center'}"
+              class="slider-thumb-tooltip ${this.formatAmPm ? 'wide' : ''} ${this._activeEntryMem == i &&
+              this._activeEntryMem != 0
+                ? 'right'
+                : this._activeEntryMem == i + 1 && this._activeEntryMem + 1 != this.entries.length
+                ? 'left'
+                : 'center'}"
               value="time"
               @update="${this._updateMarker}"
             >
@@ -141,28 +147,35 @@ export class TimeslotEditor extends LitElement {
     if (!this.hass) return;
     if (!entry.actions) return '';
 
-    return unique(entry.actions.map(action => {
-      const actionConfig = this.actions.find(e => compareActions(e, action, true));
-      if (!actionConfig) return '???';
+    return unique(
+      entry.actions.map(action => {
+        const actionConfig = this.actions.find(e => compareActions(e, action, true));
+        if (!actionConfig) return '???';
 
-      if (actionConfig.variables && Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)) {
-        return Object.entries(actionConfig.variables)
-          .filter(([field,]) => action.service_data && field in action.service_data)
-          .map(([field, variable]) => {
-            const value = action.service_data![field];
-            if (variable.type == EVariableType.Level) {
-              variable = variable as LevelVariable;
-              return levelVariableDisplay(Number(value), variable);
-            } else if (variable.type == EVariableType.List) {
-              variable = variable as ListVariable;
-              const listItem = variable.options.find(e => e.value == value);
-              return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
-            }
-            else return "";
-          }).join(", ");
-      }
-      return PrettyPrintName(actionConfig.name || localize(`services.${action.service}`, getLocale(this.hass!)) || action.service);
-    })).join(', ');
+        if (
+          actionConfig.variables &&
+          Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)
+        ) {
+          return Object.entries(actionConfig.variables)
+            .filter(([field]) => action.service_data && field in action.service_data)
+            .map(([field, variable]) => {
+              const value = action.service_data![field];
+              if (variable.type == EVariableType.Level) {
+                variable = variable as LevelVariable;
+                return levelVariableDisplay(Number(value), variable);
+              } else if (variable.type == EVariableType.List) {
+                variable = variable as ListVariable;
+                const listItem = variable.options.find(e => e.value == value);
+                return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
+              } else return '';
+            })
+            .join(', ');
+        }
+        return PrettyPrintName(
+          actionConfig.name || localize(`services.${action.service}`, getLocale(this.hass!)) || action.service
+        );
+      })
+    ).join(', ');
   }
 
   private _handleSegmentClick(e: Event, entry_id: number) {
@@ -179,7 +192,7 @@ export class TimeslotEditor extends LitElement {
     if (!thumbHandle) return;
 
     if (thumbHandle.nodeName == 'HA-ICON') thumbHandle = thumbHandle.parentElement as HTMLElement;
-    const thumb_index = Number(thumbHandle.getAttribute("index"));
+    const thumb_index = Number(thumbHandle.getAttribute('index'));
 
     const thumbElement = thumbHandle!.parentNode as HTMLElement;
 
@@ -210,8 +223,8 @@ export class TimeslotEditor extends LitElement {
     const t1 = stringToTime(this.entries[slotIndex].start);
     const t2 = stringToTime(this.entries[slotIndex + 1].stop!) || secondsPerDay;
 
-    const x1 = (t1 + this.stepSize * 60) / secondsPerDay * trackWidth;
-    const x2 = (t2 - this.stepSize * 60) / secondsPerDay * trackWidth;
+    const x1 = ((t1 + this.stepSize * 60) / secondsPerDay) * trackWidth;
+    const x2 = ((t2 - this.stepSize * 60) / secondsPerDay) * trackWidth;
 
     let mouseMoveHandler = (e: MouseEvent | TouchEvent) => {
       let startDragX;
@@ -250,7 +263,11 @@ export class TimeslotEditor extends LitElement {
         const startTime = stringToTime(this.entries[slotIndex].start);
         const entries: Timeslot[] = Object.assign(this.entries, {
           [slotIndex]: { ...this.entries[slotIndex], stop: timeToString(newStop) },
-          [slotIndex + 1]: { ...this.entries[slotIndex + 1], start: timeToString(newStop), stop: timeToString(startTime + totalDuration) }
+          [slotIndex + 1]: {
+            ...this.entries[slotIndex + 1],
+            start: timeToString(newStop),
+            stop: timeToString(startTime + totalDuration),
+          },
         });
 
         const myEvent = new CustomEvent('update', { detail: { entries: entries } });
@@ -290,9 +307,9 @@ export class TimeslotEditor extends LitElement {
         ...this.entries[this._activeEntry!],
         start: timeToString(newStop),
         stop: timeToString(endTime),
-        actions: []
+        actions: [],
       },
-      ...this.entries.slice(this._activeEntry! + 1)
+      ...this.entries.slice(this._activeEntry! + 1),
     ];
 
     const myEvent = new CustomEvent('update', { detail: { entries: entries } });
@@ -309,7 +326,7 @@ export class TimeslotEditor extends LitElement {
         start: this.entries[cutIndex!].start,
         stop: this.entries[cutIndex! + 1].stop!,
       },
-      ...this.entries.slice(cutIndex + 2)
+      ...this.entries.slice(cutIndex + 2),
     ];
 
     if (this._activeEntry == this.entries.length) this._activeEntry--;
@@ -409,14 +426,14 @@ export class TimeslotEditor extends LitElement {
       margin-top: 7px;
     }
     div.slider-thumb-ripple:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.10);
+      background: rgba(var(--rgb-primary-text-color), 0.1);
     }
     div.slider-thumb .slider-thumb-ripple:before {
       content: ' ';
       position: absolute;
       left: 0px;
       top: 0px;
-      background: rgba(var(--rgb-primary-text-color), 0.20);
+      background: rgba(var(--rgb-primary-text-color), 0.2);
       z-index: -1;
       border-radius: 50%;
       width: 36px;
@@ -528,7 +545,7 @@ export class TimeslotEditor extends LitElement {
     div.slider-thumb-tooltip.left:before {
       content: ' ';
       border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent; 
+      border-bottom: 10px solid transparent;
       border-right: 8px solid var(--primary-color);
       opacity: 1;
       position: absolute;
@@ -550,8 +567,8 @@ export class TimeslotEditor extends LitElement {
     div.slider-thumb-tooltip.right:before {
       content: ' ';
       border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent; 
-      border-left: 8px solid var(--primary-color); 
+      border-bottom: 10px solid transparent;
+      border-left: 8px solid var(--primary-color);
       opacity: 1;
       position: absolute;
       margin-top: 15px;
@@ -562,7 +579,7 @@ export class TimeslotEditor extends LitElement {
       height: 0px;
       z-index: -1;
     }
-    div.slider-thumb.hidden div.slider-thumb-tooltip  {
+    div.slider-thumb.hidden div.slider-thumb-tooltip {
       transform: scale(0);
     }
     .padded-right {

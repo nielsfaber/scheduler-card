@@ -10,27 +10,24 @@ export function pick(obj: Dictionary<any> | null | undefined, keys: string[]): D
     .reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 }
 
-
 interface Omit {
-  <T extends object, K extends [...(keyof T)[]]>
-    (obj: T, ...keys: K): {
-      [K2 in Exclude<keyof T, K[number]>]: T[K2]
-    }
+  <T extends object, K extends [...(keyof T)[]]>(obj: T, ...keys: K): {
+    [K2 in Exclude<keyof T, K[number]>]: T[K2];
+  };
 }
 
 export const omit: Omit = (obj, ...keys) => {
   const ret = {} as {
-    [K in keyof typeof obj]: (typeof obj)[K]
+    [K in keyof typeof obj]: typeof obj[K];
   };
   let key: keyof typeof obj;
   for (key in obj) {
-    if (!(keys.includes(key))) {
+    if (!keys.includes(key)) {
       ret[key] = obj[key];
     }
   }
   return ret;
 };
-
 
 // export function omit<TValue>(obj: Dictionary<TValue>, keys: string[]): Dictionary<TValue> {
 //   if (!obj) return {};
@@ -40,18 +37,16 @@ export const omit: Omit = (obj, ...keys) => {
 // }
 
 export function flatten<U>(arr: U[][]): U[] {
-  if ((arr as unknown as U[]).every((val) => !Array.isArray(val))) {
-    return (arr as unknown as U[]).slice();
+  if (((arr as unknown) as U[]).every(val => !Array.isArray(val))) {
+    return ((arr as unknown) as U[]).slice();
   }
-  return arr
-    .reduce((acc, val) => acc
-      .concat(Array.isArray(val) ? flatten((val as unknown as U[][])) : val), []);
+  return arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatten((val as unknown) as U[][]) : val), []);
 }
 
 export function unique<TValue>(arr: TValue[]) {
   let res: TValue[] = [];
   arr.forEach(item => {
-    if (!res.find(e => typeof item === "object" ? isEqual(e, item) : e === item)) res.push(item);
+    if (!res.find(e => (typeof item === 'object' ? isEqual(e, item) : e === item))) res.push(item);
   });
   return res;
 }
@@ -66,13 +61,17 @@ export function isEqual(...arr: any[]) {
 
 export function sortAlphabetically(a: any, b: any) {
   const stringVal = (a: any) => {
-    if (typeof a === "object") {
+    if (typeof a === 'object') {
       return a.name !== undefined
-        ? String(a.name).trim().toLowerCase()
-        : JSON.stringify(a)
-    }
-    else return String(a).trim().toLowerCase();
-  }
+        ? String(a.name)
+            .trim()
+            .toLowerCase()
+        : JSON.stringify(a);
+    } else
+      return String(a)
+        .trim()
+        .toLowerCase();
+  };
   return stringVal(a) < stringVal(b) ? -1 : 1;
 }
 
@@ -103,9 +102,9 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
   entries = entries.map(e =>
     stringToTime(e.stop!) < stringToTime(e.start)
       ? {
-        ...e,
-        stop: timeToString(stringToTime(e.stop!) + 3600 * 24)
-      }
+          ...e,
+          stop: timeToString(stringToTime(e.stop!) + 3600 * 24),
+        }
       : e
   );
   let startTime = 0;
@@ -117,11 +116,14 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       entries.splice(
         i,
         0,
-        Object.assign({ ...entry }, {
-          start: timeToString(startTime),
-          stop: entry.start,
-          actions: []
-        })
+        Object.assign(
+          { ...entry },
+          {
+            start: timeToString(startTime),
+            stop: entry.start,
+            actions: [],
+          }
+        )
       );
       len++;
       i++;
@@ -132,11 +134,14 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
 
   if (startTime < endOfDay && startTime > 0) {
     entries.push(
-      Object.assign({ ...entries[0] }, {
-        start: timeToString(startTime),
-        stop: timeToString(endOfDay),
-        actions: []
-      })
+      Object.assign(
+        { ...entries[0] },
+        {
+          start: timeToString(startTime),
+          stop: timeToString(endOfDay),
+          actions: [],
+        }
+      )
     );
   }
 
@@ -151,8 +156,8 @@ export function IsDefaultName(name?: string) {
 export const getLocale = (hass: HomeAssistant): FrontendTranslationData =>
   hass.locale || {
     language: hass.language,
-    number_format: NumberFormat.system
-  }
+    number_format: NumberFormat.system,
+  };
 
 export function AsArray<TValue>(value: TValue | TValue[] | null | undefined): TValue[] {
   if (Array.isArray(value)) return value;

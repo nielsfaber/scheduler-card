@@ -1,5 +1,4 @@
-import { WeekdayType, EDayType } from "../../types";
-
+import { WeekdayType, EDayType } from '../../types';
 
 export function weekdayType(weekday: WeekdayType) {
   if (weekday.includes('daily')) return EDayType.Daily;

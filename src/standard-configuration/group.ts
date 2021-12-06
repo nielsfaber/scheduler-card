@@ -21,12 +21,10 @@ export function groupActions(hass: HomeAssistant, entity: HassEntity, entityActi
       .filter(e => !e.supported_feature || e.supported_feature & supportedFeatures)
       .map(action => omit(action, 'supported_feature'));
     return actions;
-  })
+  });
 
   //find matches
-  const mixedDomains = [
-    ...new Set(entities.map(e => computeDomain(e)))
-  ].length > 1;
+  const mixedDomains = [...new Set(entities.map(e => computeDomain(e)))].length > 1;
   if (mixedDomains) {
     entityActions = entityActions.map(actionList => {
       return actionList.map(action => {
@@ -42,14 +40,14 @@ export function groupActions(hass: HomeAssistant, entity: HassEntity, entityActi
     });
   }
   if (!entityActions.length) return [];
-  let commonActions = computeCommonActions(entityActions);
+  const commonActions = computeCommonActions(entityActions);
   return commonActions;
 }
 
 export const groupStates = (_hass: HomeAssistant, _stateObj: HassEntity, entityStates: Variable[]): Variable | null => {
   if (!entityStates.length) return null;
   if (!entityStates.every(e => e.type == entityStates[0].type)) return null;
-  if (entityStates[0].type == EVariableType.List) return listVariable(...entityStates as ListVariable[]);
-  else if (entityStates[0].type == EVariableType.Level) return levelVariable(...entityStates as LevelVariable[]);
+  if (entityStates[0].type == EVariableType.List) return listVariable(...(entityStates as ListVariable[]));
+  else if (entityStates[0].type == EVariableType.Level) return levelVariable(...(entityStates as LevelVariable[]));
   else return null;
-}
+};

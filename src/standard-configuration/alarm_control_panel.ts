@@ -36,32 +36,33 @@ export const alarmControlPanelActions = (hass: HomeAssistant, _stateObj: HassEnt
   },
 ];
 
-export const alarmControlPanelStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "disarmed",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "disarmed" }, getLocale(hass)),
-      icon: 'hass:lock-open-variant-outline',
-    },
-    {
-      value: "armed_away",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_away" }, getLocale(hass)),
-      icon: 'hass:exit-run',
-    },
-    {
-      value: "armed_home",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_home" }, getLocale(hass)),
-      icon: 'hass:home-outline',
-    },
-    {
-      value: "armed_night",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "armed_night" }, getLocale(hass)),
-      icon: 'hass:power-sleep',
-    },
-    {
-      value: "triggered",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "triggered" }, getLocale(hass)),
-      icon: 'hass:alarm-light-outline',
-    },
-  ]
-});
+export const alarmControlPanelStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'disarmed',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'disarmed' }, getLocale(hass)),
+        icon: 'hass:lock-open-variant-outline',
+      },
+      {
+        value: 'armed_away',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'armed_away' }, getLocale(hass)),
+        icon: 'hass:exit-run',
+      },
+      {
+        value: 'armed_home',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'armed_home' }, getLocale(hass)),
+        icon: 'hass:home-outline',
+      },
+      {
+        value: 'armed_night',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'armed_night' }, getLocale(hass)),
+        icon: 'hass:power-sleep',
+      },
+      {
+        value: 'triggered',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'triggered' }, getLocale(hass)),
+        icon: 'hass:alarm-light-outline',
+      },
+    ],
+  });

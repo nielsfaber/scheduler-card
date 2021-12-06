@@ -1,8 +1,6 @@
-import { Action, EVariableType, LevelVariable, ListVariable } from "../../types";
-
+import { Action, EVariableType, LevelVariable, ListVariable } from '../../types';
 
 export function compareActions(actionA: Action, actionB: Action, allowVars: boolean = false) {
-
   const isOptional = (variable: string, action: Action) => {
     return (
       Object.keys(action.variables || {}).includes(variable) &&
@@ -20,15 +18,9 @@ export function compareActions(actionA: Action, actionB: Action, allowVars: bool
   const serviceDataB = Object.keys(actionB.service_data || {});
   const variablesB = Object.keys(actionB.variables || {});
 
-  const argsA = [
-    ...new Set([...serviceDataA, ...variablesA])
-  ];
-  const argsB = [
-    ...new Set([...serviceDataB, ...variablesB])
-  ];
-  const allArgs = [
-    ...new Set([...argsA, ...argsB])
-  ];
+  const argsA = [...new Set([...serviceDataA, ...variablesA])];
+  const argsB = [...new Set([...serviceDataB, ...variablesB])];
+  const allArgs = [...new Set([...argsA, ...argsB])];
 
   return allArgs.every(arg => {
     // both actions must have the parameter in common
@@ -37,41 +29,25 @@ export function compareActions(actionA: Action, actionB: Action, allowVars: bool
 
     // if its a fixed parameter it must be equal
     if (
-      serviceDataA
-        .filter(e => !variablesA.includes(e))
-        .includes(arg) &&
-      serviceDataB
-        .filter(e => !variablesB.includes(e))
-        .includes(arg)
+      serviceDataA.filter(e => !variablesA.includes(e)).includes(arg) &&
+      serviceDataB.filter(e => !variablesB.includes(e)).includes(arg)
     )
       return actionA.service_data![arg] === actionB.service_data![arg];
 
     // if both are variables they are assumed to be equal
-    if (
-      variablesA.includes(arg) &&
-      variablesB.includes(arg)
-    )
-      return true;
+    if (variablesA.includes(arg) && variablesB.includes(arg)) return true;
 
     if (!allowVars) return false;
 
     // compare a fixed value with variable
-    const value = serviceDataA.includes(arg)
-      ? actionA.service_data![arg]
-      : actionB.service_data![arg];
+    const value = serviceDataA.includes(arg) ? actionA.service_data![arg] : actionB.service_data![arg];
 
-    const variable = variablesA.includes(arg)
-      ? actionA.variables![arg]
-      : actionB.variables![arg];
+    const variable = variablesA.includes(arg) ? actionA.variables![arg] : actionB.variables![arg];
 
     if (variable.type === EVariableType.List) {
       return (variable as ListVariable).options.some(e => e.value === value);
-    }
-    else if (variable.type === EVariableType.Level)
-      return !isNaN(value);
-
-    else if (variable.type == EVariableType.Text)
-      return true;
+    } else if (variable.type === EVariableType.Level) return !isNaN(value);
+    else if (variable.type == EVariableType.Text) return true;
 
     return false;
   });

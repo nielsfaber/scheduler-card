@@ -1,22 +1,21 @@
-import wrap from "@vue/web-component-wrapper";
-import Vue from "vue";
-import DateRangePicker from "vue2-daterange-picker";
-import { customElement, property } from "lit/decorators";
+import wrap from '@vue/web-component-wrapper';
+import Vue from 'vue';
+import DateRangePicker from 'vue2-daterange-picker';
+import { customElement, property } from 'lit/decorators';
 // @ts-ignore
-import dateRangePickerStyles from "vue2-daterange-picker/dist/vue2-daterange-picker.css";
-import { LitElement, TemplateResult, CSSResultGroup, css, html } from "lit";
-import { HomeAssistant } from "custom-card-helpers";
-import { getLocale } from "../helpers";
+import dateRangePickerStyles from 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import { LitElement, TemplateResult, CSSResultGroup, css, html } from 'lit';
+import { HomeAssistant } from 'custom-card-helpers';
+import { getLocale } from '../helpers';
 import { fireEvent } from 'custom-card-helpers';
-import { formatDate } from "../data/date-time/format_date";
-import { stringToDate } from "../data/date-time/string_to_date";
-
+import { formatDate } from '../data/date-time/format_date';
+import { stringToDate } from '../data/date-time/string_to_date';
 
 export type Constructor<T = any> = new (...args: any[]) => T;
 
 export interface DateRange {
-  startDate: Date,
-  endDate: Date
+  startDate: Date;
+  endDate: Date;
 }
 
 const Component = Vue.extend({
@@ -42,10 +41,10 @@ const Component = Vue.extend({
     // @ts-ignore
     return createElement(DateRangePicker, {
       props: {
-        "time-picker": false,
-        "auto-apply": false,
-        opens: "right",
-        "show-dropdowns": false,
+        'time-picker': false,
+        'auto-apply': false,
+        opens: 'right',
+        'show-dropdowns': false,
         // @ts-ignore
         disabled: this.disabled,
         // @ts-ignore
@@ -58,26 +57,26 @@ const Component = Vue.extend({
           // @ts-ignore
           endDate: this.endDate,
         },
-        callback: (value) => {
+        callback: value => {
           // @ts-ignore
-          fireEvent(this.$el as HTMLElement, "change", value);
+          fireEvent(this.$el as HTMLElement, 'change', value);
         },
-        expression: "dateRange",
+        expression: 'dateRange',
       },
       scopedSlots: {
         input() {
-          return createElement("slot", {
-            domProps: { name: "input" },
+          return createElement('slot', {
+            domProps: { name: 'input' },
           });
         },
         header() {
-          return createElement("slot", {
-            domProps: { name: "header" },
+          return createElement('slot', {
+            domProps: { name: 'header' },
           });
         },
         footer() {
-          return createElement("slot", {
-            domProps: { name: "footer" },
+          return createElement('slot', {
+            domProps: { name: 'footer' },
           });
         },
       },
@@ -92,7 +91,7 @@ const WrappedElement: Constructor<HTMLElement> = wrap(Vue, Component);
 class VueDatePicker extends WrappedElement {
   constructor() {
     super();
-    const style = document.createElement("style");
+    const style = document.createElement('style');
     style.innerHTML = `
           ${dateRangePickerStyles}
           .calendars {
@@ -220,16 +219,12 @@ class VueDatePicker extends WrappedElement {
     const shadowRoot = this.shadowRoot!;
     shadowRoot.appendChild(style);
     // Stop click events from reaching the document, otherwise it will close the picker immediately.
-    shadowRoot.addEventListener("click", (ev) => ev.stopPropagation());
+    shadowRoot.addEventListener('click', ev => ev.stopPropagation());
   }
 }
 
-
-
-
-@customElement("scheduler-date-picker")
+@customElement('scheduler-date-picker')
 export class SchedulerDatePicker extends LitElement {
-
   @property({ attribute: false })
   public hass!: HomeAssistant;
 
@@ -269,14 +264,14 @@ export class SchedulerDatePicker extends LitElement {
         <div slot="input" class="date-range-inputs">
           <paper-input
             .value=${formatDate(this._startDate, getLocale(this.hass))}
-            .label=${this.hass.localize("ui.components.date-range-picker.start_date")}
+            .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
             .disabled=${this.disabled}
             @click=${this._handleInputClick}
             readonly
           ></paper-input>
           <paper-input
             .value=${formatDate(this._endDate, getLocale(this.hass))}
-            label=${this.hass.localize("ui.components.date-range-picker.end_date")}
+            label=${this.hass.localize('ui.components.date-range-picker.end_date')}
             .disabled=${this.disabled}
             @click=${this._handleInputClick}
             readonly
@@ -284,10 +279,10 @@ export class SchedulerDatePicker extends LitElement {
         </div>
         <div slot="footer" class="date-range-footer">
           <mwc-button @click=${this._cancelDateRange}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.hass.localize('ui.common.cancel')}
           </mwc-button>
           <mwc-button @click=${this._applyDateRange}>
-            ${this.hass.localize("ui.components.date-range-picker.select")}
+            ${this.hass.localize('ui.components.date-range-picker.select')}
           </mwc-button>
         </div>
       </vue-date-picker>
@@ -303,7 +298,7 @@ export class SchedulerDatePicker extends LitElement {
   }
 
   private get _dateRangePicker() {
-    const dateRangePicker = this.shadowRoot!.querySelector("vue-date-picker") as any;
+    const dateRangePicker = this.shadowRoot!.querySelector('vue-date-picker') as any;
     return dateRangePicker.vueComponent.$children[0];
   }
 
@@ -323,7 +318,7 @@ export class SchedulerDatePicker extends LitElement {
       value: {
         startDate: this.startDate,
         endDate: this.endDate,
-      }
+      },
     });
   }
 
@@ -372,6 +367,6 @@ export class SchedulerDatePicker extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "scheduler-date-picker": SchedulerDatePicker;
+    'scheduler-date-picker': SchedulerDatePicker;
   }
 }

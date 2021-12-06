@@ -21,14 +21,14 @@ export const selectActions = (hass: HomeAssistant, stateObj?: HassEntity): Actio
       option: listVariable({
         name: hass.localize('ui.components.dialogs.select.options'),
         options: selectOptions(hass.localize, stateObj),
-      })
+      }),
     },
     icon: 'counter',
     name: localize('services.select.select_option', getLocale(hass)),
   },
 ];
 
-export const selectStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: selectOptions(hass.localize, stateObj)
-    .map(e => Object.assign(e, { name: e.value }))
-});
+export const selectStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: selectOptions(hass.localize, stateObj).map(e => Object.assign(e, { name: e.value })),
+  });

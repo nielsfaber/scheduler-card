@@ -7,7 +7,7 @@ import { levelVariable } from '../data/variables/level_variable';
 import { getLocale } from '../helpers';
 
 export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[] => {
-  let actions: Action[] = [
+  const actions: Action[] = [
     {
       service: 'fan.turn_on',
       icon: 'hass:power',
@@ -26,7 +26,7 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
           min: 0,
           max: 100,
           step: 1,
-          unit: '%'
+          unit: '%',
         }),
       },
       supported_feature: 1,
@@ -48,9 +48,9 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
               value: 'False',
               name: hass.localize('state.default.off'),
               icon: 'hass:flash-off',
-            }
-          ]
-        })
+            },
+          ],
+        }),
       },
       supported_feature: 2,
       icon: 'hass:arrow-left-right',
@@ -73,17 +73,16 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
               icon: 'hass:sync',
             },
           ],
-        })
+        }),
       },
       supported_feature: 4,
       icon: 'hass:cog-clockwise',
       name: localize('services.fan.set_direction', getLocale(hass)),
-    }
+    },
   ];
 
-  const supportedPresets: string[] = stateObj && Array.isArray(stateObj.attributes.preset_modes)
-    ? stateObj.attributes.preset_modes
-    : [];
+  const supportedPresets: string[] =
+    stateObj && Array.isArray(stateObj.attributes.preset_modes) ? stateObj.attributes.preset_modes : [];
 
   if (supportedPresets.length)
     actions.push({
@@ -91,8 +90,8 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
       variables: {
         preset_mode: listVariable({
           name: hass.localize('ui.card.fan.preset_mode'),
-          options: supportedPresets.map(e => Object({ value: e }))
-        })
+          options: supportedPresets.map(e => Object({ value: e })),
+        }),
       },
       supported_feature: 8,
       icon: 'hass:cloud-download-outline',
@@ -101,17 +100,18 @@ export const fanActions = (hass: HomeAssistant, stateObj?: HassEntity): Action[]
   return actions;
 };
 
-export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
-      icon: "hass:power-off"
-    },
-    {
-      value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
-      icon: "hass:power"
-    }
-  ]
-});
+export const fanStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'off',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, getLocale(hass)),
+        icon: 'hass:power-off',
+      },
+      {
+        value: 'on',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, getLocale(hass)),
+        icon: 'hass:power',
+      },
+    ],
+  });

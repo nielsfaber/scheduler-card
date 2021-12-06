@@ -1,6 +1,6 @@
-import { HassEntity } from "home-assistant-js-websocket";
-import { computeDomain } from "custom-card-helpers";
-import { unique } from "../../helpers";
+import { HassEntity } from 'home-assistant-js-websocket';
+import { computeDomain } from 'custom-card-helpers';
+import { unique } from '../../helpers';
 
 export const colorModesToSupportedFeatures = (colorModes: any) => {
   if (!colorModes || !Array.isArray(colorModes)) return 0;
@@ -23,7 +23,7 @@ export const colorModesToSupportedFeatures = (colorModes: any) => {
   });
   features = unique(features);
   return features.reduce((acc, val) => acc | val, 0);
-}
+};
 
 export const computeSupportedFeatures = (stateObj: HassEntity | undefined) => {
   if (!stateObj) return 0;
@@ -35,4 +35,4 @@ export const computeSupportedFeatures = (stateObj: HassEntity | undefined) => {
     default:
       return stateObj.attributes.supported_features || 0;
   }
-}
+};

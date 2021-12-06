@@ -17,17 +17,18 @@ export const lockActions = (hass: HomeAssistant, _stateObj?: HassEntity): Action
   },
 ];
 
-export const lockStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "unlocked",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "unlocked" }, getLocale(hass)),
-      icon: 'hass:lock-open-variant-outline',
-    },
-    {
-      value: "locked",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "locked" }, getLocale(hass)),
-      icon: 'hass:lock-outline'
-    }
-  ]
-});
+export const lockStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'unlocked',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'unlocked' }, getLocale(hass)),
+        icon: 'hass:lock-open-variant-outline',
+      },
+      {
+        value: 'locked',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'locked' }, getLocale(hass)),
+        icon: 'hass:lock-outline',
+      },
+    ],
+  });

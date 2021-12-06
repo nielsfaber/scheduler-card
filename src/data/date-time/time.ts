@@ -1,17 +1,10 @@
-
-
-
-
 export function stringToTime(string: string) {
   if (string.match(/^([0-9:]+)$/)) {
     const parts = string.split(':').map(Number);
     return parts[0] * 3600 + parts[1] * 60 + (parts[2] || 0);
-  }
-  else {
+  } else {
     const ts = new Date(string);
-    return ts.getHours() * 3600
-      + ts.getMinutes() * 60
-      + ts.getSeconds();
+    return ts.getHours() * 3600 + ts.getMinutes() * 60 + ts.getSeconds();
   }
 }
 
@@ -21,10 +14,20 @@ export function timeToString(time: number) {
   const minutes = Math.floor(time / 60);
   time -= minutes * 60;
   const seconds = Math.round(time);
-  return String(hours % 24).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+  return (
+    String(hours % 24).padStart(2, '0') +
+    ':' +
+    String(minutes).padStart(2, '0') +
+    ':' +
+    String(seconds).padStart(2, '0')
+  );
 }
 
-export function roundTime(value: number, stepSize: number, options: { wrapAround?: boolean, maxHours?: number } = { wrapAround: true }) {
+export function roundTime(
+  value: number,
+  stepSize: number,
+  options: { wrapAround?: boolean; maxHours?: number } = { wrapAround: true }
+) {
   let hours = value >= 0 ? Math.floor(value / 3600) : Math.ceil(value / 3600);
   let minutes = Math.floor((value - hours * 3600) / 60);
 
@@ -33,8 +36,7 @@ export function roundTime(value: number, stepSize: number, options: { wrapAround
   if (minutes >= 60) {
     hours++;
     minutes -= 60;
-  }
-  else if (minutes < 0) {
+  } else if (minutes < 0) {
     hours--;
     minutes += 60;
   }
@@ -56,6 +58,6 @@ export function parseRelativeTime(time: string) {
   return {
     event: match[1],
     sign: match[2],
-    offset: match[3]
-  }
+    offset: match[3],
+  };
 }

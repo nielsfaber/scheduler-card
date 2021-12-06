@@ -7,7 +7,7 @@ import { entityFilter } from './entities/entity_filter';
 import { sortAlphabetically, getLocale } from '../helpers';
 
 export function entityGroups(entities: string[], config: Partial<CardConfig>, hass: HomeAssistant) {
-  let groups: Group[] = [];
+  const groups: Group[] = [];
 
   //create groups from user config
   if (config.groups) {

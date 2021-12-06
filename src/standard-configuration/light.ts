@@ -7,7 +7,6 @@ import { listVariable } from '../data/variables/list_variable';
 import { getLocale } from '../helpers';
 import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
 
-
 export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefined): Action[] => {
   const actions: Action[] = [
     {
@@ -31,7 +30,7 @@ export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefin
           step: 1,
           unit: '%',
           optional: true,
-        })
+        }),
       },
       icon: 'hass:lightbulb-on',
       name: localize('services.light.turn_on', getLocale(hass)),
@@ -47,18 +46,18 @@ export const lightActions = (hass: HomeAssistant, stateObj: HassEntity | undefin
   return actions;
 };
 
-
-export const lightStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
-      icon: "hass:lightbulb-off"
-    },
-    {
-      value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
-      icon: "hass:lightbulb"
-    }
-  ]
-});
+export const lightStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'off',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, getLocale(hass)),
+        icon: 'hass:lightbulb-off',
+      },
+      {
+        value: 'on',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, getLocale(hass)),
+        icon: 'hass:lightbulb',
+      },
+    ],
+  });

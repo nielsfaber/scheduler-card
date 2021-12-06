@@ -13,10 +13,8 @@ export type Option = {
   icon?: string;
 };
 
-
 @customElement('scheduler-select')
 export class SchedulerSelect extends LitElement {
-
   @property()
   public label = '';
 
@@ -38,7 +36,7 @@ export class SchedulerSelect extends LitElement {
   @state()
   private _opened?: boolean;
 
-  @property({ attribute: "allow-custom-value", type: Boolean })
+  @property({ attribute: 'allow-custom-value', type: Boolean })
   public allowCustomValue?: boolean = false;
 
   @property({ type: Boolean })
@@ -82,7 +80,7 @@ export class SchedulerSelect extends LitElement {
         .renderer=${this.rowRenderer}
         .allowCustomValue=${this.allowCustomValue}
         ?disabled=${this.disabled}
-        @opened-changed=${this._openedChanged} 
+        @opened-changed=${this._openedChanged}
         @value-changed=${this._valueChanged}
       >
         <paper-input
@@ -96,25 +94,21 @@ export class SchedulerSelect extends LitElement {
           ?invalid=${this.invalid}
         >
           ${isDefined(this._value) && this.items.find(e => e.value == this._value)
-        ? html`
-                ${this.icons
             ? html`
+                ${this.icons
+                  ? html`
                       <ha-icon slot="prefix" icon="${this.items.find(e => e.value == this._value)!.icon}"> </ha-icon>
                     `
-            : ''}
+                  : ''}
                 ${this.clearable
-            ? html`
+                  ? html`
                       <ha-icon-button slot="suffix" class="clear-button" @click=${this._clearValue} .path=${mdiClose}>
                       </ha-icon-button>
                     `
-            : ''}
+                  : ''}
               `
-        : ''}
-          <ha-icon-button
-            slot="suffix"
-            class="toggle-button"
-            .path=${this._opened ? mdiMenuUp : mdiMenuDown}
-          >
+            : ''}
+          <ha-icon-button slot="suffix" class="toggle-button" .path=${this._opened ? mdiMenuUp : mdiMenuDown}>
           </ha-icon-button>
         </paper-input>
       </vaadin-combo-box-light>
@@ -143,9 +137,9 @@ export class SchedulerSelect extends LitElement {
           </paper-item-body>
         </paper-icon-item>
         `;
-        root.querySelector('.name')!.textContent = entry.item.name;
-        root.querySelector('[secondary]')!.textContent = entry.item.description || "";
-        (root.querySelector('ha-icon')! as any).icon = entry.item.icon;
+      root.querySelector('.name')!.textContent = entry.item.name;
+      root.querySelector('[secondary]')!.textContent = entry.item.description || '';
+      (root.querySelector('ha-icon')! as any).icon = entry.item.icon;
     } else if (!root.firstElementChild) {
       root.innerHTML = `
         <style>

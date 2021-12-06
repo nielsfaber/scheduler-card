@@ -15,17 +15,18 @@ export const inputNumberActions = (hass: HomeAssistant, stateObj?: HassEntity): 
         max: stateObj && stateObj.attributes.max ? Number(stateObj.attributes.max) : 255,
         step: stateObj && stateObj.attributes.step ? Number(stateObj.attributes.step) : 1,
         unit: stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : '',
-      })
+      }),
     },
     icon: 'hass:counter',
     name: localize('services.input_number.set_value', getLocale(hass)),
   },
 ];
 
-export const inputNumberStates = (hass: HomeAssistant, stateObj: HassEntity) => levelVariable({
-  name: hass.localize('ui.panel.config.helpers.types.input_number'),
-  min: stateObj && stateObj.attributes.min ? Number(stateObj.attributes.min) : 0,
-  max: stateObj && stateObj.attributes.max ? Number(stateObj.attributes.max) : 255,
-  step: stateObj && stateObj.attributes.step ? Number(stateObj.attributes.step) : 1,
-  unit: stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : ''
-});
+export const inputNumberStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  levelVariable({
+    name: hass.localize('ui.panel.config.helpers.types.input_number'),
+    min: stateObj && stateObj.attributes.min ? Number(stateObj.attributes.min) : 0,
+    max: stateObj && stateObj.attributes.max ? Number(stateObj.attributes.max) : 255,
+    step: stateObj && stateObj.attributes.step ? Number(stateObj.attributes.step) : 1,
+    unit: stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : '',
+  });

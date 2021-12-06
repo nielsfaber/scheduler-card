@@ -12,8 +12,7 @@ export type Option = {
 };
 
 @customElement('scheduler-selector')
-export class schedulerSelector extends LitElement {
-
+export class SchedulerSelector extends LitElement {
   @property()
   items: Option[] = [];
 
@@ -21,7 +20,7 @@ export class schedulerSelector extends LitElement {
   value: string[] = [];
 
   @property()
-  label: string = "";
+  label = '';
 
   @property({ type: Boolean })
   invalid = false;
@@ -36,21 +35,21 @@ export class schedulerSelector extends LitElement {
   protected firstUpdated() {
     //remove items from selection which are not in the list (anymore)
     if (this.value.some(e => !this.items.map(v => v.value).includes(e))) {
-      this.value = this.value
-        .filter(e => this.items.map(v => v.value).includes(e));
+      this.value = this.value.filter(e => this.items.map(v => v.value).includes(e));
       fireEvent(this, 'value-changed', { value: this.value });
     }
   }
 
   protected render(): TemplateResult {
     return html`
-    <div class="chip-set">
-      ${this.value.length
-        ? this.value
-          .map(val => this.items.find(e => e.value == val))
-          .filter(isDefined)
-          .map(e =>
-            html`
+      <div class="chip-set">
+        ${this.value.length
+          ? this.value
+              .map(val => this.items.find(e => e.value == val))
+              .filter(isDefined)
+              .map(
+                e =>
+                  html`
           <div class="chip">
             <span class="label">
               ${e.name}
@@ -59,18 +58,19 @@ export class schedulerSelector extends LitElement {
             </ha-icon>
             </mwc-icon-button>
           </div>
-        `)
-        : ''}
-          <scheduler-select
-            .items=${this.items.filter(e => !this.value.includes(e.value))}
-            label=${this.label}
-            .icons=${false}
-            .allowCustomValue=${true}
-            @value-changed=${this._addClick}
-            ?invalid=${this.invalid && this.value.length != this.items.length}
-          >
-          </scheduler-select>
-    </div>
+        `
+              )
+          : ''}
+        <scheduler-select
+          .items=${this.items.filter(e => !this.value.includes(e.value))}
+          label=${this.label}
+          .icons=${false}
+          .allowCustomValue=${true}
+          @value-changed=${this._addClick}
+          ?invalid=${this.invalid && this.value.length != this.items.length}
+        >
+        </scheduler-select>
+      </div>
     `;
   }
 
@@ -84,7 +84,7 @@ export class schedulerSelector extends LitElement {
     const target = ev.target as HTMLInputElement;
     const value = target.value;
     if (!this.value.includes(value)) this.value = [...this.value, value];
-    target.value = "";
+    target.value = '';
     fireEvent(this, 'value-changed', { value: [...this.value] });
   }
 
@@ -98,7 +98,7 @@ export class schedulerSelector extends LitElement {
         font-size: 0.875rem;
         font-weight: 400;
         padding: 0px 12px;
-        display: inline-flex;  
+        display: inline-flex;
         align-items: center;
         box-sizing: border-box;
         margin: 1px 0px;
@@ -128,7 +128,7 @@ export class schedulerSelector extends LitElement {
         height: 16px;
         padding: 1px;
         box-sizing: border-box;
-        display: inline-flex;  
+        display: inline-flex;
         align-items: center;
         margin-right: -6px !important;
       }

@@ -17,18 +17,18 @@ export const inputBooleanActions = (hass: HomeAssistant, _stateObj?: HassEntity)
   },
 ];
 
-
-export const inputBooleanStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
-      icon: "hass:flash-off"
-    },
-    {
-      value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
-      icon: "hass:flash"
-    }
-  ]
-});
+export const inputBooleanStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'off',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, getLocale(hass)),
+        icon: 'hass:flash-off',
+      },
+      {
+        value: 'on',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, getLocale(hass)),
+        icon: 'hass:flash',
+      },
+    ],
+  });

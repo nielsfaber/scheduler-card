@@ -28,8 +28,8 @@ export function parseEntity(entity_id: string, hass: HomeAssistant, config: Part
     entity = {
       ...entity,
       name: name,
-      icon: icon
-    }
+      icon: icon,
+    };
   }
 
   if ((config.standard_configuration === undefined || config.standard_configuration) && !entity.icon) {

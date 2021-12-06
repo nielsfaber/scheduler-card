@@ -42,7 +42,10 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
       case 'fan':
         return fanStates(hass, stateObj);
       case 'group':
-        const entities: string[] = stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id) ? stateObj.attributes.entity_id : [];
+        const entities: string[] =
+          stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id)
+            ? stateObj.attributes.entity_id
+            : [];
         const configs = entities.map(e => standardStates(e, hass)).filter(isDefined);
         return groupStates(hass, stateObj, configs);
       case 'input_boolean':
@@ -72,9 +75,10 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
       default:
         return null;
     }
-  }
-  catch (e) {
-    console.error(`Scheduler-card failed to load states for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`);
+  } catch (e) {
+    console.error(
+      `Scheduler-card failed to load states for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`
+    );
     return null;
   }
 }

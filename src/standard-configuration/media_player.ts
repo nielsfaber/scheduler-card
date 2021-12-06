@@ -34,7 +34,7 @@ export const mediaPlayerActions = (hass: HomeAssistant, stateObj?: HassEntity): 
       source: listVariable({
         name: hass.localize('ui.card.media_player.source'),
         options: mediaPlayerSources(hass.localize, stateObj),
-      })
+      }),
     },
     icon: 'hass:music-box-multiple-outline',
     name: localize('services.media_player.select_source', getLocale(hass)),

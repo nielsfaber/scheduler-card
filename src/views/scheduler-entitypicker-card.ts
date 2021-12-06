@@ -64,8 +64,7 @@ export class SchedulerEditorCard extends LitElement {
       if (this.schedule.timeslots.every(e => e.stop)) this.timeSchemeSelected = true;
       else {
         const actions = unique(flatten(this.schedule.timeslots.map(e => e.actions)));
-        const matchedActions = this.getActionsForEntity()
-          .filter(e => actions.some(a => compareActions(a, e, true)));
+        const matchedActions = this.getActionsForEntity().filter(e => actions.some(a => compareActions(a, e, true)));
         if (matchedActions.length == 1) this.selectedAction = matchedActions[0];
       }
     }
@@ -73,23 +72,24 @@ export class SchedulerEditorCard extends LitElement {
 
   getGroups() {
     if (!this.hass || !this.config) return [];
-    const entities = computeEntities(this.hass, this.config)
-      .filter(e => computeDomain(e) !== "switch" || !this.scheduleEntities.includes(e));
-    let groups = entityGroups(entities, this.config, this.hass);
+    const entities = computeEntities(this.hass, this.config).filter(
+      e => computeDomain(e) !== 'switch' || !this.scheduleEntities.includes(e)
+    );
+    const groups = entityGroups(entities, this.config, this.hass);
     groups.sort(sortAlphabetically);
     return groups;
   }
 
   getEntitiesForGroup() {
     if (!this.selectedGroup || !this.hass || !this.config) return [];
-    let entities = this.selectedGroup.entities.map(e => parseEntity(e, this.hass!, this.config!));
+    const entities = this.selectedGroup.entities.map(e => parseEntity(e, this.hass!, this.config!));
     entities.sort(sortAlphabetically);
     return entities;
   }
 
   getActionsForEntity() {
     if (!this.hass || !this.config || !this.selectedEntities.length) return [];
-    let actions = computeActions(this.selectedEntities, this.hass!, this.config!).map(e =>
+    const actions = computeActions(this.selectedEntities, this.hass!, this.config!).map(e =>
       Object.assign(e, { name: computeActionDisplay(e) })
     );
     actions.sort(sortAlphabetically);
@@ -110,10 +110,10 @@ export class SchedulerEditorCard extends LitElement {
         <div class="card-header">
           <div class="name">
             ${this.config.title
-        ? typeof this.config.title == 'string'
-          ? this.config.title
-          : localize('ui.panel.common.title', getLocale(this.hass))
-        : ''}
+              ? typeof this.config.title == 'string'
+                ? this.config.title
+                : localize('ui.panel.common.title', getLocale(this.hass))
+              : ''}
           </div>
           <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
         </div>
@@ -129,20 +129,20 @@ export class SchedulerEditorCard extends LitElement {
 
           <div class="header">
             ${this.hass.localize('ui.components.entity.entity-picker.entity')}
-            ${
-      entities.length > 1
-        ? html`
-                <div class="switch">
-                  <ha-switch
-                    ?checked=${this.multipleEntity}
-                    @change=${(ev: Event) => { this.multipleEntity = (ev.target as HTMLInputElement).checked }}
-                  >
-                  </ha-switch>
-                  ${localize('ui.panel.entity_picker.multiple', getLocale(this.hass))}          
-                </div>
-              `
-        : ''
-      }
+            ${entities.length > 1
+              ? html`
+                  <div class="switch">
+                    <ha-switch
+                      ?checked=${this.multipleEntity}
+                      @change=${(ev: Event) => {
+                        this.multipleEntity = (ev.target as HTMLInputElement).checked;
+                      }}
+                    >
+                    </ha-switch>
+                    ${localize('ui.panel.entity_picker.multiple', getLocale(this.hass))}
+                  </div>
+                `
+              : ''}
           </div>
           <button-group
             .items=${entities}
@@ -152,8 +152,8 @@ export class SchedulerEditorCard extends LitElement {
             ?optional=${true}
           >
             ${!this.selectedGroup
-        ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
-        : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
+              ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
+              : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
           </button-group>
 
           <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
@@ -163,8 +163,8 @@ export class SchedulerEditorCard extends LitElement {
             @change=${(ev: CustomEvent) => this.selectAction(ev.detail)}
           >
             ${!this.selectedEntities.length
-        ? localize('ui.panel.entity_picker.no_entity_selected', getLocale(this.hass))
-        : localize('ui.panel.entity_picker.no_actions_for_entity', getLocale(this.hass))}
+              ? localize('ui.panel.entity_picker.no_entity_selected', getLocale(this.hass))
+              : localize('ui.panel.entity_picker.no_actions_for_entity', getLocale(this.hass))}
           </button-group>
           ${this.makeSchemeButton(actions)}
         </div>
@@ -204,8 +204,7 @@ export class SchedulerEditorCard extends LitElement {
     if (this.selectedAction) {
       const availableActions = this.getActionsForEntity();
       this.selectedAction = availableActions.find(e => compareActions(e, this.selectedAction!));
-    }
-    else this.selectedAction = undefined;
+    } else this.selectedAction = undefined;
   }
 
   selectAction(val: Action) {
@@ -228,7 +227,7 @@ export class SchedulerEditorCard extends LitElement {
       detail: {
         entities: this.selectedEntities,
         action: this.selectedAction,
-        timeSchemeSelected: this.timeSchemeSelected
+        timeSchemeSelected: this.timeSchemeSelected,
       },
     });
     this.dispatchEvent(myEvent);

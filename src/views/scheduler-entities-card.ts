@@ -15,12 +15,11 @@ import { entityFilter } from '../data/entities/entity_filter';
 import { WebsocketEvent } from '../const';
 
 const computeScheduleTimestamp = (schedule: Schedule) =>
-  new Date(schedule.timestamps[schedule.next_entries[0]]).valueOf()
+  new Date(schedule.timestamps[schedule.next_entries[0]]).valueOf();
 
 const sortSchedules = (schedules: Schedule[], hass: HomeAssistant) => {
-  let output = [...schedules];
+  const output = [...schedules];
   output.sort((a, b) => {
-
     const stateA = hass.states[a.entity_id]?.state;
     const stateB = hass.states[b.entity_id]?.state;
 
@@ -44,11 +43,10 @@ const sortSchedules = (schedules: Schedule[], hass: HomeAssistant) => {
     else return a.entity_id < b.entity_id ? 1 : -1;
   });
   return output;
-}
+};
 
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
-
   @property()
   config?: CardConfig;
 
@@ -63,43 +61,41 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   public hassSubscribe(): Promise<UnsubscribeFunc>[] {
     this.loadSchedules();
     return [
-      this.hass!.connection.subscribeMessage(
-        (ev: SchedulerEventData) => this.updateScheduleItem(ev),
-        { type: WebsocketEvent }
-      )
+      this.hass!.connection.subscribeMessage((ev: SchedulerEventData) => this.updateScheduleItem(ev), {
+        type: WebsocketEvent,
+      }),
     ];
   }
 
   private async updateScheduleItem(ev: SchedulerEventData): Promise<void> {
     //only update single schedule
-    fetchScheduleItem(this.hass!, ev.schedule_id)
-      .then(schedule => {
-        const oldSchedule = this.schedules?.find(e => e.schedule_id == ev.schedule_id);
-        let schedules = [...this.schedules || []];
+    fetchScheduleItem(this.hass!, ev.schedule_id).then(schedule => {
+      const oldSchedule = this.schedules?.find(e => e.schedule_id == ev.schedule_id);
+      let schedules = [...(this.schedules || [])];
 
-        if (!schedule || !this.filterIncludedSchedule(schedule)) {
-          //schedule is not in the list, remove if it was in the list
-          if (oldSchedule) {
-            schedules = schedules.filter(e => e.schedule_id != ev.schedule_id);
-          }
+      if (!schedule || !this.filterIncludedSchedule(schedule)) {
+        //schedule is not in the list, remove if it was in the list
+        if (oldSchedule) {
+          schedules = schedules.filter(e => e.schedule_id != ev.schedule_id);
         }
-        else if (!oldSchedule) {
-          //add a new schedule and sort the list
-          schedules = sortSchedules([...schedules, schedule], this.hass!);
-        }
-        else if (
-          oldSchedule.enabled == schedule.enabled &&
-          computeScheduleTimestamp(oldSchedule) == computeScheduleTimestamp(schedule)
-        ) {
-          //only overwrite the existing schedule
-          schedules = schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e);
-        }
-        else {
-          //overwrite the existing schedule and sort
-          schedules = sortSchedules(schedules.map(e => e.schedule_id == schedule.schedule_id ? schedule : e), this.hass!);
-        }
-        this.schedules = [...schedules];
-      });
+      } else if (!oldSchedule) {
+        //add a new schedule and sort the list
+        schedules = sortSchedules([...schedules, schedule], this.hass!);
+      } else if (
+        oldSchedule.enabled == schedule.enabled &&
+        computeScheduleTimestamp(oldSchedule) == computeScheduleTimestamp(schedule)
+      ) {
+        //only overwrite the existing schedule
+        schedules = schedules.map(e => (e.schedule_id == schedule.schedule_id ? schedule : e));
+      } else {
+        //overwrite the existing schedule and sort
+        schedules = sortSchedules(
+          schedules.map(e => (e.schedule_id == schedule.schedule_id ? schedule : e)),
+          this.hass!
+        );
+      }
+      this.schedules = [...schedules];
+    });
   }
 
   private async loadSchedules(): Promise<void> {
@@ -122,8 +118,14 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
     const oldConfig = changedProps.get('config') as CardConfig | undefined;
     if (oldHass && changedProps.size == 1 && this.schedules)
-      return this.schedules!.some(e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id]));
-    else if (oldConfig && this.config && (oldConfig.discover_existing !== this.config.discover_existing || oldConfig.tags !== this.config.tags))
+      return this.schedules!.some(
+        e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id])
+      );
+    else if (
+      oldConfig &&
+      this.config &&
+      (oldConfig.discover_existing !== this.config.discover_existing || oldConfig.tags !== this.config.tags)
+    )
       (async () => await this.loadSchedules())();
     return true;
   }
@@ -135,33 +137,35 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         <div class="card-header">
           <div class="name">
             ${this.config.title
-        ? typeof this.config.title == 'string'
-          ? this.config.title
-          : localize('ui.panel.common.title', getLocale(this.hass))
-        : ''}
+              ? typeof this.config.title == 'string'
+                ? this.config.title
+                : localize('ui.panel.common.title', getLocale(this.hass))
+              : ''}
           </div>
           ${this.schedules.length && this.config.show_header_toggle
-        ? html`
+            ? html`
                 <ha-switch
-                  ?checked=${this.schedules.some(el => ["on", "triggered"].includes(this.hass!.states[el.entity_id]?.state || ''))}
+                  ?checked=${this.schedules.some(el =>
+                    ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || '')
+                  )}
                   @change=${this.toggleDisableAll}
                 >
                 </ha-switch>
               `
-        : ''}
+            : ''}
         </div>
         <div class="card-content">
           ${this.getRows()}
         </div>
         ${this.config.show_add_button !== false
-        ? html`
-        <div class="card-actions">
-          <mwc-button
-            @click=${this.newItemClick}
-            ?disabled=${this.connectionError}
-          >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
-          </mwc-button>
-        </div>` : ''}
+          ? html`
+              <div class="card-actions">
+                <mwc-button @click=${this.newItemClick} ?disabled=${this.connectionError}
+                  >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
+                </mwc-button>
+              </div>
+            `
+          : ''}
       </ha-card>
     `;
   }
@@ -171,37 +175,35 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       return html`
         <div>
           <hui-warning>
-           ${localize('ui.panel.overview.backend_error', getLocale(this.hass))}
+            ${localize('ui.panel.overview.backend_error', getLocale(this.hass))}
           </hui-warning>
         </div>
       `;
-    }
-    else if (!Object.keys(this.schedules).length) {
+    } else if (!Object.keys(this.schedules).length) {
       return html`
         <div>
           ${localize('ui.panel.overview.no_entries', getLocale(this.hass))}
         </div>
       `;
     }
-    let includedSchedules: Schedule[] = [];
-    let excludedEntities: Schedule[] = [];
+    const includedSchedules: Schedule[] = [];
+    const excludedEntities: Schedule[] = [];
 
-    this.schedules
-      .forEach(schedule => {
-        const included = schedule.timeslots
-          .every(timeslot => timeslot.actions
-            .every(action => entityFilter(action.entity_id || action.service, this.config!)))
-        if (!included) excludedEntities.push(schedule);
-        else if (!this.filterByTags(schedule)) excludedEntities.push(schedule);
-        else includedSchedules.push(schedule);
-      });
+    this.schedules.forEach(schedule => {
+      const included = schedule.timeslots.every(timeslot =>
+        timeslot.actions.every(action => entityFilter(action.entity_id || action.service, this.config!))
+      );
+      if (!included) excludedEntities.push(schedule);
+      else if (!this.filterByTags(schedule)) excludedEntities.push(schedule);
+      else includedSchedules.push(schedule);
+    });
 
     return html`
       ${includedSchedules.map(schedule => {
-      const state = this.hass!.states[schedule.entity_id]?.state || '';
-      return html`
+        const state = this.hass!.states[schedule.entity_id]?.state || '';
+        return html`
           <scheduler-entity-row
-            ?disabled=${!["on", "triggered"].includes(state)}
+            ?disabled=${!['on', 'triggered'].includes(state)}
             .hass=${this.hass}
             .schedule=${schedule}
             .config=${this.config}
@@ -209,7 +211,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
           >
           </scheduler-entity-row>
         `;
-    })}
+      })}
       ${Object.keys(excludedEntities).length
         ? !this.showDiscovered
           ? html`
@@ -217,19 +219,25 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
                 <button
                   class="show-more"
                   @click=${() => {
-              this.showDiscovered = true;
-            }}
+                    this.showDiscovered = true;
+                  }}
                 >
-                  + ${localize('ui.panel.overview.excluded_items', getLocale(this.hass), '{number}', excludedEntities.length)}
+                  +
+                  ${localize(
+                    'ui.panel.overview.excluded_items',
+                    getLocale(this.hass),
+                    '{number}',
+                    excludedEntities.length
+                  )}
                 </button>
               </div>
             `
           : html`
               ${excludedEntities.map(schedule => {
-            const state = this.hass!.states[schedule.entity_id]?.state || '';
-            return html`
+                const state = this.hass!.states[schedule.entity_id]?.state || '';
+                return html`
                   <scheduler-entity-row
-                    ?disabled=${!["on", "triggered"].includes(state)}
+                    ?disabled=${!['on', 'triggered'].includes(state)}
                     .hass=${this.hass}
                     .schedule=${schedule}
                     .config=${this.config}
@@ -237,13 +245,13 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
                   >
                   </scheduler-entity-row>
                 `;
-          })}
+              })}
               <div>
                 <button
                   class="show-more"
                   @click=${() => {
-              this.showDiscovered = false;
-            }}
+                    this.showDiscovered = false;
+                  }}
                 >
                   ${capitalize(localize('ui.panel.overview.hide_excluded', getLocale(this.hass)))}
                 </button>
@@ -274,18 +282,15 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   filterIncludedSchedule(schedule: Schedule) {
     if (this.config!.discover_existing) {
       return true;
-    }
-    else if (!schedule) {
+    } else if (!schedule) {
       return false;
-    }
-    else if (!schedule.timeslots.every(slot =>
-      slot.actions.every(action =>
-        entityFilter(action.entity_id || action.service, this.config!)
+    } else if (
+      !schedule.timeslots.every(slot =>
+        slot.actions.every(action => entityFilter(action.entity_id || action.service, this.config!))
       )
-    )) {
+    ) {
       return false;
-    }
-    else return this.filterByTags(schedule);
+    } else return this.filterByTags(schedule);
   }
 
   filterByTags(schedule: Schedule) {

@@ -311,7 +311,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
 
   private _setDisplayOptionsPrimary(ev: Event) {
     const value = (ev.target as HTMLInputElement).value;
-    let displayOptions = {
+    const displayOptions = {
       ...(this._config?.display_options || DefaultCardConfig.display_options),
       primary_info: value,
     };

@@ -34,8 +34,7 @@ export const sensorStates = (_hass: HomeAssistant, stateObj: HassEntity) => {
       max: unit == '%' ? 100 : undefined,
       step: unit == '%' ? 1 : undefined,
     });
-  }
-  else {
+  } else {
     return textVariable();
   }
-}
+};

@@ -47,7 +47,7 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
     service: 'cover.open_cover',
     icon: coverIconOpen(stateObj),
     name: localize('services.cover.open_cover', getLocale(hass)),
-    supported_feature: 1
+    supported_feature: 1,
   },
   {
     service: 'cover.close_cover',
@@ -64,7 +64,7 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
         max: 100,
         step: 1,
         unit: '%',
-      })
+      }),
     },
     supported_feature: 4,
     icon: 'hass:ray-vertex',
@@ -91,7 +91,7 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
         max: 100,
         step: 1,
         unit: '%',
-      })
+      }),
     },
     supported_feature: 128,
     icon: 'hass:valve',
@@ -99,18 +99,18 @@ export const coverActions = (hass: HomeAssistant, stateObj?: HassEntity): Action
   },
 ];
 
-
-export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "closed",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "closed" }, getLocale(hass)),
-      icon: stateIcon({ ...stateObj, state: "closed" })
-    },
-    {
-      value: "open",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "open" }, getLocale(hass)),
-      icon: stateIcon({ ...stateObj, state: "open" })
-    }
-  ]
-});
+export const coverStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'closed',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'closed' }, getLocale(hass)),
+        icon: stateIcon({ ...stateObj, state: 'closed' }),
+      },
+      {
+        value: 'open',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'open' }, getLocale(hass)),
+        icon: stateIcon({ ...stateObj, state: 'open' }),
+      },
+    ],
+  });

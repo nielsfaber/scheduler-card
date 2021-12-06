@@ -2,14 +2,7 @@ import { LitElement, html, PropertyValues } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { fireEvent, HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
 
-import {
-  CardConfig,
-  EntityElement,
-  ScheduleConfig,
-  Action,
-  ERepeatType,
-  Timeslot,
-} from './types';
+import { CardConfig, EntityElement, ScheduleConfig, Action, ERepeatType, Timeslot } from './types';
 import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
 import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray, pick } from './helpers';
 import { ValidateConfig } from './config-validation';
@@ -82,8 +75,7 @@ export class SchedulerCard extends LitElement {
       if (!oldHass.localize('ui.panel.config.automation.editor.actions.name')) {
         this.translationsLoaded = true;
         return true;
-      }
-      else if (this._view == EViews.Overview) return true;
+      } else if (this._view == EViews.Overview) return true;
       return false;
     }
     return true;
@@ -93,7 +85,7 @@ export class SchedulerCard extends LitElement {
     ValidateConfig(userConfig);
     const config: CardConfig = {
       ...DefaultCardConfig,
-      ...userConfig
+      ...userConfig,
     };
     this._config = config;
   }
@@ -186,27 +178,30 @@ export class SchedulerCard extends LitElement {
       this.actions = [action];
       const defaultTimeslot: Timeslot = {
         start: '12:00:00',
-        actions: entities.map(e => assignAction(e, this.actions[0]))
+        actions: entities.map(e => assignAction(e, this.actions[0])),
       };
 
       this.schedule = oldSchedule
         ? {
-          ...oldSchedule,
-          timeslots: oldSchedule.timeslots.length == 1 && !oldSchedule.timeslots[0].stop
-            ? [
-              {
-                ...oldSchedule.timeslots[0],
-                actions: migrateActionConfig(oldSchedule.timeslots[0].actions[0], entities, this.actions, this._hass!) || defaultTimeslot.actions
-              }
-            ]
-            : [defaultTimeslot]
-        }
+            ...oldSchedule,
+            timeslots:
+              oldSchedule.timeslots.length == 1 && !oldSchedule.timeslots[0].stop
+                ? [
+                    {
+                      ...oldSchedule.timeslots[0],
+                      actions:
+                        migrateActionConfig(oldSchedule.timeslots[0].actions[0], entities, this.actions, this._hass!) ||
+                        defaultTimeslot.actions,
+                    },
+                  ]
+                : [defaultTimeslot],
+          }
         : {
-          weekdays: ['daily'],
-          timeslots: [defaultTimeslot],
-          repeat_type: ERepeatType.Repeat,
-          tags: defaultTags
-        };
+            weekdays: ['daily'],
+            timeslots: [defaultTimeslot],
+            repeat_type: ERepeatType.Repeat,
+            tags: defaultTags,
+          };
       this._view = EViews.TimePicker;
     } else {
       this.actions = computeActions(entities, this._hass, this._config);
@@ -214,18 +209,18 @@ export class SchedulerCard extends LitElement {
         {
           start: '00:00:00',
           stop: '08:00:00',
-          actions: []
+          actions: [],
         },
         {
           start: '08:00:00',
           stop: '16:00:00',
-          actions: []
+          actions: [],
         },
         {
           start: '16:00:00',
           stop: '00:00:00',
-          actions: []
-        }
+          actions: [],
+        },
       ];
 
       if (oldSchedule) {
@@ -236,16 +231,17 @@ export class SchedulerCard extends LitElement {
 
         this.schedule = {
           ...oldSchedule,
-          timeslots: oldSchedule.timeslots.length > 1 && oldSchedule.timeslots.every(e => e.stop)
-            ? oldSchedule.timeslots.map((slot, i) => Object.assign(slot, { actions: actions[i] || [] }))
-            : defaultTimeslots
-        }
+          timeslots:
+            oldSchedule.timeslots.length > 1 && oldSchedule.timeslots.every(e => e.stop)
+              ? oldSchedule.timeslots.map((slot, i) => Object.assign(slot, { actions: actions[i] || [] }))
+              : defaultTimeslots,
+        };
       } else {
         this.schedule = {
           weekdays: ['daily'],
           timeslots: defaultTimeslots,
           repeat_type: ERepeatType.Repeat,
-          tags: defaultTags
+          tags: defaultTags,
         };
       }
       this._view = EViews.TimeScheme;
@@ -262,34 +258,35 @@ export class SchedulerCard extends LitElement {
     let schedule = ev.detail as ScheduleConfig;
     schedule = {
       ...schedule,
-      timeslots: schedule.timeslots.map(slot => {
-        if (!slot.actions || !slot.actions.length) return null;
-        if (slot.actions.some(e => !e.entity_id || computeDomain(e.entity_id || "") == "notify")) {
-          slot = {
-            ...slot,
-            actions: slot.actions.map(action => !action.entity_id || computeDomain(action.entity_id || "") == "notify"
-              ? omit(action, "entity_id")
-              : action
-            )
-          };
-        }
-        if (!slot.stop) slot = omit(slot, 'stop');
-        if (!slot.conditions?.length) slot = omit(slot, 'conditions', 'condition_type') as Timeslot;
-        return slot;
-      })
-        .filter(isDefined)
-    }
+      timeslots: schedule.timeslots
+        .map(slot => {
+          if (!slot.actions || !slot.actions.length) return null;
+          if (slot.actions.some(e => !e.entity_id || computeDomain(e.entity_id || '') == 'notify')) {
+            slot = {
+              ...slot,
+              actions: slot.actions.map(action =>
+                !action.entity_id || computeDomain(action.entity_id || '') == 'notify'
+                  ? omit(action, 'entity_id')
+                  : action
+              ),
+            };
+          }
+          if (!slot.stop) slot = omit(slot, 'stop');
+          if (!slot.conditions?.length) slot = omit(slot, 'conditions', 'condition_type') as Timeslot;
+          return slot;
+        })
+        .filter(isDefined),
+    };
 
     if (this.editItem) {
-      if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: "" };
+      if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
       editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
         .catch(e => handleError(e, this))
         .then(() => {
           this.editItem = null;
           this._view = EViews.Overview;
         });
-    }
-    else {
+    } else {
       saveSchedule(this._hass, schedule)
         .catch(e => handleError(e, this))
         .then(() => {
@@ -334,11 +331,11 @@ export class SchedulerCard extends LitElement {
       tags: data.tags || [],
       start_date: data.start_date,
       end_date: data.end_date,
-    }
+    };
     this.editItem = data.schedule_id!;
 
     if (!this.entities.length || !this.schedule.timeslots.length) {
-      const result = await new Promise((resolve) => {
+      const result = await new Promise(resolve => {
         fireEvent(this, 'show-dialog', {
           dialogTag: 'dialog-delete-defective',
           dialogImport: () => import('./components/dialog-delete-defective'),
@@ -349,7 +346,7 @@ export class SchedulerCard extends LitElement {
             confirm: () => {
               resolve(true);
             },
-          }
+          },
         });
       });
       if (result) this._deleteItemClick();
@@ -359,13 +356,18 @@ export class SchedulerCard extends LitElement {
 
     if (this.schedule.timeslots.every(e => e.stop)) {
       this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots) };
-      if (!this.actions.length) handleError({ error: '', body: { message: `Could not compute actions for the schedule #${ev.detail}.` } }, this);
+      if (!this.actions.length)
+        handleError(
+          { error: '', body: { message: `Could not compute actions for the schedule #${ev.detail}.` } },
+          this
+        );
       else this._view = EViews.TimeScheme;
     } else {
       this.actions = this.actions
         .filter(e => usedActions.find(a => compareActions(e, a, true)))
         .reduce((_acc: Action[], e) => [e], []);
-      if (!this.actions.length) handleError({ error: '', body: { message: `Could not compute actions for schedule #${ev.detail}.` } }, this);
+      if (!this.actions.length)
+        handleError({ error: '', body: { message: `Could not compute actions for schedule #${ev.detail}.` } }, this);
       else this._view = EViews.TimePicker;
     }
   }

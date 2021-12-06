@@ -1,4 +1,3 @@
-
 export function ValidateConfig(config: any) {
   const errors: string[] = [];
   let tree: string[] = [];
@@ -66,7 +65,7 @@ export function ValidateConfig(config: any) {
         Required(action.variables, key, 'object');
         if (Has(action.variables, key) && Type(action.variables[key], 'object')) {
           tree.push(key);
-          const variableCfg = action.variables[key] as { options?: any; min?: any, max?: any };
+          const variableCfg = action.variables[key] as { options?: any; min?: any; max?: any };
 
           //list variable
           if (RequiredArrayType(variableCfg, 'options', 'object')) {
@@ -158,8 +157,7 @@ export function ValidateConfig(config: any) {
         Optional(entryObj, 'states', ['object', 'array']);
         if (Has(entryObj, 'states') && Type(entryObj.states, 'array')) {
           RequiredArrayType(entryObj, 'states', 'string');
-        }
-        else if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
+        } else if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
           Required(entryObj.states, 'min', 'number');
           Required(entryObj.states, 'max', 'number');
           Optional(entryObj.states, 'step', 'number');

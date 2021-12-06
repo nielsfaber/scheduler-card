@@ -1,21 +1,20 @@
-import { HomeAssistant, computeDomain, computeEntity } from "custom-card-helpers";
-import { CardConfig, Action, ListVariable, EVariableType } from "../../types";
-import { standardActions } from "../../standard-configuration/standardActions";
-import { matchPattern } from "../match_pattern";
-import { isDefined, flatten, omit, pick } from "../../helpers";
-import { compareActions } from "./compare_actions";
-import { computeCommonActions } from "./compute_common_actions";
-import { computeVariables } from "../variables/compute_variables";
-import { HassEntity } from "home-assistant-js-websocket";
-import { computeSupportedFeatures } from "../entities/compute_supported_features";
-import { computeActionDisplay } from "./compute_action_display";
-
+import { HomeAssistant, computeDomain, computeEntity } from 'custom-card-helpers';
+import { CardConfig, Action, ListVariable, EVariableType } from '../../types';
+import { standardActions } from '../../standard-configuration/standardActions';
+import { matchPattern } from '../match_pattern';
+import { isDefined, flatten, omit, pick } from '../../helpers';
+import { compareActions } from './compare_actions';
+import { computeCommonActions } from './compute_common_actions';
+import { computeVariables } from '../variables/compute_variables';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { computeSupportedFeatures } from '../entities/compute_supported_features';
+import { computeActionDisplay } from './compute_action_display';
 
 function parseString(str: string) {
   return str
     .replace(/_/g, ' ')
     .trim()
-    .toLowerCase()
+    .toLowerCase();
 }
 
 export function computeActions(entity_id: string | string[], hass: HomeAssistant, config: CardConfig): Action[] {
@@ -51,7 +50,6 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
   );
   if (customizedActions.length) {
     customizedActions.forEach(action => {
-
       //ensure services have domain prefixed
       if (!computeDomain(action.service).length)
         action = { ...action, service: computeDomain(entity_id) + '.' + computeEntity(action.service) };
@@ -72,11 +70,10 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
       if (res >= 0) {
         //standard action should be overwritten
         Object.assign(actions, {
-          [res]: { ...actions[res], ...omit(action, 'variables') }
+          [res]: { ...actions[res], ...omit(action, 'variables') },
         });
 
         if (Object.keys(action.variables || {}).length) {
-
           let variableConfig = actions[res].variables || {};
 
           //merge variable config
@@ -84,33 +81,32 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
             .map(([field, variable]) => {
               return Object.keys(action.variables!).includes(field)
                 ? [field, { ...variable, ...action.variables![field] }]
-                : [field, action.variables![field]]
+                : [field, action.variables![field]];
             })
-            .reduce((obj, [key, val]) => val ? Object.assign(obj, { [key as string]: val }) : obj, {})
+            .reduce((obj, [key, val]) => (val ? Object.assign(obj, { [key as string]: val }) : obj), {});
 
           //add new variables
           const newVariables = Object.keys(action.variables!).filter(e => !Object.keys(variableConfig).includes(e));
 
           variableConfig = {
             ...variableConfig,
-            ...computeVariables(pick(action.variables, newVariables))
+            ...computeVariables(pick(action.variables, newVariables)),
           };
 
           Object.assign(actions, {
-            [res]: { ...actions[res], variables: variableConfig }
+            [res]: { ...actions[res], variables: variableConfig },
           });
-        };
-      }
-      else {
+        }
+      } else {
         //add a new action
         action = {
           ...action,
-          variables: computeVariables(action.variables)
+          variables: computeVariables(action.variables),
         };
         actions.push(action);
       }
     });
-  };
+  }
 
   //filter by supported_features
   const supportedFeatures = computeSupportedFeatures(stateObj);
@@ -120,17 +116,23 @@ export function computeActions(entity_id: string | string[], hass: HomeAssistant
   actions = actions.map(action => {
     if (Object.keys(action.variables || {}).length) {
       Object.keys(action.variables!).forEach(field => {
-        if (action.variables![field].type == EVariableType.List && (action.variables![field] as ListVariable).options.length == 1) {
+        if (
+          action.variables![field].type == EVariableType.List &&
+          (action.variables![field] as ListVariable).options.length == 1
+        ) {
           action = {
             ...action,
-            service_data: { ...action.service_data, [field]: (action.variables![field] as ListVariable).options[0].value },
-            variables: omit(action.variables!, field)
+            service_data: {
+              ...action.service_data,
+              [field]: (action.variables![field] as ListVariable).options[0].value,
+            },
+            variables: omit(action.variables!, field),
           };
         }
-      })
+      });
     }
     return action;
-  })
+  });
 
   return actions;
 }

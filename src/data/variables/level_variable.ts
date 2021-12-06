@@ -1,6 +1,5 @@
-
-import { isDefined, unique } from "../../helpers";
-import { LevelVariable, EVariableType } from "../../types";
+import { isDefined, unique } from '../../helpers';
+import { LevelVariable, EVariableType } from '../../types';
 
 export function levelVariable(...config: Partial<LevelVariable>[]) {
   //factory function to create LevelVariable from configuration
@@ -19,9 +18,9 @@ export function levelVariable(...config: Partial<LevelVariable>[]) {
     max: max.length ? Math.max(...max) : 255,
     step: step.length ? Math.max(...step) : 1,
     scale_factor: scale_factor.length == 1 ? scale_factor[0] : 1,
-    optional: optional.length && optional.every(e => e) || false,
+    optional: (optional.length && optional.every(e => e)) || false,
     unit: unit.length ? unit.reduce((_acc, val) => val) : '',
-    name: name.length ? name.reduce((_acc, val) => val) : undefined
+    name: name.length ? name.reduce((_acc, val) => val) : undefined,
   };
   return variable;
 }

@@ -17,19 +17,18 @@ export const switchActions = (hass: HomeAssistant, _stateObj?: HassEntity): Acti
   },
 ];
 
-
-
-export const switchStates = (hass: HomeAssistant, stateObj: HassEntity) => listVariable({
-  options: [
-    {
-      value: "off",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "off" }, getLocale(hass)),
-      icon: "hass:flash-off"
-    },
-    {
-      value: "on",
-      name: computeStateDisplay(hass.localize, { ...stateObj, state: "on" }, getLocale(hass)),
-      icon: "hass:flash"
-    }
-  ]
-});
+export const switchStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'off',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, getLocale(hass)),
+        icon: 'hass:flash-off',
+      },
+      {
+        value: 'on',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, getLocale(hass)),
+        icon: 'hass:flash',
+      },
+    ],
+  });
