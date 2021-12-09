@@ -123,7 +123,9 @@
         "multiple": "Mitu"
       },
       "time_picker": {
-        "no_timeslot_selected": "Alustuseks vali ajavahemik"
+        "no_timeslot_selected": "Alustuseks vali ajavahemik",
+        "time_scheme": "Kkeem",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "võrdub",

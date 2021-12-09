@@ -123,7 +123,9 @@
         "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "É necessário selecionar um período horário para escolher uma ação"
+        "no_timeslot_selected": "É necessário selecionar um período horário para escolher uma ação",
+        "time_scheme": "Esquema",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "é",

@@ -91,35 +91,64 @@ export function PrettyPrintIcon(input?: string) {
   return `hass:${input}`;
 }
 
-export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
-  //TBD implementation for sun
-  entries.sort((a, b) => {
-    if (stringToTime(a.start) > stringToTime(b.start)) return 1;
-    else if (stringToTime(a.start) < stringToTime(b.start)) return -1;
-    else return stringToTime(a.stop!) > stringToTime(b.stop!) ? 1 : -1;
+export function calculateTimeline(entries: Timeslot[], hass: HomeAssistant): Timeslot[] {
+  //correct timeslots which are outside of 00:00:00 - 23:59:00 window
+  entries = entries.map(e =>
+    Object({
+      ...e,
+      start: stringToTime(e.start, hass) < 0 ? '00:00:00' : e.start,
+      stop: stringToTime(e.stop!, hass) > 3600 * 24 ? '00:00:00' : e.stop,
+    })
+  );
+
+  entries = entries.map(e => {
+    const duration = stringToTime(e.stop!, hass) - stringToTime(e.start, hass);
+    if (duration < 0) {
+      if (stringToTime(e.stop!, hass) == 0)
+        //if stop time is 00:00:00, this should be mapped as the end of the day
+        return {
+          ...e,
+          stop: timeToString(stringToTime(e.stop!, hass) + 3600 * 24),
+        };
+      //correct timeslots who have their start and stop point flipped
+      else
+        return {
+          ...e,
+          start: e.stop!,
+          stop: e.start,
+        };
+    } else if (duration < 60) {
+      //correct timeslots which have a duration shorter than 1 minute
+      return {
+        ...e,
+        start: e.start!,
+        stop: timeToString(stringToTime(e.start!, hass) + 60),
+      };
+    }
+    return e;
   });
 
-  entries = entries.map(e =>
-    stringToTime(e.stop!) < stringToTime(e.start)
-      ? {
-          ...e,
-          stop: timeToString(stringToTime(e.stop!) + 3600 * 24),
-        }
-      : e
-  );
-  let startTime = 0;
+  //sort chronological
+  entries.sort((a, b) => {
+    if (stringToTime(a.start, hass) > stringToTime(b.start, hass)) return 1;
+    else if (stringToTime(a.start, hass) < stringToTime(b.start, hass)) return -1;
+    else return stringToTime(a.stop!, hass) > stringToTime(b.stop!, hass) ? 1 : -1;
+  });
+
+  let startTime = '00:00:00';
   let len = entries.length;
 
+  //insert empty timeslots where needed
   for (let i = 0; i < len; i++) {
     const entry = entries[i];
-    if (stringToTime(entry.start) > startTime) {
+    if (stringToTime(entry.start, hass) > stringToTime(startTime, hass)) {
       entries.splice(
         i,
         0,
         Object.assign(
           { ...entry },
           {
-            start: timeToString(startTime),
+            start: startTime,
             stop: entry.start,
             actions: [],
           }
@@ -127,17 +156,21 @@ export function calculateTimeline(entries: Timeslot[]): Timeslot[] {
       );
       len++;
       i++;
+    } else if (stringToTime(entry.start, hass) < stringToTime(startTime, hass)) {
+      //move timeslot if it is overlapping with previous
+      entries = Object.assign(entries, { [i]: { ...entry, start: startTime } });
     }
-    startTime = stringToTime(entry.stop!);
+    startTime = entry.stop!;
   }
   const endOfDay = 24 * 3600;
 
-  if (startTime < endOfDay && startTime > 0) {
+  //insert empty timeslots at the end when needed
+  if (stringToTime(startTime, hass) < endOfDay && stringToTime(startTime, hass) > 0) {
     entries.push(
       Object.assign(
         { ...entries[0] },
         {
-          start: timeToString(startTime),
+          start: startTime,
           stop: timeToString(endOfDay),
           actions: [],
         }

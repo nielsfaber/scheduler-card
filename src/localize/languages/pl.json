@@ -123,7 +123,9 @@
         "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "Najpierw wybierz przedział czasowy"
+        "no_timeslot_selected": "Najpierw wybierz przedział czasowy",
+        "time_scheme": "Schemat",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "jest równe ",

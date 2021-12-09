@@ -35,11 +35,11 @@ export class TimePicker extends LitElement {
 
   firstUpdated() {
     const res = parseRelativeTime(this.value);
-    if (!res) this.time = stringToTime(this.value);
+    if (!res) this.time = stringToTime(this.value, this.hass!);
     else {
       this.relativeMode = true;
       this.event = res.event == ETimeEvent.Sunrise ? ETimeEvent.Sunrise : ETimeEvent.Sunset;
-      this.time = res.sign == '+' ? stringToTime(res.offset) : -stringToTime(res.offset);
+      this.time = res.sign == '+' ? stringToTime(res.offset, this.hass!) : -stringToTime(res.offset, this.hass!);
     }
   }
 
@@ -151,8 +151,8 @@ export class TimePicker extends LitElement {
     this.relativeMode = !this.relativeMode;
 
     const sunEntity = this.hass!.states['sun.sun'];
-    const ts_sunrise = stringToTime(sunEntity.attributes.next_rising);
-    const ts_sunset = stringToTime(sunEntity.attributes.next_setting);
+    const ts_sunrise = stringToTime(sunEntity.attributes.next_rising, this.hass!);
+    const ts_sunset = stringToTime(sunEntity.attributes.next_setting, this.hass!);
 
     if (this.relativeMode) {
       this.event =

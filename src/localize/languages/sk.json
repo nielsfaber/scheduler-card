@@ -123,7 +123,9 @@
         "multiple": "Viacero"
       },
       "time_picker": {
-        "no_timeslot_selected": "Najprv vyberte časový úsek"
+        "no_timeslot_selected": "Najprv vyberte časový úsek",
+        "time_scheme": "Schému",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "je",

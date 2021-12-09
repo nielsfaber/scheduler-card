@@ -8,6 +8,7 @@ export type ButtonItem = {
   icon?: string;
   value?: string;
   id?: string;
+  disabled?: boolean;
 };
 
 function name(item: ButtonItem) {
@@ -42,7 +43,11 @@ export class ButtonGroup extends LitElement {
     const id = value(item, index);
 
     return html`
-      <mwc-button class="${selection.includes(id) ? 'active' : ''}" @click=${() => this.selectItem(id)}>
+      <mwc-button
+        class="${selection.includes(id) ? 'active' : ''}"
+        ?disabled=${item.disabled}
+        @click=${() => this.selectItem(id)}
+      >
         ${item.icon
           ? html`
               <ha-icon icon="${PrettyPrintIcon(item.icon)}" class="padded-right"></ha-icon>

@@ -30,7 +30,7 @@ export function formatTime(
     try {
       new Date().toLocaleTimeString('i');
     } catch (e) {
-      return e.name === 'RangeError';
+      return (e as any).name === 'RangeError';
     }
     return false;
   };
