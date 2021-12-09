@@ -132,7 +132,8 @@
         "unequal_to": "ei võrdu",
         "all": "kõik",
         "any": "iga",
-        "no_conditions_defined": "Tingimusi pole määratud"
+        "no_conditions_defined": "Tingimusi pole määratud",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "toiming peale käivitumist",

@@ -132,7 +132,8 @@
         "unequal_to": "er ikke",
         "all": "alle",
         "any": "any",
-        "no_conditions_defined": "Ingen vilkår definert"
+        "no_conditions_defined": "Ingen vilkår definert",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "oppførsel etter fullføring",

@@ -204,11 +204,32 @@ export class SchedulerOptionsCard extends LitElement {
                 </div>
                 ${this.renderConditions()}
 
-                <div style="margin-top: 10px">
-                  <mwc-button @click=${this.addConditionClick}>
-                    <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
-                    ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
-                  </mwc-button>
+                <div class="condition-options">
+                  <div style="flex: 1">
+                    <mwc-button @click=${this.addConditionClick}>
+                      <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+                      ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
+                    </mwc-button>
+                  </div>
+                  <div class="track-conditions">
+                    ${this.schedule.timeslots[0].stop &&
+                    this.schedule.timeslots[0].conditions &&
+                    this.schedule.timeslots[0].conditions.length > 0
+                      ? html`
+                          <ha-checkbox
+                            id="track_conditions"
+                            ?checked=${this.schedule.timeslots[0].track_conditions}
+                            @change=${this.trackConditionsClick}
+                          ></ha-checkbox>
+                          <span
+                            @click=${() =>
+                              (this.shadowRoot!.querySelector('#track_conditions')! as HTMLElement).click()}
+                          >
+                            ${localize('ui.panel.conditions.track_conditions', getLocale(this.hass))}
+                          </span>
+                        `
+                      : ''}
+                  </div>
                 </div>
 
                 <div class="header">${localize('ui.panel.options.period', getLocale(this.hass))}</div>
@@ -570,8 +591,18 @@ export class SchedulerOptionsCard extends LitElement {
     };
   }
 
+  trackConditionsClick(e: Event) {
+    if (!this.schedule) return;
+    const checked = (e.target as HTMLInputElement).checked;
+    this.schedule = {
+      ...this.schedule,
+      timeslots: this.schedule.timeslots.map(e => Object({ ...e, track_conditions: checked })),
+    };
+  }
+
   private _setStartDate(ev: CustomEvent) {
     const value = String(ev.detail.value);
+    if (!value) return;
     const startDate = stringToDate(value);
     const endDate = stringToDate(this.endDate);
     if (startDate > endDate) {
@@ -585,6 +616,7 @@ export class SchedulerOptionsCard extends LitElement {
 
   private _setEndDate(ev: CustomEvent) {
     const value = String(ev.detail.value);
+    if (!value) return;
     const startDate = stringToDate(this.startDate);
     const endDate = stringToDate(value);
     if (startDate > endDate) {
@@ -712,6 +744,21 @@ export class SchedulerOptionsCard extends LitElement {
     }
     div.date-range div:first-child span {
       padding-left: 0px;
+    }
+    div.condition-options {
+      display: flex;
+      flex-direction: row;
+      margin-top: 10px;
+    }
+    div.track-conditions {
+      display: flex;
+      flex-direction: row;
+      text-align: right;
+      align-items: center;
+      max-width: 50%;
+    }
+    div.track-conditions span {
+      text-align: left;
     }
   `;
 }

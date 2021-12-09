@@ -133,7 +133,8 @@
         "unequal_to": "desigual a",
         "all": "todos",
         "any": "cualquiera",
-        "no_conditions_defined": "no hay ninguna condición definida"
+        "no_conditions_defined": "no hay ninguna condición definida",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "acción después de la finalización",

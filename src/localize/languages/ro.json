@@ -132,7 +132,8 @@
         "unequal_to": "nu este",
         "all": "tot",
         "any": "oricare",
-        "no_conditions_defined": "Nu există condiții definite"
+        "no_conditions_defined": "Nu există condiții definite",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "comportament după declanșare",

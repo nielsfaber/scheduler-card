@@ -132,7 +132,8 @@
         "unequal_to": "nie jest równe",
         "all": "wszystkie",
         "any": "dowolny",
-        "no_conditions_defined": "Nie ma zdefiniowanych warunków"
+        "no_conditions_defined": "Nie ma zdefiniowanych warunków",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "zachowanie po zakończeniu",

@@ -132,7 +132,8 @@
         "unequal_to": "is not",
         "all": "all",
         "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "no_conditions_defined": "There are no conditions defined",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "behaviour after triggering",

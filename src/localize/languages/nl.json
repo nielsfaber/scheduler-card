@@ -126,14 +126,15 @@
       "time_picker": {
         "no_timeslot_selected": "Kies eerst een tijdsslot",
         "time_scheme": "Schema",
-        "time_input_mode": "Time control mode"
+        "time_input_mode": "Invoermodus voor tijd"
       },
       "conditions": {
         "equal_to": "is",
         "unequal_to": "is niet",
         "all": "en",
         "any": "of",
-        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd"
+        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd",
+        "track_conditions": "Herevalueer wanneer condities veranderen"
       },
       "options": {
         "repeat_type": "gedrag na voltooiing",

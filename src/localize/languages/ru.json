@@ -132,7 +132,8 @@
         "unequal_to": "не равно",
         "all": "все",
         "any": "любое",
-        "no_conditions_defined": "Не определены условия"
+        "no_conditions_defined": "Не определены условия",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "поведение после срабатывания",

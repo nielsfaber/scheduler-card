@@ -746,6 +746,9 @@ export class TimeslotEditor extends LitElement {
       div.tooltip ha-icon {
         --mdc-icon-size: 20px;
       }
+      mwc-button ha-icon {
+        margin-right: 11px;
+      }
     `;
   }
 }

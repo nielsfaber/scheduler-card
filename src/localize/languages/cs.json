@@ -132,7 +132,8 @@
         "unequal_to": "není",
         "all": "Vše",
         "any": "žádný",
-        "no_conditions_defined": "Nejsou definovány žádné podmínky"
+        "no_conditions_defined": "Nejsou definovány žádné podmínky",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "chování po spuštění",

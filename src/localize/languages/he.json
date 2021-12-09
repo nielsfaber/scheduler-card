@@ -132,7 +132,8 @@
         "unequal_to": "שונה מ",
         "all": "כל התנאים",
         "any": "אחד מהתנאים",
-        "no_conditions_defined": "לא הוגדרו תנאים"
+        "no_conditions_defined": "לא הוגדרו תנאים",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "התנהגות לאחר הפעלה",

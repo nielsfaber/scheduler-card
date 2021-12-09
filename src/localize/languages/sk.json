@@ -132,7 +132,8 @@
         "unequal_to": "nie je",
         "all": "Všetko",
         "any": "žiadny",
-        "no_conditions_defined": "Nie sú definované žiadne podmienky"
+        "no_conditions_defined": "Nie sú definované žiadne podmienky",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "správanie sa po spustení",

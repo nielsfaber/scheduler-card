@@ -132,7 +132,8 @@
         "unequal_to": "не рівне",
         "all": "всі",
         "any": "будь-яке",
-        "no_conditions_defined": "Не визначені умови"
+        "no_conditions_defined": "Не визначені умови",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "поведінка після спрацювання",

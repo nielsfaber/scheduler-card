@@ -57,6 +57,7 @@ export interface Timeslot {
   stop?: string;
   conditions?: Condition[];
   condition_type?: 'or' | 'and';
+  track_conditions?: boolean;
   actions: ServiceCall[];
 }
 

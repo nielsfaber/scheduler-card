@@ -132,7 +132,8 @@
         "unequal_to": "não é",
         "all": "todos(as)",
         "any": "qualquer",
-        "no_conditions_defined": "Não existem condições definidas"
+        "no_conditions_defined": "Não existem condições definidas",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "comportamento após a conclusão",

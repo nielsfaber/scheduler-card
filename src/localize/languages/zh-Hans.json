@@ -132,7 +132,8 @@
         "unequal_to": "非",
         "all": "全部",
         "any": "任一",
-        "no_conditions_defined": "未定义条件"
+        "no_conditions_defined": "未定义条件",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
         "repeat_type": "触发后的行为",
