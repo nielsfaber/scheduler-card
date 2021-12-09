@@ -1,149 +1,191 @@
-import { LitElement, html, css, TemplateResult } from 'lit';
-import { property, customElement, eventOptions } from 'lit/decorators.js';
-import { localize } from '../localize/localize';
-import { EVariableType, Timeslot, LevelVariable, ListVariable, Action } from '../types';
-import { PrettyPrintName, unique, getLocale } from '../helpers';
+import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { customElement, property, eventOptions } from 'lit/decorators';
+import { mdiUnfoldMoreVertical } from '@mdi/js';
 import { HomeAssistant } from 'custom-card-helpers';
-import { formatAmPm, formatTime } from '../data/date-time/format_time';
-import { stringToTime, roundTime, timeToString } from '../data/date-time/time';
-import { stringToDate } from '../data/date-time/string_to_date';
-import { levelVariableDisplay } from '../data/variables/level_variable';
+
+import { Timeslot, Action, EVariableType, LevelVariable, ListVariable } from '../types';
+import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { compareActions } from '../data/actions/compare_actions';
+import { levelVariableDisplay } from '../data/variables/level_variable';
+import { unique, PrettyPrintName, getLocale } from '../helpers';
+import { localize } from '../localize/localize';
+import { stringToDate } from '../data/date-time/string_to_date';
+import { formatAmPm, formatTime, TimeFormat } from '../data/date-time/format_time';
+import { absToRelTime } from '../data/date-time/relative_time';
 
-const secondsPerDay = 86400;
-
-function Duration(el: Timeslot) {
-  const start = stringToTime(el.start);
-  let stop = stringToTime(el.stop!);
-  if (stop < start) stop += secondsPerDay;
-  return stop - start;
-}
+const SEC_PER_DAY = 86400;
+const SEC_PER_HOUR = 3600;
 
 @customElement('timeslot-editor')
 export class TimeslotEditor extends LitElement {
-  @property() hass?: HomeAssistant;
+  @property()
+  hass?: HomeAssistant;
+
   @property({ type: Array })
-  entries: Timeslot[] = [];
-  shadowRoot: any;
+  slots: Timeslot[] = [];
 
-  @property({ type: Array }) actions: Action[] = [];
-  @property({ type: Number }) stepSize = 10;
-  @property({ type: Number }) _activeEntry: number | null = null;
-  @property({ type: Number }) _activeThumb: number | null = null;
-  @property({ type: Boolean }) formatAmPm = false;
+  @property({ type: Array })
+  actions: Action[] = [];
 
-  _currentTime: number | null = null;
-  _activeEntryMem: number | null = null;
+  @property({ type: Number })
+  stepSize = 10;
+
+  isDragging: boolean = false;
+
+  currentTime: number = 0;
+
+  @property()
+  rangeMin: number = 0; //lower bound of zoomed timeframe
+
+  @property()
+  rangeMax: number = SEC_PER_DAY; //upper bound of zoomed timeframe
+
+  @property()
+  activeSlot: number | null = null;
+
+  @property()
+  activeMarker: number | null = null;
+
+  previousSlot: number | null = null;
+  timer: number = 0;
+  timeout: number = 0;
+
+  zoomFactor: number = 1;
 
   firstUpdated() {
-    this.formatAmPm = formatAmPm(getLocale(this.hass!));
+    window.addEventListener('resize', () => {
+      clearTimeout(this.timeout);
+      this.timeout = window.setTimeout(() => {
+        this.requestUpdate();
+      }, 50);
+    });
   }
 
   render() {
     if (!this.hass) return html``;
+
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const width = (SEC_PER_DAY / (this.rangeMax - this.rangeMin)) * fullWidth;
+    const left = (-this.rangeMin / (this.rangeMax - this.rangeMin)) * fullWidth;
+
     return html`
-      <div class="slider-container">
-        <div>
-          <div class="slider-track">
-            ${this.getSlots()}
-          </div>
-        </div>
-        <div class="slider-legend">
-          ${this.formatAmPm
-            ? html`
-                <div class="slider-legend-item wide empty"></div>
-                <div class="slider-legend-item wide">04:00 AM</div>
-                <div class="slider-legend-item wide">08:00 AM</div>
-                <div class="slider-legend-item wide">12:00 PM</div>
-                <div class="slider-legend-item wide">04:00 PM</div>
-                <div class="slider-legend-item wide">08:00 PM</div>
-                <div class="slider-legend-item wide empty"></div>
-              `
-            : html`
-                <div class="slider-legend-item empty"></div>
-                <div class="slider-legend-item">03:00</div>
-                <div class="slider-legend-item">06:00</div>
-                <div class="slider-legend-item">09:00</div>
-                <div class="slider-legend-item">12:00</div>
-                <div class="slider-legend-item">15:00</div>
-                <div class="slider-legend-item">18:00</div>
-                <div class="slider-legend-item">21:00</div>
-                <div class="slider-legend-item empty"></div>
-              `}
+      <div class="outer">
+        <div
+          class="wrapper ${this.isDragging ? '' : 'selectable'}"
+          style="width: ${width.toFixed(2)}px; margin-left: ${left.toFixed(2)}px"
+        >
+          ${this.renderSlots()}
         </div>
       </div>
-      <div>
-        <mwc-button @click=${this._addSlot} ?disabled=${this._activeEntry === null || this.entries.length >= 24}>
-          <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
-          ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
-        </mwc-button>
-        <mwc-button @click=${this._removeSlot} ?disabled=${this._activeEntry === null || this.entries.length <= 2}>
-          <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
-          ${this.hass.localize('ui.common.delete')}
-        </mwc-button>
+      <div class="outer">
+        <div class="time-wrapper" style="width: ${width.toFixed(2)}px; margin-left: ${left.toFixed(2)}px">
+          ${this.renderTimes()}
+        </div>
+      </div>
+      <mwc-button @click=${this._addSlot} ?disabled=${this.activeSlot === null || this.slots.length >= 24}>
+        <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+        ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
+      </mwc-button>
+      <mwc-button @click=${this._removeSlot} ?disabled=${this.activeSlot === null || this.slots.length <= 2}>
+        <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
+        ${this.hass.localize('ui.common.delete')}
+      </mwc-button>
+    `;
+  }
+
+  renderSlots() {
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const width = (SEC_PER_DAY / (this.rangeMax - this.rangeMin)) * fullWidth;
+    const left = (-this.rangeMin / (this.rangeMax - this.rangeMin)) * fullWidth;
+    let start = left;
+
+    return this.slots.map((e, i) => {
+      const w = ((stringToTime(e.stop!, this.hass!) || SEC_PER_DAY) - stringToTime(e.start, this.hass!)) / SEC_PER_DAY;
+      const actionText = this.computeActionDisplay(e) || '';
+      const textWidth = (actionText || '').length * 5 + 10;
+
+      const leftMargin = start < 0 && start + w * width > 0 ? -start + 5 : 15;
+      const rightMargin = start + w * width > fullWidth && start < fullWidth ? w * width - (fullWidth - start) + 5 : 15;
+      const availableWidth = w * width - leftMargin - rightMargin;
+      start += w * width;
+
+      return html`
+        <div
+          class="slot${this.activeSlot == i && this.activeMarker === null ? ' active' : ''} ${w * width < 2
+            ? 'noborder'
+            : ''}"
+          style="width: ${Math.floor(w * 10000) / 100}%"
+          @click=${this._selectSlot}
+          slot="${i}"
+        >
+          ${i > 0 && (this.activeSlot === i || this.activeSlot === i - 1)
+            ? html`
+                <div class="handle">
+                  <div class="button-holder">
+                    <ha-icon-button
+                      .path=${mdiUnfoldMoreVertical}
+                      @mousedown=${this._handleTouchStart}
+                      @touchstart=${this._handleTouchStart}
+                    >
+                    </ha-icon-button>
+                  </div>
+                </div>
+              `
+            : ''}
+          ${i > 0 ? this.renderTooltip(i) : ''}
+
+          <span style="margin-left: ${leftMargin.toFixed(2)}px; margin-right: ${rightMargin.toFixed(2)}px">
+            ${actionText && (availableWidth > textWidth / 3 || availableWidth > 50) && availableWidth > 30
+              ? actionText
+              : ''}
+          </span>
+        </div>
+      `;
+    });
+  }
+
+  renderTooltip(i: number) {
+    const res = parseRelativeTime(this.slots[i].start);
+
+    return html`
+      <div class="tooltip-container center">
+        <div class="tooltip ${this.activeMarker == i ? 'active' : ''}" @click=${this._selectMarker}>
+          ${res
+            ? html`
+                <ha-icon icon="hass:${res.event == 'sunrise' ? 'weather-sunny' : 'weather-night'}"></ha-icon>
+                ${res.sign} ${formatTime(stringToDate(res.offset), getLocale(this.hass!), TimeFormat.twenty_four)}
+              `
+            : formatTime(stringToDate(this.slots[i].start), getLocale(this.hass!))}
+        </div>
       </div>
     `;
   }
 
-  protected getSlots(): TemplateResult[] {
-    const output: TemplateResult[] = [];
-    this.entries.forEach((el, i) => {
-      output.push(html`
-        <div
-          class="slider-slot${this._activeEntry == i ? ' active' : ''}${el.actions ? ' filled' : ''}"
-          @click=${(ev: Event) => {
-            this._handleSegmentClick(ev, i);
-          }}
-          style="width: ${(Duration(el) / secondsPerDay) * 100}%"
-        >
-          <span class="content">${this.getEntryAction(el)}</div>
+  renderTimes() {
+    this._updateTooltips();
+
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+
+    const allowedStepSizes = [1, 2, 3, 4, 6, 8, 12];
+
+    const segmentWidth = formatAmPm(getLocale(this.hass!)) ? 55 : 40;
+    let stepSize = Math.ceil(24 / (fullWidth / segmentWidth));
+    while (!allowedStepSizes.includes(stepSize)) stepSize++;
+
+    const nums = [0, ...Array.from(Array(24 / stepSize - 1).keys()).map(e => (e + 1) * stepSize), 24];
+
+    return nums.map(e => {
+      const isSpacer = e == 0 || e == 24;
+      let w = isSpacer ? (stepSize / 48) * 100 : (stepSize / 24) * 100;
+      return html`
+        <div style="width: ${Math.floor(w * 100) / 100}%" class="${isSpacer ? '' : 'time'}">
+          ${!isSpacer ? formatTime(stringToDate(timeToString(e * SEC_PER_HOUR)), getLocale(this.hass!)) : ''}
         </div>
-      `);
-      if (i < this.entries.length - 1) {
-        const ts = stringToTime(this.entries[i].stop!);
-        output.push(html`
-          <div
-            class="slider-thumb${this._activeThumb == i ? ' active' : ''} ${this._activeEntry == i ||
-            this._activeEntry == i + 1
-              ? ''
-              : 'hidden'}"
-          >
-            <div
-              class="slider-thumb-ripple"
-              index="${i}"
-              @mousedown=${this._handleTouchStart}
-              @touchstart=${this._handleTouchStart}
-            >
-              <ha-icon icon="hass:unfold-more-vertical"> </ha-icon>
-            </div>
-            <div
-              class="slider-thumb-tooltip ${this.formatAmPm ? 'wide' : ''} ${this._activeEntryMem == i &&
-              this._activeEntryMem != 0
-                ? 'right'
-                : this._activeEntryMem == i + 1 && this._activeEntryMem + 1 != this.entries.length
-                ? 'left'
-                : 'center'}"
-              value="time"
-              @update="${this._updateMarker}"
-            >
-              ${formatTime(stringToDate(this.entries[i].stop!), getLocale(this.hass!))}
-            </div>
-          </div>
-        `);
-      }
-    });
-    return output;
-  }
-
-  updated() {
-    this.shadowRoot.querySelectorAll('.slider-thumb-tooltip').forEach((el, i) => {
-      //cannot assign text to element directly in Lit 2
-      //el.innerText = formatTime(stringToDate(this.entries[i].stop!), this.hass!.language);
-      el.childNodes[2].textContent = formatTime(stringToDate(this.entries[i].stop!), getLocale(this.hass!));
+      `;
     });
   }
 
-  getEntryAction(entry: Timeslot) {
+  computeActionDisplay(entry: Timeslot) {
     if (!this.hass) return;
     if (!entry.actions) return '';
 
@@ -178,74 +220,74 @@ export class TimeslotEditor extends LitElement {
     ).join(', ');
   }
 
-  private _handleSegmentClick(e: Event, entry_id: number) {
-    const el = e.target as HTMLElement;
-    this._activeEntry = this._activeEntry == entry_id ? null : entry_id;
-    this._activeEntryMem = entry_id;
-    const myEvent = new CustomEvent('update', { detail: { entry: this._activeEntry } });
-    this.dispatchEvent(myEvent);
-  }
-
   @eventOptions({ passive: true })
-  private _handleTouchStart(e: MouseEvent | TouchEvent) {
-    let thumbHandle = e.target as HTMLElement;
-    if (!thumbHandle) return;
+  private _handleTouchStart(ev: MouseEvent | TouchEvent) {
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const width = (SEC_PER_DAY / (this.rangeMax - this.rangeMin)) * fullWidth;
+    const left = (-this.rangeMin / (this.rangeMax - this.rangeMin)) * fullWidth;
+    const Toffset = (-left / width) * SEC_PER_DAY;
 
-    if (thumbHandle.nodeName == 'HA-ICON') thumbHandle = thumbHandle.parentElement as HTMLElement;
-    const thumb_index = Number(thumbHandle.getAttribute('index'));
+    const marker = ev.target as HTMLElement;
+    let el = marker;
+    while (!el.classList.contains('slot')) el = el.parentElement as HTMLElement;
 
-    const thumbElement = thumbHandle!.parentNode as HTMLElement;
+    const rightSlot = el;
+    const leftSlot = rightSlot.previousElementSibling as HTMLElement;
 
-    const trackElement = thumbElement.parentElement as HTMLElement;
+    const i = Number(leftSlot.getAttribute('slot'));
+
+    const Tmin = i > 0 ? stringToTime(this.slots[i].start, this.hass!) + 60 * this.stepSize : 0;
+
+    const Tmax =
+      i < this.slots.length - 2
+        ? (stringToTime(this.slots[i + 1].stop!, this.hass!) || SEC_PER_DAY) - 60 * this.stepSize
+        : SEC_PER_DAY;
+
+    this.isDragging = true;
+
+    const trackElement = (rightSlot.parentElement as HTMLElement).parentElement as HTMLElement;
     const trackCoords = trackElement.getBoundingClientRect();
-    const firstSlot: HTMLElement = thumbElement.previousElementSibling as HTMLElement;
-    const secondSlot: HTMLElement = thumbElement.nextElementSibling as HTMLElement;
 
-    const toolTip = thumbElement.querySelector('.slider-thumb-tooltip') as HTMLElement;
-    this._activeThumb = thumb_index;
-
-    const availableWidth = firstSlot.offsetWidth + secondSlot.offsetWidth;
-    const trackWidth = trackCoords.width;
-
-    const slots = Array.from(trackElement.querySelectorAll('.slider-slot')) as HTMLElement[];
-    const slotWidths = slots.map(e => e.offsetWidth);
-
-    let xStart = 0;
-    let slotIndex = -1;
-    slots.forEach((e, i) => {
-      if (e == firstSlot) {
-        slotIndex = i;
-      } else if (slotIndex == -1) {
-        xStart = xStart + slotWidths[i];
-      }
-    });
-
-    const t1 = stringToTime(this.entries[slotIndex].start);
-    const t2 = stringToTime(this.entries[slotIndex + 1].stop!) || secondsPerDay;
-
-    const x1 = ((t1 + this.stepSize * 60) / secondsPerDay) * trackWidth;
-    const x2 = ((t2 - this.stepSize * 60) / secondsPerDay) * trackWidth;
-
-    let mouseMoveHandler = (e: MouseEvent | TouchEvent) => {
+    let mouseMoveHandler = (ev: MouseEvent | TouchEvent) => {
       let startDragX;
 
       if (typeof TouchEvent !== 'undefined') {
-        if (e instanceof TouchEvent) startDragX = e.changedTouches[0].pageX;
-        else startDragX = e.pageX;
-      } else startDragX = (e as MouseEvent).pageX;
+        if (ev instanceof TouchEvent) startDragX = ev.changedTouches[0].pageX;
+        else startDragX = ev.pageX;
+      } else startDragX = (ev as MouseEvent).pageX;
 
       let x = startDragX - trackCoords.left;
-      if (x < x1) x = x1;
-      else if (x > x2) x = x2;
+      if (x > fullWidth - 10) x = fullWidth - 10;
+      if (x < 10) x = 10;
+      let time = Math.round((x / width) * SEC_PER_DAY + Toffset);
 
-      firstSlot.style.width = `${Math.round(x - xStart)}px`;
-      secondSlot.style.width = `${Math.round(availableWidth - (x - xStart))}px`;
+      if (time < Tmin) time = Tmin;
+      if (time > Tmax) time = Tmax;
 
-      let time = (x / trackWidth) * secondsPerDay;
-      time = Math.round(time) >= secondsPerDay ? secondsPerDay : roundTime(time, this.stepSize);
+      this.currentTime = time;
 
-      this._currentTime = time;
-      toolTip.dispatchEvent(new CustomEvent('update'));
+      const relTime = parseRelativeTime(this.slots[i].stop!);
+      let timeString;
+      if (relTime)
+        timeString = absToRelTime(timeToString(time), relTime.event, this.hass!, { stepSize: this.stepSize });
+      else {
+        time = Math.round(time) >= SEC_PER_DAY ? SEC_PER_DAY : roundTime(time, this.stepSize);
+        timeString = timeToString(time);
+      }
+
+      if (timeString == this.slots[i].stop) return;
+
+      this.slots = Object.assign(this.slots, {
+        [i]: {
+          ...this.slots[i],
+          stop: timeString,
+        },
+        [i + 1]: {
+          ...this.slots[i + 1],
+          start: timeString,
+        },
+      });
+      this.requestUpdate();
     };
 
     const mouseUpHandler = () => {
@@ -256,25 +298,12 @@ export class TimeslotEditor extends LitElement {
       mouseMoveHandler = () => {
         /**/
       };
-
-      if (this._currentTime !== null) {
-        const newStop = this._currentTime;
-        const totalDuration = Duration(this.entries[slotIndex]) + Duration(this.entries[slotIndex + 1]);
-        const startTime = stringToTime(this.entries[slotIndex].start);
-        const entries: Timeslot[] = Object.assign(this.entries, {
-          [slotIndex]: { ...this.entries[slotIndex], stop: timeToString(newStop) },
-          [slotIndex + 1]: {
-            ...this.entries[slotIndex + 1],
-            start: timeToString(newStop),
-            stop: timeToString(startTime + totalDuration),
-          },
-        });
-
-        const myEvent = new CustomEvent('update', { detail: { entries: entries } });
-        this.dispatchEvent(myEvent);
-      }
-      this._currentTime = null;
-      this._activeThumb = null;
+      setTimeout(() => {
+        this.isDragging = false;
+      }, 100);
+      marker.blur();
+      const myEvent = new CustomEvent('update', { detail: { entries: this.slots } });
+      this.dispatchEvent(myEvent);
     };
 
     window.addEventListener('mouseup', mouseUpHandler);
@@ -284,314 +313,439 @@ export class TimeslotEditor extends LitElement {
     window.addEventListener('touchmove', mouseMoveHandler);
   }
 
-  private _updateMarker(ev: Event) {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const ts = new Date(startOfDay.getTime() + this._currentTime! * 1000);
-    const target = ev.target as HTMLElement;
-    //cannot assign text to element directly in Lit 2
-    //target.innerText = formatTime(ts, this.hass!.language);
-    target.childNodes[2].textContent = formatTime(ts, getLocale(this.hass!));
+  _selectSlot(ev: Event) {
+    if (this.isDragging) return;
+    let el = ev.target as HTMLElement;
+    if (el.tagName.toLowerCase() == 'span') el = el.parentElement as HTMLElement;
+    if (el.classList.contains('handle')) el = el.parentElement as HTMLElement;
+    const slot = Number(el.getAttribute('slot'));
+    if (this.activeSlot == slot && this.activeMarker === null) {
+      this.activeSlot = null;
+      //this.rangeMin = 0;
+      //this.rangeMax = SEC_PER_DAY;
+      this.previousSlot = null;
+    } else {
+      this.previousSlot = this.activeSlot;
+      this.activeSlot = slot;
+      //this._calculateZoom();
+    }
+    this.activeMarker = null;
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entry: this.activeSlot } });
+    this.dispatchEvent(myEvent);
+  }
+
+  _calculateZoom() {
+    const slot = Number(this.activeSlot);
+    let min = stringToTime(this.slots[slot].start, this.hass!);
+    let max = stringToTime(this.slots[slot].stop!, this.hass!) || SEC_PER_DAY;
+
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+
+    min -= (max - min) / 3;
+    max += (max - min) / 3;
+
+    if (((max - min) / SEC_PER_DAY) * fullWidth >= 100) {
+      min = 0;
+      max = SEC_PER_DAY;
+    } else {
+      if (min < 0) max -= min;
+      if (max > SEC_PER_DAY) min -= max - SEC_PER_DAY;
+    }
+    this.rangeMin = min > 0 ? min : 0;
+    this.rangeMax = max < SEC_PER_DAY ? max : SEC_PER_DAY;
+
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+
+    this.timer = window.setInterval(() => {
+      this._updateTooltips();
+    }, 50);
+
+    this.timeout = window.setTimeout(() => {
+      clearInterval(this.timer);
+      this._updateTooltips();
+    }, 230);
   }
 
   private _addSlot() {
-    const activeSlot = this.entries[this._activeEntry!];
-    const startTime = stringToTime(activeSlot.start);
-    const endTime = stringToTime(activeSlot.stop!);
-    const newStop = roundTime(startTime + Duration(activeSlot) / 2, this.stepSize);
+    if (this.activeSlot === null) return;
+    const activeSlot = this.slots[this.activeSlot];
+    const startTime = stringToTime(activeSlot.start, this.hass!);
+    let endTime = stringToTime(activeSlot.stop!, this.hass!);
+    if (endTime < startTime) endTime += SEC_PER_DAY;
+    const newStop = roundTime(startTime + (endTime - startTime) / 2, this.stepSize);
 
-    const entries: Timeslot[] = [
-      ...this.entries.slice(0, this._activeEntry!),
-      { ...this.entries[this._activeEntry!], stop: timeToString(newStop) },
+    this.slots = [
+      ...this.slots.slice(0, this.activeSlot),
+      { ...this.slots[this.activeSlot], stop: timeToString(newStop) },
       {
-        ...this.entries[this._activeEntry!],
         start: timeToString(newStop),
         stop: timeToString(endTime),
         actions: [],
       },
-      ...this.entries.slice(this._activeEntry! + 1),
+      ...this.slots.slice(this.activeSlot + 1),
     ];
-
-    const myEvent = new CustomEvent('update', { detail: { entries: entries } });
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entries: this.slots } });
     this.dispatchEvent(myEvent);
   }
 
   private _removeSlot() {
-    const cutIndex = this._activeEntry == this.entries.length - 1 ? this._activeEntry! - 1 : this._activeEntry!;
+    if (this.activeSlot === null) return;
+    const cutIndex = this.activeSlot == this.slots.length - 1 ? this.activeSlot - 1 : this.activeSlot;
 
-    const entries: Timeslot[] = [
-      ...this.entries.slice(0, cutIndex),
+    this.slots = [
+      ...this.slots.slice(0, cutIndex),
       {
-        ...this.entries[cutIndex! + 1],
-        start: this.entries[cutIndex!].start,
-        stop: this.entries[cutIndex! + 1].stop!,
+        ...this.slots[cutIndex! + 1],
+        start: this.slots[cutIndex!].start,
+        stop: this.slots[cutIndex! + 1].stop!,
       },
-      ...this.entries.slice(cutIndex + 2),
+      ...this.slots.slice(cutIndex + 2),
     ];
 
-    if (this._activeEntry == this.entries.length) this._activeEntry--;
-    const myEvent = new CustomEvent('update', { detail: { entries: entries } });
+    if (this.activeSlot == this.slots.length) this.activeSlot--;
+    this._updateZoom();
+    const myEvent = new CustomEvent('update', { detail: { entries: this.slots } });
     this.dispatchEvent(myEvent);
   }
 
-  static styles = css`
-    div.slider-track {
-      height: 50px;
-      width: 100%;
-      display: flex;
-    }
-    div.slider-slot {
-      height: calc(100%);
-      width: 50%;
-      display: flex;
-      background: var(--primary-color);
-      opacity: 0.85;
-      z-index: 1;
-      cursor: pointer;
-      color: var(--text-primary-color);
-      justify-content: center;
-      align-items: center;
-      background: none;
-      cursor: pointer;
-      position: relative;
-      z-index: 1;
-    }
-    div.slider-slot:before {
-      content: ' ';
-      background: var(--primary-color);
-      opacity: 0.3;
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    div.slider-slot:hover:before {
-      opacity: 0.6;
-    }
-    div.slider-slot.filled:before {
-      opacity: 0.8;
-    }
-    div.slider-slot.filled:hover:before {
-      opacity: 1;
-    }
-    div.slider-slot.active:before {
-      opacity: 0.85;
-      background: var(--accent-color);
-    }
-    div.slider-track div.slider-slot:first-of-type:before {
-      border-radius: 4px 0px 0px 4px;
-    }
-    div.slider-track div.slider-slot:last-of-type:before {
-      border-radius: 0px 4px 4px 0px;
-    }
-    div.slider-slot .content {
-      display: inline-block;
-      margin: 0px 2px;
-      word-break: break-all;
-      overflow: hidden;
-      line-height: 1em;
-      max-height: 3em;
-      text-overflow: ellipsis;
-    }
-    div.slider-track div.slider-slot:first-of-type .content {
-      margin-left: 2px;
-    }
-    div.slider-track div.slider-slot:last-of-type .content {
-      margin-right: 2px;
-    }
-    div.slider-thumb {
-      height: 100%;
-      width: 2px;
-      background: var(--card-background-color);
-      display: flex;
-      cursor: pointer;
-      z-index: 5;
-      margin: 0px -1px;
-      position: relative;
-    }
-    div.slider-thumb.active {
-      z-index: 100;
-    }
-    div.slider-thumb-ripple {
-      background: none;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      flex: 1 0 36px;
-      position: relative;
-      border-radius: 50%;
-      margin-left: -18px;
-      margin-top: 7px;
-    }
-    div.slider-thumb-ripple:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.1);
-    }
-    div.slider-thumb .slider-thumb-ripple:before {
-      content: ' ';
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      background: rgba(var(--rgb-primary-text-color), 0.2);
-      z-index: -1;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-      transform-origin: center;
-      transform: scale(0);
-    }
-    div.slider-thumb.active .slider-thumb-ripple:before {
-      transform: scale(1);
-    }
-    div.slider-thumb ha-icon {
-      background: var(--card-background-color);
-      color: var(--primary-text-color);
-      width: 24px;
-      height: 24px;
-      margin-top: 6px;
-      margin-left: 6px;
-      --mdc-icon-size: 24px;
-      border-radius: 50%;
-    }
-    div.slider-thumb.hidden .slider-thumb-ripple {
-      display: none;
-    }
-    div.slider-legend {
-      display: flex;
-      width: 100%;
-    }
-    div.slider-legend-item {
-      width: calc(100% / 8);
-      font-size: 0.9em;
-      line-height: 25px;
-      display: flex;
-      justify-content: center;
-      position: relative;
-    }
-    div.slider-legend-item.wide {
-      width: calc(100% / 6);
-    }
-    div.slider-legend-item:before {
-      content: ' ';
-      background: var(--disabled-text-color);
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      width: 1px;
-      height: 8px;
-      margin-left: 50%;
-      margin-top: -4px;
-    }
-    div.slider-legend-item.empty {
-      width: calc(100% / 16);
-      display: flex;
-    }
-    div.slider-legend-item.empty.wide {
-      width: calc(100% / 12);
-    }
-    div.slider-legend-item.empty:before {
-      display: none;
-    }
-    div.slider-thumb-tooltip {
-      background: var(--primary-color);
-      border-radius: 5px;
-      color: var(--text-primary-color);
-      font-size: 1em;
-      position: absolute;
-      height: 26px;
-      width: 50px;
-      margin-top: -28px;
-      margin-left: -25px;
-      text-align: center;
-      line-height: 26px;
-      z-index: 1;
-      transition: all 0.1s ease-in-out;
-      transform-origin: center bottom;
-    }
-    div.slider-thumb-tooltip.wide {
-      width: 70px;
-      margin-left: -35px;
-    }
-    div.slider-thumb-tooltip.center:before {
-      content: ' ';
-      background: var(--primary-color);
-      transform: rotate(-45deg);
-      transform-origin: center;
-      opacity: 1;
-      position: absolute;
-      margin-top: 20px;
-      margin-left: 21px;
-      left: 0px;
-      top: 0px;
-      width: 10px;
-      height: 10px;
-      z-index: -1;
-    }
-    div.slider-thumb-tooltip.wide:before {
-      margin-left: 31px;
-    }
-    div.slider-thumb.active div.slider-thumb-tooltip {
-      z-index: 10;
-    }
-    div.slider-thumb-tooltip.left {
-      margin-left: -49px;
-      transform-origin: right bottom;
-    }
-    div.slider-thumb-tooltip.wide.left {
-      margin-left: -69px;
-    }
-    div.slider-thumb-tooltip.left:before {
-      content: ' ';
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
-      border-right: 8px solid var(--primary-color);
-      opacity: 1;
-      position: absolute;
-      margin-top: 15px;
-      margin-left: 42px;
-      left: 0px;
-      top: 0px;
-      width: 0px;
-      height: 0px;
-      z-index: -1;
-    }
-    div.slider-thumb-tooltip.wide.left:before {
-      margin-left: 62px;
-    }
-    div.slider-thumb-tooltip.right {
-      margin-left: 1px;
-      transform-origin: left bottom;
-    }
-    div.slider-thumb-tooltip.right:before {
-      content: ' ';
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
-      border-left: 8px solid var(--primary-color);
-      opacity: 1;
-      position: absolute;
-      margin-top: 15px;
-      margin-left: 0px;
-      left: 0px;
-      top: 0px;
-      width: 0px;
-      height: 0px;
-      z-index: -1;
-    }
-    div.slider-thumb.hidden div.slider-thumb-tooltip {
-      transform: scale(0);
-    }
-    .padded-right {
-      margin-right: 11px;
-    }
-    mwc-button {
-      margin: 2px 0px;
-    }
-    mwc-button.active {
-      background: var(--primary-color);
-      --mdc-theme-primary: var(--text-primary-color);
-      border-radius: 4px;
-    }
-  `;
+  private _updateTooltips() {
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    let tooltips = (this.shadowRoot?.querySelectorAll('.tooltip') as unknown) as HTMLElement[];
+
+    const getBounds = (el: HTMLElement) => {
+      const width = el.offsetWidth;
+      const left = el.parentElement!.offsetLeft + el.offsetLeft - 15;
+      if (el.parentElement!.classList.contains('left')) return [left + width / 2, left + (3 * width) / 2];
+      else if (el.parentElement!.classList.contains('right')) return [left - width / 2, left + width / 2];
+      return [left, left + width];
+    };
+
+    tooltips?.forEach((tooltip, i) => {
+      const container = tooltip.parentElement!;
+      const visible = container.classList.contains('visible');
+      const slot = Number(container.parentElement!.getAttribute('slot'));
+
+      if (slot != this.activeSlot && slot - 1 != this.activeSlot) {
+        if (visible) container.classList.remove('visible');
+      } else {
+        const left = tooltip.parentElement!.offsetLeft;
+        if (left < 0 || left > fullWidth + 15) {
+          if (visible) container.classList.remove('visible');
+        } else {
+          if (!visible) container.classList.add('visible');
+          const width = container.offsetWidth;
+          const isCenter = container.classList.contains('center');
+          let marginLeft = getBounds(tooltip)[0],
+            marginRight = fullWidth - getBounds(tooltip)[1];
+
+          if (i > 0 && slot - 1 == this.activeSlot) marginLeft -= getBounds(tooltips[i - 1])[1];
+          else if (i + 1 < tooltips.length && slot == this.activeSlot) {
+            let w = getBounds(tooltips[i + 1])[0];
+            marginRight -= w < 0 ? 0 : fullWidth - w;
+          }
+
+          //console.log(`tooltip ${i} marginLeft ${marginLeft} marginRight ${marginRight}`);
+
+          if (marginLeft < marginRight) {
+            if (marginLeft < 0) {
+              if (isCenter && marginRight > width / 2) {
+                container.classList.add('right');
+                container.classList.remove('center');
+                container.classList.remove('left');
+              }
+            } else {
+              container.classList.add('center');
+              container.classList.remove('right');
+              container.classList.remove('left');
+            }
+          } else {
+            if (marginRight < 0) {
+              if (isCenter && marginLeft > width / 2) {
+                container.classList.add('left');
+                container.classList.remove('center');
+                container.classList.remove('right');
+              }
+            } else {
+              container.classList.add('center');
+              container.classList.remove('left');
+              container.classList.remove('right');
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private _updateZoom() {
+    // let center = SEC_PER_DAY / 2;
+    // if (this.activeSlot !== null) {
+    //   const activeSlot = this.slots[this.activeSlot];
+    //   let min = stringToTime(activeSlot.start, this.hass!);
+    //   let max = stringToTime(activeSlot.stop!, this.hass!) || SEC_PER_DAY;
+    //   center = Math.round((max + min) / 2);
+    // }
+
+    // let timeSpan = SEC_PER_DAY;
+    // if (this.zoomFactor == 2) timeSpan = SEC_PER_DAY / 2;
+    // else if (this.zoomFactor == 3) timeSpan = SEC_PER_DAY / 4;
+    // else if (this.zoomFactor == 4) timeSpan = SEC_PER_DAY / 8;
+
+    // let min = center - Math.round(timeSpan / 2);
+    // let max = center + Math.round(timeSpan / 2);
+
+    // if (min < 0) {
+    //   max += -min;
+    //   min = 0;
+    //   if (max > SEC_PER_DAY) max = SEC_PER_DAY;
+    // } else if (max > SEC_PER_DAY) {
+    //   min -= max - SEC_PER_DAY;
+    //   max = SEC_PER_DAY;
+    //   if (min < 0) min = 0;
+    // }
+
+    // this.rangeMin = min;
+    // this.rangeMax = max;
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+
+    this.timer = window.setInterval(() => {
+      this._updateTooltips();
+    }, 50);
+
+    this.timeout = window.setTimeout(() => {
+      clearInterval(this.timer);
+      this._updateTooltips();
+    }, 230);
+  }
+
+  // private _zoomIn() {
+  //   this.zoomFactor++;
+  //   this._updateZoom();
+  // }
+
+  // private _zoomOut() {
+  //   this.zoomFactor--;
+  //   this._updateZoom();
+  // }
+
+  private _selectMarker(ev: Event, enable = true) {
+    ev.stopImmediatePropagation();
+    let el = ev.target as HTMLElement;
+    while (!el.classList.contains('slot')) el = el.parentElement as HTMLElement;
+    const slot = Number(el.getAttribute('slot'));
+    if (enable && this.activeMarker === slot) this.activeMarker = null;
+    else this.activeMarker = enable ? slot : null;
+    const myEvent = new CustomEvent('update', { detail: { entry: this.activeSlot, marker: this.activeMarker } });
+    this.dispatchEvent(myEvent);
+    this._updateTooltips();
+  }
+
+  static get styles(): CSSResultGroup {
+    return css`
+      :host {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      div.outer {
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        border-radius: 5px;
+      }
+      div.wrapper,
+      div.time-wrapper {
+        white-space: nowrap;
+        transition: width 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67), margin 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+      }
+      .slot {
+        float: left;
+        background: rgba(var(--rgb-primary-color), 0.7);
+        height: 60px;
+        cursor: pointer;
+        box-sizing: border-box;
+        transition: background 0.1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+      }
+      .wrapper.selectable .slot:hover {
+        background: rgba(var(--rgb-primary-color), 0.85);
+      }
+      .slot:not(:first-child) {
+        border-left: 1px solid var(--card-background-color);
+      }
+      .slot:not(:last-child) {
+        border-right: 1px solid var(--card-background-color);
+      }
+      .slot.active {
+        background: rgba(var(--rgb-accent-color), 0.7);
+      }
+      .slot.noborder {
+        border: none;
+      }
+      .wrapper.selectable .slot.active:hover {
+        background: rgba(var(--rgb-accent-color), 0.85);
+      }
+      div.time-wrapper div {
+        float: left;
+        display: flex;
+        position: relative;
+        height: 25px;
+        line-height: 25px;
+        font-size: 12px;
+        text-align: center;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+      }
+      div.time-wrapper div.time:before {
+        content: ' ';
+        background: var(--disabled-text-color);
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 1px;
+        height: 5px;
+        margin-left: 50%;
+        margin-top: 0px;
+      }
+      .slot span {
+        font-size: 14px;
+        color: var(--text-primary-color);
+        height: 100%;
+        display: flex;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+        transition: margin 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        word-break: break-all;
+        white-space: normal;
+        overflow: hidden;
+        line-height: 1em;
+      }
+      div.handle {
+        display: flex;
+        height: 100%;
+        width: 36px;
+        margin-left: -19px;
+        margin-bottom: -60px;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+      }
+      div.button-holder {
+        background: var(--card-background-color);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        visibility: hidden;
+        animation: 0.2s fadeIn;
+        animation-fill-mode: forwards;
+      }
+      ha-icon-button {
+        --mdc-icon-button-size: 36px;
+        margin-top: -6px;
+        margin-left: -6px;
+      }
+      @keyframes fadeIn {
+        99% {
+          visibility: hidden;
+        }
+        100% {
+          visibility: visible;
+        }
+      }
+      div.tooltip-container {
+        position: absolute;
+        margin-top: -28px;
+        margin-left: -40px;
+        width: 80px;
+        height: 26px;
+        display: flex;
+        text-align: center;
+        display: none;
+      }
+      div.tooltip-container.visible {
+        display: block;
+      }
+      div.tooltip-container.left {
+        margin-left: -80px;
+        text-align: right;
+      }
+      div.tooltip-container.right {
+        margin-left: 0px;
+        text-align: left;
+      }
+      div.tooltip {
+        display: inline-flex;
+        margin: 0px auto;
+        border-radius: 5px;
+        color: var(--text-primary-color);
+        font-size: 1em;
+        padding: 0px 5px;
+        text-align: center;
+        line-height: 26px;
+        z-index: 1;
+        transition: all 0.1s ease-in;
+        transform-origin: center bottom;
+        --tooltip-color: var(--primary-color);
+        background: var(--tooltip-color);
+      }
+      div.tooltip.active {
+        --tooltip-color: rgba(var(--rgb-accent-color), 0.7);
+      }
+      div.tooltip-container.left div.tooltip {
+        transform-origin: right bottom;
+      }
+      div.tooltip-container.right div.tooltip {
+        transform-origin: left bottom;
+      }
+      div.tooltip-container.center div.tooltip:before {
+        content: ' ';
+        width: 0px;
+        height: 0px;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 10px solid var(--tooltip-color);
+        position: absolute;
+        margin-top: 25px;
+        margin-left: calc(50% - 6px);
+        top: 0px;
+        left: 0px;
+      }
+      div.tooltip-container.left div.tooltip:before {
+        content: ' ';
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 8px solid var(--tooltip-color);
+        opacity: 1;
+        position: absolute;
+        margin-top: 15px;
+        margin-left: calc(100% - 8px);
+        left: 0px;
+        top: 0px;
+        width: 0px;
+        height: 0px;
+      }
+      div.tooltip-container.right div.tooltip:before {
+        content: ' ';
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 8px solid var(--tooltip-color);
+        opacity: 1;
+        position: absolute;
+        margin-top: 15px;
+        margin-left: 0px;
+        left: 0px;
+        top: 0px;
+        width: 0px;
+        height: 0px;
+      }
+      div.tooltip ha-icon {
+        --mdc-icon-size: 20px;
+      }
+    `;
+  }
 }

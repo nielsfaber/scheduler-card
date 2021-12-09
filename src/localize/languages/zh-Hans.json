@@ -123,7 +123,9 @@
         "multiple": "多选"
       },
       "time_picker": {
-        "no_timeslot_selected": "请选择时间段"
+        "no_timeslot_selected": "请选择时间段",
+        "time_scheme": "议程",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "是",

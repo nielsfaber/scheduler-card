@@ -1,11 +1,23 @@
-export function stringToTime(string: string) {
+import { HomeAssistant } from 'custom-card-helpers';
+import { ETimeEvent } from '../../types';
+
+export function stringToTime(string: string, hass: HomeAssistant) {
   if (string.match(/^([0-9:]+)$/)) {
     const parts = string.split(':').map(Number);
     return parts[0] * 3600 + parts[1] * 60 + (parts[2] || 0);
-  } else {
-    const ts = new Date(string);
-    return ts.getHours() * 3600 + ts.getMinutes() * 60 + ts.getSeconds();
   }
+  const res = parseRelativeTime(string);
+  if (res) {
+    const sunEntity = hass.states['sun.sun'];
+    const ts_sunrise = stringToTime(sunEntity.attributes.next_rising, hass);
+    const ts_sunset = stringToTime(sunEntity.attributes.next_setting, hass);
+
+    let ts = res.event == 'sunrise' ? ts_sunrise : ts_sunset;
+    ts = res.sign == '+' ? ts + stringToTime(res.offset, hass) : ts - stringToTime(res.offset, hass);
+    return ts;
+  }
+  const ts = new Date(string);
+  return ts.getHours() * 3600 + ts.getMinutes() * 60 + ts.getSeconds();
 }
 
 export function timeToString(time: number) {
@@ -56,7 +68,7 @@ export function parseRelativeTime(time: string) {
   const match = time.match(/^([a-z]+)([\+|-]{1})([0-9:]+)$/);
   if (!match) return false;
   return {
-    event: match[1],
+    event: match[1] as ETimeEvent,
     sign: match[2],
     offset: match[3],
   };

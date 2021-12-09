@@ -123,7 +123,9 @@
         "multiple": "Множественный"
       },
       "time_picker": {
-        "no_timeslot_selected": "Выберите временной слот"
+        "no_timeslot_selected": "Выберите временной слот",
+        "time_scheme": "Cхему",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "равно",

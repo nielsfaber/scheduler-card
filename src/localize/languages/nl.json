@@ -124,7 +124,9 @@
         "multiple": "Meerdere"
       },
       "time_picker": {
-        "no_timeslot_selected": "Kies eerst een tijdsslot"
+        "no_timeslot_selected": "Kies eerst een tijdsslot",
+        "time_scheme": "Schema",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "is",

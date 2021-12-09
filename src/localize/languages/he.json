@@ -123,7 +123,9 @@
         "multiple": "מספר יישויות"
       },
       "time_picker": {
-        "no_timeslot_selected": "בחר משבצת זמן קודם"
+        "no_timeslot_selected": "בחר משבצת זמן קודם",
+        "time_scheme": "סכימה",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "שווה ל",

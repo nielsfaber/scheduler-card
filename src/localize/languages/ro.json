@@ -123,7 +123,9 @@
         "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "Prima dată selectați un interval orar"
+        "no_timeslot_selected": "Prima dată selectați un interval orar",
+        "time_scheme": "Schemă",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "este",

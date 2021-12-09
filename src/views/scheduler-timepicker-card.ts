@@ -14,6 +14,7 @@ import {
   Action,
   LevelVariable,
   ServiceCall,
+  ETimeEvent,
 } from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize, sortAlphabetically, omit, isEqual, getLocale } from '../helpers';
 import { DefaultTimeStep, DefaultActionIcon } from '../const';
@@ -30,17 +31,37 @@ import { weekdayType } from '../data/date-time/weekday_type';
 import { compareActions } from '../data/actions/compare_actions';
 import { importAction } from '../data/actions/import_action';
 import { assignAction } from '../data/actions/assign_action';
+import { parseRelativeTime, stringToTime } from '../data/date-time/time';
+import { absToRelTime, relToAbsTime } from '../data/date-time/relative_time';
 
 @customElement('scheduler-timepicker-card')
 export class SchedulerTimepickerCard extends LitElement {
-  @property() hass?: HomeAssistant;
-  @property() config?: CardConfig;
-  @property() schedule!: ScheduleConfig;
-  @property() actions?: Action[];
-  @property() entities?: EntityElement[];
-  @property() activeEntry: number | null = null;
-  @property({ type: Boolean }) timeslots = false;
-  @property({ type: Boolean }) editItem = false;
+  @property()
+  hass?: HomeAssistant;
+
+  @property()
+  config?: CardConfig;
+
+  @property()
+  schedule!: ScheduleConfig;
+
+  @property()
+  actions?: Action[];
+
+  @property()
+  entities?: EntityElement[];
+
+  @property()
+  activeEntry: number | null = null;
+
+  @property()
+  activeMarker: number | null = null;
+
+  @property({ type: Boolean })
+  timeslots = false;
+
+  @property({ type: Boolean })
+  editItem = false;
 
   firstUpdated() {
     if (!this.actions || !this.hass) return;
@@ -90,17 +111,18 @@ export class SchedulerTimepickerCard extends LitElement {
               `
             : html`
                 ${this.renderDays()}
-                <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
+                <div class="header">${localize('ui.panel.time_picker.time_scheme', getLocale(this.hass))}</div>
+
                 <timeslot-editor
                   .hass=${this.hass}
                   .actions=${this.actions}
-                  .entries=${this.schedule.timeslots}
+                  .slots=${this.schedule.timeslots}
                   stepSize=${this.config.time_step || DefaultTimeStep}
                   @update=${this.handlePlannerUpdate}
                 >
                 </timeslot-editor>
 
-                ${this.renderActions()} ${this.getVariableEditor()}
+                ${this.renderMarkerOptions()} ${this.renderActions()} ${this.getVariableEditor()}
               `}
         </div>
         <div class="card-actions">
@@ -208,7 +230,7 @@ export class SchedulerTimepickerCard extends LitElement {
   }
 
   renderActions() {
-    if (!this.hass) return;
+    if (!this.hass || this.activeMarker !== null) return;
 
     const selectedAction =
       this.activeEntry !== null && this.schedule.timeslots[this.activeEntry!].actions.length
@@ -228,6 +250,59 @@ export class SchedulerTimepickerCard extends LitElement {
         ${localize('ui.panel.time_picker.no_timeslot_selected', getLocale(this.hass))}
       </button-group>
     `;
+  }
+
+  renderMarkerOptions() {
+    if (!this.hass || !this.config || this.activeMarker === null) return;
+
+    const value = this.schedule.timeslots[this.activeMarker].start;
+    const res = parseRelativeTime(value);
+
+    const deltaSunrise = stringToTime(value, this.hass) - stringToTime('sunrise+00:00', this.hass),
+      deltaSunset = stringToTime(value, this.hass) - stringToTime('sunset+00:00', this.hass);
+
+    const markerOptions = [
+      {
+        value: 'time',
+        name: this.hass.localize('ui.panel.config.automation.editor.triggers.type.time.at'),
+        icon: 'hass:clock-outline',
+      },
+      {
+        value: ETimeEvent.Sunrise,
+        name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise'),
+        icon: 'hass:weather-sunny',
+        disabled: Math.abs(deltaSunrise) > 7200,
+      },
+      {
+        value: ETimeEvent.Sunset,
+        name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset'),
+        icon: 'hass:weather-night',
+        disabled: Math.abs(deltaSunset) > 7200,
+      },
+    ];
+
+    return html`
+      <div class="header">${localize('ui.panel.time_picker.time_input_mode', getLocale(this.hass))}</div>
+      <button-group .items=${markerOptions} .value=${res ? res.event : 'time'} @change=${this.updateMarkerSetting}>
+      </button-group>
+    `;
+  }
+
+  updateMarkerSetting(ev: Event) {
+    const value = (ev.target as HTMLInputElement).value;
+    const ts = this.schedule.timeslots[this.activeMarker!].start;
+
+    const res =
+      value == 'time'
+        ? relToAbsTime(ts, this.hass!, { stepSize: this.config!.time_step })
+        : absToRelTime(ts, value as ETimeEvent, this.hass!, { stepSize: this.config!.time_step });
+
+    let timeslots = [...this.schedule.timeslots];
+    timeslots = Object.assign(timeslots, {
+      [this.activeMarker! - 1]: { ...this.schedule.timeslots[this.activeMarker! - 1], stop: res },
+      [this.activeMarker!]: { ...this.schedule.timeslots[this.activeMarker!], start: res },
+    });
+    this.schedule = { ...this.schedule, timeslots: [...timeslots] };
   }
 
   updateActiveEntry(data: Partial<Timeslot>) {
@@ -281,11 +356,12 @@ export class SchedulerTimepickerCard extends LitElement {
         timeslots: [...entries],
       };
     } else if (ev.detail.hasOwnProperty('entry')) {
-      if (ev.detail.entry !== null) {
-        this.activeEntry = Number(ev.detail.entry);
-      } else {
-        this.activeEntry = null;
-      }
+      this.activeMarker = null;
+      this.activeEntry = ev.detail.entry !== null ? Number(ev.detail.entry) : null;
+    }
+    if (ev.detail.hasOwnProperty('marker')) {
+      this.activeEntry = null;
+      this.activeMarker = ev.detail.marker !== null ? Number(ev.detail.marker) : null;
     }
   }
 

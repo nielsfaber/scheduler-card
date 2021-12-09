@@ -355,7 +355,7 @@ export class SchedulerCard extends LitElement {
     }
 
     if (this.schedule.timeslots.every(e => e.stop)) {
-      this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots) };
+      this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots, this._hass!) };
       if (!this.actions.length)
         handleError(
           { error: '', body: { message: `Could not compute actions for the schedule #${ev.detail}.` } },

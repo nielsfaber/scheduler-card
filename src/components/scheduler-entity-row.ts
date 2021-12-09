@@ -256,33 +256,37 @@ export class ScheduleEntityRow extends LitElement {
   }
 
   computeTime(entry: Timeslot) {
+    const computeRelativeTimeString = (timeString: string) => {
+      const res = parseRelativeTime(timeString);
+      if (!res) return timeString;
+
+      const eventString =
+        res.event == ETimeEvent.Sunrise
+          ? this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
+          : this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
+      if (Math.abs(stringToTime(res.offset, this.hass)) < 5 * 60)
+        return localize('ui.components.time.at_sun_event', getLocale(this.hass), '{sunEvent}', eventString);
+
+      const signString =
+        res.sign == '-'
+          ? this._hass
+              .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
+              .slice(0, -1)
+              .toLowerCase()
+          : this._hass
+              .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
+              .slice(0, -1)
+              .toLowerCase();
+
+      const timeStr = formatTime(stringToDate(res.offset), getLocale(this.hass), TimeFormat.twenty_four);
+
+      return `${timeStr} ${signString} ${eventString}`;
+    };
+
     if (!entry.stop) {
       const timeString = entry.start;
-      const res = parseRelativeTime(timeString);
-
-      if (res) {
-        const eventString =
-          res.event == ETimeEvent.Sunrise
-            ? this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
-            : this._hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
-        if (Math.abs(stringToTime(res.offset)) < 5 * 60)
-          return localize('ui.components.time.at_sun_event', getLocale(this.hass), '{sunEvent}', eventString);
-
-        const signString =
-          res.sign == '-'
-            ? this._hass
-                .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
-                .slice(0, -1)
-                .toLowerCase()
-            : this._hass
-                .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
-                .slice(0, -1)
-                .toLowerCase();
-
-        const timeStr = formatTime(stringToDate(res.offset), getLocale(this.hass), TimeFormat.twenty_four);
-
-        return `${timeStr} ${signString} ${eventString}`;
-      } else {
+      if (parseRelativeTime(timeString)) return computeRelativeTimeString(timeString);
+      else {
         const time = stringToDate(timeString);
         return localize(
           'ui.components.time.absolute',
@@ -292,8 +296,12 @@ export class ScheduleEntityRow extends LitElement {
         );
       }
     } else {
-      const start = formatTime(stringToDate(entry.start), getLocale(this.hass));
-      const end = formatTime(stringToDate(entry.stop), getLocale(this.hass));
+      const start = parseRelativeTime(entry.start)
+        ? computeRelativeTimeString(entry.start)
+        : formatTime(stringToDate(entry.start), getLocale(this.hass));
+      const end = parseRelativeTime(entry.stop)
+        ? computeRelativeTimeString(entry.stop)
+        : formatTime(stringToDate(entry.stop), getLocale(this.hass));
       return localize('ui.components.time.interval', getLocale(this.hass), ['{startTime}', '{endTime}'], [start, end]);
     }
   }
