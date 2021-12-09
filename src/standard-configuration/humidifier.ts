@@ -1,6 +1,6 @@
 import { HassEntity } from 'home-assistant-js-websocket';
 import { Action } from '../types';
-import { LocalizeFunc, HomeAssistant } from 'custom-card-helpers';
+import { LocalizeFunc, HomeAssistant, computeStateDisplay } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
@@ -77,7 +77,7 @@ export const humidifierActions = (
       name: hass.localize('ui.card.vacuum.actions.turn_on'),
     },
     {
-      service: 'turn_off',
+      service: 'humidifier.turn_off',
       icon: 'hass:power-off',
       name: hass.localize('ui.card.vacuum.actions.turn_off'),
     },
@@ -97,7 +97,7 @@ export const humidifierActions = (
     },
   ];
 
-  if (supportedModes.length > 1) {
+  if (supportedModes.length) {
     actions.push({
       service: 'humidifier.set_mode',
       variables: {
@@ -107,8 +107,24 @@ export const humidifierActions = (
         }),
       },
       icon: 'hass:cog-transfer-outline',
-      name: localize('services.climate.set_mode', getLocale(hass)),
+      name: localize('services.humidifier.set_mode', getLocale(hass)),
     });
   }
   return actions;
 };
+
+export const humidifierStates = (hass: HomeAssistant, stateObj: HassEntity) =>
+  listVariable({
+    options: [
+      {
+        value: 'off',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'off' }, getLocale(hass)),
+        icon: 'hass:flash-off',
+      },
+      {
+        value: 'on',
+        name: computeStateDisplay(hass.localize, { ...stateObj, state: 'on' }, getLocale(hass)),
+        icon: 'hass:flash',
+      },
+    ],
+  });

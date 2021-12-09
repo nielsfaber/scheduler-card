@@ -21,6 +21,7 @@ import { proximityStates } from './proximity';
 import { sensorStates } from './sensor';
 import { sunStates } from './sun';
 import { waterHeaterStates } from './water_heater';
+import { humidifierStates } from './humidifier';
 
 export function standardStates(entity_id: string, hass: HomeAssistant): Variable | null {
   try {
@@ -48,6 +49,8 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
             : [];
         const configs = entities.map(e => standardStates(e, hass)).filter(isDefined);
         return groupStates(hass, stateObj, configs);
+      case 'humdifier':
+        return humidifierStates(hass, stateObj);
       case 'input_boolean':
         return inputBooleanStates(hass, stateObj);
       case 'input_number':

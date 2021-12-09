@@ -24,7 +24,8 @@
       "oscillate": "sett svingning[ til {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "sett luftfuktighet[ til {humidity}]"
+      "set_humidity": "sett luftfuktighet[ til {humidity}]",
+      "set_mode": "sett modus[ til {mode}]"
     },
     "input_number": {
       "set_value": "sett verdi[ til {value}]"

@@ -24,7 +24,8 @@
       "oscillate": "קבע תנודה[ ל {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "קבע לחות[ ל {humidity}]"
+      "set_humidity": "קבע לחות[ ל {humidity}]",
+      "set_mode": "קבע מצב עבודה[ ל {mode}]"
     },
     "input_number": {
       "set_value": "קבע ערך[ ל {value}]"

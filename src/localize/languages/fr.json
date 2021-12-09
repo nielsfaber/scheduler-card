@@ -24,7 +24,8 @@
       "oscillate": "ajuster l'oscillation[ à {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "ajuster l'humidité[ à {humidity}]"
+      "set_humidity": "ajuster l'humidité[ à {humidity}]",
+      "set_mode": "ajuster le mode[ à {mode}]"
     },
     "input_number": {
       "set_value": "ajuster la valeur[ à {value}]"

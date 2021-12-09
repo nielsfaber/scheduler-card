@@ -24,7 +24,8 @@
       "oscillate": "vali hajutus[ @ {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "sea niiskus[ {humidity}]"
+      "set_humidity": "sea niiskus[ {humidity}]",
+      "set_mode": "vali režiim [{mode}]"
     },
     "input_number": {
       "set_value": "vali väärtus[ {value}]"

@@ -24,7 +24,8 @@
       "oscillate": "nastaviť osciláciu[ na {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "nastaviť vlhkosť[ na {humidity}]"
+      "set_humidity": "nastaviť vlhkosť[ na {humidity}]",
+      "set_mode": "nastaviť režim[ na {mode}]"
     },
     "input_number": {
       "set_value": "nastaviť hodnotu[ na {value}]"

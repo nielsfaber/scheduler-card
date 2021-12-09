@@ -24,7 +24,8 @@
       "oscillate": "set oscillation[ to {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "set humidity[ to {humidity}]",
+      "set_mode": "mód beállítása[ to {mode}]"
     },
     "input_number": {
       "set_value": "érték beállítása[ to {value}]"

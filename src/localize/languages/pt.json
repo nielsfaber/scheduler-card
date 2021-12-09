@@ -24,7 +24,8 @@
       "oscillate": "definir oscilação[ para {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "definir humidade[ para {humidity}]"
+      "set_humidity": "definir humidade[ para {humidity}]",
+      "set_mode": "definir modo[ para {mode}]"
     },
     "input_number": {
       "set_value": "definir valor[ para {value}]"

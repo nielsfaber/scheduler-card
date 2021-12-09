@@ -24,7 +24,8 @@
       "oscillate": "设置摇摆[ 至 {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "设定湿度[ 至 {humidity}]"
+      "set_humidity": "设定湿度[ 至 {humidity}]",
+      "set_mode": "设定模式[ 为 {mode}]"
     },
     "input_number": {
       "set_value": "设定数值[ 至 {value}]"

@@ -24,7 +24,8 @@
       "oscillate": "встановити коливання[ to {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "встановити вологість[ to {humidity}]"
+      "set_humidity": "встановити вологість[ to {humidity}]",
+      "set_mode": "встановити режим[ to {mode}]"
     },
     "input_number": {
       "set_value": "встановити значення[ to {value}]"

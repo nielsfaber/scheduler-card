@@ -24,7 +24,8 @@
       "oscillate": "zet oscillatie[ naar {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "luchtvochtigheid instellen [ op {humidity}]"
+      "set_humidity": "luchtvochtigheid instellen [ op {humidity}]",
+      "set_mode": "modus aanpassen[ naar {mode}]"
     },
     "input_number": {
       "set_value": "waarde aanpassen[ naar {value}]"
