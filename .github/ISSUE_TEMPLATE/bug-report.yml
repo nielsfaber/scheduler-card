@@ -1,0 +1,48 @@
+name: Bug report
+description: Create a report to help improve Scheduler-card
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a bug report, please check for similar existing issues (both open and closed) before posting.
+        Note that this place is only for reporting issues with the card, not the component!
+        
+        ---
+        
+        Thank you for taking the effort to fill in all relevant details.
+  - type: input
+    id: card-version
+    attributes:
+      label: Card Version
+      description: "Which version of Scheduler-card are you running? If you're not sure, you can check it via the [browser logs](https://zapier.com/help/troubleshoot/behavior/view-and-save-your-browser-console-logs)."
+      placeholder: "v1.0.0"
+    validations:
+      required: true  
+  - type: input
+    id: component-version
+    attributes:
+      label: Component Version
+      description: "Which version of Scheduler-com ponent are you running (if relevant)? See [here](https://github.com/nielsfaber/scheduler-component#updating) for instructions how to check it."
+      placeholder: ""
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug description
+      description: What happened and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Which steps did you take to see this bug?
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional info
+      description: Add additional info which you see relevant here (optional).
