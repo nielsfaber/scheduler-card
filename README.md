@@ -884,13 +884,5 @@ If you have an issue with this card, please report it [here](https://github.com/
 ## Say thank you
 If you want to make donation as appreciation of my work, you can do so via PayPal (preferred) or buy me a coffee. Thank you!
 
-<form action="https://www.paypal.com/donate" method="post" target="_top">
-<input type="hidden" name="business" value="CLL4T6Y8ACXNN" />
-<input type="hidden" name="no_recurring" value="0" />
-<input type="hidden" name="item_name" value="Thank you for supporting my work, it is much appreciated!" />
-<input type="hidden" name="currency_code" value="EUR" />
-<input type="image" src="https://pics.paypal.com/00/s/YzU5NzhlNGItMzA3My00ZWRlLThmODMtODc4ODI1NzQ3ZWQy/file.PNG" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" width="150" />
-<img alt="" border="0" src="https://www.paypal.com/en_NL/i/scr/pixel.gif" width="1" height="1" />
-</form>
-
+<a href="https://www.paypal.com/donate/?business=CLL4T6Y8ACXNN&no_recurring=0&item_name=Thank+you+for+supporting+my+work%2C+it+is+much+appreciated%21&currency_code=EUR" target="_blank"><img src="https://pics.paypal.com/00/s/YzU5NzhlNGItMzA3My00ZWRlLThmODMtODc4ODI1NzQ3ZWQy/file.PNG" width="150" /></a>
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
