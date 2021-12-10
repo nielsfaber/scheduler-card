@@ -37,6 +37,7 @@
 - [Translations](#translations)
 - [Tips & Tricks](#tips--tricks)
   - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
+  - [Customizing built-in actions](#customizing-built-in-actions)
 - [Troubleshooting](#troubleshooting)
 - [Say thank you](#say-thank-you)
 
@@ -834,6 +835,42 @@ set_climate_livingroom:
 
 ```
 
+### Customizing built-in actions
+
+Out of the box, scheduler looks at the properties of your HA entities to show the correct actions in the card.
+In 99% of the cases this gives the right behaviour, but exceptions are always possible.
+To overcome this, scheduler allows overwriting the built-in actions by your own ones.
+
+<u>Example:</u>
+
+The [Tuya TS0601](https://www.zigbee2mqtt.io/devices/TS0601_thermostat.html) Zigbee TRV has operation modes `off`, `heat`, `auto`.
+The Scheduler Card will show an action `heat`, which sets the temperature to the desired level and sets the mode to `heat`.
+However, in mode `heat` the TS0601 will remain continuously heating, i.e. it does not regulate to the desired temperature.
+Instead, the `heat` action needs to be modified to use mode `auto` instead (in which it does properly regulate temperature).
+
+This can be done via `customize` as follows:
+```yaml
+customize:
+  climate.my_tuya_thermostat:
+    exclude_actions:
+      - heat       # hide the built-in action to avoid duplicates
+      - set mode   # we won't use this
+      - set preset # we won't use this
+    actions:       # add the custom actions
+      - service: set_temperature
+        service_data:
+          hvac_mode: auto
+        variables:
+          temperature:
+            min: 10
+            max: 25
+            step: 0.5
+            unit: '°C'
+        icon: 'hass:fire'
+        name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
+```
+
+
 ---
 
 ## Troubleshooting
@@ -845,6 +882,15 @@ If you have an issue with this card, please report it [here](https://github.com/
 
 
 ## Say thank you
-If you want to make donation as appreciation of my work, you can buy me a coffee. Thank you!
+If you want to make donation as appreciation of my work, you can do so via PayPal (preferred) or buy me a coffee. Thank you!
+
+<form action="https://www.paypal.com/donate" method="post" target="_top">
+<input type="hidden" name="business" value="CLL4T6Y8ACXNN" />
+<input type="hidden" name="no_recurring" value="0" />
+<input type="hidden" name="item_name" value="Thank you for supporting my work, it is much appreciated!" />
+<input type="hidden" name="currency_code" value="EUR" />
+<input type="image" src="https://pics.paypal.com/00/s/YzU5NzhlNGItMzA3My00ZWRlLThmODMtODc4ODI1NzQ3ZWQy/file.PNG" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" width="150" />
+<img alt="" border="0" src="https://www.paypal.com/en_NL/i/scr/pixel.gif" width="1" height="1" />
+</form>
 
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
