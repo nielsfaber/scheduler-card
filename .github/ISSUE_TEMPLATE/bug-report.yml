@@ -16,7 +16,7 @@ body:
       label: Checklist
       description: Please check the following items before submitting your request.
       options:
-        - label: I checked for similar existing requests (both open and closed) before posting.
+        - label: I checked for similar existing issues (both open and closed) before posting.
           required: true
         - label: I will participate in further discussion about this issue and can help by testing (if requested).
           required: true
