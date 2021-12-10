@@ -24,7 +24,6 @@ body:
     attributes:
       label: Component Version
       description: "Which version of Scheduler-com ponent are you running (if relevant)? See [here](https://github.com/nielsfaber/scheduler-component#updating) for instructions how to check it."
-      placeholder: ""
     validations:
       required: true
   - type: textarea
