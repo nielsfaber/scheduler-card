@@ -12,11 +12,17 @@ export function levelVariable(...config: Partial<LevelVariable>[]) {
   const unit = config.map(e => e.unit).filter(isDefined);
   const name = config.map(e => e.name).filter(isDefined);
 
+  const stepSize = step.length ? Math.max(...step) : 1;
+  const round = (val: number) => {
+    val = Math.round(val / stepSize) * stepSize;
+    return parseFloat(val.toPrecision(12));
+  };
+
   const variable: LevelVariable = {
     type: EVariableType.Level,
-    min: min.length ? Math.min(...min) : 0,
-    max: max.length ? Math.max(...max) : 255,
-    step: step.length ? Math.max(...step) : 1,
+    min: round(min.length ? Math.min(...min) : 0),
+    max: round(max.length ? Math.max(...max) : 255),
+    step: stepSize,
     scale_factor: scale_factor.length == 1 ? scale_factor[0] : 1,
     optional: (optional.length && optional.every(e => e)) || false,
     unit: unit.length ? unit.reduce((_acc, val) => val) : '',
