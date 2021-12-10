@@ -5,12 +5,21 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before opening a bug report, please check for similar existing issues (both open and closed) before posting.
-        Note that this place is only for reporting issues with the card, not the component!
+        Note that this place is only for reporting issues with the card, not the [component](https://github.com/nielsfaber/scheduler-component).
         
         ---
         
         Thank you for taking the effort to fill in all relevant details.
+  - type: checkboxes
+    id: check_existing
+    attributes:
+      label: Checklist
+      description: Please check the following items before submitting your request.
+      options:
+        - label: I checked for similar existing requests (both open and closed) before posting.
+          required: true
+        - label: I will participate in further discussion about this issue and can help by testing (if requested).
+          required: true
   - type: input
     id: card-version
     attributes:
@@ -24,8 +33,6 @@ body:
     attributes:
       label: Component Version
       description: "Which version of Scheduler-com ponent are you running (if relevant)? See [here](https://github.com/nielsfaber/scheduler-component#updating) for instructions how to check it."
-    validations:
-      required: true
   - type: textarea
     id: bug-description
     attributes:

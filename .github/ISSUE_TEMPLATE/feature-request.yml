@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an idea for this project
+labels: feature_request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Your feature requests should be kept small, else it will probably remain open for a long time or not be implemented at all.
+        Note that this place is only for proposing improvements for the card, not the [component](https://github.com/nielsfaber/scheduler-component).
+        
+        ---
+        
+        Thank you for taking the effort to fill in all relevant details.
+  - type: checkboxes
+    id: check_existing
+    attributes:
+      label: Checklist
+      description: Please check the following items before submitting your request.
+      options:
+        - label: I checked for similar existing requests (both open and closed) before posting.
+          required: true
+        - label: My request is generic, other users may benefit from it too.
+          required: true
+        - label: I will participate in further discussion about this feature and can test it (if requested) once it's done.
+          required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: A clear description of what you want to see changed or added.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional info
+      description: Some example of how the new functionality should look like.
+    validations:
+      required: true
