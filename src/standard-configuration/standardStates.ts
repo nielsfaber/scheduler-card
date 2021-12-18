@@ -1,87 +1,51 @@
-import { computeDomain, HomeAssistant } from 'custom-card-helpers';
-import { alarmControlPanelStates } from './alarm_control_panel';
-import { coverStates } from './cover';
-import { lockStates } from './lock';
-import { binarySensorStates } from './binary_sensor';
-import { inputBooleanStates } from './input_boolean';
-import { switchStates } from './switch';
-import { personStates } from './person';
-import { fanStates } from './fan';
-import { lightStates } from './light';
-import { climateStates } from './climate';
-import { deviceTrackerStates } from './device_tracker';
-import { groupStates } from './group';
+import { computeDomain, computeStateDisplay, HomeAssistant } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { inputSelectStates } from './input_select';
-import { selectStates } from './select';
+import { DefaultActionIcon } from '../const';
+import { levelVariable } from '../data/variables/level_variable';
+import { listVariable } from '../data/variables/list_variable';
+import { textVariable } from '../data/variables/text_variable';
+import { getLocale, isDefined } from '../helpers';
+import { localize } from '../localize/localize';
 import { Variable } from '../types';
-import { isDefined } from '../helpers';
-import { inputNumberStates } from './input_number';
-import { proximityStates } from './proximity';
-import { sensorStates } from './sensor';
-import { sunStates } from './sun';
-import { waterHeaterStates } from './water_heater';
-import { humidifierStates } from './humidifier';
+import { statesList } from './states';
+import { stateIcon } from './state_icons';
+import { parseVariable } from './variables';
 
 export function standardStates(entity_id: string, hass: HomeAssistant): Variable | null {
-  try {
-    const domain = computeDomain(entity_id);
-    const stateObj: HassEntity | undefined = hass.states[entity_id];
-    if (!stateObj) return null;
+  const domain = computeDomain(entity_id);
+  const stateObj: HassEntity | undefined = hass.states[entity_id];
+  if (!stateObj) return null;
 
-    switch (domain) {
-      case 'alarm_control_panel':
-        return alarmControlPanelStates(hass, stateObj);
-      case 'binary_sensor':
-        return binarySensorStates(hass, stateObj);
-      case 'climate':
-        return climateStates(hass, stateObj);
-      case 'cover':
-        return coverStates(hass, stateObj);
-      case 'device_tracker':
-        return deviceTrackerStates(hass, stateObj);
-      case 'fan':
-        return fanStates(hass, stateObj);
-      case 'group':
-        const entities: string[] =
-          stateObj && stateObj.attributes.entity_id && Array.isArray(stateObj.attributes.entity_id)
-            ? stateObj.attributes.entity_id
-            : [];
-        const configs = entities.map(e => standardStates(e, hass)).filter(isDefined);
-        return groupStates(hass, stateObj, configs);
-      case 'humdifier':
-        return humidifierStates(hass, stateObj);
-      case 'input_boolean':
-        return inputBooleanStates(hass, stateObj);
-      case 'input_number':
-        return inputNumberStates(hass, stateObj);
-      case 'input_select':
-        return inputSelectStates(hass, stateObj);
-      case 'light':
-        return lightStates(hass, stateObj);
-      case 'lock':
-        return lockStates(hass, stateObj);
-      case 'person':
-        return personStates(hass, stateObj);
-      case 'proximity':
-        return proximityStates(hass, stateObj);
-      case 'select':
-        return selectStates(hass, stateObj);
-      case 'sensor':
-        return sensorStates(hass, stateObj);
-      case 'sun':
-        return sunStates(hass, stateObj);
-      case 'switch':
-        return switchStates(hass, stateObj);
-      case 'water_heater':
-        return waterHeaterStates(hass, stateObj);
-      default:
-        return null;
-    }
-  } catch (e) {
-    console.error(
-      `Scheduler-card failed to load states for '${entity_id}'. Check if this entity is configured correctly, or open an issue for this in GitHub.`
+  if (!Object.keys(statesList).includes(domain)) return null;
+
+  let stateConfig = parseVariable(statesList[domain], stateObj, hass);
+
+  if ('options' in stateConfig && isDefined(stateConfig.options)) {
+    let options = [...stateConfig.options];
+    options = options.map(e =>
+      Object.assign(e, {
+        icon: e.icon ? e.icon : stateIcon(stateObj, e.value, DefaultActionIcon),
+        name: e.name ? e.name : getStateName(stateObj, e.value, hass),
+      })
     );
-    return null;
+    stateConfig = { ...stateConfig, options: options };
+    if (!options.length) return null;
+    return listVariable(stateConfig);
+  } else if ('unit' in stateConfig && isDefined(stateConfig.unit)) {
+    return levelVariable(stateConfig);
+  } else {
+    return textVariable(stateConfig);
   }
 }
+
+const getStateName = (stateObj: HassEntity, state: string, hass: HomeAssistant) => {
+  const domain = computeDomain(stateObj.entity_id);
+  return (
+    (stateObj.attributes.device_class &&
+      hass.localize(
+        `component.${domain}.state.${stateObj.attributes.device_class}.${state}`
+      )) ||
+    hass.localize(`component.${domain}.state._.${state}`) ||
+    state
+  );
+};
