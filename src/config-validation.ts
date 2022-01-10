@@ -14,6 +14,7 @@ export function ValidateConfig(config: any) {
   const Type = (input: any, type: string | string[]) => {
     if (Array.isArray(type)) return type.some(e => Type(input, e));
     else if (type == 'array') return Array.isArray(input);
+    else if (type == 'object') return typeof input === type && input !== null;
     else return typeof input === type;
   };
 
@@ -56,30 +57,42 @@ export function ValidateConfig(config: any) {
       if (Object.keys(action.service_data).some(e => !Type(e, 'string')))
         addError('service_data items must have string as index type');
     }
-    Optional(action, 'variable', 'object');
-    if (Has(action, 'variable') && Type(action.variable, 'object')) {
-      tree.push('variable');
-      Required(action.variable, 'field', 'string');
-      Optional(action.variable, 'name', 'string');
+    Optional(action, 'variables', 'object');
+    if (Has(action, 'variables') && Type(action.variables, 'object')) {
+      Object.keys(action.variables).forEach(key => {
+        tree = baseTree.concat(baseTree, ['variables']);
+        if (!Type(key, 'string')) addError(`${key} is not allowed`);
+        Required(action.variables, key, 'object');
+        if (Has(action.variables, key) && Type(action.variables[key], 'object')) {
+          tree.push(key);
+          const variableCfg = action.variables[key] as { options?: any; min?: any; max?: any };
 
-      //list variable
-      if (RequiredArrayType(action.variable, 'options', 'object')) {
-        action.variable.options.forEach((option, index) => {
-          tree = baseTree.concat(baseTree, ['variable', index]);
-          Required(option, 'value', 'string');
-          Optional(option, 'name', 'string');
-          Optional(option, 'icon', 'string');
-        });
-      }
+          //list variable
+          if (RequiredArrayType(variableCfg, 'options', 'object')) {
+            variableCfg.options.forEach((option, index) => {
+              tree = baseTree.concat(baseTree, ['variables', key, 'options', index]);
+              Required(option, 'value', 'string');
+              Optional(option, 'name', 'string');
+              Optional(option, 'icon', 'string');
+            });
+          }
 
-      //level variable
-      else {
-        Optional(action.variable, 'min', 'number');
-        Optional(action.variable, 'max', 'number');
-        Optional(action.variable, 'step', 'number');
-        Optional(action.variable, 'optional', 'boolean');
-        Optional(action.variable, 'unit', 'string');
-      }
+          //level variable
+          else if (variableCfg.min !== undefined || variableCfg.max !== undefined) {
+            Optional(variableCfg, 'min', 'number');
+            Optional(variableCfg, 'max', 'number');
+            Optional(variableCfg, 'step', 'number');
+            Optional(variableCfg, 'scale_factor', 'number');
+            Optional(variableCfg, 'optional', 'boolean');
+            Optional(variableCfg, 'unit', 'string');
+          }
+
+          //text variable
+          else {
+            Optional(variableCfg, 'multiline', 'boolean');
+          }
+        }
+      });
     }
   };
 
@@ -88,6 +101,7 @@ export function ValidateConfig(config: any) {
   Optional(config, 'title', ['boolean', 'string']);
   Optional(config, 'time_step', 'number');
   Optional(config, 'show_header_toggle', 'boolean');
+  Optional(config, 'show_add_button', 'boolean');
 
   Optional(config, 'include', 'array');
   RequiredArrayType(config, 'include', 'string');
@@ -140,22 +154,20 @@ export function ValidateConfig(config: any) {
           });
         }
 
-        tree = ['customize', key];
-        Optional(entryObj, 'states', ['array', 'object']);
-        RequiredArrayType(entryObj, 'states', 'string');
-        if (Has(entryObj, 'states') && Type(entryObj.states[key], 'object')) {
+        Optional(entryObj, 'states', ['object', 'array']);
+        if (Has(entryObj, 'states') && Type(entryObj.states, 'array')) {
           RequiredArrayType(entryObj, 'states', 'string');
-          if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
-            tree.push('states');
-            Required(entryObj.states, 'min', 'number');
-            Required(entryObj.states, 'max', 'number');
-            Optional(entryObj.states, 'step', 'number');
-            Optional(entryObj.states, 'unit', 'string');
-          }
+        } else if (Has(entryObj, 'states') && Type(entryObj.states, 'object')) {
+          Required(entryObj.states, 'min', 'number');
+          Required(entryObj.states, 'max', 'number');
+          Optional(entryObj.states, 'step', 'number');
+          Optional(entryObj.states, 'scale_factor', 'number');
+          Optional(entryObj.states, 'unit', 'string');
         }
       }
     });
   }
+  Optional(config, 'tags', ['string', 'array']);
 
   if (errors.length) {
     throw new Error(

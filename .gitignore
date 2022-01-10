@@ -1,4 +1,9 @@
 node_modules
 package-lock.json
 README.html
-.DS_Store
+*.DS_Store
+.vscode
+._*
+stats.html
+dist/
+!dist/scheduler-card.js

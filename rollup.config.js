@@ -4,18 +4,21 @@ import babel from 'rollup-plugin-babel';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
+import { visualizer } from 'rollup-plugin-visualizer';
+
 
 const plugins = [
   nodeResolve(),
   commonjs({
-    include: 'node_modules/**'
+    include: 'node_modules/**',
   }),
   typescript(),
   json(),
   babel({
     exclude: 'node_modules/**',
   }),
-  terser()
+  visualizer(),
+  terser(),
 ];
 
 export default [
@@ -24,9 +27,9 @@ export default [
     output: {
       dir: 'dist',
       format: 'iife',
-      sourcemap: false
+      sourcemap: false,
     },
     plugins: [...plugins],
-    context: 'window'
+    context: 'window',
   },
 ];

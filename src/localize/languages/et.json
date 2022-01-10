@@ -8,13 +8,15 @@
       "set_temperature": "vali temperatuur [{temperature}]",
       "set_temperature_hvac_mode_heat": "küte[ @ {temperature}]",
       "set_temperature_hvac_mode_cool": "jahutus [ @ {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "vali režiim [{hvac_mode}]",
       "set_preset_mode": "eelseade[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "sulge",
       "open_cover": "ava",
-      "set_cover_position": "sea asendisse[{position}]"
+      "set_cover_position": "sea asendisse[{position}]",
+      "set_cover_tilt_position": "sea ribide kalle [ asendisse {tilt_position}]"
     },
     "fan": {
       "set_speed": "vali kiirus[ @ {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "vali hajutus[ @ {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "sea niiskus[ {humidity}]"
+      "set_humidity": "sea niiskus[ {humidity}]",
+      "set_mode": "vali režiim [{mode}]"
     },
     "input_number": {
       "set_value": "vali väärtus[ {value}]"
     },
     "input_select": {
+      "select_option": "valik[ {option}]"
+    },
+    "select": {
       "select_option": "valik[ {option}]"
     },
     "light": {
@@ -36,13 +42,17 @@
     "media_player": {
       "select_source": "vali sisend[ {source}]"
     },
+    "notify": {
+      "notify": "send notification"
+    },
     "script": {
-      "script": "käivitae"
+      "script": "käivita"
     },
     "vacuum": {
       "start_pause": "alusta/ootele"
     },
     "water_heater": {
+      "set_operation_mode": "vali režiim [{operation_mode}]",
       "set_away_mode": "kodust ära"
     }
   },
@@ -82,13 +92,14 @@
         "tomorrow": "homme",
         "repeated_days": "iga {days} järel",
         "repeated_days_except": "iga päev aga mitte {excludedDays}",
-        "days_range": "{startDay} kuni {endDay}"
+        "days_range": "{startDay} kuni {endDay}",
+        "next_week_day": "järgmisel {weekday}"
       },
       "time": {
         "absolute": "{time}",
         "interval": "{startTime} kuni {endTime}",
-        "midnight": "keskööl",
-        "noon": "keskpäeval",
+        "at_midnight": "keskööl",
+        "at_noon": "keskpäeval",
         "at_sun_event": "{sunEvent}"
       }
     },
@@ -98,6 +109,7 @@
       },
       "overview": {
         "no_entries": "Ajastused puuduvad",
+        "backend_error": "Ajastaja sidumine puudub. Sidumine tuleb luua enne selle kaardi kasutamist.",
         "excluded_items": "välja on jäetud {number}  {if number is 1} ajastus {else} ajastust",
         "hide_excluded": "peida välja jäetud ajastused",
         "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust"
@@ -108,20 +120,25 @@
         "no_entities_for_group": "Selles grupis puuduvad olemid",
         "no_entity_selected": "Vali alustuseks olem",
         "no_actions_for_entity": "Selle olemi jaoks pole tegevusi",
-        "make_scheme": "loo skeem"
+        "make_scheme": "loo skeem",
+        "multiple": "Mitu"
       },
       "time_picker": {
-        "no_timeslot_selected": "Alustuseks vali ajavahemik"
+        "no_timeslot_selected": "Alustuseks vali ajavahemik",
+        "time_scheme": "Kkeem",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "võrdub",
         "unequal_to": "ei võrdu",
         "all": "kõik",
         "any": "iga",
-        "no_conditions_defined": "Tingimusi pole määratud"
+        "no_conditions_defined": "Tingimusi pole määratud",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "toiming peale käivitumist"
+        "repeat_type": "toiming peale käivitumist",
+        "period": "periood"
       }
     }
   }

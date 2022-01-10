@@ -1,0 +1,145 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} na {value}",
+      "action_with_parameter": "{action} s {parameter}"
+    },
+    "climate": {
+      "set_temperature": "nastaviť teplotu[ na {temperature}]",
+      "set_temperature_hvac_mode_heat": "vykurovanie[ na {temperature}]",
+      "set_temperature_hvac_mode_cool": "chladenie[ na {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "nastaviť režim[ na {hvac_mode}]",
+      "set_preset_mode": "nastaviť predvoľbu[ {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "zatvoriť",
+      "open_cover": "otvoriť",
+      "set_cover_position": "nastaviť polohu[ na {position}]",
+      "set_cover_tilt_position": "nastaviť naklonenie[ na {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "nastaviť rýchlosť[ na {speed}]",
+      "set_direction": "nastaviť smer[ na {direction}]",
+      "oscillate": "nastaviť osciláciu[ na {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "nastaviť vlhkosť[ na {humidity}]",
+      "set_mode": "nastaviť režim[ na {mode}]"
+    },
+    "input_number": {
+      "set_value": "nastaviť hodnotu[ na {value}]"
+    },
+    "input_select": {
+      "select_option": "vybrať možnosť[ {option}]"
+    },
+    "select": {
+      "select_option": "vybrať možnosť[ {option}]"
+    },
+    "light": {
+      "turn_on": "zapnúť[ na {brightness} jas]"
+    },
+    "media_player": {
+      "select_source": "vybrať zdroj[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
+    },
+    "script": {
+      "script": "spustiť"
+    },
+    "vacuum": {
+      "start_pause": "štart / pauza"
+    },
+    "water_heater": {
+      "set_operation_mode": "nastaviť režim[ na {operation_mode}]",
+      "set_away_mode": "nastaviť mód neprítomný"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "ovládací panel alarmu",
+    "climate": "klimatizácia",
+    "cover": "rolety",
+    "fan": "ventilátory",
+    "group": "skupiny",
+    "humidifier": "zvlhčovače",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
+    "light": "svetlá",
+    "lock": "zámky",
+    "media_player": "mediálne prehrávače",
+    "scene": "scény",
+    "script": "skripty",
+    "switch": "vypínače",
+    "vacuum": "vysávače",
+    "water_heater": "ohrievače vody"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "denne",
+          "workdays": "pracovné dni",
+          "weekend": "víkend"
+        },
+        "day_types_long": {
+          "daily": "každý deň",
+          "workdays": "cez pracovné dni",
+          "weekend": "cez víkend"
+        },
+        "days": "dni",
+        "tomorrow": "zajtra",
+        "repeated_days": "každý {days}",
+        "repeated_days_except": "každý deň okrem {excludedDays}",
+        "days_range": "od {startDay} do {endDay}",
+        "next_week_day": "budúcu {weekday}"
+      },
+      "time": {
+        "absolute": "od {time}",
+        "interval": "od {startTime} do {endTime}",
+        "at_midnight": "od polnoci",
+        "at_noon": "od obeda",
+        "at_sun_event": "na {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Plánovač"
+      },
+      "overview": {
+        "no_entries": "Žiadne položky k zobrazeniu",
+        "backend_error": "Nepodarilo sa pripojiť k Scheduler Component. Musí byť nainštalovaný ako integrácia pred použitím tejto karty.",
+        "excluded_items": "Vylúčené položky: {number}",
+        "hide_excluded": "skryť vylúčené položky",
+        "additional_tasks": "Ďalšie úlohy: {number}"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Nie sú definované žiadne skupiny",
+        "no_group_selected": "Najprv vyberte skupinu",
+        "no_entities_for_group": "V tejto skupine nie sú žiadne entity",
+        "no_entity_selected": "Najprv vyberte entitu",
+        "no_actions_for_entity": "Pre túto entitu neexistujú žiadne akcie",
+        "make_scheme": "vytvoriť schému",
+        "multiple": "Viacero"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Najprv vyberte časový úsek",
+        "time_scheme": "Schému",
+        "time_input_mode": "Time control mode"
+      },
+      "conditions": {
+        "equal_to": "je",
+        "unequal_to": "nie je",
+        "all": "Všetko",
+        "any": "žiadny",
+        "no_conditions_defined": "Nie sú definované žiadne podmienky",
+        "track_conditions": "Re-evaluate when conditions change"
+      },
+      "options": {
+        "repeat_type": "správanie sa po spustení",
+        "period": "obdobie"
+      }
+    }
+  }
+}

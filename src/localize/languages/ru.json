@@ -8,13 +8,15 @@
       "set_temperature": "установить температуру[ {temperature}]",
       "set_temperature_hvac_mode_heat": "обогрев[ {temperature}]",
       "set_temperature_hvac_mode_cool": "охлаждение[ {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "регулировать[ в пределах {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "установить режим[ {hvac_mode}]",
       "set_preset_mode": "выбрать набор настроек[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "закрыть",
       "open_cover": "открыть",
-      "set_cover_position": "установить позицию[ {position}]"
+      "set_cover_position": "установить позицию[ {position}]",
+      "set_cover_tilt_position": "установить наклон[ {tilt_position}]"
     },
     "fan": {
       "set_speed": "установить скорость[ {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "установить колебание[ {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "установить влажность[ {humidity}]"
+      "set_humidity": "установить влажность[ {humidity}]",
+      "set_mode": "установить режим[ {mode}]"
     },
     "input_number": {
       "set_value": "установить значение[ в {value}]"
     },
     "input_select": {
+      "select_option": "установить опцию[ {option}]"
+    },
+    "select": {
       "select_option": "установить опцию[ {option}]"
     },
     "light": {
@@ -36,6 +42,9 @@
     "media_player": {
       "select_source": "выбрать источник[ {source}]"
     },
+    "notify": {
+      "notify": "послать сообщение"
+    },
     "script": {
       "script": "запустить"
     },
@@ -43,6 +52,7 @@
       "start_pause": "старт / пауза"
     },
     "water_heater": {
+      "set_operation_mode": "установить режим[ {operation_mode}]",
       "set_away_mode": "установить режим вне дома"
     }
   },
@@ -82,13 +92,14 @@
         "tomorrow": "завтра",
         "repeated_days": "каждый {days}",
         "repeated_days_except": "каждый день кроме {excludedDays}",
-        "days_range": "с {startDay} до {endDay}"
+        "days_range": "с {startDay} до {endDay}",
+        "next_week_day": "в следующую {weekday}"
       },
       "time": {
         "absolute": "в {time}",
         "interval": "с {startTime} до {endTime}",
-        "midnight": "полночь",
-        "noon": "полдень",
+        "at_midnight": "в полночь",
+        "at_noon": "в полдень",
         "at_sun_event": "в {sunEvent}"
       }
     },
@@ -98,6 +109,7 @@
       },
       "overview": {
         "no_entries": "Отсутствуют элементы",
+        "backend_error": "Нет соединенияс scheduler component. Scheduler component должен быть установлен до применения этой карты.",
         "excluded_items": "{number} исключено {if number is 1} элемент {else} элементов",
         "hide_excluded": "скрыть исключенные элементы",
         "additional_tasks": "{number} больше {if number is 1} задача {else} задач"
@@ -108,20 +120,25 @@
         "no_entities_for_group": "Отсутствуют элементы в группе",
         "no_entity_selected": "Выберите элемент",
         "no_actions_for_entity": "Нет действий для этого элемента",
-        "make_scheme": "создать схему"
+        "make_scheme": "создать схему",
+        "multiple": "Множественный"
       },
       "time_picker": {
-        "no_timeslot_selected": "Выберите временной слот"
+        "no_timeslot_selected": "Выберите временной слот",
+        "time_scheme": "Cхему",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "равно",
         "unequal_to": "не равно",
         "all": "все",
         "any": "любое",
-        "no_conditions_defined": "Не определены условия"
+        "no_conditions_defined": "Не определены условия",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "поведение после срабатывания"
+        "repeat_type": "поведение после срабатывания",
+        "period": "период"
       }
     }
   }

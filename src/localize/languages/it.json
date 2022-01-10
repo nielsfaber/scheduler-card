@@ -8,13 +8,15 @@
       "set_temperature": "imposta temperatura[ a {temperature}]",
       "set_temperature_hvac_mode_heat": "riscaldamento[ a {temperature}]",
       "set_temperature_hvac_mode_cool": "raffrescamento[ a {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regola[ a {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "imposta modalità[ a {hvac_mode}]",
       "set_preset_mode": "imposta programmazione[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "chiuso",
       "open_cover": "aperto",
-      "set_cover_position": "imposta posizione[ su {position}]"
+      "set_cover_position": "imposta posizione[ su {position}]",
+      "set_cover_tilt_position": "imposta inclinazione[ su {tilt_position}]"
     },
     "fan": {
       "set_speed": "imposta velocità[ a {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "imposta oscillazione[ a {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "imposta umidità[ a {humidity}]"
+      "set_humidity": "imposta umidità[ a {humidity}]",
+      "set_mode": "imposta modalità[ a {mode}]"
     },
     "input_number": {
       "set_value": "imposta valore[ a {value}]"
     },
     "input_select": {
+      "select_option": "seleziona opzione[ {option}]"
+    },
+    "select": {
       "select_option": "seleziona opzione[ {option}]"
     },
     "light": {
@@ -36,6 +42,9 @@
     "media_player": {
       "select_source": "seleziona sorgente[ {source}]"
     },
+    "notify": {
+      "notify": "invia notifica"
+    },
     "script": {
       "script": "esegui"
     },
@@ -43,18 +52,19 @@
       "start_pause": "avvia / pausa"
     },
     "water_heater": {
+      "set_operation_mode": "imposta modalità[ a {operation_mode}]",
       "set_away_mode": "imposta fuori casa"
     }
   },
   "domains": {
     "alarm_control_panel": "pannello di controllo allarme",
     "climate": "clima",
-    "cover": "cover",
+    "cover": "serrande",
     "fan": "ventole",
     "group": "gruppi",
     "humidifier": "umidificatori",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
+    "input_boolean": "input booleani",
+    "input_number": "input numerici",
     "input_select": "input select",
     "light": "luci",
     "lock": "lucchetti",
@@ -78,17 +88,18 @@
           "workdays": "nei giorni lavorativi",
           "weekend": "nel weekend"
         },
-        "days": "days",
-        "tomorrow": "tomorrow",
+        "days": "giorni",
+        "tomorrow": "domani",
         "repeated_days": "ogni {days}",
         "repeated_days_except": "ogni giorno tranne {excludedDays}",
-        "days_range": "{if startDay is domenica} dalla domenica {else} dal {startDay} {if endDay is domenica} alla domenica {else} al {endDay}"
+        "days_range": "{if startDay is domenica} dalla domenica {else} dal {startDay} {if endDay is domenica} alla domenica {else} al {endDay}",
+        "next_week_day": "prossimo {weekday}"
       },
       "time": {
         "absolute": "alle {time}",
         "interval": "dalle {startTime} alle {endTime}",
-        "midnight": "mezzanotte",
-        "noon": "mezzogiorno",
+        "at_midnight": "a mezzanotte",
+        "at_noon": "a mezzogiorno",
         "at_sun_event": "al {sunEvent}"
       }
     },
@@ -98,6 +109,7 @@
       },
       "overview": {
         "no_entries": "Non ci sono oggetti da visualizzare",
+        "backend_error": "Impossibile connettersi con il componente scheduler. Deve essere installato come integrazione prima di poter utilizzare questa card.",
         "excluded_items": "{number} {if number is 1} oggetto escluso {else} oggetti esclusi",
         "hide_excluded": "Nascondi oggetti esclusi",
         "additional_tasks": "{number} attività in più"
@@ -108,20 +120,25 @@
         "no_entities_for_group": "Non ci sono entità in questo gruppo",
         "no_entity_selected": "Seleziona prima un'entità",
         "no_actions_for_entity": "Non ci sono azioni per questa entità",
-        "make_scheme": "crea schema"
+        "make_scheme": "crea schema",
+        "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "Seleziona prima una fascia oraria"
+        "no_timeslot_selected": "Seleziona prima una fascia oraria",
+        "time_scheme": "Schema",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "uguale",
         "unequal_to": "non uguale",
         "all": "tutte",
         "any": "qualunque",
-        "no_conditions_defined": "Non ci sono condizioni definite"
+        "no_conditions_defined": "Non ci sono condizioni definite",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "comportamento dopo l'attivazione"
+        "repeat_type": "comportamento dopo il completamento",
+        "period": "periodo"
       }
     }
   }

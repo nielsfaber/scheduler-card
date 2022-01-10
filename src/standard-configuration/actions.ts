@@ -1,0 +1,363 @@
+import { HomeAssistant } from 'custom-card-helpers';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { levelVariable } from '../data/variables/level_variable';
+import { listAttribute, numericAttribute } from './attribute';
+import { VariableConfig } from './variables';
+import { colorModesToSupportedFeatures } from '../data/entities/compute_supported_features';
+
+export type ActionItem = {
+  supported_feature?: number | ((stateObj?: HassEntity) => number);
+  service?: string;
+  service_data?: Record<string, string>;
+  variables?: Record<string, VariableConfig>;
+  condition?: (stateObj: HassEntity | undefined) => boolean;
+};
+
+const temperatureVariable = (stateObj: HassEntity | undefined, hass: HomeAssistant) => {
+  const tempUnit = hass.config.unit_system.temperature;
+  const isFahrenHeit = tempUnit.includes('F');
+
+  return levelVariable({
+    min: numericAttribute(stateObj, 'min_temp', isFahrenHeit ? 45 : 7),
+    max: numericAttribute(stateObj, 'max_temp', isFahrenHeit ? 95 : 35),
+    step: numericAttribute(stateObj, 'target_temp_step', isFahrenHeit ? 1 : 0.1),
+    unit: tempUnit,
+  });
+};
+
+export const actionList: Record<string, Record<string, ActionItem>> = {
+  alarm_control_panel: {
+    alarm_disarm: {},
+    alarm_arm_home: {
+      supported_feature: 1,
+    },
+    alarm_arm_away: {
+      supported_feature: 2,
+    },
+    alarm_arm_night: {
+      supported_feature: 4,
+    },
+    alarm_arm_custom_bypass: {
+      supported_feature: 16,
+    },
+  },
+  automation: {
+    turn_on: {},
+    turn_off: {},
+    trigger: {},
+  },
+  climate: {
+    turn_off: {
+      condition: stateObj => !listAttribute(stateObj, 'hvac_modes').includes('off'),
+    },
+    _turn_off: {
+      service: 'set_hvac_mode',
+      service_data: {
+        hvac_mode: 'off',
+      },
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('off'),
+    },
+    set_temperature: {
+      variables: {
+        temperature: {},
+      },
+      supported_feature: 1,
+      condition: stateObj =>
+        !['heat', 'cool', 'heat_cool'].some(e =>
+          listAttribute(stateObj, 'hvac_modes').includes(e)
+        ),
+    },
+    heat: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'heat',
+      },
+      variables: {
+        temperature: {
+          template: temperatureVariable,
+        },
+      },
+      supported_feature: 1,
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('heat'),
+    },
+    cool: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'cool',
+      },
+      variables: {
+        temperature: {
+          template: temperatureVariable,
+        },
+      },
+      supported_feature: 1,
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('cool'),
+    },
+    regulate: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'heat_cool',
+      },
+      variables: {
+        target_temp_low: {
+          template: temperatureVariable,
+        },
+        target_temp_high: {
+          template: temperatureVariable,
+        },
+      },
+      supported_feature: 1,
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('heat_cool'),
+    },
+    set_mode: {
+      service: 'set_hvac_mode',
+      variables: {
+        hvac_mode: {
+          template: stateObj => {
+            const supportedFeatures =
+              numericAttribute(stateObj, 'supported_features') || 0;
+            let modes = listAttribute(stateObj, 'hvac_modes');
+            if (supportedFeatures & 1)
+              modes = modes.filter(
+                e => !['heat', 'cool', 'heat_cool', 'off'].includes(e)
+              );
+            return { options: modes };
+          },
+        },
+      },
+    },
+    set_preset: {
+      service: 'set_preset_mode',
+      variables: {
+        preset_mode: {
+          options: 'preset_modes',
+        },
+      },
+      supported_feature: 16,
+    },
+  },
+  cover: {
+    close: {
+      service: 'close_cover',
+      supported_feature: 2,
+    },
+    open: {
+      service: 'open_cover',
+      supported_feature: 1,
+    },
+    set_position: {
+      service: 'set_cover_position',
+      variables: {
+        position: {
+          min: 0,
+          max: 100,
+          step: 1,
+          unit: '%',
+        },
+      },
+      supported_feature: 4,
+    },
+    set_tilt_position: {
+      service: 'set_cover_tilt_position',
+      variables: {
+        tilt_position: {
+          min: 0,
+          max: 100,
+          step: 1,
+          unit: '%',
+        },
+      },
+      supported_feature: 128,
+    },
+  },
+  fan: {
+    turn_on: {},
+    turn_off: {},
+    set_percentage: {
+      service: 'set_percentage',
+      variables: {
+        percentage: {
+          min: 0,
+          max: 100,
+          step: 1,
+          unit: '%',
+        },
+      },
+      supported_feature: 1,
+    },
+    set_oscillation: {
+      service: 'oscillate',
+      variables: {
+        oscillating: {
+          options: ['True', 'False'],
+        },
+      },
+      supported_feature: 2,
+    },
+    set_direction: {
+      variables: {
+        direction: {
+          options: ['forward', 'reverse'],
+        },
+      },
+      supported_feature: 4,
+    },
+    set_preset: {
+      service: 'set_preset_mode',
+      variables: {
+        preset_mode: {
+          options: 'preset_modes',
+        },
+      },
+      supported_feature: 8,
+    },
+  },
+  humidifier: {
+    turn_on: {},
+    turn_off: {},
+    set_humidity: {
+      variables: {
+        humidity: {
+          min: 'min_humidity',
+          max: 'max_humidity',
+          step: 1,
+          unit: '%',
+        },
+      },
+    },
+    set_mode: {
+      variables: {
+        mode: {
+          options: 'available_modes',
+        },
+      },
+      supported_feature: 1,
+    },
+  },
+  input_boolean: {
+    turn_on: {},
+    turn_off: {},
+  },
+  input_number: {
+    set_value: {
+      variables: {
+        value: {
+          min: 'min',
+          max: 'max',
+          step: 'step',
+          unit: 'unit_of_measurement',
+        },
+      },
+    },
+  },
+  input_select: {
+    select_option: {
+      variables: {
+        option: {
+          options: 'options',
+        },
+      },
+    },
+  },
+  light: {
+    turn_on: {
+      condition: stateObj => colorModesToSupportedFeatures(stateObj) == 0,
+    },
+    _turn_on: {
+      variables: {
+        brightness: {
+          min: 0,
+          max: 100,
+          step: 1,
+          unit: '%',
+          scale_factor: 2.55,
+          optional: true,
+        },
+      },
+      supported_feature: stateObj => colorModesToSupportedFeatures(stateObj),
+    },
+    turn_off: {},
+  },
+  lock: {
+    lock: {},
+    unlock: {},
+  },
+  media_player: {
+    turn_on: { supported_feature: 128 },
+    turn_off: { supported_feature: 256 },
+    select_source: {
+      variables: {
+        source: {
+          options: 'source_list',
+        },
+      },
+      supported_feature: 2048,
+    },
+  },
+  notify: {
+    '{entity_id}': {
+      variables: {
+        title: {},
+        message: {
+          multiline: true,
+        },
+      },
+    },
+  },
+  scenes: {
+    turn_on: {},
+  },
+  script: {
+    turn_on: {},
+    turn_off: {},
+    '{entity_id}': {},
+  },
+  select: {
+    select_option: {
+      variables: {
+        option: {
+          options: 'options',
+        },
+      },
+    },
+  },
+  switch: {
+    turn_on: {},
+    turn_off: {},
+  },
+  vacuum: {
+    turn_on: { supported_feature: 1 },
+    start: {
+      supported_feature: 8192,
+    },
+    play_pause: {
+      supported_feature: 4,
+    },
+  },
+  water_heater: {
+    set_temperature: {
+      variables: {
+        temperature: {
+          template: temperatureVariable,
+        },
+      },
+    },
+    set_mode: {
+      service: 'set_operation_mode',
+      variables: {
+        operation_mode: {
+          options: 'operation_list',
+        },
+      },
+      supported_feature: 2,
+    },
+    set_away_mode: {
+      variables: {
+        away_mode: {
+          options: ['on', 'off'],
+        },
+      },
+      supported_feature: 4,
+    },
+  },
+};

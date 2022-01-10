@@ -8,13 +8,15 @@
       "set_temperature": "temperatuur instellen[ naar {temperature}]",
       "set_temperature_hvac_mode_heat": "verwarmen[ naar {temperature}]",
       "set_temperature_hvac_mode_cool": "koelen[ naar {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "reguleren[ naar {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "modus aanpassen[ naar {hvac_mode}]",
       "set_preset_mode": "programma[ {preset_mode}] instellen"
     },
     "cover": {
       "close_cover": "sluiten",
       "open_cover": "openen",
-      "set_cover_position": "positie instellen[ naar {position}]"
+      "set_cover_position": "positie instellen[ naar {position}]",
+      "set_cover_tilt_position": "hellingshoek instellen[ naar {tilt_position}]"
     },
     "fan": {
       "set_speed": "snelheid instellen[ op {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "zet oscillatie[ naar {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "luchtvochtigheid instellen [ op {humidity}]"
+      "set_humidity": "luchtvochtigheid instellen [ op {humidity}]",
+      "set_mode": "modus aanpassen[ naar {mode}]"
     },
     "input_number": {
       "set_value": "waarde aanpassen[ naar {value}]"
     },
     "input_select": {
+      "select_option": "selecteer optie[ {option}]"
+    },
+    "select": {
       "select_option": "selecteer optie[ {option}]"
     },
     "light": {
@@ -36,6 +42,9 @@
     "media_player": {
       "select_source": "kies ingang[ {source}]"
     },
+    "notify": {
+      "notify": "notificatie sturen"
+    },
     "script": {
       "script": "uitvoeren"
     },
@@ -43,6 +52,7 @@
       "start_pause": "start / pauzeer"
     },
     "water_heater": {
+      "set_operation_mode": "modus aanpassen[ naar {operation_mode}]",
       "set_away_mode": "stel afwezigheidsmode in"
     }
   },
@@ -56,6 +66,7 @@
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
+    "select": "select",
     "light": "verlichting",
     "lock": "sloten",
     "media_player": "mediaspelers",
@@ -82,13 +93,14 @@
         "tomorrow": "morgen",
         "repeated_days": "elke {days}",
         "repeated_days_except": "elke dag behalve {excludedDays}",
-        "days_range": "van {startDay} tot {endDay}"
+        "days_range": "van {startDay} tot {endDay}",
+        "next_week_day": "volgende week {weekday}"
       },
       "time": {
         "absolute": "om {time}",
         "interval": "van {startTime} tot {endTime}",
-        "midnight": "middernacht",
-        "noon": "12:00",
+        "at_midnight": "om middernacht",
+        "at_noon": "om 12:00",
         "at_sun_event": "bij {sunEvent}"
       }
     },
@@ -98,6 +110,7 @@
       },
       "overview": {
         "no_entries": "Er zijn geen items aangemaakt",
+        "backend_error": "Er kon geen verbinding worden gemaakt met het Scheduler component. Deze moet als integratie zijn geinstalleerd voordat deze kaart gebruikt kan worden.",
         "excluded_items": "{number} uitgesloten {if number is 1} item {else} items",
         "hide_excluded": "verberg uitgesloten items",
         "additional_tasks": "{number} overige {if number is 1} taak {else} taken"
@@ -108,20 +121,25 @@
         "no_groups_defined": "Er zijn geen groepen gedefinieerd",
         "no_entities_for_group": "Deze groep heeft geen entiteiten",
         "no_actions_for_entity": "Deze entiteit heeft geen acties",
-        "make_scheme": "maak schema"
+        "make_scheme": "maak schema",
+        "multiple": "Meerdere"
       },
       "time_picker": {
-        "no_timeslot_selected": "Kies eerst een tijdsslot"
+        "no_timeslot_selected": "Kies eerst een tijdsslot",
+        "time_scheme": "Schema",
+        "time_input_mode": "Invoermodus voor tijd"
       },
       "conditions": {
         "equal_to": "is",
         "unequal_to": "is niet",
         "all": "en",
         "any": "of",
-        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd"
+        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd",
+        "track_conditions": "Herevalueer wanneer condities veranderen"
       },
       "options": {
-        "repeat_type": "gedrag na activeren"
+        "repeat_type": "gedrag na voltooiing",
+        "period": "periode"
       }
     }
   }

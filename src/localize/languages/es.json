@@ -6,15 +6,17 @@
     },
     "climate": {
       "set_temperature": "establecer temperatura[ a {temperature}]",
-      "set_temperature_hvac_mode_heat": "calefacción [ a {temperature}]",
-      "set_temperature_hvac_mode_cool": "frío [ a {temperature}]",
+      "set_temperature_hvac_mode_heat": "calefacción[ a {temperature}]",
+      "set_temperature_hvac_mode_cool": "frío[ a {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regular[ entre {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "establecer modo[ a {hvac_mode}]",
-      "set_preset_mode": "establecer preajuste [ {preset_mode}]"
+      "set_preset_mode": "establecer preajuste[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "cerrado",
       "open_cover": "abierto",
-      "set_cover_position": "establecer posición [ a {position}]"
+      "set_cover_position": "establecer posición[ a {position}]",
+      "set_cover_tilt_position": "establecer inclinación[ a {tilt_position}]"
     },
     "fan": {
       "set_speed": "establecer velocidad [ a {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "establecer oscilación[ a {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "establecer humedad[ a {humidity}]"
+      "set_humidity": "establecer humedad[ a {humidity}]",
+      "set_mode": "establecer modo[ a {mode}]"
     },
     "input_number": {
       "set_value": "establecer valor[ a {value}]"
     },
     "input_select": {
+      "select_option": "seleccionar opción[ {option}]"
+    },
+    "select": {
       "select_option": "seleccionar opción[ {option}]"
     },
     "light": {
@@ -36,6 +42,9 @@
     "media_player": {
       "select_source": "seleccionar fuente[ {source}]"
     },
+    "notify": {
+      "notify": "enviar notificación"
+    },
     "script": {
       "script": "ejecutar"
     },
@@ -43,6 +52,7 @@
       "start_pause": "iniciar / pausar"
     },
     "water_heater": {
+      "set_operation_mode": "establecer modo[ a {operation_mode}]",
       "set_away_mode": "establecer modo fuera de casa"
     }
   },
@@ -59,6 +69,7 @@
     "light": "luces",
     "lock": "cerraduras",
     "media_player": "reproductores",
+    "automation": "automatizaciones",
     "scene": "escenas",
     "script": "scripts",
     "switch": "interruptores",
@@ -82,13 +93,14 @@
         "tomorrow": "mañana",
         "repeated_days": "cada {days}",
         "repeated_days_except": "cada dia excepto {excludedDays}",
-        "days_range": "de {startDay} a {endDay}"
+        "days_range": "de {startDay} a {endDay}",
+        "next_week_day": "próximo {weekday}"
       },
       "time": {
         "absolute": "a las {time}",
         "interval": "desde las {startTime} a las {endTime}",
-        "midnight": "medianoche",
-        "noon": "mediodía",
+        "at_midnight": "a la medianoche",
+        "at_noon": "a la mediodía",
         "at_sun_event": "a la {sunEvent}"
       }
     },
@@ -98,6 +110,7 @@
       },
       "overview": {
         "no_entries": "No hay ningún elemento que mostrar",
+        "backend_error": "Fallo de conexión con Scheduler component. Debe ser installado como integración antes de poder usar este panel.",
         "excluded_items": "{number} {if number is 1} elemento excluido {else} elementos excluidos",
         "hide_excluded": "ocultar elementos excluidos",
         "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
@@ -105,23 +118,28 @@
       "entity_picker": {
         "no_groups_defined": "No hay ningún grupo definido",
         "no_group_selected": "selecciona un grupo primero",
-        "no_entities_for_group": "no hay ningúna entidad en este grupo",
+        "no_entities_for_group": "no hay ninguna entidad en este grupo",
         "no_entity_selected": "selecciona una entidad primero",
         "no_actions_for_entity": "no hay acciones para esta entidad",
-        "make_scheme": "crear planificación"
+        "make_scheme": "crear planificación",
+        "multiple": "Múltiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "selecciona un bloque de tiempo primero"
+        "no_timeslot_selected": "selecciona un bloque de tiempo primero",
+        "time_scheme": "Planificación",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "igual a",
         "unequal_to": "desigual a",
         "all": "todos",
         "any": "cualquiera",
-        "no_conditions_defined": "no hay ninguna condición definida"
+        "no_conditions_defined": "no hay ninguna condición definida",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "acción después de ejecutar"
+        "repeat_type": "acción después de la finalización",
+        "period": "período"
       }
     }
   }

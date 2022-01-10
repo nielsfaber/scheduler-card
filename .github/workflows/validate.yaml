@@ -7,12 +7,31 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  validate:
+  hacs_validate:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v2"
       - name: HACS validation
-        uses: "hacs/integration/action@main"
+        uses: "hacs/action@main"
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "plugin"
+  language_validate:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.x'
+      - uses: actions/cache@v2
+        name: Load pip cache
+        with:
+          path: ~/.cache/pip
+          key: language-validate-pip-cache
+      - name: Install dependencies
+        run: |
+          python3 -m pip install colorama setuptools
+          python3 -m pip install pyicu
+      - name: Language validation
+        run: |
+          script -e -c "python3 .github/workflows/check.py"

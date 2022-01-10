@@ -1,65 +1,147 @@
-import { computeDomain, HomeAssistant } from 'custom-card-helpers';
-import { alarmControlPanelActions } from './alarm_control_panel';
-import { ActionConfig } from '../types';
-import { climateActions } from './climate';
-import { coverActions } from './cover';
-import { fanActions } from './fan';
-import { humidifierActions } from './humidifier';
-import { inputNumberActions } from './input_number';
-import { inputSelectActions } from './input_select';
-import { lightActions } from './light';
-import { lockActions } from './lock';
-import { mediaPlayerActions } from './media_player';
-import { scriptActions } from './script';
-import { vacuumActions } from './vacuum';
-import { waterHeaterActions } from './water_heater';
+import { computeDomain, computeEntity, HomeAssistant } from 'custom-card-helpers';
+import { DefaultActionIcon } from '../const';
+import { isDefined, pick } from '../helpers';
+import { Action, EVariableType, ListVariable } from '../types';
+import { parseVariable, VariableConfig } from './variables';
+import { ActionItem, actionList } from './actions';
+import { HassEntity } from 'home-assistant-js-websocket';
+import { levelVariable } from '../data/variables/level_variable';
+import { listVariable } from '../data/variables/list_variable';
+import { textVariable } from '../data/variables/text_variable';
+import { actionName } from './action_name';
+import { actionIcon } from './action_icons';
+import { getVariableName } from './variable_name';
+import { getVariableOptionName, getVariableOptions } from './variable_options';
+import { getVariableOptionIcon } from './variable_icons';
+import { listAttribute } from './attribute';
 import { groupActions } from './group';
-import { inputBooleanActions } from './input_boolean';
-import { sceneActions } from './scene';
-import { switchActions } from './switch';
 
-export function standardActions(entity_id: string, hass: HomeAssistant, filterCapabilities = false): ActionConfig[] {
+export const standardActions = (
+  entity_id: string,
+  hass: HomeAssistant,
+  filterCapabilities = true
+): Action[] => {
+  const domain = computeDomain(entity_id);
+
+  if (domain == 'group') {
+    const stateObj = hass.states[entity_id];
+    const subEntities = listAttribute(stateObj, 'entity_id');
+    if (!subEntities.length) return [];
+
+    const subActions = subEntities.map(e => standardActions(e, hass, filterCapabilities));
+    return groupActions(hass, stateObj, subActions);
+  }
+
+  //not supported by standard configuration
+  if (!Object.keys(actionList).includes(domain)) return [];
+
+  return Object.entries(actionList[domain])
+    .map(([id, config]) => parseAction(id, config, entity_id, hass, filterCapabilities))
+    .filter(isDefined);
+};
+
+const parseAction = (
+  id: string,
+  config: ActionItem,
+  entity_id: string,
+  hass: HomeAssistant,
+  filterCapabilities: boolean
+): Action | undefined => {
   const domain = computeDomain(entity_id);
   const stateObj = hass.states[entity_id];
-  switch (domain) {
-    case 'alarm_control_panel':
-      return alarmControlPanelActions(hass, stateObj);
-    case 'climate':
-      return climateActions(hass, stateObj, filterCapabilities);
-    case 'cover':
-      return coverActions(hass, stateObj);
-    case 'fan':
-      return fanActions(hass, stateObj);
-    case 'group':
-      const entities: string[] = stateObj.attributes.entity_id! || [];
-      const configs = entities.map(e => standardActions(e, hass));
-      return groupActions(stateObj, configs);
-    case 'humidifer':
-      return humidifierActions(hass, stateObj);
-    case 'input_boolean':
-      return inputBooleanActions(hass, stateObj);
-    case 'input_number':
-      return inputNumberActions(hass, stateObj);
-    case 'input_select':
-      return inputSelectActions(hass, stateObj);
-    case 'light':
-      return lightActions(hass, stateObj);
-    case 'lock':
-      return lockActions(hass, stateObj);
-    case 'media_player':
-      return mediaPlayerActions(hass, stateObj);
-    case 'scene':
-      return sceneActions(hass, stateObj);
-    case 'script':
-      return scriptActions(hass, stateObj);
-    case 'switch':
-      return switchActions(hass, stateObj);
-    case 'vacuum':
-      return vacuumActions(hass, stateObj);
-    case 'water_heater':
-      return waterHeaterActions(hass, stateObj);
+  if (config.condition && !config.condition(stateObj)) return;
 
-    default:
-      return [];
+  if (id.startsWith('_')) id = id = id.substring(1);
+
+  let action: Action = {
+    name: '',
+    icon: DefaultActionIcon,
+    service: config.service ? `${domain}.${config.service}` : `${domain}.${id}`,
+    service_data: config.service_data,
+  };
+
+  if (config.supported_feature) {
+    const supportedFeature =
+      config.supported_feature instanceof Function
+        ? config.supported_feature(stateObj)
+        : config.supported_feature;
+    action = {
+      ...action,
+      supported_feature: supportedFeature,
+    };
   }
-}
+
+  action = {
+    ...action,
+    name: actionName(domain, id, hass),
+    icon: actionIcon(domain, id, stateObj),
+  };
+
+  Object.keys(config.variables || {}).forEach(key => {
+    action = {
+      ...action,
+      variables: {
+        ...action.variables,
+        [key]: parseActionVariable(
+          domain,
+          key,
+          config.variables![key],
+          stateObj,
+          hass,
+          filterCapabilities
+        ),
+      },
+    };
+  });
+
+  //strip actions having no selectable options
+  if (
+    Object.values(action.variables || {}).some(
+      e => e.type == EVariableType.List && !(e as ListVariable).options.length
+    )
+  )
+    return;
+
+  //insert entity ID for services notify / script
+  const match = action.service.match(/^[a-z_]+\.(\{entity_id\})$/);
+  if (match)
+    action = {
+      ...action,
+      service: action.service.replace(match[1], computeEntity(entity_id)),
+    };
+
+  return action;
+};
+
+const parseActionVariable = (
+  domain: string,
+  variable: string,
+  variableConfig: VariableConfig,
+  stateObj: HassEntity | undefined,
+  hass: HomeAssistant,
+  filterCapabilities: boolean
+) => {
+  let config = parseVariable(variableConfig, stateObj, hass);
+  config = { ...config, name: getVariableName(domain, variable, hass) };
+  if ('options' in config && isDefined(config.options)) {
+    let options = [...config.options];
+    if (!filterCapabilities) {
+      const extraOptions = getVariableOptions(domain, variable).filter(
+        k => !options.map(e => e.value).includes(k)
+      );
+      options = [...options, ...extraOptions.map(e => Object({ value: e }))];
+    }
+    options = options.map(e =>
+      Object.assign(e, {
+        name: e.name ? e.name : getVariableOptionName(domain, variable, e.value, hass),
+        icon: e.icon ? e.icon : getVariableOptionIcon(domain, variable, e.value),
+      })
+    );
+    config = { ...config, options: options };
+    return listVariable(config);
+  } else if ('unit' in config && isDefined(config.unit)) {
+    return levelVariable(config);
+  } else {
+    return textVariable(config);
+  }
+};

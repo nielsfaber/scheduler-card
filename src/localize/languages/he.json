@@ -1,0 +1,145 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} ל {value}",
+      "action_with_parameter": "{action} עם {parameter}"
+    },
+    "climate": {
+      "set_temperature": "קבע טמפרטורה[ ל {temperature}]",
+      "set_temperature_hvac_mode_heat": "חימום[ ל {temperature}]",
+      "set_temperature_hvac_mode_cool": "קירור[ ל {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "קבע מצב עבודה[ ל {hvac_mode}]",
+      "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]"
+    },
+    "cover": {
+      "close_cover": "סגירה",
+      "open_cover": "פתיחה",
+      "set_cover_position": "קבע מיקום[ ל {position}]",
+      "set_cover_tilt_position": "קבע הטיה[ ל {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "קבע מהירות[ ל {speed}]",
+      "set_direction": "קבע כיוון[ ל {direction}]",
+      "oscillate": "קבע תנודה[ ל {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "קבע לחות[ ל {humidity}]",
+      "set_mode": "קבע מצב עבודה[ ל {mode}]"
+    },
+    "input_number": {
+      "set_value": "קבע ערך[ ל {value}]"
+    },
+    "input_select": {
+      "select_option": "בחר אפשרות[ {option}]"
+    },
+    "select": {
+      "select_option": "בחר אפשרות[ {option}]"
+    },
+    "light": {
+      "turn_on": "הדלקה[ בעוצמה של {brightness}]"
+    },
+    "media_player": {
+      "select_source": "select source[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
+    },
+    "script": {
+      "script": "בצע"
+    },
+    "vacuum": {
+      "start_pause": "התחל / הפסק"
+    },
+    "water_heater": {
+      "set_operation_mode": "קבע מצב עבודה[ ל {operation_mode}]",
+      "set_away_mode": "קבע מצב מוץ לבית"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "בקרת אזעקה",
+    "climate": "מזג אוויר",
+    "cover": "תריסים",
+    "fan": "מאווררים",
+    "group": "קבוצות יישויות",
+    "humidifier": "מכשירי אדים",
+    "input_boolean": "כניסה בוליאנית",
+    "input_number": "כניסה מספרית",
+    "input_select": "בחירת כניסה",
+    "light": "תאורה",
+    "lock": "מנעולים",
+    "media_player": "נגני מדיה",
+    "scene": "תרחישים",
+    "script": "סקריפטים",
+    "switch": "מפסקים",
+    "vacuum": "שואבי אבק",
+    "water_heater": "מחממי מים"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "כל יום",
+          "workdays": "ימי חול",
+          "weekend": "סוף שבוע"
+        },
+        "day_types_long": {
+          "daily": "כל יום",
+          "workdays": "בימי חול",
+          "weekend": "בסוף השבוע"
+        },
+        "days": "ימים",
+        "tomorrow": "מחר",
+        "repeated_days": "בכל {days}",
+        "repeated_days_except": "בכל יום פרט ל  {excludedDays}",
+        "days_range": "מ- {startDay} ועד- {endDay}",
+        "next_week_day": "הבא {weekday}"
+      },
+      "time": {
+        "absolute": "בשעה {time}",
+        "interval": "משעה {startTime} עד שעה {endTime}",
+        "at_midnight": "בחצות הלילה",
+        "at_noon": "בחצות היום",
+        "at_sun_event": "ב {sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "לוח זמנים"
+      },
+      "overview": {
+        "no_entries": "אין פריטים להצגה",
+        "backend_error": "אין אפשרות להתחבר לרכיב התזמונים. נדרש להתקין את הרכיב באינטגרציה לפני השימוש בכרטיס.",
+        "excluded_items": "{number} לא נכלל {if number is 1} פריט {else} פריטים",
+        "hide_excluded": "הסתר פריטים לא כלולים",
+        "additional_tasks": "{number} נוסף {if number is 1} משימה {else} משימות"
+      },
+      "entity_picker": {
+        "no_groups_defined": "לא הוגדרו קבוצות",
+        "no_group_selected": "בחר קבוצה תחילה",
+        "no_entities_for_group": "אין יישויות בקבוצה זו",
+        "no_entity_selected": "תחילה בחר יישות",
+        "no_actions_for_entity": "אין פעולות עבור יישות זאת",
+        "make_scheme": "בנה סכימה",
+        "multiple": "מספר יישויות"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "בחר משבצת זמן קודם",
+        "time_scheme": "סכימה",
+        "time_input_mode": "Time control mode"
+      },
+      "conditions": {
+        "equal_to": "שווה ל",
+        "unequal_to": "שונה מ",
+        "all": "כל התנאים",
+        "any": "אחד מהתנאים",
+        "no_conditions_defined": "לא הוגדרו תנאים",
+        "track_conditions": "Re-evaluate when conditions change"
+      },
+      "options": {
+        "repeat_type": "התנהגות לאחר הפעלה",
+        "period": "פרק זמן"
+      }
+    }
+  }
+}

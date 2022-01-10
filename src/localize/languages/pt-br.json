@@ -1,95 +1,106 @@
 {
   "services": {
     "generic": {
-      "parameter_to_value": "{parameter} to {value}",
-      "action_with_parameter": "{action} with {parameter}"
+      "parameter_to_value": "{parameter} para {value}",
+      "action_with_parameter": "{action} com {parameter}"
     },
     "climate": {
-      "set_temperature": "ajustar temperatura[ a {temperature}]",
-      "set_temperature_hvac_mode_heat": "ajustar temperatura[ a {temperature}]",
-      "set_temperature_hvac_mode_cool": "ajustar temperatura[ a {temperature}]",
-      "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ {preset_mode}]"
+      "set_temperature": "definir temperatura[ para {temperature}]",
+      "set_temperature_hvac_mode_heat": "aquecimento[ para {temperature}]",
+      "set_temperature_hvac_mode_cool": "arrefecimento[ para {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "definir modo[ para {hvac_mode}]",
+      "set_preset_mode": "definir predefinição[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "fechar",
       "open_cover": "abrir",
-      "set_cover_position": "ajustar posição[ a {position}]"
+      "set_cover_position": "definir posição[ para {position}]",
+      "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
-      "set_direction": "set direction[ to {direction}]",
-      "oscillate": "set oscillation[ to {oscillate}]"
+      "set_speed": "definir velocidade[ para {speed}]",
+      "set_direction": "definir direção[ para {direction}]",
+      "oscillate": "definir oscilação[ para {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "set humidity[ to {humidity}]"
+      "set_humidity": "definir humidade[ para {humidity}]",
+      "set_mode": "definir modo[ para {mode}]"
     },
     "input_number": {
-      "set_value": "set value[ to {value}]"
+      "set_value": "definir valor[ para {value}]"
     },
     "input_select": {
-      "select_option": "select option[ {option}]"
+      "select_option": "selecionar opção[ {option}]"
+    },
+    "select": {
+      "select_option": "selecionar opção[ {option}]"
     },
     "light": {
-      "turn_on": "ligar[ a {brightness} Brilho]"
+      "turn_on": "ligar[ com {brightness} brightness]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "selecionar origem[ {source}]"
+    },
+    "notify": {
+      "notify": "send notification"
     },
     "script": {
-      "script": "execute"
+      "script": "executar"
     },
     "vacuum": {
-      "start_pause": "start / pause"
+      "start_pause": "iniciar / pausar"
     },
     "water_heater": {
-      "set_away_mode": "set away mode"
+      "set_operation_mode": "definir modo[ para {operation_mode}]",
+      "set_away_mode": "definir modo ausente"
     }
   },
   "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "climate": "ar condicionado",
-    "cover": "persiana",
-    "fan": "ventilador",
-    "group": "groups",
-    "humidifier": "humifiers",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "light": "luz",
-    "lock": "locks",
-    "media_player": "media players",
-    "scene": "scenes",
+    "alarm_control_panel": "painel de controlo de alarme",
+    "climate": "ambiente",
+    "cover": "estores",
+    "fan": "ventiladores",
+    "group": "grupos",
+    "humidifier": "humidificadores",
+    "input_boolean": "campo booleano",
+    "input_number": "campo numérico",
+    "input_select": "campo de opção",
+    "light": "iluminação",
+    "lock": "fechaduras",
+    "media_player": "reprodutores de mídia",
+    "scene": "cenas",
     "script": "scripts",
-    "switch": "interruptor",
-    "vacuum": "aspirador",
-    "water_heater": "water heaters"
+    "switch": "interruptores",
+    "vacuum": "aspiradores",
+    "water_heater": "aquecedores hidráulicos"
   },
   "ui": {
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "todos os dias",
-          "workdays": "dias da semana",
-          "weekend": "final da semana"
+          "daily": "diário",
+          "workdays": "semana de trabalho",
+          "weekend": "fim-de-semana"
         },
         "day_types_long": {
           "daily": "todos os dias",
-          "workdays": "dias da semana",
-          "weekend": "final da semana"
+          "workdays": "em dias de semana",
+          "weekend": "no fim-de-semana"
         },
-        "days": "Dias",
-        "tomorrow": "tomorrow",
-        "repeated_days": "every {days}",
-        "repeated_days_except": "every day except {excludedDays}",
-        "days_range": "from {startDay} to {endDay}"
+        "days": "dias",
+        "tomorrow": "amanhã",
+        "repeated_days": "a cada {days}",
+        "repeated_days_except": "a cada dia exceto {excludedDays}",
+        "days_range": "até {startDay} até {endDay}",
+        "next_week_day": "próximo {weekday}"
       },
       "time": {
-        "absolute": "at {time}",
-        "interval": "from {startTime} to {endTime}",
-        "midnight": "midnight",
-        "noon": "noon",
-        "at_sun_event": "at {sunEvent}"
+        "absolute": "à {time}",
+        "interval": "das {startTime} às {endTime}",
+        "at_midnight": "ao meia-noite",
+        "at_noon": "ao meio-dia",
+        "at_sun_event": "ao {sunEvent}"
       }
     },
     "panel": {
@@ -97,31 +108,37 @@
         "title": "Agenda"
       },
       "overview": {
-        "no_entries": "Não tem item pra mostar",
-        "excluded_items": "{number} excluded {if number is 1} item {else} items",
-        "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "no_entries": "Não existem itens a mostrar",
+        "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
+        "excluded_items": "{number}{if number is 1} item excluído {else} itens excluídos",
+        "hide_excluded": "ocultar itens excluídos",
+        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
       },
       "entity_picker": {
-        "no_groups_defined": "Não tem grupo definido",
+        "no_groups_defined": "Não existem grupos definidos",
         "no_group_selected": "Selecione um grupo primeiro",
-        "no_entities_for_group": "Não tem entidade no grupo",
+        "no_entities_for_group": "Não existem entidades neste grupo",
         "no_entity_selected": "Selecione uma entidade primeiro",
-        "no_actions_for_entity": "Não há ações para esta entidade",
-        "make_scheme": "make scheme"
+        "no_actions_for_entity": "Não existem ações para esta entidade",
+        "make_scheme": "criar esquema",
+        "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first"
+        "no_timeslot_selected": "Selecionar um período horário primeiro",
+        "time_scheme": "Esquema",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined"
+        "equal_to": "é",
+        "unequal_to": "não é",
+        "all": "todos(as)",
+        "any": "qualquer",
+        "no_conditions_defined": "Não existem condições definidas",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "behaviour after triggering"
+        "repeat_type": "comportamento após a conclusão",
+        "period": "período"
       }
     }
   }

@@ -1,43 +1,29 @@
-
-
-
-
-function supportLocaleString() {
-  try {
-    new Date().toLocaleDateString("i");
-  } catch (e) {
-    return e.name === "RangeError";
-  }
-  return false;
-}
-
+import { FrontendTranslationData } from 'custom-card-helpers';
 
 export const weekdayArray = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-
-function getWeekday(dateObj: Date | number, _locales: string, short?: boolean) {
-  if (typeof dateObj !== "object") {
-    let date = new Date(2017, 1, 26);
-    date.setDate(date.getDate() + dateObj);
-    dateObj = date;
-  }
-  let weekday = dateObj.getDay();
-  return short ? weekdayArray[weekday].substr(0, 3) : weekdayArray[weekday];
-}
-
-
-export const formatWeekday = supportLocaleString()
-  ? (dateObj: Date | number, locales: string, short?: boolean) => {
-    if (typeof dateObj !== "object") {
-      let date = new Date(2017, 1, 26);
-      date.setDate(date.getDate() + dateObj);
-      dateObj = date;
+export const formatWeekday = (date: Date | number, locale: FrontendTranslationData, short?: boolean): string => {
+  const supportLocaleString = () => {
+    try {
+      new Date().toLocaleDateString('i');
+    } catch (e) {
+      return e.name === 'RangeError';
     }
-    return dateObj.toLocaleDateString(locales, {
-      weekday: short ? "short" : "long",
-    })
+    return false;
+  };
+
+  if (typeof date !== 'object') {
+    let _date = new Date(2017, 1, 26);
+    _date.setDate(_date.getDate() + date);
+    date = _date;
   }
-  : (dateObj: Date | number, locales: string, short?: boolean) => getWeekday(dateObj, locales, short);
 
-
-
+  if (supportLocaleString()) {
+    return date.toLocaleDateString(locale.language, {
+      weekday: short ? 'short' : 'long',
+    });
+  } else {
+    const weekday = date.getDay();
+    return short ? weekdayArray[weekday].substr(0, 3) : weekdayArray[weekday];
+  }
+};

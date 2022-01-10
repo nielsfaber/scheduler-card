@@ -4,14 +4,20 @@ import * as en from './languages/en.json';
 import * as es from './languages/es.json';
 import * as et from './languages/et.json';
 import * as fr from './languages/fr.json';
+import * as he from './languages/he.json';
 import * as hu from './languages/hu.json';
 import * as it from './languages/it.json';
 import * as nl from './languages/nl.json';
 import * as no from './languages/no.json';
 import * as pl from './languages/pl.json';
+import * as pt from './languages/pt.json';
 import * as pt_br from './languages/pt-br.json';
 import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
+import * as sk from './languages/sk.json';
+import * as uk from './languages/uk.json';
+import * as zh_Hans from './languages/zh-Hans.json';
+import { FrontendTranslationData } from 'custom-card-helpers';
 
 const languages: any = {
   cs: cs,
@@ -21,6 +27,7 @@ const languages: any = {
   et: et,
   es_419: es,
   fr: fr,
+  he: he,
   hu: hu,
   it: it,
   nb: no,
@@ -28,22 +35,25 @@ const languages: any = {
   nn: no,
   no: no,
   pl: pl,
-  pt: pt_br,
+  pt: pt,
   pt_BR: pt_br,
   ro: ro,
+  sk: sk,
   ru: ru,
+  uk: uk,
+  'zh-Hans': zh_Hans,
 };
 
 export function localize(
   string: string,
-  lang: string,
+  locale: FrontendTranslationData,
   search: string | (string | number)[] | number = '',
   replace: string | (string | number)[] | number = ''
 ) {
   let translated: string;
   try {
-    if (lang == 'test') return 'TRANSLATED';
-    translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
+    if (locale.language == 'test') return 'TRANSLATED';
+    translated = string.split('.').reduce((o, i) => o[i], languages[locale.language]);
     if (!translated) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   } catch (e) {
     try {

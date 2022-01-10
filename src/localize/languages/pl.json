@@ -8,13 +8,15 @@
       "set_temperature": "ustaw temperaturę[ na {temperature}]",
       "set_temperature_hvac_mode_heat": "grzej[ do {temperature}]",
       "set_temperature_hvac_mode_cool": "chłodź[ do {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "ustaw tryb[ na {hvac_mode}]",
       "set_preset_mode": "ustaw preset[ {preset_mode}]"
     },
     "cover": {
       "close_cover": "zamknij",
       "open_cover": "otwórz",
-      "set_cover_position": "ustaw pozycję[ na {position}]"
+      "set_cover_position": "ustaw pozycję[ na {position}]",
+      "set_cover_tilt_position": "ustaw pozycję lameli[ na {tilt_position}]"
     },
     "fan": {
       "set_speed": "ustaw prędkość[ na {speed}]",
@@ -22,12 +24,16 @@
       "oscillate": "ustaw oscylacje[ na {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "ustaw wilgotność[ na {humidity}]"
+      "set_humidity": "ustaw wilgotność[ na {humidity}]",
+      "set_mode": "ustaw tryb[ na {mode}]"
     },
     "input_number": {
       "set_value": "ustaw wartość[ na {value}]"
     },
     "input_select": {
+      "select_option": "wybierz opcję[ {option}]"
+    },
+    "select": {
       "select_option": "wybierz opcję[ {option}]"
     },
     "light": {
@@ -36,6 +42,9 @@
     "media_player": {
       "select_source": "wybierz źródło[ {source}]"
     },
+    "notify": {
+      "notify": "send notification"
+    },
     "script": {
       "script": "wykonaj"
     },
@@ -43,6 +52,7 @@
       "start_pause": "start / pauza"
     },
     "water_heater": {
+      "set_operation_mode": "ustaw tryb[ na {operation_mode}]",
       "set_away_mode": "ustaw tryb nieobecności"
     }
   },
@@ -82,13 +92,14 @@
         "tomorrow": "jutro",
         "repeated_days": "co {days} dni",
         "repeated_days_except": "coddziennie z wyjątkiem {excludedDays}",
-        "days_range": "od {startDay} do {endDay}"
+        "days_range": "od {startDay} do {endDay}",
+        "next_week_day": "następna {weekday}"
       },
       "time": {
         "absolute": "o {time}",
         "interval": "od {startTime} do {endTime}",
-        "midnight": "północ",
-        "noon": "południe",
+        "at_midnight": "o północ",
+        "at_noon": "o południe",
         "at_sun_event": "o {sunEvent}"
       }
     },
@@ -98,6 +109,7 @@
       },
       "overview": {
         "no_entries": "Nie ma elementów do pokazania",
+        "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{number} wykluczona {if number is 1} pozycja {else} pozycje",
         "hide_excluded": "ukryj wykluczone pozycje",
         "additional_tasks": "{number} dodatkowe {if number is 1} zadanie {else} zadań(nia)"
@@ -108,20 +120,25 @@
         "no_entities_for_group": "Nie ma encji w tej grupie",
         "no_entity_selected": "Najpierw wybierz encję",
         "no_actions_for_entity": "Nie ma akcji dla tej encji",
-        "make_scheme": "stwórz schemat"
+        "make_scheme": "stwórz schemat",
+        "multiple": "Multiple"
       },
       "time_picker": {
-        "no_timeslot_selected": "Najpierw wybierz przedział czasowy"
+        "no_timeslot_selected": "Najpierw wybierz przedział czasowy",
+        "time_scheme": "Schemat",
+        "time_input_mode": "Time control mode"
       },
       "conditions": {
         "equal_to": "jest równe ",
         "unequal_to": "nie jest równe",
         "all": "wszystkie",
         "any": "dowolny",
-        "no_conditions_defined": "Nie ma zdefiniowanych warunków"
+        "no_conditions_defined": "Nie ma zdefiniowanych warunków",
+        "track_conditions": "Re-evaluate when conditions change"
       },
       "options": {
-        "repeat_type": "zachowanie po wyzwoleniu"
+        "repeat_type": "zachowanie po zakończeniu",
+        "period": "okres"
       }
     }
   }
