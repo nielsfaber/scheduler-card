@@ -327,7 +327,7 @@ export class SchedulerOptionsCard extends LitElement {
             : html`
                 <mwc-button
                   @click=${this.confirmConditionClick}
-                  ?disabled=${!this.selectedEntity || !this.conditionMatchType || !this.conditionValue}
+                  ?disabled=${!this.selectedEntity || !this.conditionMatchType || !isDefined(this.conditionValue)}
                   >${this.hass.localize('ui.common.save')}</mwc-button
                 >
                 ${this.editItem !== undefined
