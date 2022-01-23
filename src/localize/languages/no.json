@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarmpanel",
+    "binary_sensor": "binary sensors",
     "climate": "klima",
     "cover": "solskjerming",
     "fan": "vifter",
@@ -70,8 +71,7 @@
     "light": "lys",
     "lock": "låser",
     "media_player": "mediaspillere",
-    "scene": "scener",
-    "script": "skript",
+    "notify": "notification",
     "switch": "brytere",
     "vacuum": "støvsugere",
     "water_heater": "varmtvannsberedere"

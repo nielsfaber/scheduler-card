@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "poplašný ovládací panel",
+    "binary_sensor": "binary sensors",
     "climate": "klima",
     "cover": "rolety",
     "fan": "ventilátory",
@@ -70,8 +71,7 @@
     "light": "světla",
     "lock": "zámky",
     "media_player": "média přehrávače",
-    "scene": "scény",
-    "script": "skripty",
+    "notify": "notification",
     "switch": "spínače",
     "vacuum": "vysavače",
     "water_heater": "ohřívače vody"

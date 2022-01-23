@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "בקרת אזעקה",
+    "binary_sensor": "binary sensors",
     "climate": "מזג אוויר",
     "cover": "תריסים",
     "fan": "מאווררים",
@@ -70,8 +71,7 @@
     "light": "תאורה",
     "lock": "מנעולים",
     "media_player": "נגני מדיה",
-    "scene": "תרחישים",
-    "script": "סקריפטים",
+    "notify": "notification",
     "switch": "מפסקים",
     "vacuum": "שואבי אבק",
     "water_heater": "מחממי מים"

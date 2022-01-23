@@ -1,10 +1,9 @@
 import { Group, CardConfig } from '../types';
 import { DefaultGroupIcon } from '../const';
 import { computeDomain, HomeAssistant } from 'custom-card-helpers';
-import { localize } from '../localize/localize';
 import { domainIcons } from '../standard-configuration/standardIcon';
 import { entityFilter } from './entities/entity_filter';
-import { sortAlphabetically, getLocale } from '../helpers';
+import { standardGroupNames } from '../standard-configuration/group_name';
 
 export function entityGroups(entities: string[], config: Partial<CardConfig>, hass: HomeAssistant) {
   const groups: Group[] = [];
@@ -28,7 +27,7 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>, ha
   //automatically create groups for ungrouped entities
   domains.forEach(domain => {
     const group: Group = {
-      name: localize(`domains.${domain}`, getLocale(hass)) || domain,
+      name: standardGroupNames(domain, hass),
       icon:
         (config.standard_configuration === undefined || config.standard_configuration) && domain in domainIcons
           ? domainIcons[domain]

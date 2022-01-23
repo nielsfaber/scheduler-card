@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panneau de contrôle de l'alarme",
+    "binary_sensor": "binary sensors",
     "climate": "thermostat",
     "cover": "volet",
     "fan": "ventilateur",
@@ -70,8 +71,7 @@
     "light": "lumière",
     "lock": "serrure",
     "media_player": "lecteur multimédia",
-    "scene": "scène",
-    "script": "script",
+    "notify": "notification",
     "switch": "interrupteur",
     "vacuum": "aspirateur",
     "water_heater": "chauffe eau"

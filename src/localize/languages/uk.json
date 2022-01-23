@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "панель керування сигналізацією",
+    "binary_sensor": "binary sensors",
     "climate": "клімат",
     "cover": "жалюзі",
     "fan": "вентилятори",
@@ -70,8 +71,7 @@
     "light": "освітлення",
     "lock": "замки",
     "media_player": "медіаплеєри",
-    "scene": "сцени",
-    "script": "скрипти",
+    "notify": "notification",
     "switch": "вимикачі",
     "vacuum": "пилососи",
     "water_heater": "водонагрівачі"

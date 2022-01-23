@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panou control alarmă",
+    "binary_sensor": "binary sensors",
     "climate": "climat",
     "cover": "jaluzele",
     "fan": "ventilatoare",
@@ -70,8 +71,7 @@
     "light": "lumini",
     "lock": "încuietori",
     "media_player": "media playere",
-    "scene": "scene",
-    "script": "scripturi",
+    "notify": "notification",
     "switch": "întrerupătoare",
     "vacuum": "aspiratoare",
     "water_heater": "încălzitoare apă"

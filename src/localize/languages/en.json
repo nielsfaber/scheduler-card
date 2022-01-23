@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarm control panel",
+    "binary_sensor": "binary sensors",
     "climate": "climate",
     "cover": "covers",
     "fan": "fans",
@@ -70,8 +71,7 @@
     "light": "lights",
     "lock": "locks",
     "media_player": "media players",
-    "scene": "scenes",
-    "script": "scripts",
+    "notify": "notification",
     "switch": "switches",
     "vacuum": "vacuums",
     "water_heater": "water heaters"

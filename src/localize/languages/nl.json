@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarmsystemen",
+    "binary_sensor": "binaire sensoren",
     "climate": "verwarming",
     "cover": "zonwering",
     "fan": "ventilatie",
@@ -71,8 +72,7 @@
     "light": "verlichting",
     "lock": "sloten",
     "media_player": "mediaspelers",
-    "scene": "scènes",
-    "script": "scripts",
+    "notify": "notificatie",
     "switch": "schakelaars",
     "vacuum": "stofzuigers",
     "water_heater": "waterverwarming"

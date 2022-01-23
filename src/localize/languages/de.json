@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "Alarmzentrale",
+    "binary_sensor": "binary sensors",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
@@ -70,8 +71,7 @@
     "light": "Licht",
     "lock": "Schlösser",
     "media_player": "Medienplayer",
-    "scene": "Szene",
-    "script": "Skripte",
+    "notify": "notification",
     "switch": "Schalter",
     "vacuum": "Staubsauger",
     "water_heater": "Boiler"

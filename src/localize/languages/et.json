@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "valvepaneel",
+    "binary_sensor": "binary sensors",
     "climate": "kliimaseade",
     "cover": "aknakatted",
     "fan": "ventilaatorid",
@@ -70,8 +71,7 @@
     "light": "valgustid",
     "lock": "lukud",
     "media_player": "meediamängijad",
-    "scene": "stseenid",
-    "script": "skriptud",
+    "notify": "notification",
     "switch": "lülitid",
     "vacuum": "tolmuimejad",
     "water_heater": "veeboilerid"

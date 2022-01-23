@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "pannello di controllo allarme",
+    "binary_sensor": "binary sensors",
     "climate": "clima",
     "cover": "serrande",
     "fan": "ventole",
@@ -70,8 +71,7 @@
     "light": "luci",
     "lock": "lucchetti",
     "media_player": "media player",
-    "scene": "scene",
-    "script": "script",
+    "notify": "notification",
     "switch": "interruttori",
     "vacuum": "aspirapolveri",
     "water_heater": "scaldabagno"

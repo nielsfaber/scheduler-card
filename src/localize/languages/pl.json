@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panel kontrolny alarmu",
+    "binary_sensor": "binary sensors",
     "climate": "klimatyzacja",
     "cover": "rolety",
     "fan": "wentylatory",
@@ -70,8 +71,7 @@
     "light": "światła",
     "lock": "zamki",
     "media_player": "odtwarzacze",
-    "scene": "sceny",
-    "script": "skrypty",
+    "notify": "notification",
     "switch": "przełączniki",
     "vacuum": "odkurzacze",
     "water_heater": "podgrzewacze wody"

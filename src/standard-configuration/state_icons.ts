@@ -38,6 +38,10 @@ export const stateIcons: IconList = {
     on: binarySensorIcon,
     off: binarySensorIcon,
   },
+  calendar: {
+    on: 'mdi:flash',
+    off: 'mdi:flash-off',
+  },
   climate: {
     off: 'mdi:power-off',
     heat: 'mdi:fire',

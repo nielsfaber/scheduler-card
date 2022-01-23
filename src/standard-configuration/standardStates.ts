@@ -31,7 +31,7 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
     stateConfig = { ...stateConfig, options: options };
     if (!options.length) return null;
     return listVariable(stateConfig);
-  } else if ('unit' in stateConfig && isDefined(stateConfig.unit)) {
+  } else if ('min' in stateConfig && isDefined(stateConfig.min) && 'max' in stateConfig && isDefined(stateConfig.max)) {
     return levelVariable(stateConfig);
   } else {
     return textVariable(stateConfig);
@@ -42,9 +42,7 @@ const getStateName = (stateObj: HassEntity, state: string, hass: HomeAssistant) 
   const domain = computeDomain(stateObj.entity_id);
   return (
     (stateObj.attributes.device_class &&
-      hass.localize(
-        `component.${domain}.state.${stateObj.attributes.device_class}.${state}`
-      )) ||
+      hass.localize(`component.${domain}.state.${stateObj.attributes.device_class}.${state}`)) ||
     hass.localize(`component.${domain}.state._.${state}`) ||
     state
   );

@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panel de control de alarma",
+    "binary_sensor": "binary sensors",
     "climate": "climatización",
     "cover": "cortinas",
     "fan": "ventiladores",
@@ -70,9 +71,7 @@
     "light": "luces",
     "lock": "cerraduras",
     "media_player": "reproductores",
-    "automation": "automatizaciones",
-    "scene": "escenas",
-    "script": "scripts",
+    "notify": "notification",
     "switch": "interruptores",
     "vacuum": "aspiradores",
     "water_heater": "calentador de agua"
