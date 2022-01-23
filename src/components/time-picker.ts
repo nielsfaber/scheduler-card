@@ -6,7 +6,7 @@ import { ETimeEvent } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { formatTime } from '../data/date-time/format_time';
-import { getLocale } from '../helpers';
+import { getLocale, isDefined } from '../helpers';
 
 @customElement('time-picker')
 export class TimePicker extends LitElement {
@@ -18,7 +18,7 @@ export class TimePicker extends LitElement {
   @property() relativeMode = false;
   @property() event = ETimeEvent.Sunrise;
 
-  @property() _time = 0;
+  @property() _time?;
 
   maxOffset = 2;
 
@@ -27,10 +27,13 @@ export class TimePicker extends LitElement {
     return Math.abs(this._time);
   }
   set time(value: number) {
-    this._time = roundTime(value, this.stepSize, {
+    const newTime = roundTime(value, this.stepSize, {
       wrapAround: !this.relativeMode,
       maxHours: this.relativeMode ? this.maxOffset : undefined,
     });
+    const timeUpdated = newTime != this._time && isDefined(this._time);
+    this._time = newTime;
+    if (timeUpdated) this.updateValue();
   }
 
   firstUpdated() {
@@ -43,7 +46,7 @@ export class TimePicker extends LitElement {
     }
   }
 
-  updated() {
+  updateValue() {
     if (this.relativeMode) {
       const sign = this._time >= 0 ? '+' : '-';
       const offset = timeToString(this.time);
