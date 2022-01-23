@@ -182,6 +182,10 @@
               "additional_tasks": "Number of additional tasks"
             }
           },
+          "show_header_toggle": {
+            "heading": "Show header toggle",
+            "description": "Show toggle switch at the top of the card for enabling/enabling all entities"
+          },
           "tags": {
             "heading": "Tags",
             "description": "Use tags to divide schedules between multiple cards"
