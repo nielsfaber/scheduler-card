@@ -7,6 +7,7 @@ const variableList: Record<string, Record<string, string>> = {
     target_temp_high: 'ui.panel.lovelace.editor.card.generic.maximum',
     hvac_mode: 'ui.card.climate.operation',
     preset_mode: 'ui.card.climate.preset_mode',
+    fan_mode: 'ui.card.climate.fan_mode',
   },
   cover: {
     position: 'ui.card.cover.position',
@@ -36,8 +37,7 @@ const variableList: Record<string, Record<string, string>> = {
   },
   notify: {
     title: 'ui.panel.config.automation.editor.actions.type.device_id.extra_fields.title',
-    message:
-      'ui.panel.config.automation.editor.actions.type.device_id.extra_fields.message',
+    message: 'ui.panel.config.automation.editor.actions.type.device_id.extra_fields.message',
   },
   select: {
     option: 'ui.components.dialogs.input_select.options',
@@ -49,11 +49,7 @@ const variableList: Record<string, Record<string, string>> = {
   },
 };
 
-export const getVariableName = (
-  domain: string,
-  variable: string,
-  hass: HomeAssistant
-) => {
+export const getVariableName = (domain: string, variable: string, hass: HomeAssistant) => {
   if (domain in variableList && variable in variableList[domain]) {
     return hass.localize(variableList[domain][variable]);
   }

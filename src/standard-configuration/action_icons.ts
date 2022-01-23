@@ -43,6 +43,7 @@ const actionIcons: IconList = {
     set_temperature: 'mdi:thermometer',
     set_mode: 'mdi:cog-transfer-outline',
     set_preset: 'mdi:cloud-download-outline',
+    set_fan_mode: 'mdi:fan',
   },
   cover: {
     close: coverIcon,
@@ -117,11 +118,7 @@ const actionIcons: IconList = {
   },
 };
 
-export const actionIcon = (
-  domain: string,
-  action: string,
-  stateObj: HassEntity | undefined
-): string | undefined => {
+export const actionIcon = (domain: string, action: string, stateObj: HassEntity | undefined): string | undefined => {
   if (domain in actionIcons && action in actionIcons[domain]) {
     let item = actionIcons[domain][action];
     if (item instanceof Function) {

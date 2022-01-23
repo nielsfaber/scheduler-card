@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "chłodź[ do {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "ustaw tryb[ na {hvac_mode}]",
-      "set_preset_mode": "ustaw preset[ {preset_mode}]"
+      "set_preset_mode": "ustaw preset[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "zamknij",

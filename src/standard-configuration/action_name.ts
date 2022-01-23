@@ -25,6 +25,7 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     set_temperature: 'services.climate.set_temperature',
     set_mode: 'services.climate.set_hvac_mode',
     set_preset: 'services.climate.set_preset_mode',
+    set_fan_mode: 'services.climate.set_fan_mode',
   },
   cover: {
     close: 'services.cover.close_cover',
@@ -105,9 +106,7 @@ export const actionName = (domain: string, action: string, hass: HomeAssistant) 
     if (item instanceof Function) {
       item = item(action);
     }
-    return item.startsWith('services')
-      ? localize(item, getLocale(hass))
-      : hass.localize(item);
+    return item.startsWith('services') ? localize(item, getLocale(hass)) : hass.localize(item);
   }
   return action;
 };

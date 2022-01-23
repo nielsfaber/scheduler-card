@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "制冷模式[ 至 {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "调节[ 至 {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "设定模式[ 为 {hvac_mode}]",
-      "set_preset_mode": "设定预设模式[ 为 {preset_mode}]"
+      "set_preset_mode": "设定预设模式[ 为 {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "关闭",
