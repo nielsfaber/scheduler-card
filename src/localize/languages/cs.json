@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "chlazení[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "nastavit režim[ na {hvac_mode}]",
-      "set_preset_mode": "nastavit předvolbu[ {preset_mode}]"
+      "set_preset_mode": "nastavit předvolbu[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "zavřít",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "poplašný ovládací panel",
+    "binary_sensor": "binary sensors",
     "climate": "klima",
     "cover": "rolety",
     "fan": "ventilátory",
@@ -69,8 +71,7 @@
     "light": "světla",
     "lock": "zámky",
     "media_player": "média přehrávače",
-    "scene": "scény",
-    "script": "skripty",
+    "notify": "notification",
     "switch": "spínače",
     "vacuum": "vysavače",
     "water_heater": "ohřívače vody"

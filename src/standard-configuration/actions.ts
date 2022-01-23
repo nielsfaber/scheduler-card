@@ -63,9 +63,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       supported_feature: 1,
       condition: stateObj =>
-        !['heat', 'cool', 'heat_cool'].some(e =>
-          listAttribute(stateObj, 'hvac_modes').includes(e)
-        ),
+        !['heat', 'cool', 'heat_cool'].some(e => listAttribute(stateObj, 'hvac_modes').includes(e)),
     },
     heat: {
       service: 'set_temperature',
@@ -114,13 +112,9 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       variables: {
         hvac_mode: {
           template: stateObj => {
-            const supportedFeatures =
-              numericAttribute(stateObj, 'supported_features') || 0;
+            const supportedFeatures = numericAttribute(stateObj, 'supported_features') || 0;
             let modes = listAttribute(stateObj, 'hvac_modes');
-            if (supportedFeatures & 1)
-              modes = modes.filter(
-                e => !['heat', 'cool', 'heat_cool', 'off'].includes(e)
-              );
+            if (supportedFeatures & 1) modes = modes.filter(e => !['heat', 'cool', 'heat_cool', 'off'].includes(e));
             return { options: modes };
           },
         },
@@ -134,6 +128,14 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
         },
       },
       supported_feature: 16,
+    },
+    set_fan_mode: {
+      service: 'set_fan_mode',
+      variables: {
+        fan_mode: {
+          options: 'fan_modes',
+        },
+      },
     },
   },
   cover: {

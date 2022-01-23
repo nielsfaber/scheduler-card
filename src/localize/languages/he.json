@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "קירור[ ל {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "קבע מצב עבודה[ ל {hvac_mode}]",
-      "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]"
+      "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "סגירה",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "בקרת אזעקה",
+    "binary_sensor": "binary sensors",
     "climate": "מזג אוויר",
     "cover": "תריסים",
     "fan": "מאווררים",
@@ -69,8 +71,7 @@
     "light": "תאורה",
     "lock": "מנעולים",
     "media_player": "נגני מדיה",
-    "scene": "תרחישים",
-    "script": "סקריפטים",
+    "notify": "notification",
     "switch": "מפסקים",
     "vacuum": "שואבי אבק",
     "water_heater": "מחממי מים"

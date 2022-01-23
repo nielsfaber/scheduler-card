@@ -4,7 +4,7 @@ import { fireEvent, HomeAssistant, LovelaceCardEditor, computeDomain } from 'cus
 
 import { CardConfig, EntityElement, ScheduleConfig, Action, ERepeatType, Timeslot } from './types';
 import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
-import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray, pick } from './helpers';
+import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray, pick, isEqual } from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './views/scheduler-entities-card';
@@ -253,7 +253,7 @@ export class SchedulerCard extends LitElement {
     this._view = EViews.NewSchedule;
   }
 
-  _saveItemClick(ev: CustomEvent): void {
+  async _saveItemClick(ev: CustomEvent): Promise<void> {
     if (!this._hass) return;
     let schedule = ev.detail as ScheduleConfig;
     schedule = {
@@ -279,13 +279,25 @@ export class SchedulerCard extends LitElement {
     };
 
     if (this.editItem) {
-      if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
-      editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
-        .catch(e => handleError(e, this))
-        .then(() => {
-          this.editItem = null;
-          this._view = EViews.Overview;
-        });
+      const oldSchedule = await fetchScheduleItem(this._hass, this.editItem);
+      if (
+        isEqual(omit(schedule, 'timeslots'), omit(pick(oldSchedule, Object.keys(schedule)), 'timeslots')) &&
+        schedule.timeslots.length == oldSchedule.timeslots.length &&
+        schedule.timeslots.every((slot, i) => isEqual(slot, pick(oldSchedule.timeslots[i], Object.keys(slot))))
+      ) {
+        // don't save if there are no changes
+        this.editItem = null;
+        this._view = EViews.Overview;
+      } else {
+        if (!oldSchedule.enabled) this._hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
+        if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
+        editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
+          .catch(e => handleError(e, this))
+          .then(() => {
+            this.editItem = null;
+            this._view = EViews.Overview;
+          });
+      }
     } else {
       saveSchedule(this._hass, schedule)
         .catch(e => handleError(e, this))

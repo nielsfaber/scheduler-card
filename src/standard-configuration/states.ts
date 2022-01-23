@@ -19,6 +19,7 @@ export const statesList: Record<string, VariableConfig> = {
   climate: {
     options: 'hvac_modes',
   },
+  calendar: onOffType,
   cover: { options: ['open', 'closed'] },
   device_tracker: { options: ['home', 'not_home'] },
   fan: onOffType,
@@ -35,6 +36,11 @@ export const statesList: Record<string, VariableConfig> = {
   },
   light: onOffType,
   lock: { options: ['locked', 'unlocked'] },
+  number: {
+    min: 'min',
+    max: 'max',
+    step: 'step',
+  },
   person: { options: ['home', 'not_home'] },
   proximity: {
     unit: 'unit_of_measurement',

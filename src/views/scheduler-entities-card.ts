@@ -45,6 +45,31 @@ const sortSchedules = (schedules: Schedule[], hass: HomeAssistant) => {
   return output;
 };
 
+//check whether entities and tags of schedule are included in configuration
+const isIncluded = (schedule: Schedule, config: CardConfig) => {
+  if (
+    !schedule.timeslots.every(timeslot =>
+      timeslot.actions.every(action => entityFilter(action.entity_id || action.service, config))
+    )
+  )
+    return false;
+
+  const filters = AsArray(config.tags);
+  if (filters.length) {
+    if ((schedule.tags || []).some(e => filters.includes(e))) return true;
+    else if (filters.includes('none') && !schedule.tags?.length) return true;
+    return false;
+  }
+  return true;
+};
+
+//check whether entities and tags of schedule are included in configuration OR they should be discovered
+const isIncludedOrExcluded = (schedule: Schedule, config: CardConfig) => {
+  if (config.discover_existing) return true;
+  else if (!schedule) return false;
+  else return isIncluded(schedule, config);
+};
+
 @customElement('scheduler-entities-card')
 export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   @property()
@@ -73,7 +98,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       const oldSchedule = this.schedules?.find(e => e.schedule_id == ev.schedule_id);
       let schedules = [...(this.schedules || [])];
 
-      if (!schedule || !this.filterIncludedSchedule(schedule)) {
+      if (!schedule || !isIncludedOrExcluded(schedule, this.config!)) {
         //schedule is not in the list, remove if it was in the list
         if (oldSchedule) {
           schedules = schedules.filter(e => e.schedule_id != ev.schedule_id);
@@ -103,9 +128,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
 
     fetchSchedules(this.hass!)
       .then(res => {
-        let schedules = res;
-
-        schedules = schedules.filter(e => this.filterIncludedSchedule(e));
+        let schedules = res.filter(e => isIncludedOrExcluded(e, this.config!));
         this.schedules = sortSchedules(schedules, this.hass!);
       })
       .catch(_e => {
@@ -144,13 +167,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
           </div>
           ${this.schedules.length && this.config.show_header_toggle
             ? html`
-                <ha-switch
-                  ?checked=${this.schedules.some(el =>
-                    ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || '')
-                  )}
-                  @change=${this.toggleDisableAll}
-                >
-                </ha-switch>
+                <ha-switch ?checked=${this.computeHeaderToggleState()} @change=${this.toggleDisableAll}> </ha-switch>
               `
             : ''}
         </div>
@@ -169,6 +186,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
       </ha-card>
     `;
   }
+
   getRows() {
     if (!this.config || !this.hass || !this.schedules) return html``;
     if (this.connectionError) {
@@ -186,17 +204,8 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         </div>
       `;
     }
-    const includedSchedules: Schedule[] = [];
-    const excludedEntities: Schedule[] = [];
-
-    this.schedules.forEach(schedule => {
-      const included = schedule.timeslots.every(timeslot =>
-        timeslot.actions.every(action => entityFilter(action.entity_id || action.service, this.config!))
-      );
-      if (!included) excludedEntities.push(schedule);
-      else if (!this.filterByTags(schedule)) excludedEntities.push(schedule);
-      else includedSchedules.push(schedule);
-    });
+    const includedSchedules: Schedule[] = this.schedules.filter(e => isIncluded(e, this.config!));
+    const excludedEntities: Schedule[] = this.schedules.filter(e => !isIncluded(e, this.config!));
 
     return html`
       ${includedSchedules.map(schedule => {
@@ -264,9 +273,20 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   toggleDisableAll(ev: Event) {
     if (!this.hass || !this.schedules) return;
     const checked = (ev.target as HTMLInputElement).checked;
-    this.schedules.forEach(el => {
+    const items = this.schedules.filter(e =>
+      this.showDiscovered ? isIncludedOrExcluded(e, this.config!) : isIncluded(e, this.config!)
+    );
+    items.forEach(el => {
       this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
     });
+  }
+
+  computeHeaderToggleState() {
+    if (!this.schedules) return false;
+    const items = this.schedules.filter(e =>
+      this.showDiscovered ? isIncludedOrExcluded(e, this.config!) : isIncluded(e, this.config!)
+    );
+    return items.some(el => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''));
   }
 
   editItemClick(entity_id: string) {
@@ -277,30 +297,6 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
   newItemClick() {
     const myEvent = new CustomEvent('newClick');
     this.dispatchEvent(myEvent);
-  }
-
-  filterIncludedSchedule(schedule: Schedule) {
-    if (this.config!.discover_existing) {
-      return true;
-    } else if (!schedule) {
-      return false;
-    } else if (
-      !schedule.timeslots.every(slot =>
-        slot.actions.every(action => entityFilter(action.entity_id || action.service, this.config!))
-      )
-    ) {
-      return false;
-    } else return this.filterByTags(schedule);
-  }
-
-  filterByTags(schedule: Schedule) {
-    const filters = AsArray(this.config!.tags);
-    if (filters.length) {
-      if ((schedule.tags || []).some(e => filters.includes(e))) return true;
-      else if (filters.includes('none') && !schedule.tags?.length) return true;
-      return false;
-    }
-    return true;
   }
 
   static styles = css`

@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "охлаждение[ {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "регулировать[ в пределах {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "установить режим[ {hvac_mode}]",
-      "set_preset_mode": "выбрать набор настроек[ {preset_mode}]"
+      "set_preset_mode": "выбрать набор настроек[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "закрыть",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "панель управления сигнализацией",
+    "binary_sensor": "binary sensors",
     "climate": "климат",
     "cover": "жалюзи",
     "fan": "вентиляторы",
@@ -69,8 +71,7 @@
     "light": "освещение",
     "lock": "замки",
     "media_player": "медиа-плееры",
-    "scene": "сцены",
-    "script": "скрипты",
+    "notify": "notification",
     "switch": "розетки",
     "vacuum": "пылесосы",
     "water_heater": "подогреватели воды"

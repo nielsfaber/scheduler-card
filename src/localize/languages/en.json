@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "cool[ to {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "set mode[ to {hvac_mode}]",
-      "set_preset_mode": "set preset[ to {preset_mode}]"
+      "set_preset_mode": "set preset[ to {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "close",
@@ -26,7 +27,6 @@
     "humidifier": {
       "set_humidity": "set humidity[ to {humidity}]",
       "set_mode": "set mode[ to {mode}]"
-
     },
     "input_number": {
       "set_value": "set value[ to {value}]"
@@ -59,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarm control panel",
+    "binary_sensor": "binary sensors",
     "climate": "climate",
     "cover": "covers",
     "fan": "fans",
@@ -70,8 +71,7 @@
     "light": "lights",
     "lock": "locks",
     "media_player": "media players",
-    "scene": "scenes",
-    "script": "scripts",
+    "notify": "notification",
     "switch": "switches",
     "vacuum": "vacuums",
     "water_heater": "water heaters"
@@ -181,6 +181,10 @@
               "days": "Repeated days of the week",
               "additional_tasks": "Number of additional tasks"
             }
+          },
+          "show_header_toggle": {
+            "heading": "Show header toggle",
+            "description": "Show toggle switch at the top of the card for enabling/enabling all entities"
           },
           "tags": {
             "heading": "Tags",

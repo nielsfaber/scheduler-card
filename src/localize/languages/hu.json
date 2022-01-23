@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "hőmérséklet[ to {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "mód beállítása[ to {hvac_mode}]",
-      "set_preset_mode": "preset beállítása[ {preset_mode}]"
+      "set_preset_mode": "preset beállítása[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "zárás",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarm control panel",
+    "binary_sensor": "binary sensors",
     "climate": "termosztát",
     "cover": "redőny",
     "fan": "ventilátor",
@@ -69,8 +71,7 @@
     "light": "lámpa",
     "lock": "locks",
     "media_player": "lejátszó",
-    "scene": "jelenetek",
-    "script": "scripts",
+    "notify": "notification",
     "switch": "kapcsoló",
     "vacuum": "pórszívó",
     "water_heater": "water heaters"

@@ -240,6 +240,20 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 ></ha-checkbox>
               </ha-formfield>
 
+              <div class="header">
+                ${localize('ui.panel.card_editor.fields.show_header_toggle.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.show_header_toggle.description', getLocale(this.hass))}
+              </div>
+              <ha-switch
+                ?checked=${this._config.show_header_toggle}
+                @change=${(ev: Event) => {
+                  this._updateConfig({ show_header_toggle: (ev.target as HTMLInputElement).checked });
+                }}
+              >
+              </ha-switch>
+
               ${this.tagOptions !== undefined
                 ? html`
                     <div class="header">

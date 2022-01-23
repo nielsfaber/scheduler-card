@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "sett temperatur[ til {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "reguler[ til {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "sett modus[ til {hvac_mode}]",
-      "set_preset_mode": "sett forhåndsvalg[ {preset_mode}]"
+      "set_preset_mode": "sett forhåndsvalg[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "lukk",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarmpanel",
+    "binary_sensor": "binary sensors",
     "climate": "klima",
     "cover": "solskjerming",
     "fan": "vifter",
@@ -69,8 +71,7 @@
     "light": "lys",
     "lock": "låser",
     "media_player": "mediaspillere",
-    "scene": "scener",
-    "script": "skript",
+    "notify": "notification",
     "switch": "brytere",
     "vacuum": "støvsugere",
     "water_heater": "varmtvannsberedere"

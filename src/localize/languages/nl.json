@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "koelen[ naar {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "reguleren[ naar {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "modus aanpassen[ naar {hvac_mode}]",
-      "set_preset_mode": "programma[ {preset_mode}] instellen"
+      "set_preset_mode": "programma[ {preset_mode}] instellen",
+      "set_fan_mode": "ventilatiemodus aanpassen[ naar {fan_mode}]"
     },
     "cover": {
       "close_cover": "sluiten",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "alarmsystemen",
+    "binary_sensor": "binaire sensoren",
     "climate": "verwarming",
     "cover": "zonwering",
     "fan": "ventilatie",
@@ -70,8 +72,7 @@
     "light": "verlichting",
     "lock": "sloten",
     "media_player": "mediaspelers",
-    "scene": "scènes",
-    "script": "scripts",
+    "notify": "notificatie",
     "switch": "schakelaars",
     "vacuum": "stofzuigers",
     "water_heater": "waterverwarming"

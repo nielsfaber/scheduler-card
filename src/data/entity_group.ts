@@ -1,24 +1,25 @@
 import { Group, CardConfig } from '../types';
 import { DefaultGroupIcon } from '../const';
 import { computeDomain, HomeAssistant } from 'custom-card-helpers';
-import { localize } from '../localize/localize';
 import { domainIcons } from '../standard-configuration/standardIcon';
 import { entityFilter } from './entities/entity_filter';
-import { sortAlphabetically, getLocale } from '../helpers';
+import { standardGroupNames } from '../standard-configuration/group_name';
 
 export function entityGroups(entities: string[], config: Partial<CardConfig>, hass: HomeAssistant) {
-  const groups: Group[] = [];
+  let groups: Group[] = [];
 
   //create groups from user config
   if (config.groups) {
     config.groups.forEach(el => {
-      const group: Group = {
-        name: el.name,
-        icon: el.icon || DefaultGroupIcon,
-        entities: entities.filter(e => entityFilter(e, el)),
-      };
-
-      groups.push(group);
+      if (!entities.find(e => entityFilter(e, el))) return;
+      groups = [
+        ...groups,
+        {
+          name: el.name,
+          icon: el.icon || DefaultGroupIcon,
+          entities: entities.filter(e => entityFilter(e, el)),
+        },
+      ];
     });
   }
 
@@ -27,16 +28,17 @@ export function entityGroups(entities: string[], config: Partial<CardConfig>, ha
 
   //automatically create groups for ungrouped entities
   domains.forEach(domain => {
-    const group: Group = {
-      name: localize(`domains.${domain}`, getLocale(hass)) || domain,
-      icon:
-        (config.standard_configuration === undefined || config.standard_configuration) && domain in domainIcons
-          ? domainIcons[domain]
-          : DefaultGroupIcon,
-      entities: ungroupedEntities.filter(e => entityFilter(e, { include: [domain], exclude: [] })),
-    };
-
-    groups.push(group);
+    groups = [
+      ...groups,
+      {
+        name: standardGroupNames(domain, hass),
+        icon:
+          (config.standard_configuration === undefined || config.standard_configuration) && domain in domainIcons
+            ? domainIcons[domain]
+            : DefaultGroupIcon,
+        entities: ungroupedEntities.filter(e => entityFilter(e, { include: [domain], exclude: [] })),
+      },
+    ];
   });
   return groups;
 }

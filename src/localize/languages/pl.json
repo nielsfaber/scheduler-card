@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "chłodź[ do {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "ustaw tryb[ na {hvac_mode}]",
-      "set_preset_mode": "ustaw preset[ {preset_mode}]"
+      "set_preset_mode": "ustaw preset[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "zamknij",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panel kontrolny alarmu",
+    "binary_sensor": "binary sensors",
     "climate": "klimatyzacja",
     "cover": "rolety",
     "fan": "wentylatory",
@@ -69,8 +71,7 @@
     "light": "światła",
     "lock": "zamki",
     "media_player": "odtwarzacze",
-    "scene": "sceny",
-    "script": "skrypty",
+    "notify": "notification",
     "switch": "przełączniki",
     "vacuum": "odkurzacze",
     "water_heater": "podgrzewacze wody"

@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "制冷模式[ 至 {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "调节[ 至 {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "设定模式[ 为 {hvac_mode}]",
-      "set_preset_mode": "设定预设模式[ 为 {preset_mode}]"
+      "set_preset_mode": "设定预设模式[ 为 {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "关闭",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "警戒控制面板",
+    "binary_sensor": "binary sensors",
     "climate": "空调/地暖",
     "cover": "窗帘",
     "fan": "风扇/空气净化器",
@@ -69,8 +71,7 @@
     "light": "灯具",
     "lock": "门锁",
     "media_player": "媒体播放器",
-    "scene": "场景",
-    "script": "脚本",
+    "notify": "notification",
     "switch": "开关",
     "vacuum": "扫地机/吸尘器",
     "water_heater": "热水器"

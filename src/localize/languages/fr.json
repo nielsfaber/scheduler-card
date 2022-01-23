@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "refroidit[ à {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "ajuster le mode[ à {hvac_mode}]",
-      "set_preset_mode": "choisir le pré-réglage[ {preset_mode}]"
+      "set_preset_mode": "choisir le pré-réglage[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "fermer",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panneau de contrôle de l'alarme",
+    "binary_sensor": "binary sensors",
     "climate": "thermostat",
     "cover": "volet",
     "fan": "ventilateur",
@@ -69,8 +71,7 @@
     "light": "lumière",
     "lock": "serrure",
     "media_player": "lecteur multimédia",
-    "scene": "scène",
-    "script": "script",
+    "notify": "notification",
     "switch": "interrupteur",
     "vacuum": "aspirateur",
     "water_heater": "chauffe eau"

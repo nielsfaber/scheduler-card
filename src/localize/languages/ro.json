@@ -10,7 +10,8 @@
       "set_temperature_hvac_mode_cool": "răcire[ la {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "setare mod[ la {hvac_mode}]",
-      "set_preset_mode": "setare preset[ {preset_mode}]"
+      "set_preset_mode": "setare preset[ {preset_mode}]",
+      "set_fan_mode": "set fan mode[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "închidere",
@@ -58,6 +59,7 @@
   },
   "domains": {
     "alarm_control_panel": "panou control alarmă",
+    "binary_sensor": "binary sensors",
     "climate": "climat",
     "cover": "jaluzele",
     "fan": "ventilatoare",
@@ -69,8 +71,7 @@
     "light": "lumini",
     "lock": "încuietori",
     "media_player": "media playere",
-    "scene": "scene",
-    "script": "scripturi",
+    "notify": "notification",
     "switch": "întrerupătoare",
     "vacuum": "aspiratoare",
     "water_heater": "încălzitoare apă"

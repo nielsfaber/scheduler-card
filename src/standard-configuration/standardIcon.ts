@@ -22,9 +22,7 @@ export const sensorIcon = (stateObj: HassEntity) => {
     case 'signal_strength':
       return 'mdi:wifi';
     default:
-      return stateObj.attributes.unit_of_measurement?.includes('°')
-        ? 'mdi:thermometer'
-        : 'mdi:eye';
+      return stateObj.attributes.unit_of_measurement?.includes('°') ? 'mdi:thermometer' : 'mdi:eye';
   }
 };
 
@@ -48,6 +46,7 @@ export const domainIcons: Record<string, string> = {
   alarm_control_panel: 'hass:alarm-light-outline',
   automation: 'hass:playlist-play',
   binary_sensor: 'hass:radiobox-blank',
+  calendar: 'hass:calendar',
   camera: 'hass:camera',
   climate: 'hass:home-thermometer-outline',
   cover: 'hass:window-shutter',
@@ -63,6 +62,7 @@ export const domainIcons: Record<string, string> = {
   light: 'hass:lightbulb-outline',
   lock: 'hass:lock-open-outline',
   media_player: 'hass:cast-connected',
+  number: 'hass:ray-vertex',
   notify: 'hass:message-text-outline',
   person: 'hass:account-outline',
   proximity: 'hass:map-marker-distance',

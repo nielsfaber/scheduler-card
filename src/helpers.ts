@@ -56,7 +56,15 @@ export function isDefined<TValue>(value: TValue | null | undefined): value is TV
 }
 
 export function isEqual(...arr: any[]) {
-  return arr.every(e => JSON.stringify(e) === JSON.stringify(arr[0]));
+  if (!arr.length) return false;
+  const firstItem = arr[0];
+
+  return arr.every(item => {
+    return firstItem && item && typeof firstItem === 'object' && typeof item === 'object'
+      ? Object.keys(firstItem).length === Object.keys(item).length &&
+          Object.keys(firstItem).reduce((res, key) => res && isEqual(firstItem[key], item[key]), true)
+      : firstItem === item;
+  });
 }
 
 export function sortAlphabetically(a: any, b: any) {
