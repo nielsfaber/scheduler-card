@@ -209,6 +209,7 @@ export interface CardConfig extends LovelaceCardConfig {
   groups: GroupConfig[];
   customize: Dictionary<EntityConfig>;
   tags?: string[] | string;
+  sort_by: string[] | string;
 }
 
 /* interface */

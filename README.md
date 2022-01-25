@@ -18,8 +18,7 @@
     - [Behaviour after completion](#behaviour-after-completion)
     - [Name](#name)
 - [Configuration](#configuration)
-  - [Introduction](#introduction-1)
-  - [Overview](#overview)
+  - [Options](#options)
   - [Standard configuration](#standard-configuration)
   - [Adding entities](#adding-entities)
     - [Include](#include)
@@ -27,7 +26,7 @@
   - [Groups](#groups)
   - [Schedule discovery](#schedule-discovery)
   - [Customize](#customize)
-    - [Options](#options)
+    - [Options](#options-1)
     - [Actions](#actions)
     - [Numeric action variable](#numeric-action-variable)
     - [List action variable](#list-action-variable)
@@ -58,32 +57,18 @@ See it in action:
 HACS installation:
 
 Note: Ensure you have a www folder created as in config/www or the installation will succeed but fails silently
-1. Click the Orange + button bottom right and search for Scheduler Card
-2. Click on "Install" under the new card that just popped up.
-3. Use the GUI; Configuration -> Lovelace Dashboards -> Resources Tab to add `/hacsfiles/scheduler-card/scheduler-card.js`, or add a reference to the card in the resources section of `configuration.yaml`:
-
-```yaml
-resources:
-  - url: /hacsfiles/scheduler-card/scheduler-card.js
-    type: module
-```
+1. Open the [HACS](https://hacs.xyz/) panel in HA and go to the 'Frontend' section.
+2. Search for scheduler-card and click download.
+3. Follow the instructions provided to complete the installation.
 
 Note: Ensure to install [`https://github.com/nielsfaber/scheduler-component`](https://github.com/nielsfaber/scheduler-component) and add the integration in order for the scheduler to work properly.
 
 
-Manual installation
+Manual installation:
 
 1. Download the latest release of `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
-
-2. Use the GUI; Configuration -> Lovelace Dashboards -> Resources Tab to add `/local/scheduler-card/scheduler-card.js?v=0`, or add a reference to the card in the resources section of `configuration.yaml`:
-
-```yaml
-resources:
-  - url: /local/scheduler-card/scheduler-card.js?v=0
-    type: module
-```
-
- 3. Add the card in the view where you want it to be shown:
+2. Follow the instructions [here](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/) to add the card to HA. Example URL: `/local/scheduler-card/scheduler-card.js?v=0`.
+ 3. Add the card in the view where you want it to be shown by editing `ui-lovelace.yaml` (or use the card editor):
 
   ```yaml
  type: custom:scheduler-card
@@ -109,7 +94,7 @@ Updating manually:
 
 Use `git pull` for manual installation updates.
 
-Since most browsers will cache the Lovelace card code, you can force a refresh of  the browser by editing the entry in the `resources:` section in  `ui-lovelace.yaml`, by updating the version to `?v=(n+1)` (where `n` the current value).
+Since most browsers will cache the Lovelace card code, you can force a refresh of the browser by editing the entry in the Lovelace resources section, by updating the URL to `?v=(n+1)` (where `n` the current value).
 
 
 </details>
@@ -304,54 +289,43 @@ If you leave the field empty, the automatically generated name shall be used ins
 
 ## Configuration
 
+The configuration of the card can be done via the UI editor or in YAML.
+Some (advanced) configuration options (such as `customize`) are YAML-only currently.
 
-### Introduction
-The configuration of the card is in YAML.
-Currently there is no UI editor provided (this may change in the future).
+Configuration is not *necessary*, except for defining a set of entities which you want to control with the card, which is done via `include`.
 
-_Configuration is not necessary_, it is only used for customization.
+### Options
 
-The card includes a _standard configuration_.
-It is intended to make setting up the card easy.
-The standard configuration consists of the following:
-* Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
-* Defining actions per entity based on their capabilities
-* Icons for groups, entities and actions
-
-:warning: **Tip**: If you want to define your own configuration, provide `standard_configuration:false` to disable it completely.
-
-
-### Overview
-
-| Name                     | Type           | Default      | Description                                                                                                                                                                                                                                |
-| ------------------------ | -------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`                   | string         | **Required** | `custom:scheduler-card`                                                                                                                                                                                                                    |
-| `standard_configuration` | boolean        | *true*       | Use the [standard configuration](#standard-configuration) as a base configuration.                                                                                                                                                         |
-| `discover_existing`      | boolean        | *true*       | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info. |
-| `include`                | list           | none         | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                            |
-| `exclude`                | list           | none         | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                    |
-| `groups`                 | list           | none         | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                       |
-| `customize`              | dictionary     | none         | Customize the available actions or visualization of entities.   <br>See [customize](#customize) for more info.                                                                                                                             |
-| `title`                  | boolean/string | *true*       | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                     |
-| `time_step`              | number         | 10           | Set the time step (in minutes) for the time picker                                                                                                                                                                                         |
-| `show_header_toggle`     | boolean        | *false*      | Show a switch at the top of the card that can be used to enable/disable the complete list.                                                                                                                                                 |
-| `show_add_button`        | boolean        | *true*       | Show button for creating new schedules.                                                                                                                                                                                                    |
-| `display_options`        | dictionary     | none         | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                        |
-| `tags`                   | string/list    | none         | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                  |
+| Name                     | Type           | Default                     | Description                                                                                                                                                                                                                                                                                                   |
+| ------------------------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                   | string         | **Required**                | `custom:scheduler-card`                                                                                                                                                                                                                                                                                       |
+| `standard_configuration` | boolean        | *true*                      | Use the [standard configuration](#standard-configuration) as a base configuration.                                                                                                                                                                                                                            |
+| `discover_existing`      | boolean        | *true*                      | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info.                                                                    |
+| `include`                | list           | none                        | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                                                                                               |
+| `exclude`                | list           | none                        | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                                                                                       |
+| `groups`                 | list           | none                        | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                                                                                          |
+| `customize`              | dictionary     | none                        | Customize the available actions or visualization of entities.   <br>See [customize](#customize) for more info.                                                                                                                                                                                                |
+| `title`                  | boolean/string | *true*                      | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                                                                                        |
+| `time_step`              | number         | 10                          | Set the time step (in minutes) for the time picker                                                                                                                                                                                                                                                            |
+| `sort_by`                | string/list    | `relative-time`,<br>`state` | Order in which schedules appear in the list. Choose from:<ul> <li>`relative-time`: duration until next task</li><li>`title`: displayed [primary info](#primary-info)</li><li>`state`: enabled/disabled status</ul>Note that `state` currently is the only option which can be combined with a second option.. |
+| `show_header_toggle`     | boolean        | *false*                     | Show a switch at the top of the card that can be used to enable/disable the complete list.                                                                                                                                                                                                                    |
+| `show_add_button`        | boolean        | *true*                      | Show button for creating new schedules.                                                                                                                                                                                                                                                                       |
+| `display_options`        | dictionary     | none                        | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                                                                                           |
+| `tags`                   | string/list    | none                        | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                                     |
 ### Standard configuration
 
 The card includes a _standard configuration_.
 It is intended to make setting up the card easy.
-The standard configuration has actions defined for most types of entities in Home assistant.
+The standard configuration consists of the following features:
+* Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
+* Defining actions per entity based on their capabilities
+* Icons for groups, entities and actions
 
 When including an entity, the standard configuration will automatically detect which actions are supported by it, and will make these available.
-
 Also it has icons for most entity types and actions.
 
-If you would rather set up your own configuration of entities and actions, you can provide `standard_configuration:false` to disable it.
+:warning: **Warning**: You can provide `standard_configuration:false` in the card configuration to disable it completely for full control. If so, you will need to configure all actions and properties via `customize`.
 
-
-:warning: **Note**: Not all entity types are currently supported by the standard configuration. If you are missing something, you can make a [feature request](https://github.com/nielsfaber/scheduler-card/issues/new) for it.
 
 ### Adding entities
 
@@ -884,5 +858,5 @@ If you have an issue with this card, please report it [here](https://github.com/
 ## Say thank you
 If you want to make donation as appreciation of my work, you can do so via PayPal (preferred) or buy me a coffee. Thank you!
 
-<a href="https://www.paypal.com/donate/?business=CLL4T6Y8ACXNN&no_recurring=0&item_name=Thank+you+for+supporting+my+work%2C+it+is+much+appreciated%21&currency_code=EUR" target="_blank"><img src="https://pics.paypal.com/00/s/YzlhMzI2ZjYtZDQxMi00NzNiLThmZTktOTk3MmEyYTA2Zjc0/file.PNG" width="150" /></a>
+<a href="https://www.paypal.com/donate/?business=CLL4T6Y8ACXNN&no_recurring=0&item_name=Thank+you+for+supporting+my+work+on+the+Scheduler+project%2E+it+is+much+appreciated%21&currency_code=EUR" target="_blank"><img src="https://pics.paypal.com/00/s/YzlhMzI2ZjYtZDQxMi00NzNiLThmZTktOTk3MmEyYTA2Zjc0/file.PNG" width="150" /></a>
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>

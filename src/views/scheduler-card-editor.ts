@@ -138,6 +138,48 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
               </variable-slider>
 
               <div class="header">
+                ${localize('ui.panel.card_editor.fields.sort_by.heading', getLocale(this.hass))}
+              </div>
+              <div class="text-field">
+                ${localize('ui.panel.card_editor.fields.sort_by.description', getLocale(this.hass))}
+              </div>
+
+              <div>
+                <ha-formfield
+                  label=${localize('ui.panel.card_editor.fields.sort_by.options.relative_time', getLocale(this.hass))}
+                >
+                  <ha-radio
+                    name="sort_by"
+                    ?checked=${AsArray(this._config.sort_by || DefaultCardConfig.sort_by).includes('relative-time')}
+                    value="relative-time"
+                    @change=${this._setSortBy}
+                  ></ha-radio>
+                </ha-formfield>
+                <ha-formfield
+                  label=${localize('ui.panel.card_editor.fields.sort_by.options.title', getLocale(this.hass))}
+                >
+                  <ha-radio
+                    name="sort_by"
+                    ?checked=${AsArray(this._config.sort_by || DefaultCardConfig.sort_by).includes('title')}
+                    value="title"
+                    @change=${this._setSortBy}
+                  ></ha-radio>
+                </ha-formfield>
+              </div>
+
+              <div>
+                <ha-formfield
+                  label=${localize('ui.panel.card_editor.fields.sort_by.options.state', getLocale(this.hass))}
+                >
+                  <ha-checkbox
+                    ?checked=${AsArray(this._config.sort_by || DefaultCardConfig.sort_by).includes('state')}
+                    value="state"
+                    @change=${this._setSortBy}
+                  ></ha-checkbox>
+                </ha-formfield>
+              </div>
+
+              <div class="header">
                 ${localize('ui.panel.card_editor.fields.display_format_primary.heading', getLocale(this.hass))}
               </div>
               <div class="text-field">
@@ -321,6 +363,16 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       options = [...options, ...configTags.filter(e => !options.includes(e))];
     }
     return options.map(e => Object({ name: e, value: e }));
+  }
+
+  private _setSortBy(ev: Event) {
+    const checked = (ev.target as HTMLInputElement).checked;
+    const value = (ev.target as HTMLInputElement).value;
+    let config = AsArray(this._config?.sort_by || DefaultCardConfig.sort_by);
+    if (value != 'state' && checked) config = config.filter(e => e == 'state');
+    if (!config.includes(value) && checked) config = [...config, value];
+    if (config.includes(value) && !checked) config = config.filter(e => e != value);
+    this._updateConfig({ sort_by: config });
   }
 
   private _setDisplayOptionsPrimary(ev: Event) {

@@ -40,6 +40,7 @@ export const DefaultCardConfig: CardConfig = {
     icon: 'action',
   },
   tags: [],
+  sort_by: ['relative-time', 'state'],
 };
 
 export const WebsocketEvent = 'scheduler_updated';

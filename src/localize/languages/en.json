@@ -164,6 +164,15 @@
             "heading": "Time step",
             "description": "Resolution (in minutes) for creating schedules"
           },
+          "sort_by": {
+            "heading": "Sorting options",
+            "description": "Order in which the schedules appear in the card",
+            "options": {
+              "relative_time": "Time remaining until next action",
+              "title": "Displayed title of the schedule",
+              "state": "Show active schedules on top"
+            }
+          },
           "display_format_primary": {
             "heading": "Displayed primary info",
             "description": "Configure which label is used for schedules in the overview",
