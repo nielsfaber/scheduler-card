@@ -306,7 +306,18 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
     },
   },
-  scenes: {
+  number: {
+    set_value: {
+      variables: {
+        value: {
+          min: 'min',
+          max: 'max',
+          step: 'step',
+        },
+      },
+    },
+  },
+  scene: {
     turn_on: {},
   },
   script: {

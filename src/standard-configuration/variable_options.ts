@@ -69,17 +69,8 @@ export const getVariableOptions = (domain: string, variable: string) => {
   return [];
 };
 
-export const getVariableOptionName = (
-  domain: string,
-  variable: string,
-  option: string,
-  hass: HomeAssistant
-) => {
-  if (
-    domain in variableOptions &&
-    variable in variableOptions[domain] &&
-    option in variableOptions[domain][variable]
-  )
+export const getVariableOptionName = (domain: string, variable: string, option: string, hass: HomeAssistant) => {
+  if (domain in variableOptions && variable in variableOptions[domain] && option in variableOptions[domain][variable])
     return hass.localize(variableOptions[domain][variable][option]);
   return option;
 };

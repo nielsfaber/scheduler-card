@@ -39,6 +39,9 @@ const variableList: Record<string, Record<string, string>> = {
     title: 'ui.panel.config.automation.editor.actions.type.device_id.extra_fields.title',
     message: 'ui.panel.config.automation.editor.actions.type.device_id.extra_fields.message',
   },
+  number: {
+    value: 'ui.panel.config.helpers.types.input_number',
+  },
   select: {
     option: 'ui.components.dialogs.input_select.options',
   },

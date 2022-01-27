@@ -10,10 +10,7 @@ type ListVariableConfig = {
   options: string | string[] | Record<string, Partial<ListOption>>;
 };
 
-type ListVariableTemplate = (
-  stateObj: HassEntity | undefined,
-  hass: HomeAssistant
-) => ListVariableConfig;
+type ListVariableTemplate = (stateObj: HassEntity | undefined, hass: HomeAssistant) => ListVariableConfig;
 
 export type ListVariableType = ListVariableConfig | { template: ListVariableTemplate };
 
@@ -26,10 +23,7 @@ type LevelVariableConfig = {
   scale_factor?: number;
 };
 
-type LevelVariableTemplate = (
-  stateObj: HassEntity | undefined,
-  hass: HomeAssistant
-) => LevelVariableConfig;
+type LevelVariableTemplate = (stateObj: HassEntity | undefined, hass: HomeAssistant) => LevelVariableConfig;
 
 export type LevelVariableType = LevelVariableConfig | { template: LevelVariableTemplate };
 
@@ -51,7 +45,7 @@ export const parseVariable = (
 
   if ('options' in res) {
     return parseListVariable(res, stateObj);
-  } else if ('unit' in res) {
+  } else if ('min' in res && 'max' in res) {
     return parseLevelVariable(res, stateObj);
   } else {
     return <TextVariableConfig>res;
@@ -78,17 +72,11 @@ export const parseListVariable = (
   }
 };
 
-export const parseLevelVariable = (
-  config: LevelVariableConfig,
-  stateObj: HassEntity | undefined
-) => {
+export const parseLevelVariable = (config: LevelVariableConfig, stateObj: HassEntity | undefined) => {
   let result: Partial<LevelVariable> = pick(config, ['unit', 'optional', 'scale_factor']);
-  if (isDefined(config.min))
-    result = { ...result, min: numericAttribute(stateObj, config.min) };
-  if (isDefined(config.max))
-    result = { ...result, max: numericAttribute(stateObj, config.max) };
-  if (isDefined(config.step))
-    result = { ...result, step: numericAttribute(stateObj, config.step) };
+  if (isDefined(config.min)) result = { ...result, min: numericAttribute(stateObj, config.min) };
+  if (isDefined(config.max)) result = { ...result, max: numericAttribute(stateObj, config.max) };
+  if (isDefined(config.step)) result = { ...result, step: numericAttribute(stateObj, config.step) };
   if (isDefined(config.unit) && config.unit == 'unit_of_measurement')
     result = { ...result, unit: stringAttribute(stateObj, config.unit, '') };
   return result;

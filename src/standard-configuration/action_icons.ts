@@ -91,7 +91,10 @@ const actionIcons: IconList = {
   notify: {
     '{entity_id}': 'mdi:message-alert',
   },
-  scenes: {
+  number: {
+    set_value: 'mdi:counter',
+  },
+  scene: {
     turn_on: 'mdi:play',
   },
   script: {

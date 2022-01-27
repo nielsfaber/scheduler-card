@@ -73,7 +73,10 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
   notify: {
     '{entity_id}': 'services.notify.notify',
   },
-  scenes: {
+  number: {
+    set_value: 'services.input_number.set_value',
+  },
+  scene: {
     turn_on: 'ui.card.vacuum.actions.turn_on',
   },
   script: {

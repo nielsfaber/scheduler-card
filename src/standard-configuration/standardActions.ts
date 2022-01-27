@@ -16,11 +16,7 @@ import { getVariableOptionIcon } from './variable_icons';
 import { listAttribute } from './attribute';
 import { groupActions } from './group';
 
-export const standardActions = (
-  entity_id: string,
-  hass: HomeAssistant,
-  filterCapabilities = true
-): Action[] => {
+export const standardActions = (entity_id: string, hass: HomeAssistant, filterCapabilities = true): Action[] => {
   const domain = computeDomain(entity_id);
 
   if (domain == 'group') {
@@ -62,9 +58,7 @@ const parseAction = (
 
   if (config.supported_feature) {
     const supportedFeature =
-      config.supported_feature instanceof Function
-        ? config.supported_feature(stateObj)
-        : config.supported_feature;
+      config.supported_feature instanceof Function ? config.supported_feature(stateObj) : config.supported_feature;
     action = {
       ...action,
       supported_feature: supportedFeature,
@@ -82,23 +76,14 @@ const parseAction = (
       ...action,
       variables: {
         ...action.variables,
-        [key]: parseActionVariable(
-          domain,
-          key,
-          config.variables![key],
-          stateObj,
-          hass,
-          filterCapabilities
-        ),
+        [key]: parseActionVariable(domain, key, config.variables![key], stateObj, hass, filterCapabilities),
       },
     };
   });
 
   //strip actions having no selectable options
   if (
-    Object.values(action.variables || {}).some(
-      e => e.type == EVariableType.List && !(e as ListVariable).options.length
-    )
+    Object.values(action.variables || {}).some(e => e.type == EVariableType.List && !(e as ListVariable).options.length)
   )
     return;
 
@@ -126,9 +111,7 @@ const parseActionVariable = (
   if ('options' in config && isDefined(config.options)) {
     let options = [...config.options];
     if (!filterCapabilities) {
-      const extraOptions = getVariableOptions(domain, variable).filter(
-        k => !options.map(e => e.value).includes(k)
-      );
+      const extraOptions = getVariableOptions(domain, variable).filter(k => !options.map(e => e.value).includes(k));
       options = [...options, ...extraOptions.map(e => Object({ value: e }))];
     }
     options = options.map(e =>
@@ -139,7 +122,7 @@ const parseActionVariable = (
     );
     config = { ...config, options: options };
     return listVariable(config);
-  } else if ('unit' in config && isDefined(config.unit)) {
+  } else if ('min' in config && isDefined(config.min) && 'max' in config && isDefined(config.max)) {
     return levelVariable(config);
   } else {
     return textVariable(config);
