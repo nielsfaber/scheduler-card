@@ -3,7 +3,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { levelVariable } from '../data/variables/level_variable';
 import { listAttribute, numericAttribute } from './attribute';
 import { VariableConfig } from './variables';
-import { colorModesToSupportedFeatures } from '../data/entities/compute_supported_features';
+import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
 
 export type ActionItem = {
   supported_feature?: number | ((stateObj?: HassEntity) => number);
@@ -263,7 +263,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
   },
   light: {
     turn_on: {
-      condition: stateObj => colorModesToSupportedFeatures(stateObj) == 0,
+      condition: stateObj => computeSupportedFeatures(stateObj) == 0,
     },
     _turn_on: {
       variables: {
@@ -276,7 +276,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
           optional: true,
         },
       },
-      supported_feature: stateObj => colorModesToSupportedFeatures(stateObj),
+      condition: stateObj => computeSupportedFeatures(stateObj) != 0,
     },
     turn_off: {},
   },
