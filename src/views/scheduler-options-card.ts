@@ -508,7 +508,7 @@ export class SchedulerOptionsCard extends LitElement {
       !this.hass ||
       !this.schedule ||
       !this.conditionMatchType ||
-      !this.conditionValue
+      !isDefined(this.conditionValue)
     )
       return;
 

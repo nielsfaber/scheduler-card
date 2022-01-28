@@ -8,8 +8,20 @@ import { fireEvent } from 'custom-card-helpers';
 
 @customElement('scheduler-variable-picker')
 export class SchedulerVariablePicker extends LitElement {
-  @property() variable?: Variable | null;
-  @property() value?: string | number | null;
+  @property()
+  variable?: Variable | null;
+
+  @property()
+  value?: string | number | null;
+
+  firstUpdated() {
+    if (
+      (this.value === null || this.value === undefined) &&
+      this.variable?.type == EVariableType.Level &&
+      !(this.variable as LevelVariable).optional
+    )
+      this.levelVariableUpdated((this.variable as LevelVariable).min);
+  }
 
   render() {
     if (!this.variable) return html``;
@@ -19,9 +31,10 @@ export class SchedulerVariablePicker extends LitElement {
     else return html``;
   }
 
-  private levelVariableUpdated(ev: CustomEvent) {
-    this.value = ev.detail.value;
-    fireEvent(this, 'value-changed', { value: ev.detail.value });
+  private levelVariableUpdated(ev: CustomEvent | number) {
+    const value = typeof ev == 'number' ? ev : Number(ev.detail.value);
+    this.value = value;
+    fireEvent(this, 'value-changed', { value: value });
   }
 
   renderLevelVariable() {
