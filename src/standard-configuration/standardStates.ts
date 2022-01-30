@@ -7,6 +7,8 @@ import { textVariable } from '../data/variables/text_variable';
 import { getLocale, isDefined } from '../helpers';
 import { localize } from '../localize/localize';
 import { Variable } from '../types';
+import { listAttribute } from './attribute';
+import { groupStates } from './group';
 import { statesList } from './states';
 import { stateIcon } from './state_icons';
 import { parseVariable } from './variables';
@@ -15,6 +17,14 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
   const domain = computeDomain(entity_id);
   const stateObj: HassEntity | undefined = hass.states[entity_id];
   if (!stateObj) return null;
+
+  if (domain == 'group') {
+    const stateObj = hass.states[entity_id];
+    const subEntities = listAttribute(stateObj, 'entity_id');
+    if (!subEntities.length) return null;
+    const subStates = subEntities.map(e => standardStates(e, hass));
+    return subStates.every(isDefined) ? groupStates(hass, stateObj, subStates as Variable[]) : null;
+  }
 
   if (!Object.keys(statesList).includes(domain)) return null;
 
