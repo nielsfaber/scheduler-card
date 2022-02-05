@@ -62,16 +62,8 @@ const actionIcons: IconList = {
   },
 };
 
-export const getVariableOptionIcon = (
-  domain: string,
-  variable: string,
-  option: string
-) => {
-  if (
-    domain in actionIcons &&
-    variable in actionIcons[domain] &&
-    option in actionIcons[domain][variable]
-  )
+export const getVariableOptionIcon = (domain: string, variable: string, option: string) => {
+  if (domain in actionIcons && variable in actionIcons[domain] && option in actionIcons[domain][variable])
     return actionIcons[domain][variable][option];
   return;
 };

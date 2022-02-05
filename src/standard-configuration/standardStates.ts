@@ -34,7 +34,7 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
     let options = [...stateConfig.options];
     options = options.map(e =>
       Object.assign(e, {
-        icon: e.icon ? e.icon : stateIcon(stateObj, e.value, DefaultActionIcon),
+        icon: e.icon ? e.icon : stateIcon(stateObj, e.value, hass, DefaultActionIcon),
         name: e.name ? e.name : getStateName(stateObj, e.value, hass),
       })
     );

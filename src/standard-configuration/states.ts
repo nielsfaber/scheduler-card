@@ -1,3 +1,4 @@
+import { computeDomain, computeEntity } from 'custom-card-helpers';
 import { numericAttribute, stringAttribute } from './attribute';
 import { VariableConfig } from './variables';
 
@@ -41,7 +42,15 @@ export const statesList: Record<string, VariableConfig> = {
     max: 'max',
     step: 'step',
   },
-  person: { options: ['home', 'not_home'] },
+  person: {
+    template: (_stateObj, hass) => {
+      let modes = ['home', 'not_home'];
+      let zones = Object.keys(hass.states)
+        .filter(e => computeDomain(e) == 'zone')
+        .map(computeEntity);
+      return { options: [...new Set([...modes, ...zones])] };
+    },
+  },
   proximity: {
     unit: 'unit_of_measurement',
   },
