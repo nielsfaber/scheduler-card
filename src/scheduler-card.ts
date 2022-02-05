@@ -283,7 +283,7 @@ export class SchedulerCard extends LitElement {
       if (
         isEqual(omit(schedule, 'timeslots'), omit(pick(oldSchedule, Object.keys(schedule)), 'timeslots')) &&
         schedule.timeslots.length == oldSchedule.timeslots.length &&
-        schedule.timeslots.every((slot, i) => isEqual(slot, pick(oldSchedule.timeslots[i], Object.keys(slot))))
+        schedule.timeslots.every((slot, i) => isEqual(slot, oldSchedule.timeslots[i]))
       ) {
         // don't save if there are no changes
         this.editItem = null;
