@@ -61,16 +61,17 @@ export class SchedulerSelector extends LitElement {
         `
               )
           : ''}
-        <scheduler-select
-          .items=${this.items.filter(e => !this.value.includes(e.value))}
-          label=${this.label}
-          .icons=${false}
-          .allowCustomValue=${true}
-          @value-changed=${this._addClick}
-          ?invalid=${this.invalid && this.value.length != this.items.length}
-        >
-        </scheduler-select>
       </div>
+
+      <scheduler-select
+        .items=${this.items.filter(e => !this.value.includes(e.value))}
+        label=${this.label}
+        .icons=${false}
+        .allowCustomValue=${true}
+        @value-changed=${this._addClick}
+        ?invalid=${this.invalid && this.value.length != this.items.length}
+      >
+      </scheduler-select>
     `;
   }
 
@@ -90,6 +91,9 @@ export class SchedulerSelector extends LitElement {
 
   static get styles(): CSSResultGroup {
     return css`
+      div.chip-set {
+        margin: 0px -4px;
+      }
       div.chip {
         height: 32px;
         border-radius: 16px;
@@ -101,7 +105,7 @@ export class SchedulerSelector extends LitElement {
         display: inline-flex;
         align-items: center;
         box-sizing: border-box;
-        margin: 1px 0px;
+        margin: 4px;
       }
       .icon {
         vertical-align: middle;

@@ -93,13 +93,13 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
               </button-group>
               ${typeof this._config.title == 'string'
                 ? html`
-                    <paper-input
+                    <ha-textfield
                       label=${localize('ui.panel.card_editor.fields.title.custom_title', getLocale(this.hass))}
                       .value=${this._config.title}
                       @value-changed=${(ev: Event) => {
                         this._updateConfig({ title: String((ev.target as HTMLInputElement).value) });
                       }}
-                    ></paper-input>
+                    ></ha-textfield>
                   `
                 : ''}
 
@@ -547,13 +547,16 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
       }
       div.row ha-icon {
         padding: 8px;
-        color: var(--paper-item-icon-color);
+        color: var(--state-icon-color);
       }
       div.row state-badge {
         flex: 0 0 40px;
       }
       div.row ha-switch {
         padding: 13px 5px;
+      }
+      ha-textfield {
+        width: 100%;
       }
     `;
   }

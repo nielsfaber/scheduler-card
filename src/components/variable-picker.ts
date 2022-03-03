@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable } from '../types';
 
@@ -79,13 +79,14 @@ export class SchedulerVariablePicker extends LitElement {
     const value = this.value;
 
     return html`
-      <paper-input
-        no-label-float
-        .value=${value || ''}
-        @value-changed=${this.listVariableUpdated}
-        .label=${variable.name}
-      >
-      </paper-input>
+      <ha-textfield .value=${value || ''} @value-changed=${this.listVariableUpdated} .label=${variable.name}>
+      </ha-textfield>
     `;
   }
+
+  static styles = css`
+    ha-textfield {
+      width: 100%;
+    }
+  `;
 }

@@ -127,10 +127,10 @@ export class SchedulerOptionsCard extends LitElement {
   tags: string[] = [];
 
   @state()
-  startDate: string = '';
+  startDate = '';
 
   @state()
-  endDate: string = '';
+  endDate = '';
 
   async firstUpdated() {
     if (this.config?.tags) {
@@ -249,6 +249,7 @@ export class SchedulerOptionsCard extends LitElement {
                         )}
                       </span>
                       <ha-date-input
+                        .locale=${this.hass.locale}
                         value=${this.startDate}
                         .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
                         @value-changed=${this._setStartDate}
@@ -268,6 +269,7 @@ export class SchedulerOptionsCard extends LitElement {
                         )}
                       </span>
                       <ha-date-input
+                        .locale=${this.hass.locale}
                         value=${this.endDate}
                         .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
                         @value-changed=${this._setEndDate}
@@ -279,14 +281,13 @@ export class SchedulerOptionsCard extends LitElement {
                 </div>
 
                 <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
-                <paper-input
-                  no-label-float
+                <ha-textfield
                   value=${this.schedule.name || ''}
                   placeholder=${this.schedule.name
                     ? ''
                     : this.hass.localize('ui.components.area-picker.add_dialog.name')}
                   @value-changed=${this.updateName}
-                ></paper-input>
+                ></ha-textfield>
 
                 ${this.config.tags
                   ? html`
@@ -736,6 +737,9 @@ export class SchedulerOptionsCard extends LitElement {
     }
     div.date-range div {
       display: flex;
+      flex-shrink: 0;
+      flex-grow: 1;
+      flex-basis: 160px;
       align-items: center;
     }
     div.date-range div span {
@@ -759,6 +763,9 @@ export class SchedulerOptionsCard extends LitElement {
     }
     div.track-conditions span {
       text-align: left;
+    }
+    ha-textfield {
+      width: 100%;
     }
   `;
 }

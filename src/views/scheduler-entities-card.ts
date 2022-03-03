@@ -176,7 +176,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     //load all schedules
     fetchSchedules(this.hass!)
       .then(res => {
-        let schedules = res.filter(e => isIncludedOrExcluded(e, this.config!));
+        const schedules = res.filter(e => isIncludedOrExcluded(e, this.config!));
         let scheduleInfo: Record<string, ScheduleDisplayInfo> = {};
         Object.keys(schedules).forEach(e => {
           scheduleInfo = {
@@ -364,7 +364,7 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         return parts2
           .filter(e => e.length)
           .map(e => {
-            let res = e.match(/<tag>([^<]*)<\/tag>/g);
+            const res = e.match(/<tag>([^<]*)<\/tag>/g);
             return res ? unsafeHTML(`<span class="filter-tag">${res[0]}</span>`) : e;
           });
       return unsafeHTML(input);
@@ -497,7 +497,6 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     div.schedule-row.disabled {
       --primary-text-color: var(--disabled-text-color);
       --secondary-text-color: var(--disabled-text-color);
-      --paper-item-icon-color: var(--disabled-text-color);
       --state-icon-color: var(--disabled-text-color);
     }
     div.schedule-row span.filter-tag {

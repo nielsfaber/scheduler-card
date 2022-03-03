@@ -53,7 +53,7 @@ export class SchedulerSelect extends LitElement {
 
   public focus() {
     this.updateComplete.then(() => {
-      (this.shadowRoot?.querySelector('paper-input') as HTMLInputElement).focus();
+      (this.shadowRoot?.querySelector('vaadin-combo-box-light') as any)?.inputElement?.focus();
     });
   }
 
@@ -83,7 +83,7 @@ export class SchedulerSelect extends LitElement {
         @opened-changed=${this._openedChanged}
         @value-changed=${this._valueChanged}
       >
-        <paper-input
+        <ha-textfield
           .label=${this.label}
           class="input"
           autocapitalize="none"
@@ -108,54 +108,25 @@ export class SchedulerSelect extends LitElement {
                   : ''}
               `
             : ''}
-          <ha-icon-button slot="suffix" class="toggle-button" .path=${this._opened ? mdiMenuUp : mdiMenuDown}>
-          </ha-icon-button>
-        </paper-input>
+        </ha-textfield>
+        <ha-svg-icon
+          class="toggle-button ${this.items.length ? '' : 'disabled'}"
+          .path=${this._opened && this.items.length ? mdiMenuUp : mdiMenuDown}
+          @click=${this._toggleOpen}
+        ></ha-svg-icon>
       </vaadin-combo-box-light>
     `;
   }
 
-  rowRenderer = (root: HTMLElement, _owner, entry: { item: Option }) => {
-    if (!root.firstElementChild && this.icons) {
+  private rowRenderer(root: HTMLElement, _owner, entry: { item: Option }) {
+    if (!root.firstElementChild)
       root.innerHTML = `
-        <style>
-          paper-icon-item {
-              margin: -10px;
-              padding: 0;
-          }
-          ha-icon {
-              display: flex;
-              flex: 0 0 40px;
-              color: var(--state-icon-color);
-          }
-        </style>
-        <paper-icon-item>
-          <ha-icon icon="" slot="item-icon"></ha-icon>
-          <paper-item-body two-line>
-            <div class="name"></div>
-            <div secondary></div>
-          </paper-item-body>
-        </paper-icon-item>
-        `;
-      root.querySelector('.name')!.textContent = entry.item.name;
-      root.querySelector('[secondary]')!.textContent = entry.item.description || '';
-      (root.querySelector('ha-icon')! as any).icon = entry.item.icon;
-    } else if (!root.firstElementChild) {
-      root.innerHTML = `
-        <style>
-          paper-item {
-              margin: -10px;
-              padding: 0;
-          }
-        </style>
-        <paper-item>
-          <paper-item-body>
-            ${entry.item.name}
-          </paper-item-body>
-        </paper-item>
-        `;
-    }
-  };
+        <mwc-list-item>
+          <span class="name"><span>
+        </mwc-list-item>
+      `;
+    root.querySelector('.name')!.textContent = entry.item.name;
+  }
 
   private _clearValue(ev: Event) {
     ev.stopPropagation();
@@ -164,6 +135,19 @@ export class SchedulerSelect extends LitElement {
 
   private get _value() {
     return isDefined(this.value) ? this.value : '';
+  }
+
+  private _toggleOpen(ev: Event) {
+    if (!this.items.length) {
+      ev.stopPropagation();
+      return;
+    }
+    if (this._opened) {
+      (this.shadowRoot?.querySelector('vaadin-combo-box-light') as any)?.inputElement?.blur();
+      ev.stopPropagation();
+    } else {
+      (this.shadowRoot?.querySelector('vaadin-combo-box-light') as any)?.inputElement?.focus();
+    }
   }
 
   private _openedChanged(ev: CustomEvent) {
@@ -188,23 +172,35 @@ export class SchedulerSelect extends LitElement {
   static get styles(): CSSResultGroup {
     return css`
       :host {
-        line-height: 1em;
+        display: block;
+        width: 100%;
       }
-      paper-input > ha-icon-button {
+      vaadin-combo-box-light {
+        position: relative;
+      }
+      ha-textfield {
+        width: 100%;
+      }
+      ha-textfield > ha-icon-button {
         --mdc-icon-button-size: 24px;
         padding: 2px;
         color: var(--secondary-text-color);
       }
-      [hidden] {
-        display: none;
+      ha-svg-icon {
+        color: var(--input-dropdown-icon-color);
+        position: absolute;
+        cursor: pointer;
       }
-      paper-input > ha-icon {
-        display: flex;
-        flex: 0 0 40px;
-        color: var(--state-icon-color);
-        width: 40px;
-        height: 26px;
-        align-items: center;
+      ha-svg-icon.disabled {
+        cursor: default;
+        color: var(--disabled-text-color);
+      }
+      .toggle-button {
+        right: 12px;
+        top: -10px;
+      }
+      :host([opened]) .toggle-button {
+        color: var(--primary-color);
       }
     `;
   }

@@ -130,7 +130,6 @@ export class VariableSlider extends LitElement {
     }
     ha-slider {
       width: 100%;
-      --paper-slider-pin-start-color: var(--primary-color);
     }
   `;
 }
