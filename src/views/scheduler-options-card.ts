@@ -286,7 +286,7 @@ export class SchedulerOptionsCard extends LitElement {
                   placeholder=${this.schedule.name
                     ? ''
                     : this.hass.localize('ui.components.area-picker.add_dialog.name')}
-                  @value-changed=${this.updateName}
+                  @input=${this.updateName}
                 ></ha-textfield>
 
                 ${this.config.tags
@@ -328,7 +328,10 @@ export class SchedulerOptionsCard extends LitElement {
             : html`
                 <mwc-button
                   @click=${this.confirmConditionClick}
-                  ?disabled=${!this.selectedEntity || !this.conditionMatchType || !isDefined(this.conditionValue)}
+                  ?disabled=${!this.selectedEntity ||
+                    !this.conditionMatchType ||
+                    !isDefined(this.conditionValue) ||
+                    (typeof this.conditionValue == 'string' && !this.conditionValue.trim().length)}
                   >${this.hass.localize('ui.common.save')}</mwc-button
                 >
                 ${this.editItem !== undefined
@@ -481,7 +484,7 @@ export class SchedulerOptionsCard extends LitElement {
                 ? listVariableDisplay(item.value, states as ListVariable)
                 : states.type == EVariableType.Level
                 ? levelVariableDisplay(item.value, states as LevelVariable)
-                : ''
+                : item.value
               : ''}
           </span>
           <ha-icon-button

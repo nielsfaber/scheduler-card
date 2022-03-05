@@ -96,7 +96,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                     <ha-textfield
                       label=${localize('ui.panel.card_editor.fields.title.custom_title', getLocale(this.hass))}
                       .value=${this._config.title}
-                      @value-changed=${(ev: Event) => {
+                      @input=${(ev: Event) => {
                         this._updateConfig({ title: String((ev.target as HTMLInputElement).value) });
                       }}
                     ></ha-textfield>

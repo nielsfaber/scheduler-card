@@ -79,8 +79,7 @@ export class SchedulerVariablePicker extends LitElement {
     const value = this.value;
 
     return html`
-      <ha-textfield .value=${value || ''} @value-changed=${this.listVariableUpdated} .label=${variable.name}>
-      </ha-textfield>
+      <ha-textfield .value=${value || ''} @input=${this.listVariableUpdated} .label=${variable.name}> </ha-textfield>
     `;
   }
 
