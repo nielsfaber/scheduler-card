@@ -133,8 +133,8 @@ export class TimePicker extends LitElement {
   private getBeforeAfter() {
     if (!this.hass) return '';
     return this._time < 0
-      ? this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.before').slice(0, -1)
-      : this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.after').slice(0, -1);
+      ? this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.before').trim()
+      : this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.after').trim();
   }
 
   private toggleAmPm() {
@@ -143,10 +143,12 @@ export class TimePicker extends LitElement {
 
   private toggleBeforeAfter() {
     this.time = -this._time;
+    this.updateValue();
   }
 
   private toggleSunriseSunset() {
     this.event = this.event == ETimeEvent.Sunrise ? ETimeEvent.Sunset : ETimeEvent.Sunrise;
+    this.updateValue();
   }
 
   private toggleMode() {
