@@ -44,8 +44,8 @@ export const statesList: Record<string, VariableConfig> = {
   },
   person: {
     template: (_stateObj, hass) => {
-      let modes = ['home', 'not_home'];
-      let zones = Object.keys(hass.states)
+      const modes = ['home', 'not_home'];
+      const zones = Object.keys(hass.states)
         .filter(e => computeDomain(e) == 'zone')
         .map(computeEntity);
       return { options: [...new Set([...modes, ...zones])] };
