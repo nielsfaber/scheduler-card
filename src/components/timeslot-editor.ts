@@ -99,7 +99,7 @@ export class TimeslotEditor extends LitElement {
       </mwc-button>
       <mwc-button
         @click=${this._removeSlot}
-        ?disabled=${this.activeSlot === null || this.slots.length <= 2}
+        ?disabled=${this.activeSlot === null || this.slots.length <= 1}
       >
         <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
         ${this.hass.localize('ui.common.delete')}
