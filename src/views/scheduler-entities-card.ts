@@ -55,6 +55,7 @@ const sortByRelativeTime = (schedules: Schedule[]) => {
 const sortByTitle = (schedules: Schedule[], displayInfo: Record<string, ScheduleDisplayInfo>) => {
   const output = [...schedules];
   output.sort((a, b) => {
+    if (!displayInfo[a.schedule_id!]) return displayInfo[b.schedule_id!] ? 1 : -1;
     const titleA = displayInfo[a.schedule_id!].primaryInfo.join('');
     const titleB = displayInfo[b.schedule_id!].primaryInfo.join('');
     return sortAlphabetically(titleA, titleB);
@@ -179,10 +180,12 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
         const schedules = res.filter(e => isIncludedOrExcluded(e, this.config!));
         let scheduleInfo: Record<string, ScheduleDisplayInfo> = {};
         Object.keys(schedules).forEach(e => {
-          scheduleInfo = {
-            ...scheduleInfo,
-            [schedules[e].schedule_id]: getScheduleDisplayInfo(schedules[e], this.config!, this.hass!),
-          };
+          try {
+            scheduleInfo = {
+              ...scheduleInfo,
+              [schedules[e].schedule_id]: getScheduleDisplayInfo(schedules[e], this.config!, this.hass!),
+            };
+          } catch (_e) {}
         });
         this.scheduleDisplayInfo = scheduleInfo;
         this.schedules = this.sortSchedules(schedules);
