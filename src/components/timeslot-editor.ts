@@ -57,13 +57,27 @@ export class TimeslotEditor extends LitElement {
 
   zoomFactor = 1;
 
+  constructor() {
+    super();
+    this.handleResize = this.handleResize.bind(this);
+  }
+
+  handleResize(_event: any) {
+    clearTimeout(this.timeout);
+    this.timeout = window.setTimeout(() => {
+      this.requestUpdate();
+    }, 50);
+  }
+
   firstUpdated() {
-    window.addEventListener('resize', () => {
-      clearTimeout(this.timeout);
-      this.timeout = window.setTimeout(() => {
-        this.requestUpdate();
-      }, 50);
-    });
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  public disconnectedCallback() {
+    window.removeEventListener('resize', this.handleResize);
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+    super.disconnectedCallback && super.disconnectedCallback();
   }
 
   render() {
@@ -357,6 +371,7 @@ export class TimeslotEditor extends LitElement {
       window.removeEventListener('touchmove', mouseMoveHandler);
       window.removeEventListener('mouseup', mouseUpHandler);
       window.removeEventListener('touchend', mouseUpHandler);
+      window.removeEventListener('blur', mouseUpHandler);
       mouseMoveHandler = () => {
         /**/
       };
