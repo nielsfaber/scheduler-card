@@ -1,0 +1,211 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} {value}",
+      "action_with_parameter": "{action} {parameter}"
+    },
+    "climate": {
+      "set_temperature": "aseta lämpötilaksi[ {temperature}]",
+      "set_temperature_hvac_mode_heat": "lämmitä[ {temperature} asteeseen]",
+      "set_temperature_hvac_mode_cool": "jäähdytä[ {temperature} asteeseen]",
+      "set_temperature_hvac_mode_heat_cool": "pidä lämpötila välillä[ {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "aseta tilaksi[ {hvac_mode}]",
+      "set_preset_mode": "aseta esivalinta[ {preset_mode}]",
+      "set_fan_mode": "aseta tuuletus[ {fan_mode}]"
+    },
+    "cover": {
+      "close_cover": "sulje",
+      "open_cover": "avaa",
+      "set_cover_position": "aseta sijainniksi[ {position}]",
+      "set_cover_tilt_position": "aseta kallistus[ {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "aseta nopeus[ {speed}]",
+      "set_direction": "asenta suunta[ {direction}]",
+      "oscillate": "aseta pyörimisnopeus[ {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "aseta kosteus[ {humidity}]",
+      "set_mode": "aseta tilaksi {mode}"
+    },
+    "input_number": {
+      "set_value": "aseta arvo {value}"
+    },
+    "input_select": {
+      "select_option": "valitse[ {option}]"
+    },
+    "select": {
+      "select_option": "valitse[ {option}]"
+    },
+    "light": {
+      "turn_on": "kytke päälle[ {brightness} kirkkaudella]"
+    },
+    "media_player": {
+      "select_source": "valitse lähteeksi[ {source}]"
+    },
+    "notify": {
+      "notify": "lähetä ilmoitus"
+    },
+    "script": {
+      "script": "suorita"
+    },
+    "vacuum": {
+      "start_pause": "aloita / keskeytä"
+    },
+    "water_heater": {
+      "set_operation_mode": "aseta tilaksi[ {operation_mode}]",
+      "set_away_mode": "aseta poissa-tila"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "hälytyspaneeli",
+    "binary_sensor": "binary sensor",
+    "climate": "ilmastointi",
+    "cover": "kaihdin/tallin ovi",
+    "fan": "tuuletin",
+    "group": "ryhmä",
+    "humidifier": "ilmankosteuttimet",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
+    "light": "valaisin",
+    "lock": "lukko",
+    "media_player": "mediatoistin",
+    "notify": "ilmoitus",
+    "switch": "kytkin",
+    "vacuum": "imuri",
+    "water_heater": "vedenlämmitin"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "päivittäin",
+          "workdays": "työpäivisin",
+          "weekend": "viikonloppuisin"
+        },
+        "day_types_long": {
+          "daily": "päivittäin",
+          "workdays": "työpäivisin",
+          "weekend": "viikonloppuisin"
+        },
+        "days": "päivää",
+        "tomorrow": "huomenna",
+        "repeated_days": "joka {days}",
+        "repeated_days_except": "joka päivä paitsi {excludedDays}",
+        "days_range": "{startDay} {endDay}",
+        "next_week_day": "seuraava {weekday}"
+      },
+      "time": {
+        "absolute": "{time}",
+        "interval": "{startTime} - {endTime}",
+        "at_midnight": "keskiyöllä",
+        "at_noon": "keskipäivällä",
+        "at_sun_event": "{sunEvent}"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Ajastin"
+      },
+      "overview": {
+        "no_entries": "Ei näytettäviä kohteita",
+        "backend_error": "Ei voitu yhdistää scheduler komponenttiin. Kortin käyttäminen vaatii scheduler integraation asentamisen.",
+        "excluded_items": "{number} {if number is 1} poissuljettu kohde {else} poissuljettua kohdetta",
+        "hide_excluded": "piilota poissuljetut kohteet",
+        "additional_tasks": "{number} {if number is 1} tehtävä {else} tehtävää"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Ryhmiä ei ole luotu",
+        "no_group_selected": "Valitse ryhmä ensin",
+        "no_entities_for_group": "Ryhmässä ei ole kohteita",
+        "no_entity_selected": "Valitse kohde ensin",
+        "no_actions_for_entity": "Kohteelle ei ole toimintoja",
+        "make_scheme": "luo aikataulu",
+        "multiple": "Monta kohdetta"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Valitse aikaikkuna ensin",
+        "time_scheme": "Aikataulu",
+        "time_input_mode": "Ajastustapa"
+      },
+      "conditions": {
+        "equal_to": "yhtä kuin",
+        "unequal_to": "ei yhtä kuin",
+        "all": "kaikki",
+        "any": "mikä tahansa",
+        "no_conditions_defined": "Ehtoja ei ole määritetty",
+        "track_conditions": "Uudelleentarkista kun ehdot muuttuvat"
+      },
+      "options": {
+        "repeat_type": "toiminta tapahtuman jälkeen",
+        "period": "ajanjakso"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Kohteet",
+          "other": "Muu"
+        },
+        "fields": {
+          "title": {
+            "heading": "Kortin otsikko",
+            "options": {
+              "standard": "normaali",
+              "hidden": "piilotettu",
+              "custom": "muokattu"
+            },
+            "custom_title": "Muokattu otsikko"
+          },
+          "discover_existing": {
+            "heading": "Näytä kaikki ajoitukset",
+            "description": "Tämä kytkee käyttöön 'näytä olemassa olevat -attribuutin'. Aiemmin luodut ajastukset lisätään automaattisesti korttiin. "
+          },
+          "time_step": {
+            "heading": "Ajastusvälit",
+            "description": "Ajastusväli minuutteina ajastusten luontiin"
+          },
+          "sort_by": {
+            "heading": "Lajitteluasetukset",
+            "description": "Järjestys miten ajastukset näkyvät kortissa",
+            "options": {
+              "relative_time": "Aikaa jäljellä seuraavaan toimintoon",
+              "title": "Ajastuksen otsikko",
+              "state": "Aktiiviset ajastukset ylhäällä"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Ensisijainen tieto",
+            "description": "Valitse mitä näytetään yhteenvedossa",
+            "options": {
+              "default": "Ajastuksen nimi",
+              "entity_action": "Ajastuksen yhteenveto"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Toissijainen tieto",
+            "description": "Valitse mitkä lisätiedot näkyvät yhteenvedossa",
+            "options": {
+              "relative_time": "Aikaa jäljellä seuraavaan toimintoon",
+              "time": "Seuraavalle toiminnolle määritetty aika",
+              "days": "Toistuvat viikonpäivät",
+              "additional_tasks": "Lisätoimintojen määrä"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Näytä otsikkokytkin",
+            "description": "Näytä kytkin kortin yläreunassa usean ajastuksen päälle/pois kytkemiseen"
+          },
+          "tags": {
+            "heading": "Tunniste",
+            "description": "Käytä tunnisteita ajastusten jakamiseen korttien välillä"
+          },
+          "entities": {
+            "heading": "Ajastettavat kohteet",
+            "description": "Valitse kohteet, joille haluat luoda ajastuksia. Voit klikata ryhmään laajentaaksesi sen. Huom: joitain kohteita voi käyttää vain ehtoina (esim. sensorit), ei toimintoihin",
+            "included_number": "{number} / {total} valittu"
+          }
+        }
+      }
+    }
+  }
+}
