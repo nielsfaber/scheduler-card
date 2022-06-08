@@ -5,41 +5,48 @@ import { PrettyPrintName } from '../../helpers';
 import { listVariableDisplay } from '../variables/list_variable';
 import { textVariableDisplay } from '../variables/text_variable';
 
-const wildcardPattern = /\{[^\}]+\}/g;
+const wildcardPattern = /\{([^\}]+)\}/;
 const parameterPattern = /\[([^\]]+)\]/;
+const MAX_RECURSION_DEPTH = 100;
 
 export function computeActionDisplay(action: Action) {
   let name = action.name;
   if (!name) name = PrettyPrintName(computeEntity(action.service));
 
-  const res = name.match(parameterPattern);
-  if (res) {
-    let replacement = res[1];
-    const matches = res[1].match(wildcardPattern);
-    if (
-      matches &&
-      matches.length &&
-      matches.every(wildcard => {
-        const field = wildcard.substring(1, wildcard.length - 1);
-        if (!Object.keys(action.service_data || {}).includes(field)) return false;
-        let value = '';
-        if (Object.keys(action.variables || {}).includes(field)) {
-          if (action.variables![field].type == EVariableType.Level)
-            value = levelVariableDisplay(action.service_data![field], action.variables![field] as LevelVariable);
-          else if (action.variables![field].type == EVariableType.List)
-            value = listVariableDisplay(action.service_data![field], action.variables![field] as ListVariable);
-          else value = textVariableDisplay(action.service_data![field], action.variables![field] as TextVariable);
-        } else {
-          value = action.service_data![field];
-        }
-        replacement = replacement.replace(wildcard, value);
-        return true;
-      })
-    ) {
-      return name.replace(res[0], replacement);
+  const replaceWildcards = (string: string, recursionDepth: number = 0): string => {
+    const res = wildcardPattern.exec(string);
+    if (!res) return string;
+    const field = res[1];
+
+    if (!Object.keys(action.service_data || {}).includes(field)) return string.replace(res[0], '');
+
+    let replacement: string;
+    if (Object.keys(action.variables || {}).includes(field)) {
+      if (action.variables![field].type == EVariableType.Level)
+        replacement = levelVariableDisplay(action.service_data![field], action.variables![field] as LevelVariable);
+      else if (action.variables![field].type == EVariableType.List)
+        replacement = listVariableDisplay(action.service_data![field], action.variables![field] as ListVariable);
+      else replacement = textVariableDisplay(action.service_data![field], action.variables![field] as TextVariable);
     } else {
-      return name.replace(res[0], '');
+      replacement = action.service_data![field];
     }
-  }
+    string = string.replace(res[0], replacement);
+    if (recursionDepth >= MAX_RECURSION_DEPTH) return string;
+    return replaceWildcards(string);
+  };
+
+  const replaceSubstrings = (string: string, recursionDepth: number = 0): string => {
+    const res = parameterPattern.exec(string);
+    if (!res) return string;
+
+    const replacement = replaceWildcards(res[1]);
+    if (!replacement.match(wildcardPattern)) string = string.replace(res[0], replacement);
+    else string = string.replace(res[0], '');
+    if (recursionDepth >= MAX_RECURSION_DEPTH) return string;
+    return replaceSubstrings(string);
+  };
+
+  name = replaceSubstrings(name);
+  name = replaceWildcards(name);
   return name || '';
 }
