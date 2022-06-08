@@ -39,8 +39,11 @@ export function computeActionDisplay(action: Action) {
     const res = parameterPattern.exec(string);
     if (!res) return string;
 
-    const replacement = replaceWildcards(res[1]);
-    if (!replacement.match(wildcardPattern)) string = string.replace(res[0], replacement);
+    const hasAllWildcards = res[1]
+      .match(wildcardPattern)
+      ?.every(e => Object.keys(action.service_data || {}).includes(e.substring(1, e.length - 1)));
+
+    if (hasAllWildcards) string = string.replace(res[0], replaceWildcards(res[1]));
     else string = string.replace(res[0], '');
     if (recursionDepth >= MAX_RECURSION_DEPTH) return string;
     return replaceSubstrings(string);
