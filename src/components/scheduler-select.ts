@@ -45,6 +45,16 @@ export class SchedulerSelect extends LitElement {
   @query('vaadin-combo-box-light', true)
   private _comboBox!: HTMLElement;
 
+  private _overlayMutationObserver?: MutationObserver;
+
+  public disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._overlayMutationObserver) {
+      this._overlayMutationObserver.disconnect();
+      this._overlayMutationObserver = undefined;
+    }
+  }
+
   public open() {
     this.updateComplete.then(() => {
       (this.shadowRoot?.querySelector('vaadin-combo-box-light') as any)?.open();
@@ -152,6 +162,42 @@ export class SchedulerSelect extends LitElement {
 
   private _openedChanged(ev: CustomEvent) {
     this._opened = ev.detail.value;
+
+    if (this._opened && 'MutationObserver' in window && !this._overlayMutationObserver) {
+      const overlay = document.querySelector<HTMLElement>('vaadin-combo-box-overlay');
+
+      if (!overlay) return;
+
+      this._overlayMutationObserver = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'inert' &&
+            // @ts-expect-error
+            overlay.inert === true
+          ) {
+            // @ts-expect-error
+            overlay.inert = false;
+            this._overlayMutationObserver?.disconnect();
+            this._overlayMutationObserver = undefined;
+          } else if (mutation.type === 'childList') {
+            mutation.removedNodes.forEach(node => {
+              if (node.nodeName === 'VAADIN-COMBO-BOX-OVERLAY') {
+                this._overlayMutationObserver?.disconnect();
+                this._overlayMutationObserver = undefined;
+              }
+            });
+          }
+        });
+      });
+
+      this._overlayMutationObserver.observe(overlay, {
+        attributes: true,
+      });
+      this._overlayMutationObserver.observe(document.body, {
+        childList: true,
+      });
+    }
   }
 
   private _valueChanged(ev: CustomEvent) {
