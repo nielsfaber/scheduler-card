@@ -4,7 +4,18 @@ import { fireEvent, HomeAssistant, LovelaceCardEditor, computeDomain } from 'cus
 
 import { CardConfig, EntityElement, ScheduleConfig, Action, ERepeatType, Timeslot } from './types';
 import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
-import { calculateTimeline, flatten, unique, omit, IsDefaultName, isDefined, AsArray, pick, isEqual } from './helpers';
+import {
+  calculateTimeline,
+  flatten,
+  unique,
+  omit,
+  IsDefaultName,
+  isDefined,
+  AsArray,
+  pick,
+  isEqual,
+  getLocale,
+} from './helpers';
 import { ValidateConfig } from './config-validation';
 
 import './views/scheduler-entities-card';
@@ -23,6 +34,8 @@ import { compareActions } from './data/actions/compare_actions';
 import { importAction } from './data/actions/import_action';
 import { assignAction } from './data/actions/assign_action';
 import { migrateActionConfig } from './data/actions/migrate_action_config';
+import { formatTime, TimeFormat } from './data/date-time/format_time';
+import { roundTime, stringToTime, timeToString } from './data/date-time/time';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -176,8 +189,12 @@ export class SchedulerCard extends LitElement {
 
     if (!timeSchemeSelected) {
       this.actions = [action];
+
+      let now = stringToTime(formatTime(new Date(), getLocale(this._hass), TimeFormat.twenty_four), this._hass);
+      now = roundTime(now, this._config.time_step, { wrapAround: true });
+
       const defaultTimeslot: Timeslot = {
-        start: '12:00:00',
+        start: timeToString(now),
         actions: entities.map(e => assignAction(e, this.actions[0])),
       };
 
