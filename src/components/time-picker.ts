@@ -18,7 +18,7 @@ export class TimePicker extends LitElement {
   @property() relativeMode = false;
   @property() event = ETimeEvent.Sunrise;
 
-  @property() _time?;
+  @property() _time!: number;
 
   maxOffset = 2;
 
@@ -58,12 +58,18 @@ export class TimePicker extends LitElement {
     this.dispatchEvent(myEvent);
   }
 
-  render() {
+  getTimeParts() {
     const timeString = this.relativeMode
       ? timeToString(this.time)
       : formatTime(stringToDate(timeToString(this.time)), getLocale(this.hass!));
 
-    const timeParts = timeString.split(/:|\ /);
+    let timeParts: string[] = timeString.split(/:|\ /);
+    timeParts[0] = String(Number(timeParts[0]));
+    return timeParts;
+  }
+
+  render() {
+    const timeParts = this.getTimeParts();
 
     return html`
       <div class="time-picker">
@@ -72,7 +78,19 @@ export class TimePicker extends LitElement {
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
-        <div class="hours">${timeParts[0].padStart(2, '0')}</div>
+        <div class="hours">
+          <ha-textfield
+            type="number"
+            inputmode="numeric"
+            .value=${timeParts[0]}
+            no-spinner
+            outlined
+            @input=${(ev: Event) => this._hoursChanged(ev, timeParts.length > 2)}
+            @focus=${this._onFocus}
+            @blur=${(ev: Event) => this._handleHoursInput(ev, timeParts)}
+          >
+          </ha-textfield>
+        </div>
         <div class="hours-down">
           <mwc-button @click=${() => (this.time = this._time - 3600)}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
@@ -84,7 +102,19 @@ export class TimePicker extends LitElement {
             <ha-icon icon="hass:chevron-up"></ha-icon>
           </mwc-button>
         </div>
-        <div class="minutes">${timeParts[1]}</div>
+        <div class="minutes">
+          <ha-textfield
+            type="number"
+            inputmode="numeric"
+            .value=${timeParts[1]}
+            no-spinner
+            outlined
+            @input=${this._minutesChanged}
+            @focus=${this._onFocus}
+            @blur=${(ev: Event) => this._handleMinutesInput(ev, timeParts)}
+          >
+          </ha-textfield>
+        </div>
         <div class="minutes-down">
           <mwc-button @click=${() => (this.time = this._time - this.stepSize * 60)}>
             <ha-icon icon="hass:chevron-down"></ha-icon>
@@ -173,6 +203,106 @@ export class TimePicker extends LitElement {
     }
   }
 
+  private _hoursChanged(ev: Event, amPmMode: boolean = false) {
+    const el = ev.target as HTMLInputElement;
+    const inputValue = el.value;
+    let newValue = Number(inputValue);
+
+    const minHours = this.relativeMode ? 0 : amPmMode ? 1 : 0;
+    const maxHours = this.relativeMode ? this.maxOffset : amPmMode ? 12 : 23;
+
+    let isValid = true;
+    if (inputValue.length > 2) {
+      isValid = false;
+      newValue = Number(inputValue.substring(0, 2));
+    }
+    if (newValue < 0) {
+      isValid = false;
+      newValue = -newValue;
+    }
+    if (newValue < minHours) {
+      isValid = false;
+      newValue = minHours;
+    }
+    if (newValue > maxHours) {
+      isValid = false;
+      newValue = maxHours;
+    }
+
+    if (!isValid) {
+      //override the entered value in case of invalid input
+      el.value = String(newValue);
+      el.blur();
+    }
+  }
+
+  private _minutesChanged(ev: Event) {
+    const el = ev.target as HTMLInputElement;
+    const inputValue = el.value;
+    let newValue = Number(inputValue);
+    let isValid = true;
+
+    if (inputValue.length > 2) {
+      isValid = false;
+      newValue = Number(inputValue.substring(0, 2));
+    }
+    if (newValue < 0) {
+      isValid = false;
+      newValue = -newValue;
+    }
+    if (newValue > 59) {
+      isValid = false;
+      newValue = 59;
+    }
+    if (newValue % this.stepSize != 0) {
+      newValue = Math.round(newValue / this.stepSize) * this.stepSize;
+    }
+
+    if (!isValid) {
+      //override the entered value in case of invalid input
+      el.value = String(newValue).padStart(2, '0');
+      el.blur();
+    }
+  }
+
+  private _onFocus(ev: Event) {
+    const el = ev.target as HTMLInputElement;
+    el.value = '';
+  }
+
+  private _handleHoursInput(ev: Event, timeParts: string[]) {
+    const el = ev.target as HTMLInputElement;
+    let value = Number(el.value);
+
+    if (!el.value.length) {
+      el.value = timeParts[0];
+      return;
+    }
+    if (timeParts.length > 2 && value == 12) value = 0;
+    if (timeParts.length > 2 && timeParts[2] == 'PM') value += 12;
+    const minutes = Number(timeParts[1]);
+    this.time = this._time >= 0 ? value * 3600 + minutes * 60 : -(value * 3600 + minutes * 60);
+    el.value = this.getTimeParts()[0];
+  }
+
+  private _handleMinutesInput(ev: Event, timeParts: string[]) {
+    const el = ev.target as HTMLInputElement;
+    let value = Number(el.value);
+
+    if (!el.value.length) {
+      el.value = timeParts[1];
+      return;
+    }
+    if (value % this.stepSize != 0) {
+      value = Math.round(value / this.stepSize) * this.stepSize;
+    }
+    let hours = Number(timeParts[0]);
+    if (timeParts.length > 2 && hours == 12) hours = 0;
+    if (timeParts.length > 2 && timeParts[2] == 'PM') hours += 12;
+    this.time = this._time >= 0 ? hours * 3600 + value * 60 : -(hours * 3600 + value * 60);
+    el.value = this.getTimeParts()[1];
+  }
+
   static styles = css`
     div.time-picker {
       display: grid;
@@ -182,7 +312,7 @@ export class TimePicker extends LitElement {
         'hours-up   .         minutes-up   suffix options'
         'hours      separator minutes      suffix options'
         'hours-down .         minutes-down suffix options';
-      grid-gap: 10px 0px;
+      grid-gap: 4px 0px;
       align-items: center;
     }
 
@@ -241,6 +371,14 @@ export class TimePicker extends LitElement {
       background: var(--primary-color);
       --mdc-theme-primary: var(--text-primary-color);
       border-radius: 4px;
+    }
+
+    ha-textfield {
+      text-align: center;
+      --text-field-padding: 0 4px;
+      --mdc-typography-subtitle1-font-size: 42px;
+      --mdc-text-field-outlined-idle-border-color: var(--card-background-color);
+      --mdc-text-field-outlined-hover-border-color: var(--card-background-color);
     }
   `;
 }
