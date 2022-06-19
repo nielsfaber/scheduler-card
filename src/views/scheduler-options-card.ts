@@ -138,7 +138,10 @@ export class SchedulerOptionsCard extends LitElement {
       const tagEntries = await fetchTags(this.hass!);
       const existingTags = tagEntries.map(e => e.name);
       const configTags = AsArray(this.config.tags);
-      this.tags = [...existingTags, ...configTags.filter(e => !existingTags.includes(e) && e != 'none')];
+      this.tags = [
+        ...existingTags,
+        ...configTags.filter(e => !existingTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),
+      ];
     }
 
     (await (window as any).loadCardHelpers()).importMoreInfoControl('input_datetime');
@@ -675,7 +678,7 @@ export class SchedulerOptionsCard extends LitElement {
   updateTags(ev: Event) {
     let value = ((ev.target as HTMLInputElement).value as unknown) as string[];
     value = value.map(e => e.trim());
-    value = value.filter(e => e != 'none');
+    value = value.filter(e => !['none', 'disabled', 'enabled'].includes(e));
     value.sort(sortAlphabetically);
 
     this.schedule = {

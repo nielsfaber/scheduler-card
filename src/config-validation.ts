@@ -169,6 +169,7 @@ export function ValidateConfig(config: any) {
     });
   }
   Optional(config, 'tags', ['string', 'array']);
+  Optional(config, 'exclude_tags', ['string', 'array']);
 
   if (errors.length) {
     throw new Error(

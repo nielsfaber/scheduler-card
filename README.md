@@ -312,6 +312,7 @@ Configuration is not *necessary*, except for defining a set of entities which yo
 | `show_add_button`        | boolean        | *true*                      | Show button for creating new schedules.                                                                                                                                                                                                                                                                       |
 | `display_options`        | dictionary     | none                        | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                                                                                           |
 | `tags`                   | string/list    | none                        | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                                     |
+| `exclude_tags`           | string/list    | none                        | Eliminate items from the schedules filtered by `tags`.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                    |
 ### Standard configuration
 
 The card includes a _standard configuration_.
@@ -654,6 +655,7 @@ The effect of assigning tags:
 - You can also assign multiple tags to the card. In this case they will not be automatically applied to newly created  (you should choose this via 'options'). 
 - You can also assign multiple tags to a schedule. This allows you to make them appear in multiple cards (each with card having its own tag).
 - You can assign `tags: none` to a card if you want to have only schedules without a tag showing up here.
+- You can assign `tags: enabled` or `tags: disabled` to a card if you want to include (respectively) all enabled or disabled schedules.
 - The option to assign tags on schedules is only available on cards which have the `tags` option set.
 
 :warning: **Tip**: If you want to start using tags you will have to go through your current schedules and assign them with tags.
@@ -671,7 +673,6 @@ Consider the following situation:
 Since both cards have the light domain [included](#include), the created schedules would normally show up in both cards, which is not desirable.
 
 Now by assigning `tags` to the card configurations, you can filter them. 
-
 
 Config for card A:
 ```yaml
@@ -691,6 +692,22 @@ tags: holiday
 Result:
 
 ![tags example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/tags_example.png?raw=true)
+
+
+**Excluding tags**
+
+For more advanced filtering it is possible to define `exclude_tags` to the card.
+
+The tag or tags defined in `exclude_tags` will be used to hide schedules from a card.
+
+The `exclude_tags` function works on top of the `tags` function, so you can eliminate schedules from the ones which are included via `tags`.
+
+*Example use-case*
+
+* All schedules for the holiday program are assigned with tag `holiday`.
+* All schedules which occur in the weekend are assigned with tag `weekend`.
+* By assigning `tags: weekend` and `exlude_tags: holiday` only the weekend schedules which are not part of the holiday program will be shown.
+
 
 ## Translations
 

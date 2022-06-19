@@ -95,13 +95,27 @@ const isIncluded = (schedule: Schedule, config: CardConfig) => {
   )
     return false;
 
+  let included = true;
+
+  //filter items by tags
   const filters = AsArray(config.tags);
   if (filters.length) {
-    if ((schedule.tags || []).some(e => filters.includes(e))) return true;
-    else if (filters.includes('none') && !schedule.tags?.length) return true;
-    return false;
+    included = false;
+    if ((schedule.tags || []).some(e => filters.includes(e))) included = true;
+    else if (filters.includes('none') && !schedule.tags?.length) included = true;
+    else if (filters.includes('enabled') && schedule.enabled) included = true;
+    else if (filters.includes('disabled') && !schedule.enabled) included = true;
   }
-  return true;
+
+  //filter items by exclude_tags
+  const excludeFilters = AsArray(config.exclude_tags);
+  if (excludeFilters.length && included) {
+    if ((schedule.tags || []).some(e => excludeFilters.includes(e))) included = false;
+    else if (excludeFilters.includes('none') && !schedule.tags?.length) included = false;
+    else if (excludeFilters.includes('enabled') && schedule.enabled) included = false;
+    else if (excludeFilters.includes('disabled') && !schedule.enabled) included = false;
+  }
+  return included;
 };
 
 //check whether entities and tags of schedule are included in configuration OR they should be discovered
