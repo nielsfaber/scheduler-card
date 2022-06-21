@@ -104,6 +104,12 @@
         "at_sun_event": "la {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Complete modifications",
+        "description": "The schedule which has been changed is currently disabled, should it be enabled?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Planificator"

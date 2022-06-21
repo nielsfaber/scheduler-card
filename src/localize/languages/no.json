@@ -104,6 +104,12 @@
         "at_sun_event": "ved {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Fullfør endringene",
+        "description": "Tidsplanen som er endret er for øyeblikket deaktivert, bør den være aktivert?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Tidsplan"

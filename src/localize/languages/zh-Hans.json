@@ -104,6 +104,12 @@
         "at_sun_event": "在 {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "完成修改",
+        "description": "已更改的计划当前已禁用，是否应该启用？"
+      }
+    },
     "panel": {
       "common": {
         "title": "计划任务"

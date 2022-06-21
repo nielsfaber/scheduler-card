@@ -104,6 +104,12 @@
         "at_sun_event": "о {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Завершіть зміни",
+        "description": "Розклад, який було змінено, наразі вимкнено, чи потрібно його ввімкнути?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Планувальник"

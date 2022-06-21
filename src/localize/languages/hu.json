@@ -104,6 +104,12 @@
         "at_sun_event": "{sunEvent}kor"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Végezze el a módosításokat",
+        "description": "A módosított ütemezés jelenleg le van tiltva, engedélyezni kell?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Időzítések"

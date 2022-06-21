@@ -105,6 +105,12 @@
         "at_sun_event": "bij {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Wijzigingen voltooid",
+        "description": "Deze planning is momenteel gedeactiveerd. Dient deze te worden ingeschakeld?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Tijdplanner"

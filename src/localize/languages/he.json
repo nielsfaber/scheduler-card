@@ -104,6 +104,12 @@
         "at_sun_event": "ב {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "השלם את השינויים",
+        "description": "לוח הזמנים ששונה מושבת כעת, האם צריך להפעיל אותו?"
+      }
+    },
     "panel": {
       "common": {
         "title": "לוח זמנים"

@@ -104,6 +104,12 @@
         "at_sun_event": "a la {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Completa las modificaciones",
+        "description": "El horario que se ha cambiado está actualmente deshabilitado, ¿debería habilitarse?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Programador"

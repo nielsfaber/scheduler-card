@@ -26,6 +26,7 @@ import './views/scheduler-card-editor';
 
 import './components/dialog-error';
 import './components/dialog-delete-defective';
+import './components/dialog-enable-item';
 
 import { parseEntity } from './data/entities/parse_entity';
 import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
@@ -306,7 +307,23 @@ export class SchedulerCard extends LitElement {
         this.editItem = null;
         this._view = EViews.Overview;
       } else {
-        if (!oldSchedule.enabled) this._hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
+        if (!oldSchedule.enabled) {
+          const result = await new Promise(resolve => {
+            fireEvent(this, 'show-dialog', {
+              dialogTag: 'dialog-enable-item',
+              dialogImport: () => import('./components/dialog-enable-item'),
+              dialogParams: {
+                cancel: () => {
+                  resolve(false);
+                },
+                confirm: () => {
+                  resolve(true);
+                },
+              },
+            });
+          });
+          if (result) this._hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
+        }
         if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
         editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
           .catch(e => handleError(e, this))

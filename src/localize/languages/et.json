@@ -104,6 +104,12 @@
         "at_sun_event": "{sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Viige muudatused lõpule",
+        "description": "Muudetud ajakava on praegu keelatud, kas see peaks olema lubatud?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Ajastaja"

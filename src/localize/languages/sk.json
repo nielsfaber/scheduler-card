@@ -104,6 +104,12 @@
         "at_sun_event": "na {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Dokončite úpravy",
+        "description": "Plán, ktorý sa zmenil, je momentálne zakázaný, mal by byť povolený?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Plánovač"

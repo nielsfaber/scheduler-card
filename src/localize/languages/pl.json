@@ -104,6 +104,12 @@
         "at_sun_event": "o {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Zakończ modyfikacje",
+        "description": "Zmieniony harmonogram jest obecnie wyłączony, czy powinien być włączony?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Harmonogram"

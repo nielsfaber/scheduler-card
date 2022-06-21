@@ -104,6 +104,12 @@
         "at_sun_event": "ao {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Conclua as modificações",
+        "description": "A programação que foi alterada está atualmente desabilitada, deveria ser habilitada?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Agenda"

@@ -104,6 +104,12 @@
         "at_sun_event": "au {sunEvent}"
       }
     },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Compléter les modifs",
+        "description": "Le planning qui a été modifié est actuellement désactivé, doit-il être activé ?"
+      }
+    },
     "panel": {
       "common": {
         "title": "Planificateur"
