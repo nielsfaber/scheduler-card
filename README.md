@@ -731,6 +731,7 @@ Currently the following languages are supported:
 | Русский     | ru         |                   |
 | Română      | ro         |                   |
 | Slovenčina  | sk         |                   |
+| Suomalainen  | fi        |                   |
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn |                   |
 | 简体中文    | zh-Hans    |                   |

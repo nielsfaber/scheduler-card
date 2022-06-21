@@ -106,8 +106,8 @@
     },
     "dialog": {
       "enable_schedule": {
-        "title": "Complete modifications",
-        "description": "The schedule which has been changed is currently disabled, should it be enabled?"
+        "title": "Completați modificările",
+        "description": "Programul care a fost modificat este momentan dezactivat, ar trebui activat?"
       }
     },
     "panel": {
