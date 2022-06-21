@@ -36,7 +36,7 @@ const languages: any = {
   no: no,
   pl: pl,
   pt: pt,
-  pt_BR: pt_br,
+  pt-BR: pt-br,
   ro: ro,
   sk: sk,
   ru: ru,
