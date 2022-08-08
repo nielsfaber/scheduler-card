@@ -373,6 +373,7 @@ export class TimePicker extends LitElement {
 
     ha-textfield {
       text-align: center;
+      --text-field-text-align: center;
       --text-field-padding: 0 4px;
       --mdc-typography-subtitle1-font-size: 42px;
       --mdc-text-field-outlined-idle-border-color: var(--card-background-color);
