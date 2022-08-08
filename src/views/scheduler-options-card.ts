@@ -57,7 +57,7 @@ const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
       [EConditionMatchType.Above]: {
         value: EConditionMatchType.Above,
         name: hass.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.above'),
-        icon: 'hass:greater-than',
+        icon: 'mdi:greater-than',
       },
     };
 
@@ -67,7 +67,7 @@ const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
       [EConditionMatchType.Below]: {
         value: EConditionMatchType.Below,
         name: hass.localize('ui.panel.config.automation.editor.triggers.type.numeric_state.below'),
-        icon: 'hass:less-than',
+        icon: 'mdi:less-than',
       },
     };
 
@@ -77,7 +77,7 @@ const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
       [EConditionMatchType.Equal]: {
         value: EConditionMatchType.Equal,
         name: localize('ui.panel.conditions.equal_to', getLocale(hass)),
-        icon: 'hass:equal',
+        icon: 'mdi:equal',
       },
     };
 
@@ -87,7 +87,7 @@ const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
       [EConditionMatchType.Unequal]: {
         value: EConditionMatchType.Unequal,
         name: localize('ui.panel.conditions.unequal_to', getLocale(hass)),
-        icon: 'hass:not-equal-variant',
+        icon: 'mdi:not-equal-variant',
       },
     };
 
@@ -210,7 +210,7 @@ export class SchedulerOptionsCard extends LitElement {
                 <div class="condition-options">
                   <div style="flex: 1">
                     <mwc-button @click=${this.addConditionClick}>
-                      <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+                      <ha-icon icon="mdi:plus-circle-outline" class="padded-right"></ha-icon>
                       ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
                     </mwc-button>
                   </div>

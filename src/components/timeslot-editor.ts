@@ -97,11 +97,11 @@ export class TimeslotEditor extends LitElement {
         </div>
       </div>
       <mwc-button @click=${this._addSlot} ?disabled=${this.activeSlot === null || this.slots.length >= 24}>
-        <ha-icon icon="hass:plus-circle-outline" class="padded-right"></ha-icon>
+        <ha-icon icon="mdi:plus-circle-outline" class="padded-right"></ha-icon>
         ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
       </mwc-button>
       <mwc-button @click=${this._removeSlot} ?disabled=${this.activeSlot === null || this.slots.length <= 2}>
-        <ha-icon icon="hass:minus-circle-outline" class="padded-right"></ha-icon>
+        <ha-icon icon="mdi:minus-circle-outline" class="padded-right"></ha-icon>
         ${this.hass.localize('ui.common.delete')}
       </mwc-button>
     `;
@@ -166,7 +166,7 @@ export class TimeslotEditor extends LitElement {
         <div class="tooltip ${this.activeMarker == i ? 'active' : ''}" @click=${this._selectMarker}>
           ${res
             ? html`
-                <ha-icon icon="hass:${res.event == 'sunrise' ? 'weather-sunny' : 'weather-night'}"></ha-icon>
+                <ha-icon icon="mdi:${res.event == 'sunrise' ? 'weather-sunny' : 'weather-night'}"></ha-icon>
                 ${res.sign} ${formatTime(stringToDate(res.offset), getLocale(this.hass!), TimeFormat.twenty_four)}
               `
             : formatTime(stringToDate(this.slots[i].start), getLocale(this.hass!))}

@@ -75,7 +75,7 @@ export class TimePicker extends LitElement {
       <div class="time-picker">
         <div class="hours-up">
           <mwc-button @click=${() => (this.time = this._time + 3600)}>
-            <ha-icon icon="hass:chevron-up"></ha-icon>
+            <ha-icon icon="mdi:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="hours">
@@ -93,13 +93,13 @@ export class TimePicker extends LitElement {
         </div>
         <div class="hours-down">
           <mwc-button @click=${() => (this.time = this._time - 3600)}>
-            <ha-icon icon="hass:chevron-down"></ha-icon>
+            <ha-icon icon="mdi:chevron-down"></ha-icon>
           </mwc-button>
         </div>
         <div class="separator">:</div>
         <div class="minutes-up">
           <mwc-button @click=${() => (this.time = this._time + this.stepSize * 60)}>
-            <ha-icon icon="hass:chevron-up"></ha-icon>
+            <ha-icon icon="mdi:chevron-up"></ha-icon>
           </mwc-button>
         </div>
         <div class="minutes">
@@ -117,7 +117,7 @@ export class TimePicker extends LitElement {
         </div>
         <div class="minutes-down">
           <mwc-button @click=${() => (this.time = this._time - this.stepSize * 60)}>
-            <ha-icon icon="hass:chevron-down"></ha-icon>
+            <ha-icon icon="mdi:chevron-down"></ha-icon>
           </mwc-button>
         </div>
         ${this.relativeMode
@@ -127,9 +127,7 @@ export class TimePicker extends LitElement {
                   ${this.getBeforeAfter()}
                 </mwc-button>
                 <mwc-button @click=${this.toggleSunriseSunset}>
-                  <ha-icon
-                    icon="hass:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"
-                  ></ha-icon>
+                  <ha-icon icon="mdi:${this.event == ETimeEvent.Sunrise ? 'weather-sunny' : 'weather-night'}"></ha-icon>
                 </mwc-button>
               </div>
             `
@@ -155,7 +153,7 @@ export class TimePicker extends LitElement {
 
     return html`
       <mwc-button @click="${this.toggleMode}" class="${this.relativeMode ? 'active' : ''}">
-        <ha-icon icon="hass:theme-light-dark"></ha-icon>
+        <ha-icon icon="mdi:theme-light-dark"></ha-icon>
       </mwc-button>
     `;
   }

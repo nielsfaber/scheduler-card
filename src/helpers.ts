@@ -96,7 +96,7 @@ export function PrettyPrintIcon(input?: string) {
   if (!input) return;
   if (typeof input != typeof 'x') input = String(input);
   if (input.match(/^[a-z]+:[a-z0-9-]+$/i)) return input;
-  return `hass:${input}`;
+  return `mdi:${input}`;
 }
 
 export function calculateTimeline(entries: Timeslot[], hass: HomeAssistant): Timeslot[] {

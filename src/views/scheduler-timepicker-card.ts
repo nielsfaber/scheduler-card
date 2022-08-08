@@ -166,7 +166,7 @@ export class SchedulerTimepickerCard extends LitElement {
           )}
         </div>
         <div class="summary-arrow">
-          <ha-icon icon="hass:arrow-right"> </ha-icon>
+          <ha-icon icon="mdi:arrow-right"> </ha-icon>
         </div>
         <div class="summary-action" @click=${this.editActionClick}>
           ${this.timeslots
@@ -265,18 +265,18 @@ export class SchedulerTimepickerCard extends LitElement {
       {
         value: 'time',
         name: this.hass.localize('ui.panel.config.automation.editor.triggers.type.time.at'),
-        icon: 'hass:clock-outline',
+        icon: 'mdi:clock-outline',
       },
       {
         value: ETimeEvent.Sunrise,
         name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise'),
-        icon: 'hass:weather-sunny',
+        icon: 'mdi:weather-sunny',
         disabled: Math.abs(deltaSunrise) > 7200,
       },
       {
         value: ETimeEvent.Sunset,
         name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset'),
-        icon: 'hass:weather-night',
+        icon: 'mdi:weather-night',
         disabled: Math.abs(deltaSunset) > 7200,
       },
     ];

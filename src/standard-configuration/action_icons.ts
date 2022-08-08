@@ -89,7 +89,7 @@ const actionIcons: IconList = {
   media_player: {
     turn_on: 'mdi:power',
     turn_off: 'mdi:power-off',
-    select_source: 'hass:music-box-multiple-outline',
+    select_source: 'mdi:music-box-multiple-outline',
   },
   notify: {
     '{entity_id}': 'mdi:message-alert',

@@ -54,7 +54,7 @@ export class SchedulerSelector extends LitElement {
             <span class="label">
               ${e.name}
             </span>            
-            <ha-icon class="button" icon="hass:close" @click=${() => this._removeClick(e.value)}>
+            <ha-icon class="button" icon="mdi:close" @click=${() => this._removeClick(e.value)}>
             </ha-icon>
             </mwc-icon-button>
           </div>
