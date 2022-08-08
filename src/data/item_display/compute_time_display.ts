@@ -22,11 +22,11 @@ export const computeTimeDisplay = (entry: Timeslot, hass: HomeAssistant) => {
       res.sign == '-'
         ? hass
             .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
-            .slice(0, -1)
+            .replace(/[^a-z]/gi, '')
             .toLowerCase()
         : hass
             .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
-            .slice(0, -1)
+            .replace(/[^a-z]/gi, '')
             .toLowerCase();
 
     const timeStr = formatTime(stringToDate(res.offset), getLocale(hass), TimeFormat.twenty_four);
