@@ -46,6 +46,7 @@ export const domainIcons: Record<string, string> = {
   alarm_control_panel: 'hass:alarm-light-outline',
   automation: 'hass:playlist-play',
   binary_sensor: 'hass:radiobox-blank',
+  button: 'hass:gesture-tap-button',
   calendar: 'hass:calendar',
   camera: 'hass:camera',
   climate: 'hass:home-thermometer-outline',

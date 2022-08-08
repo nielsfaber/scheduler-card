@@ -17,6 +17,9 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     turn_off: 'ui.card.vacuum.actions.turn_off',
     trigger: 'ui.card.script.run',
   },
+  button: {
+    press: 'ui.card.button.press',
+  },
   climate: {
     turn_off: 'ui.card.vacuum.actions.turn_off',
     heat: 'services.climate.set_temperature_hvac_mode_heat',

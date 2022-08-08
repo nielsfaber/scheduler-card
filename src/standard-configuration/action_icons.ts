@@ -35,6 +35,9 @@ const actionIcons: IconList = {
     turn_off: 'mdi:power-off',
     trigger: 'mdi:play',
   },
+  button: {
+    press: 'mdi:gesture-tap-button',
+  },
   climate: {
     turn_off: 'mdi:power-off',
     heat: 'mdi:fire',

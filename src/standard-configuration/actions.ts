@@ -46,6 +46,9 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
     turn_off: {},
     trigger: {},
   },
+  button: {
+    press: {},
+  },
   climate: {
     turn_off: {
       condition: stateObj => !listAttribute(stateObj, 'hvac_modes').includes('off'),
