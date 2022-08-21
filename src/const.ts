@@ -1,6 +1,6 @@
 import { CardConfig } from './types';
 
-export const CARD_VERSION = 'v2.3.5';
+export const CARD_VERSION = 'v2.3.6';
 
 export const DefaultTimeStep = 10;
 
