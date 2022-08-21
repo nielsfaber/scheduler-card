@@ -13,7 +13,7 @@ export function computeActionDisplay(action: Action) {
   let name = action.name;
   if (!name) name = PrettyPrintName(computeEntity(action.service));
 
-  const replaceWildcards = (string: string, recursionDepth: number = 0): string => {
+  const replaceWildcards = (string: string, recursionDepth = 0): string => {
     const res = wildcardPattern.exec(string);
     if (!res) return string;
     const field = res[1];
@@ -35,15 +35,13 @@ export function computeActionDisplay(action: Action) {
     return replaceWildcards(string);
   };
 
-  const replaceSubstrings = (string: string, recursionDepth: number = 0): string => {
+  const replaceSubstrings = (string: string, recursionDepth = 0): string => {
     const res = parameterPattern.exec(string);
     if (!res) return string;
 
-    const hasAllWildcards = res[1]
-      .match(wildcardPattern)
-      ?.every(e => Object.keys(action.service_data || {}).includes(e.substring(1, e.length - 1)));
+    const hasWildcard = res[1].match(wildcardPattern)?.map(e => Object.keys(action.service_data || {}).includes(e[1]));
 
-    if (hasAllWildcards) string = string.replace(res[0], replaceWildcards(res[1]));
+    if (hasWildcard) string = string.replace(res[0], replaceWildcards(res[1]));
     else string = string.replace(res[0], '');
     if (recursionDepth >= MAX_RECURSION_DEPTH) return string;
     return replaceSubstrings(string);
