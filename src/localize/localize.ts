@@ -16,6 +16,7 @@ import * as pt_br from './languages/pt-BR.json';
 import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
+import * as sl from './languages/sl.json';
 import * as uk from './languages/uk.json';
 import * as zh_Hans from './languages/zh-Hans.json';
 import { FrontendTranslationData } from 'custom-card-helpers';
@@ -41,6 +42,7 @@ const languages: any = {
   'pt-BR': pt_br,
   ro: ro,
   sk: sk,
+  sl: sl,
   ru: ru,
   uk: uk,
   'zh-Hans': zh_Hans,

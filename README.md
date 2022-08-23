@@ -730,7 +730,8 @@ Currently the following languages are supported:
 | Português   | pt, pt-br  |                   |
 | Русский     | ru         |                   |
 | Română      | ro         |                   |
-| Slovenčina  | sk         |                   |
+| Slovenščina  | sl         |                   |
+| Slovenský  | sk         |                   |
 | Suomalainen  | fi        |                   |
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn |                   |
