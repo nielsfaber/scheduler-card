@@ -1,0 +1,217 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} v {value}",
+      "action_with_parameter": "{action} z {parameter}"
+    },
+    "climate": {
+      "set_temperature": "nastavi temperaturo[ na {temperature}]",
+      "set_temperature_hvac_mode_heat": "ogrej[ na {temperature}]",
+      "set_temperature_hvac_mode_cool": "ohladi[ na {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "reguliraj[ na {target_temp_low} - {target_temp_high}]",
+      "set_hvac_mode": "nastavi način[ na {hvac_mode}]",
+      "set_preset_mode": "nastavi preset[ na {preset_mode}]",
+      "set_fan_mode": "nastavi ventilator[ na {fan_mode}]"
+    },
+    "cover": {
+      "close_cover": "zapri",
+      "open_cover": "odpri",
+      "set_cover_position": "nastavi pozicijo[ na {position}]",
+      "set_cover_tilt_position": "nastavi naklon[ na {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "nastavi hitrost[ na {speed}]",
+      "set_direction": "nastavi smer[ na {direction}]",
+      "oscillate": "nastavi obračanje[ na {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "nastavi vlažnost[ na {humidity}]",
+      "set_mode": "nastavi način[ na {mode}]"
+    },
+    "input_number": {
+      "set_value": "nastavi vrednost[ na {value}]"
+    },
+    "input_select": {
+      "select_option": "izberi možnost[ {option}]"
+    },
+    "select": {
+      "select_option": "izberi možnost[ {option}]"
+    },
+    "light": {
+      "turn_on": "vključi[ z {brightness} brightness]"
+    },
+    "media_player": {
+      "select_source": "Izberi vir[ {source}]"
+    },
+    "notify": {
+      "notify": "pošlji sporočilo"
+    },
+    "script": {
+      "script": "izvedi"
+    },
+    "vacuum": {
+      "start_pause": "zaženi / ustavi"
+    },
+    "water_heater": {
+      "set_operation_mode": "nastavi način[ na {operation_mode}]",
+      "set_away_mode": "nastavi način odsoten"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "kontrolna plošča alarma",
+    "binary_sensor": "binarni sensorji",
+    "climate": "klime",
+    "cover": "rolete",
+    "fan": "ventilatorji",
+    "group": "skupine entitet",
+    "humidifier": "vlažilniki",
+    "input_boolean": "input boolean",
+    "input_number": "input number",
+    "input_select": "input select",
+    "light": "luči",
+    "lock": "ključavnice",
+    "media_player": "medijsi predvajalniki",
+    "notify": "obvestila",
+    "switch": "stikala",
+    "vacuum": "sesalniki",
+    "water_heater": "grelniki vode"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "dnevno",
+          "workdays": "delovniki",
+          "weekend": "vikend"
+        },
+        "day_types_long": {
+          "daily": "vsak dan",
+          "workdays": "ob delovnikih",
+          "weekend": "ob vikendih"
+        },
+        "days": "dni",
+        "tomorrow": "jutri",
+        "repeated_days": "vsakih {days}",
+        "repeated_days_except": "vsak dan razen {excludedDays}",
+        "days_range": "od {startDay} do {endDay}",
+        "next_week_day": "naslednji {weekday}"
+      },
+      "time": {
+        "absolute": "ob {time}",
+        "interval": "od {startTime} do {endTime}",
+        "at_midnight": "opolnoči",
+        "at_noon": "opoldne",
+        "at_sun_event": "ob {sunEvent}"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Zaključi spremembe",
+        "description": "Urnik, katerega ste spremenili je trenutno izključen, ali ga želite omogočiti?"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Urnik"
+      },
+      "overview": {
+        "no_entries": "Ni vpisov za prikaz",
+        "backend_error": "Ni povezave s komponento urnika. Komponenta mora biti nameščena kot integracija, preden lahko uporabite to kartico.",
+        "excluded_items": "{number}{if number is 1} izločen predmet {else} izločenih predmetov",
+        "hide_excluded": "skrij izločene predmete",
+        "additional_tasks": "še {number}{if number is 1} opravilo {else} opravil"
+      },
+      "entity_picker": {
+        "no_groups_defined": "Ni definiranih skupin",
+        "no_group_selected": "Najprej izberite skupino",
+        "no_entities_for_group": "V tej skupini ni entitet",
+        "no_entity_selected": "Najprej izberite entiteto",
+        "no_actions_for_entity": "Za to entiteto ni akcij",
+        "make_scheme": "izdelaj shemo",
+        "multiple": "Večkratno"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "Najprej izberi časovni okvir",
+        "time_scheme": "Shema",
+        "time_input_mode": "Način časovnega nadzora"
+      },
+      "conditions": {
+        "equal_to": "je enako",
+        "unequal_to": "ni enako",
+        "all": "vse",
+        "any": "karkoli",
+        "no_conditions_defined": "Ni definiranih pogojev",
+        "track_conditions": "Ponovno preglej ko se pogoji spremenijo"
+      },
+      "options": {
+        "repeat_type": "obnašanje, ko končaš",
+        "period": "perioda"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entitete",
+          "other": "Ostalo"
+        },
+        "fields": {
+          "title": {
+            "heading": "Ime kartice",
+            "options": {
+              "standard": "standardno",
+              "hidden": "skrito",
+              "custom": "po meri"
+            },
+            "custom_title": "Ime po želji"
+          },
+          "discover_existing": {
+            "heading": "Prikaži vse urnike",
+            "description": "Tole nastavi parameter 'discover existing'. Prej kreirani urniki bodo samodejno dodani v kartico. "
+          },
+          "time_step": {
+            "heading": "Časovni korak",
+            "description": "Ločljivost (v minutah) za kreiranje urnikov"
+          },
+          "sort_by": {
+            "heading": "Možnosti sortiranja",
+            "description": "Zaporedje, po katerem se prikažejo urniki na kartici",
+            "options": {
+              "relative_time": "Preostali čas do naslednje akcije",
+              "title": "Prikazano ime urnika",
+              "state": "Prikaži aktivne urnike na vrhu"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Prikazane primarne informacije",
+            "description": "Nastavite, kaj se prikazuje v pregledu urnikov",
+            "options": {
+              "default": "Ime urnika",
+              "entity_action": "Povzetek operacije"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Prikazane sekundarne informacije",
+            "description": "Nastavite, katere dodatne informacije želite imeti prikazane v pregledu",
+            "options": {
+              "relative_time": "Preostali čas do naslednje akcije",
+              "time": "Nastavljen čas za naslednjo akcijo",
+              "days": "Katere dni/kdaj se sproži akcija",
+              "additional_tasks": "Število dodatnih opravil"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Prikaži glavo",
+            "description": "Na vrhu prikaže stikalo, s katerim lahko omogočite/izključite vse entitete naenkrat"
+          },
+          "tags": {
+            "heading": "Tag-i",
+            "description": "Uporabite tag-e za ločevanje urnikov med več karticami"
+          },
+          "entities": {
+            "heading": "Vključene entitete",
+            "description": "Izberite entitete, katere želike krmiliti s tem urnikom. Lahko kliknete na skupino, da jo odprete. Vedite, da lahko nekatere entitete (npr. senzorje) uporabite samo v pogojih, ne pa za akcije.",
+            "included_number": "{number}/{total} izbranih"
+          }
+        }
+      }
+    }
+  }
+}
