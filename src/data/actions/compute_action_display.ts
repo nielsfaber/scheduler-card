@@ -39,8 +39,8 @@ export function computeActionDisplay(action: Action) {
     const res = parameterPattern.exec(string);
     if (!res) return string;
 
-    const hasWildcard = res[1].match(wildcardPattern)?.map(e => Object.keys(action.service_data || {}).includes(e[1]));
-
+    const field = res[1].match(wildcardPattern)![1];
+    const hasWildcard = Object.keys(action.service_data || {}).includes(field);
     if (hasWildcard) string = string.replace(res[0], replaceWildcards(res[1]));
     else string = string.replace(res[0], '');
     if (recursionDepth >= MAX_RECURSION_DEPTH) return string;

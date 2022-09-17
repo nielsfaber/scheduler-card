@@ -95,7 +95,9 @@ export class SchedulerTimepickerCard extends LitElement {
           <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
         </div>
         <div class="card-content">
-          <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+          <div class="header">
+            ${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}
+          </div>
           ${this.renderSummary()}
           ${!this.timeslots
             ? html`
@@ -238,7 +240,7 @@ export class SchedulerTimepickerCard extends LitElement {
         : null;
 
     return html`
-      <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+      <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}</div>
       <button-group
         .items=${this.activeEntry !== null ? this.actions : []}
         .value=${selectedAction !== null

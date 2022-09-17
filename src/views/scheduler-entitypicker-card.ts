@@ -156,7 +156,9 @@ export class SchedulerEditorCard extends LitElement {
               : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
           </button-group>
 
-          <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.name')}</div>
+          <div class="header">
+            ${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}
+          </div>
           <button-group
             .items=${actions}
             .value=${actions.findIndex(e => isEqual(e, this.selectedAction))}

@@ -74,7 +74,8 @@ export class SchedulerCard extends LitElement {
 
   firstUpdated() {
     const hass = this._hass!;
-    if (hass.localize('ui.panel.config.automation.editor.actions.name')) this.translationsLoaded = true;
+    if (hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action'))
+      this.translationsLoaded = true;
     else {
       const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
       el._loadFragmentTranslations(hass.language, 'config').then(() => {
@@ -86,7 +87,7 @@ export class SchedulerCard extends LitElement {
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
     if (oldHass && changedProps.size == 1) {
-      if (!oldHass.localize('ui.panel.config.automation.editor.actions.name')) {
+      if (!oldHass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')) {
         this.translationsLoaded = true;
         return true;
       } else if (this._view == EViews.Overview) return true;
