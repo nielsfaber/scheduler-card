@@ -312,6 +312,7 @@ export class TimePicker extends LitElement {
         'hours-down .         minutes-down suffix options';
       grid-gap: 4px 0px;
       align-items: center;
+      direction: ltr;
     }
 
     div.hours-up {
