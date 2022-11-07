@@ -1,7 +1,7 @@
 import { LitElement, html, css, PropertyValues } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html';
-import { HomeAssistant } from 'custom-card-helpers';
+import { fireEvent, HomeAssistant } from 'custom-card-helpers';
 import { STATE_NOT_RUNNING, UnsubscribeFunc } from 'home-assistant-js-websocket';
 
 import { localize } from '../localize/localize';
@@ -344,12 +344,15 @@ export class SchedulerEntitiesCard extends SubscribeMixin(LitElement) {
     const state = this.hass!.states[schedule.entity_id]?.state || '';
 
     return html`
-      <div
-        class="schedule-row ${['on', 'triggered'].includes(state) ? '' : 'disabled'}"
-        @click=${() => this.editItemClick(schedule.schedule_id!)}
-      >
-        <ha-icon icon="${PrettyPrintIcon(displayInfo.icon)}"></ha-icon>
-        <div class="info">
+      <div class="schedule-row ${['on', 'triggered'].includes(state) ? '' : 'disabled'}">
+        <ha-icon
+          icon="${PrettyPrintIcon(displayInfo.icon)}"
+          @click=${(ev: Event) =>
+            fireEvent(ev.target as HTMLElement, 'hass-more-info', {
+              entityId: schedule.entity_id,
+            })}
+        ></ha-icon>
+        <div class="info" @click=${() => this.editItemClick(schedule.schedule_id!)}>
           ${this.renderDisplayItems(schedule, displayInfo.primaryInfo)}
           <div class="secondary">
             ${this.renderDisplayItems(schedule, displayInfo.secondaryInfo)}
