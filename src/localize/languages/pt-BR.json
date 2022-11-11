@@ -8,16 +8,16 @@
       "set_temperature": "definir temperatura[ para {temperature}]",
       "set_temperature_hvac_mode_heat": "aquecimento[ para {temperature}]",
       "set_temperature_hvac_mode_cool": "arrefecimento[ para {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "regulate[ para {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "definir modo[ para {hvac_mode}]",
       "set_preset_mode": "definir predefinição[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "definir modo do ventilador[ para {fan_mode}]"
     },
     "cover": {
       "close_cover": "fechar",
       "open_cover": "abrir",
       "set_cover_position": "definir posição[ para {position}]",
-      "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
+      "set_cover_tilt_position": "definir a posição de inclinação[ para {tilt_position}]"
     },
     "fan": {
       "set_speed": "definir velocidade[ para {speed}]",
@@ -44,7 +44,7 @@
       "select_source": "selecionar origem[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "notify": "enviar notificação"
     },
     "script": {
       "script": "executar"
@@ -58,10 +58,10 @@
     }
   },
   "domains": {
-    "alarm_control_panel": "painel de controlo de alarme",
-    "binary_sensor": "binary sensors",
+    "alarm_control_panel": "painel de alarme",
+    "binary_sensor": "sensores binários",
     "climate": "ambiente",
-    "cover": "estores",
+    "cover": "persiana",
     "fan": "ventiladores",
     "group": "grupos",
     "humidifier": "humidificadores",
@@ -71,7 +71,7 @@
     "light": "iluminação",
     "lock": "fechaduras",
     "media_player": "reprodutores de mídia",
-    "notify": "notification",
+    "notify": "notificar",
     "switch": "interruptores",
     "vacuum": "aspiradores",
     "water_heater": "aquecedores hidráulicos"
@@ -93,7 +93,7 @@
         "tomorrow": "amanhã",
         "repeated_days": "a cada {days}",
         "repeated_days_except": "a cada dia exceto {excludedDays}",
-        "days_range": "até {startDay} até {endDay}",
+        "days_range": "de {startDay} até {endDay}",
         "next_week_day": "próximo {weekday}"
       },
       "time": {
@@ -115,8 +115,8 @@
         "title": "Agenda"
       },
       "overview": {
-        "no_entries": "Não existem itens a mostrar",
-        "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
+        "no_entries": "Não existem itens para mostrar",
+        "backend_error": "Não foi possível conectar com o componente agendador. Ele precisa ser instalado como integração antes que este cartão possa ser usado.",
         "excluded_items": "{number}{if number is 1} item excluído {else} itens excluídos",
         "hide_excluded": "ocultar itens excluídos",
         "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
@@ -128,20 +128,20 @@
         "no_entity_selected": "Selecione uma entidade primeiro",
         "no_actions_for_entity": "Não existem ações para esta entidade",
         "make_scheme": "criar esquema",
-        "multiple": "Multiple"
+        "multiple": "Múltiplo"
       },
       "time_picker": {
         "no_timeslot_selected": "Selecionar um período horário primeiro",
         "time_scheme": "Esquema",
-        "time_input_mode": "Time control mode"
+        "time_input_mode": "Modo de controle do tempo"
       },
       "conditions": {
         "equal_to": "é",
         "unequal_to": "não é",
         "all": "todos(as)",
-        "any": "qualquer",
+        "any": "qualquer um",
         "no_conditions_defined": "Não existem condições definidas",
-        "track_conditions": "Re-evaluate when conditions change"
+        "track_conditions": "Reavaliar quando as condições mudarem"
       },
       "options": {
         "repeat_type": "comportamento após a conclusão",
