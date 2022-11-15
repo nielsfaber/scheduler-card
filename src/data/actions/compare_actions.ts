@@ -1,6 +1,7 @@
+import { isEqual } from '../../helpers';
 import { Action, EVariableType, LevelVariable, ListVariable } from '../../types';
 
-export function compareActions(actionA: Action, actionB: Action, allowVars: boolean = false) {
+export function compareActions(actionA: Action, actionB: Action, allowVars = false) {
   const isOptional = (variable: string, action: Action) => {
     return (
       Object.keys(action.variables || {}).includes(variable) &&
@@ -32,7 +33,7 @@ export function compareActions(actionA: Action, actionB: Action, allowVars: bool
       serviceDataA.filter(e => !variablesA.includes(e)).includes(arg) &&
       serviceDataB.filter(e => !variablesB.includes(e)).includes(arg)
     )
-      return actionA.service_data![arg] === actionB.service_data![arg];
+      return isEqual(actionA.service_data![arg], actionB.service_data![arg]);
 
     // if both are variables they are assumed to be equal
     if (variablesA.includes(arg) && variablesB.includes(arg)) return true;
