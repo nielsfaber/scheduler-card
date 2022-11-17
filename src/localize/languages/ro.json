@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "Completați modificările",
         "description": "Programul care a fost modificat este momentan dezactivat, ar trebui activat?"
+      },
+      "confirm_delete": {
+        "title": "Ștergeți entitatea?",
+        "description": "Sigur doriți să eliminați această entitate?"
       }
     },
     "panel": {

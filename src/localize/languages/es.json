@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "Completa las modificaciones",
         "description": "El horario que se ha cambiado está actualmente deshabilitado, ¿debería habilitarse?"
+      },
+      "confirm_delete": {
+        "title": "¿Eliminar entidad?",
+        "description": "¿Estás seguro de que deseas eliminar esta entidad?"
       }
     },
     "panel": {

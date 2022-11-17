@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "Completa le modifiche",
         "description": "La pianificazione modificata è attualmente disabilitata, dovrebbe essere abilitata?"
+      },
+      "confirm_delete": {
+        "title": "Vuoi rimuovere l'entità?",
+        "description": "Sei sicuro di voler rimuovere questa entità?"
       }
     },
     "panel": {

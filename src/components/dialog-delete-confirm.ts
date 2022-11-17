@@ -2,6 +2,8 @@ import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
 import { mdiClose } from '@mdi/js';
+import { getLocale } from '../helpers';
+import { localize } from '../localize/localize';
 
 @customElement('dialog-delete-confirm')
 export class DialogDeleteConfirm extends LitElement {
@@ -27,12 +29,12 @@ export class DialogDeleteConfirm extends LitElement {
           <ha-header-bar>
             <ha-icon-button slot="navigationIcon" dialogAction="cancel" .path=${mdiClose}> </ha-icon-button>
             <span slot="title">
-              ${this.hass.localize('ui.dialogs.more_info_control.restored.confirm_remove_title')}
+              ${localize('ui.dialog.confirm_delete.title', getLocale(this.hass))}
             </span>
           </ha-header-bar>
         </div>
         <div class="wrapper">
-          ${this.hass.localize('ui.dialogs.more_info_control.restored.confirm_remove_text')}
+          ${localize('ui.dialog.confirm_delete.description', getLocale(this.hass))}
         </div>
 
         <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">

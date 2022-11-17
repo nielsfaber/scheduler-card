@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "Dokončite úpravy",
         "description": "Plán, ktorý sa zmenil, je momentálne zakázaný, mal by byť povolený?"
+      },
+      "confirm_delete": {
+        "title": "Odstrániť entitu?",
+        "description": "Naozaj chcete odstrániť túto entitu?"
       }
     },
     "panel": {

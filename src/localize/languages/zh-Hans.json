@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "完成修改",
         "description": "已更改的计划当前已禁用，是否应该启用？"
+      },
+      "confirm_delete": {
+        "title": "是否删除实体？",
+        "description": "您确定要删除此实体吗？"
       }
     },
     "panel": {

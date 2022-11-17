@@ -109,6 +109,10 @@
       "enable_schedule": {
         "title": "Wijzigingen voltooid",
         "description": "Deze planning is momenteel gedeactiveerd. Dient deze te worden ingeschakeld?"
+      },
+      "confirm_delete": {
+        "title": "Entiteit verwijderen?",
+        "description": "Weet je zeker dat je dit item wilt verwijderen?"
       }
     },
     "panel": {

@@ -108,6 +108,10 @@
       "enable_schedule": {
         "title": "Conclua as modificações",
         "description": "A programação que foi alterada está atualmente desabilitada, deveria ser habilitada?"
+      },
+      "confirm_delete": {
+        "title": "Remover a entidade?",
+        "description": "Tem a certeza que deseja remover esta entidade?"
       }
     },
     "panel": {
