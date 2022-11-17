@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create zip
+        run: |
+          zip ./scheduler-card.zip ./* ./dist/* -x '.*'
+
+      - uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: ./scheduler-card.zip application/zip
