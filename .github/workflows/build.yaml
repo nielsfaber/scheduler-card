@@ -11,13 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Create zip
-        run: |
-          cd dist/
-          zip ../scheduler-card.zip ./scheduler-card.js -x '.*'
-
       - uses: JasonEtco/upload-to-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: ./scheduler-card.zip application/zip
+          args: ./dist/scheduler-card.js
