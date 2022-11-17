@@ -13,7 +13,8 @@ jobs:
 
       - name: Create zip
         run: |
-          zip ./scheduler-card.zip ./* ./dist/* -x '.*'
+          cd dist/
+          zip ../scheduler-card.zip ./scheduler-card.js -x '.*'
 
       - uses: JasonEtco/upload-to-release@master
         env:
