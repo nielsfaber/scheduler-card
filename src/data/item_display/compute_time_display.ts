@@ -13,7 +13,11 @@ export const computeTimeDisplay = (entry: Timeslot, hass: HomeAssistant) => {
 
     const eventString =
       res.event == ETimeEvent.Sunrise
-        ? hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
+        ? getLocale(hass).language == 'de'
+          ? hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise')
+          : hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').toLowerCase()
+        : getLocale(hass).language == 'de'
+        ? hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset')
         : hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset').toLowerCase();
     if (Math.abs(stringToTime(res.offset, hass)) < 5 * 60)
       return localize('ui.components.time.at_sun_event', getLocale(hass), '{sunEvent}', eventString);
