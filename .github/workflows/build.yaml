@@ -15,4 +15,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: ./dist/scheduler-card.js
+          args: ./dist/scheduler-card.js text/javascript
