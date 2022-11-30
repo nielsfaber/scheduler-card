@@ -57,7 +57,7 @@ export const parseListVariable = (
   stateObj: HassEntity | undefined
 ): AtLeast<ListVariable, 'options'> => {
   if (typeof config.options == 'string') {
-    let res = listAttribute(stateObj, config.options);
+    const res = listAttribute(stateObj, config.options);
     return {
       options: res.map(e => Object({ value: e })),
     };

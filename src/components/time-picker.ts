@@ -63,7 +63,7 @@ export class TimePicker extends LitElement {
       ? timeToString(this.time)
       : formatTime(stringToDate(timeToString(this.time)), getLocale(this.hass!));
 
-    let timeParts: string[] = timeString.split(/:|\ /);
+    const timeParts: string[] = timeString.split(/:|\ /);
     timeParts[0] = String(Number(timeParts[0]));
     return timeParts;
   }
@@ -201,7 +201,7 @@ export class TimePicker extends LitElement {
     }
   }
 
-  private _hoursChanged(ev: Event, amPmMode: boolean = false) {
+  private _hoursChanged(ev: Event, amPmMode = false) {
     const el = ev.target as HTMLInputElement;
     const inputValue = el.value;
     let newValue = Number(inputValue);
