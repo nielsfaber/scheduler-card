@@ -27,7 +27,7 @@ const coverIcon = (stateObj: HassEntity, state: string) => {
 };
 
 const personIcon = (_stateObj: HassEntity, state: string, hass: HomeAssistant) => {
-  let stateIcons: Record<string, string> = {
+  const stateIcons: Record<string, string> = {
     home: 'mdi:home-outline',
     not_home: 'mdi:exit-run',
   };
