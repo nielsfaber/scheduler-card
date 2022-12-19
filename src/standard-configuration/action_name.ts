@@ -54,6 +54,9 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     turn_on: 'ui.card.vacuum.actions.turn_on',
     turn_off: 'ui.card.vacuum.actions.turn_off',
   },
+  input_button: {
+    press: 'ui.card.button.press',
+  },
   input_number: {
     set_value: 'services.input_number.set_value',
   },

@@ -56,6 +56,7 @@ export const domainIcons: Record<string, string> = {
   group: 'mdi:google-circles-communities',
   humidifier: 'mdi:air-humidifier',
   input_boolean: 'mdi:drawing',
+  input_button: 'mdi:gesture-tap-button',
   input_number: 'mdi:ray-vertex',
   input_select: 'mdi:format-list-bulleted',
   select: 'mdi:format-list-bulleted',

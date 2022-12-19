@@ -240,6 +240,9 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
     turn_on: {},
     turn_off: {},
   },
+  input_button: {
+    press: {},
+  },
   input_number: {
     set_value: {
       variables: {

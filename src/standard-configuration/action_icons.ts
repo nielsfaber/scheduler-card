@@ -72,6 +72,9 @@ const actionIcons: IconList = {
     turn_on: 'mdi:flash',
     turn_off: 'mdi:flash-off',
   },
+  input_button: {
+    press: 'mdi:gesture-tap-button',
+  },
   input_number: {
     set_value: 'mdi:counter',
   },
