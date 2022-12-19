@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "是否删除实体？",
         "description": "您确定要删除此实体吗？"
+      },
+      "confirm_migrate": {
+        "title": "修改时间表",
+        "description": "此操作将丢失某些设置。 你想继续吗？"
       }
     },
     "panel": {
       "common": {
-        "title": "计划任务"
+        "title": "计划任务",
+        "new_schedule": "新时间表",
+        "default_name": "日程 #{id}"
       },
       "overview": {
         "no_entries": "无事项",

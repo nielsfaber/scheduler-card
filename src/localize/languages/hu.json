@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Biztos benne, hogy eltávolítja az entitást?",
         "description": "Biztos benne, hogy el szeretné távolítani ezt az entitást?"
+      },
+      "confirm_migrate": {
+        "title": "Ütemezés módosítása",
+        "description": "Ezzel a művelettel bizonyos beállítások elvesznek. Akarod folytatni?"
       }
     },
     "panel": {
       "common": {
-        "title": "Időzítések"
+        "title": "Időzítések",
+        "new_schedule": "Új ütemezés",
+        "default_name": "Ütemterv #{id}"
       },
       "overview": {
         "no_entries": "Nincs megjeleníthető elem",

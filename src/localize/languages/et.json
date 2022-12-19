@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Kas eemaldan olemi?",
         "description": "Oled kindel, et soovid selle olemi eemaldada?"
+      },
+      "confirm_migrate": {
+        "title": "Muutke ajakava",
+        "description": "Selle muudatusega lähevad mõned seaded kaotsi. Kas soovite jätkata?"
       }
     },
     "panel": {
       "common": {
-        "title": "Ajastaja"
+        "title": "Ajastaja",
+        "new_schedule": "Uus ajakava",
+        "default_name": "Ajakava #{id}"
       },
       "overview": {
         "no_entries": "Ajastused puuduvad",

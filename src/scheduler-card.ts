@@ -1,42 +1,42 @@
-import { LitElement, html, PropertyValues } from 'lit';
+import { LitElement, html, PropertyValues, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { fireEvent, HomeAssistant, LovelaceCardEditor, computeDomain } from 'custom-card-helpers';
-
-import { CardConfig, EntityElement, ScheduleConfig, Action, ERepeatType, Timeslot } from './types';
-import { CARD_VERSION, EViews, DefaultCardConfig } from './const';
+import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { CardConfig, ScheduleConfig, Action, Schedule, SchedulerEventData } from './types';
+import { CARD_VERSION, DefaultCardConfig, WebsocketEvent } from './const';
 import {
-  calculateTimeline,
-  flatten,
-  unique,
-  omit,
-  IsDefaultName,
-  isDefined,
   AsArray,
-  pick,
-  isEqual,
+  calculateTimeline,
+  capitalize,
+  flatten,
   getLocale,
+  isDefined,
+  PrettyPrintIcon,
+  sortAlphabetically,
+  unique,
 } from './helpers';
 import { ValidateConfig } from './config-validation';
-
-import './views/scheduler-entities-card';
-import './views/scheduler-entitypicker-card';
-import './views/scheduler-timepicker-card';
-import './views/scheduler-options-card';
-import './views/scheduler-card-editor';
-
-import './components/dialog-error';
-import './components/dialog-delete-defective';
-import './components/dialog-enable-item';
-
 import { parseEntity } from './data/entities/parse_entity';
-import { fetchScheduleItem, editSchedule, saveSchedule, handleError, deleteSchedule } from './data/websockets';
+import { deleteSchedule, fetchScheduleItem, fetchSchedules, handleError } from './data/websockets';
 import { computeActions } from './data/actions/compute_actions';
 import { compareActions } from './data/actions/compare_actions';
 import { importAction } from './data/actions/import_action';
-import { assignAction } from './data/actions/assign_action';
-import { migrateActionConfig } from './data/actions/migrate_action_config';
-import { formatTime, TimeFormat } from './data/date-time/format_time';
-import { roundTime, stringToTime, timeToString } from './data/date-time/time';
+import { entityFilter } from './data/entities/entity_filter';
+import {
+  computeScheduleHeader,
+  computeScheduleInfo,
+  computeScheduleIcon,
+} from './data/item_display/compute_schedule_display';
+import { STATE_NOT_RUNNING, UnsubscribeFunc } from 'home-assistant-js-websocket';
+import { SubscribeMixin } from './components/subscribe-mixin';
+import { unsafeHTML } from 'lit/directives/unsafe-html';
+import { localize } from './localize/localize';
+import { commonStyle } from './styles';
+import { DialogParams } from './components/generic-dialog';
+
+import './editor/scheduler-editor';
+import './scheduler-card-editor';
+import './components/my-relative-time';
+import './components/generic-dialog';
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -51,48 +51,239 @@ console.info(
   'color: white; font-weight: bold; background: dimgray'
 );
 
+interface ScheduleDisplayInfo {
+  primaryInfo: string[];
+  secondaryInfo: string[];
+  icon: string;
+}
+
+const computeScheduleTimestamp = (schedule: Schedule) =>
+  new Date(schedule.timestamps[schedule.next_entries[0]]).valueOf();
+
+const sortByRelativeTime = (schedules: Schedule[]) => {
+  const output = [...schedules];
+  output.sort((a, b) => {
+    const remainingA = computeScheduleTimestamp(a);
+    const remainingB = computeScheduleTimestamp(b);
+    const now = new Date().valueOf();
+
+    const reverse = remainingA < now && remainingB < now;
+
+    if (remainingA !== null && remainingB !== null) {
+      if (remainingA < now && remainingB >= now) return 1;
+      else if (remainingA >= now && remainingB < now) return -1;
+      else if (remainingA > remainingB) return reverse ? -1 : 1;
+      else if (remainingA < remainingB) return reverse ? 1 : -1;
+      else return a.entity_id < b.entity_id ? 1 : -1;
+    } else if (remainingB !== null) return 1;
+    else if (remainingA !== null) return -1;
+    else return a.entity_id < b.entity_id ? 1 : -1;
+  });
+
+  return output;
+};
+
+const sortByTitle = (schedules: Schedule[], displayInfo: Record<string, ScheduleDisplayInfo>) => {
+  const output = [...schedules];
+  output.sort((a, b) => {
+    if (!displayInfo[a.schedule_id!]) return displayInfo[b.schedule_id!] ? 1 : -1;
+    const titleA = displayInfo[a.schedule_id!].primaryInfo.join('');
+    const titleB = displayInfo[b.schedule_id!].primaryInfo.join('');
+    return sortAlphabetically(titleA, titleB);
+  });
+  return output;
+};
+
+const sortByState = (schedules: Schedule[], hass: HomeAssistant, expiredSchedulesLast: boolean) => {
+  const output = [...schedules];
+
+  output.sort((a, b) => {
+    const stateA = hass.states[a.entity_id]?.state;
+    const stateB = hass.states[b.entity_id]?.state;
+
+    const scheduleA_active = ['on', 'triggered'].includes(stateA);
+    const scheduleB_active = ['on', 'triggered'].includes(stateB);
+
+    if (scheduleA_active && !scheduleB_active) return -1;
+    else if (!scheduleA_active && scheduleB_active) return 1;
+
+    if (expiredSchedulesLast) {
+      if (stateA != 'off' && stateB == 'off') return 1;
+      else if (stateA == 'off' && stateB != 'off') return -1;
+    }
+
+    return 0;
+  });
+  return output;
+};
+
+//check whether entities and tags of schedule are included in configuration
+const isIncluded = (schedule: Schedule, config: CardConfig) => {
+  if (
+    !schedule.timeslots.every(timeslot =>
+      timeslot.actions.every(action => entityFilter(action.entity_id || action.service, config))
+    )
+  )
+    return false;
+
+  let included = true;
+
+  //filter items by tags
+  const filters = AsArray(config.tags);
+  if (filters.length) {
+    included = false;
+    if ((schedule.tags || []).some(e => filters.includes(e))) included = true;
+    else if (filters.includes('none') && !schedule.tags?.length) included = true;
+    else if (filters.includes('enabled') && schedule.enabled) included = true;
+    else if (filters.includes('disabled') && !schedule.enabled) included = true;
+  }
+
+  //filter items by exclude_tags
+  const excludeFilters = AsArray(config.exclude_tags);
+  if (excludeFilters.length && included) {
+    if ((schedule.tags || []).some(e => excludeFilters.includes(e))) included = false;
+    else if (excludeFilters.includes('none') && !schedule.tags?.length) included = false;
+    else if (excludeFilters.includes('enabled') && schedule.enabled) included = false;
+    else if (excludeFilters.includes('disabled') && !schedule.enabled) included = false;
+  }
+  return included;
+};
+
+//check whether entities and tags of schedule are included in configuration OR they should be discovered
+const isIncludedOrExcluded = (schedule: Schedule, config: CardConfig) => {
+  if (config.discover_existing) return true;
+  else if (!schedule) return false;
+  else return isIncluded(schedule, config);
+};
+
+const getScheduleDisplayInfo = (schedule: Schedule, config: CardConfig, hass: HomeAssistant) => {
+  const info: ScheduleDisplayInfo = {
+    primaryInfo: computeScheduleHeader(schedule, config, hass),
+    secondaryInfo: computeScheduleInfo(schedule, config, hass),
+    icon: computeScheduleIcon(schedule, config, hass),
+  };
+  return info;
+};
+
 @customElement('scheduler-card')
-export class SchedulerCard extends LitElement {
+export class SchedulerCard extends SubscribeMixin(LitElement) {
+  @property()
+  _config?: CardConfig;
+
+  @property()
+  showDiscovered = false;
+
+  @property()
+  schedules?: Schedule[];
+
+  @property()
+  translationsLoaded = false;
+
+  scheduleDisplayInfo: Record<string, ScheduleDisplayInfo> = {};
+
+  connectionError = false;
+
   public static getConfigElement(): LovelaceCardEditor {
     return document.createElement('scheduler-card-editor');
   }
 
-  @property() _config?: CardConfig;
-  @property() private _hass?: HomeAssistant;
-  @property() _view: EViews = EViews.Overview;
-
-  @property() entities?: EntityElement[];
-  @property() actions: Action[] = [];
-  @property() schedule?: ScheduleConfig;
-
-  @property() translationsLoaded = false;
-  editItem: string | null = null;
-
-  set hass(hass: HomeAssistant) {
-    this._hass = hass;
+  public hassSubscribe(): Promise<UnsubscribeFunc>[] {
+    this.loadSchedules();
+    return [
+      this.hass!.connection.subscribeMessage((ev: SchedulerEventData) => this.updateScheduleItem(ev), {
+        type: WebsocketEvent,
+      }),
+    ];
   }
 
   firstUpdated() {
-    const hass = this._hass!;
+    const hass = this.hass!;
     if (hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action'))
       this.translationsLoaded = true;
     else {
       const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
       el._loadFragmentTranslations(hass.language, 'config').then(() => {
-        this._hass!.localize;
+        this.hass!.localize;
       });
     }
   }
 
+  private async updateScheduleItem(ev: SchedulerEventData): Promise<void> {
+    //only update single schedule
+    if (ev.event == 'scheduler_item_removed') {
+      this.schedules = this.schedules?.filter(e => e.schedule_id != ev.schedule_id);
+      return;
+    }
+    fetchScheduleItem(this.hass!, ev.schedule_id).then(schedule => {
+      const oldSchedule = this.schedules?.find(e => e.schedule_id == ev.schedule_id);
+      let schedules = [...(this.schedules || [])];
+      try {
+        this.scheduleDisplayInfo = {
+          ...this.scheduleDisplayInfo,
+          [schedule.schedule_id!]: getScheduleDisplayInfo(schedule, this._config!, this.hass!),
+        };
+      } catch (_e) {}
+
+      if (!schedule || !isIncludedOrExcluded(schedule, this._config!)) {
+        //schedule is not in the list, remove if it was in the list
+        if (oldSchedule) {
+          schedules = schedules.filter(e => e.schedule_id != ev.schedule_id);
+        }
+      } else if (!oldSchedule) {
+        //add a new schedule and sort the list
+        schedules = this.sortSchedules([...schedules, schedule]);
+      } else if (computeScheduleTimestamp(oldSchedule) == computeScheduleTimestamp(schedule)) {
+        //only overwrite the existing schedule
+        schedules = schedules.map(e => (e.schedule_id == schedule.schedule_id ? schedule : e));
+      } else {
+        //overwrite the existing schedule and sort
+        schedules = this.sortSchedules(schedules.map(e => (e.schedule_id == schedule.schedule_id ? schedule : e)));
+      }
+      this.schedules = [...schedules];
+    });
+  }
+
+  private async loadSchedules(): Promise<void> {
+    //load all schedules
+    fetchSchedules(this.hass!)
+      .then(res => {
+        const schedules = res.filter(e => isIncludedOrExcluded(e, this._config!));
+        let scheduleInfo: Record<string, ScheduleDisplayInfo> = {};
+        Object.keys(schedules).forEach(e => {
+          try {
+            scheduleInfo = {
+              ...scheduleInfo,
+              [schedules[e].schedule_id]: getScheduleDisplayInfo(schedules[e], this._config!, this.hass!),
+            };
+          } catch (_e) {}
+        });
+        this.scheduleDisplayInfo = scheduleInfo;
+        this.schedules = this.sortSchedules(schedules);
+      })
+      .catch(_e => {
+        this.schedules = [];
+        this.connectionError = true;
+      });
+  }
+
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    const oldHass = changedProps.get('_hass') as HomeAssistant | undefined;
+    const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
+    const oldConfig = changedProps.get('config') as CardConfig | undefined;
     if (oldHass && changedProps.size == 1) {
       if (!oldHass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')) {
         this.translationsLoaded = true;
-        return true;
-      } else if (this._view == EViews.Overview) return true;
-      return false;
+      }
     }
+    if (oldHass && changedProps.size == 1 && this.schedules)
+      return this.schedules!.some(
+        e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id])
+      );
+    else if (
+      oldConfig &&
+      this._config &&
+      (oldConfig.discover_existing !== this._config.discover_existing || oldConfig.tags !== this._config.tags)
+    )
+      (async () => await this.loadSchedules())();
     return true;
   }
 
@@ -106,271 +297,249 @@ export class SchedulerCard extends LitElement {
   }
 
   public getCardSize() {
-    return 9;
+    if (!this._config) return 0;
+    return (this._config.title || this._config.show_header_toggle ? 2 : 0) + (this._config.entities.length || 1);
   }
 
-  protected render() {
-    if (!this._hass || !this._config || !this.translationsLoaded) return html``;
-    if (this._view == EViews.Overview) {
-      return html`
-        <scheduler-entities-card
-          .hass=${this._hass}
-          .config=${this._config}
-          @editClick=${this._editItemClick}
-          @newClick=${this._addItemClick}
-        >
-        </scheduler-entities-card>
-      `;
-    } else if (this._view == EViews.NewSchedule) {
-      return html`
-        <scheduler-editor-card
-          .hass=${this._hass}
-          .config=${this._config}
-          .entities=${this.entities}
-          .schedule=${this.schedule}
-          @nextClick=${this._confirmItemClick}
-          @cancelClick=${this._cancelEditClick}
-        >
-        </scheduler-editor-card>
-      `;
-    } else if (this._view == EViews.TimePicker || this._view == EViews.TimeScheme) {
-      return html`
-        <scheduler-timepicker-card
-          .hass=${this._hass}
-          .config=${this._config}
-          .schedule=${this.schedule}
-          .entities=${this.entities}
-          .actions=${this.actions}
-          ?timeslots=${this._view == EViews.TimeScheme}
-          ?editItem=${this.editItem !== null}
-          @cancelClick=${this._cancelEditClick}
-          @saveClick=${this._saveItemClick}
-          @optionsClick=${this._gotoOptionsClick}
-          @deleteClick=${this._deleteItemClick}
-          @editActionClick=${this._editActionClick}
-        >
-        </scheduler-timepicker-card>
-      `;
-    } else if (this._view == EViews.Options) {
-      return html`
-      <scheduler-options-card
-        .hass=${this._hass}
-        .config=${this._config}
-        .schedule=${this.schedule}
-        @cancelClick=${this._cancelEditClick}
-        @saveClick=${this._saveItemClick}
-        @backClick=${this._optionsBackClick}
-      >
-      </scheduler-timescheme-card>
+  render() {
+    if (!this.hass || !this._config || !this.schedules) return html``;
+    return html`
+      <ha-card>
+        <div class="card-header">
+          <div class="name">
+            ${this._config.title
+              ? typeof this._config.title == 'string'
+                ? this._config.title
+                : localize('ui.panel.common.title', getLocale(this.hass))
+              : ''}
+          </div>
+          ${this.schedules.length && this._config.show_header_toggle
+            ? html`
+                <ha-switch ?checked=${this.computeHeaderToggleState()} @change=${this.toggleDisableAll}> </ha-switch>
+              `
+            : ''}
+        </div>
+        <div class="card-content">
+          ${this.renderRows()}
+        </div>
+        ${this._config.show_add_button !== false
+          ? html`
+              <div class="card-actions">
+                <mwc-button @click=${this._addItemClick} ?disabled=${this.connectionError}
+                  >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
+                </mwc-button>
+              </div>
+            `
+          : ''}
+      </ha-card>
     `;
-    } else return html``; //shouldnt happen!
   }
 
-  private _addItemClick(): void {
-    this._view = EViews.NewSchedule;
-    this.editItem = null;
-    this.entities = [];
-    this.actions = [];
-    this.schedule = undefined;
-  }
-
-  private _cancelEditClick(): void {
-    this._view = EViews.Overview;
-    this.editItem = null;
-  }
-
-  private _confirmItemClick(ev: CustomEvent): void {
-    if (!this._hass || !this._config) return;
-    const entities: string[] = ev.detail.entities;
-    this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
-
-    const timeSchemeSelected = Boolean(ev.detail.timeSchemeSelected);
-    const action: Action = ev.detail.action;
-    const oldSchedule = this.schedule;
-    const defaultTags = AsArray(this._config.tags).length == 1 ? AsArray(this._config.tags).slice(0, 1) : [];
-
-    if (!timeSchemeSelected) {
-      this.actions = [action];
-
-      let now = stringToTime(formatTime(new Date(), getLocale(this._hass), TimeFormat.twenty_four), this._hass);
-      now = roundTime(now, this._config.time_step, { wrapAround: true });
-
-      const defaultTimeslot: Timeslot = {
-        start: timeToString(now),
-        actions: entities.map(e => assignAction(e, this.actions[0])),
-      };
-
-      this.schedule = oldSchedule
-        ? {
-            ...oldSchedule,
-            timeslots:
-              oldSchedule.timeslots.length == 1 && !oldSchedule.timeslots[0].stop
-                ? [
-                    {
-                      ...oldSchedule.timeslots[0],
-                      actions:
-                        migrateActionConfig(oldSchedule.timeslots[0].actions[0], entities, this.actions, this._hass!) ||
-                        defaultTimeslot.actions,
-                    },
-                  ]
-                : [defaultTimeslot],
-          }
-        : {
-            weekdays: ['daily'],
-            timeslots: [defaultTimeslot],
-            repeat_type: ERepeatType.Repeat,
-            tags: defaultTags,
-          };
-      this._view = EViews.TimePicker;
-    } else {
-      this.actions = computeActions(entities, this._hass, this._config);
-      const defaultTimeslots = [
-        {
-          start: '00:00:00',
-          stop: '08:00:00',
-          actions: [],
-        },
-        {
-          start: '08:00:00',
-          stop: '16:00:00',
-          actions: [],
-        },
-        {
-          start: '16:00:00',
-          stop: '00:00:00',
-          actions: [],
-        },
-      ];
-
-      if (oldSchedule) {
-        //migrate existing schedule
-        const actions = oldSchedule.timeslots
-          .map(e => e.actions[0])
-          .map(v => migrateActionConfig(v, entities, this.actions, this._hass!));
-
-        this.schedule = {
-          ...oldSchedule,
-          timeslots:
-            oldSchedule.timeslots.length > 1 && oldSchedule.timeslots.every(e => e.stop)
-              ? oldSchedule.timeslots.map((slot, i) => Object.assign(slot, { actions: actions[i] || [] }))
-              : defaultTimeslots,
-        };
-      } else {
-        this.schedule = {
-          weekdays: ['daily'],
-          timeslots: defaultTimeslots,
-          repeat_type: ERepeatType.Repeat,
-          tags: defaultTags,
-        };
-      }
-      this._view = EViews.TimeScheme;
+  renderRows() {
+    if (!this._config || !this.hass || !this.schedules) return html``;
+    if (this.connectionError) {
+      return html`
+        <div>
+          <hui-warning>
+            ${localize('ui.panel.overview.backend_error', getLocale(this.hass))}
+          </hui-warning>
+        </div>
+      `;
+    } else if (!Object.keys(this.schedules).length) {
+      return html`
+        <div>
+          ${localize('ui.panel.overview.no_entries', getLocale(this.hass))}
+        </div>
+      `;
     }
+
+    const includedSchedules: Schedule[] = this.schedules.filter(e => isIncluded(e, this._config!));
+    const excludedEntities: Schedule[] = this.schedules.filter(e => !isIncluded(e, this._config!));
+
+    return html`
+      ${includedSchedules.map(schedule => this.renderScheduleRow(schedule))}
+      ${Object.keys(excludedEntities).length
+        ? !this.showDiscovered
+          ? html`
+              <div>
+                <button
+                  class="show-more"
+                  @click=${() => {
+                    this.showDiscovered = true;
+                  }}
+                >
+                  +
+                  ${localize(
+                    'ui.panel.overview.excluded_items',
+                    getLocale(this.hass),
+                    '{number}',
+                    excludedEntities.length
+                  )}
+                </button>
+              </div>
+            `
+          : html`
+              ${excludedEntities.map(schedule => this.renderScheduleRow(schedule))}
+              <div>
+                <button
+                  class="show-more"
+                  @click=${() => {
+                    this.showDiscovered = false;
+                  }}
+                >
+                  ${capitalize(localize('ui.panel.overview.hide_excluded', getLocale(this.hass)))}
+                </button>
+              </div>
+            `
+        : ''}
+    `;
   }
 
-  private _editActionClick(ev: CustomEvent): void {
-    this.schedule = ev.detail;
-    this._view = EViews.NewSchedule;
+  renderScheduleRow(schedule: Schedule) {
+    if (!this.hass) return html``;
+    if (
+      !schedule ||
+      !schedule.next_entries.length ||
+      !Object.keys(this.scheduleDisplayInfo).includes(schedule.schedule_id!)
+    ) {
+      return this.hass.config.state !== STATE_NOT_RUNNING
+        ? html`
+            <hui-warning>
+              Defective schedule entity: ${schedule.entity_id}
+            </hui-warning>
+          `
+        : html`
+            <hui-warning>
+              ${this.hass.localize('ui.panel.lovelace.warning.starting')}
+            </hui-warning>
+          `;
+    }
+
+    const displayInfo = this.scheduleDisplayInfo[schedule.schedule_id!];
+    const state = this.hass!.states[schedule.entity_id]?.state || '';
+
+    return html`
+      <div class="schedule-row ${['on', 'triggered'].includes(state) ? '' : 'disabled'}">
+        <ha-icon
+          icon="${PrettyPrintIcon(displayInfo.icon)}"
+          @click=${(ev: Event) =>
+            fireEvent(ev.target as HTMLElement, 'hass-more-info', {
+              entityId: schedule.entity_id,
+            })}
+        ></ha-icon>
+        <div class="info" @click=${() => this._editItemClick(schedule.schedule_id!)}>
+          ${this.renderDisplayItems(schedule, displayInfo.primaryInfo)}
+          <div class="secondary">
+            ${this.renderDisplayItems(schedule, displayInfo.secondaryInfo)}
+          </div>
+        </div>
+        <ha-switch
+          ?checked=${['on', 'triggered'].includes(this.hass.states[schedule.entity_id]?.state || '')}
+          ?disabled=${this.hass.states[schedule.entity_id]?.state == 'completed'}
+          @click=${(ev: Event) => this.toggleDisabled(ev, schedule.entity_id)}
+        >
+        </ha-switch>
+      </div>
+    `;
   }
 
-  async _saveItemClick(ev: CustomEvent): Promise<void> {
-    if (!this._hass) return;
-    let schedule = ev.detail as ScheduleConfig;
-    schedule = {
-      ...schedule,
-      timeslots: schedule.timeslots
-        .map(slot => {
-          if (!slot.actions || !slot.actions.length) return null;
-          if (slot.actions.some(e => !e.entity_id || computeDomain(e.entity_id || '') == 'notify')) {
-            slot = {
-              ...slot,
-              actions: slot.actions.map(action =>
-                !action.entity_id || computeDomain(action.entity_id || '') == 'notify'
-                  ? omit(action, 'entity_id')
-                  : action
-              ),
-            };
-          }
-          if (!slot.stop) slot = omit(slot, 'stop');
-          if (!slot.conditions?.length) slot = omit(slot, 'conditions', 'condition_type') as Timeslot;
-          return slot;
-        })
-        .filter(isDefined),
+  renderDisplayItems(schedule: Schedule, displayItem: string[]) {
+    const replaceReservedTags = (input: string) => {
+      const parts = input.split('<my-relative-time></my-relative-time>');
+      if (parts.length > 1)
+        return html`
+          ${parts[0] ? unsafeHTML(parts[0]) : ''}
+          <my-relative-time .hass=${this.hass} .datetime=${new Date(schedule.timestamps[schedule.next_entries[0]])}>
+          </my-relative-time>
+          ${parts[1] ? unsafeHTML(parts[1]) : ''}
+        `;
+
+      const parts2 = input.split(/(<tag>[^<]*<\/tag>)/g);
+      if (parts2.length > 1)
+        return parts2
+          .filter(e => e.length)
+          .map(e => {
+            const res = e.match(/<tag>([^<]*)<\/tag>/g);
+            return res ? unsafeHTML(`<span class="filter-tag">${res[0]}</span>`) : e;
+          });
+      return unsafeHTML(input);
     };
 
-    if (this.editItem) {
-      const oldSchedule = await fetchScheduleItem(this._hass, this.editItem);
-      if (
-        isEqual(omit(schedule, 'timeslots'), omit(pick(oldSchedule, Object.keys(schedule)), 'timeslots')) &&
-        schedule.timeslots.length == oldSchedule.timeslots.length &&
-        schedule.timeslots.every((slot, i) => isEqual(slot, oldSchedule.timeslots[i]))
-      ) {
-        // don't save if there are no changes
-        this.editItem = null;
-        this._view = EViews.Overview;
-      } else {
-        if (!oldSchedule.enabled) {
-          const result = await new Promise(resolve => {
-            fireEvent(this, 'show-dialog', {
-              dialogTag: 'dialog-enable-item',
-              dialogImport: () => import('./components/dialog-enable-item'),
-              dialogParams: {
-                cancel: () => {
-                  resolve(false);
-                },
-                confirm: () => {
-                  resolve(true);
-                },
-              },
-            });
-          });
-          if (result) this._hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
-        }
-        if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
-        editSchedule(this._hass, { ...schedule, schedule_id: this.editItem })
-          .catch(e => handleError(e, this))
-          .then(() => {
-            this.editItem = null;
-            this._view = EViews.Overview;
-          });
-      }
-    } else {
-      saveSchedule(this._hass, schedule)
-        .catch(e => handleError(e, this))
-        .then(() => {
-          this._view = EViews.Overview;
-        });
+    return displayItem.filter(isDefined).map(
+      e =>
+        html`
+          ${replaceReservedTags(e)}<br />
+        `
+    );
+  }
+
+  sortSchedules(schedules: Schedule[]) {
+    const sortingOptions = AsArray(this._config?.sort_by);
+    if (sortingOptions.includes('relative-time')) schedules = sortByRelativeTime(schedules);
+    if (sortingOptions.includes('title')) schedules = sortByTitle(schedules, this.scheduleDisplayInfo);
+    if (sortingOptions.includes('state')) {
+      const expiredSchedulesLast = sortingOptions.includes('relative-time');
+      schedules = sortByState(schedules, this.hass!, expiredSchedulesLast);
     }
+    return schedules;
   }
 
-  _deleteItemClick(): void {
-    if (!this.editItem || !this._hass) return;
-    const entity_id = this.editItem;
-    deleteSchedule(this._hass, entity_id)
-      .catch(e => handleError(e, this))
-      .then(() => {
-        this.editItem = null;
-        this._view = EViews.Overview;
-      });
+  toggleDisabled(ev: Event, entity_id: string) {
+    if (!this.hass || !entity_id) return;
+    ev.stopPropagation();
+    const checked = !(ev.target as HTMLInputElement).checked;
+    this.hass.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: entity_id });
   }
 
-  async _editItemClick(ev: CustomEvent) {
-    if (!this._hass || !this._config) return;
+  toggleDisableAll(ev: Event) {
+    if (!this.hass || !this.schedules) return;
+    const checked = (ev.target as HTMLInputElement).checked;
+    const items = this.schedules.filter(e =>
+      this.showDiscovered ? isIncludedOrExcluded(e, this._config!) : isIncluded(e, this._config!)
+    );
+    items.forEach(el => {
+      this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
+    });
+  }
 
-    const data = await fetchScheduleItem(this._hass, ev.detail);
+  computeHeaderToggleState() {
+    if (!this.schedules) return false;
+    const items = this.schedules.filter(e =>
+      this.showDiscovered ? isIncludedOrExcluded(e, this._config!) : isIncluded(e, this._config!)
+    );
+    return items.some(el => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''));
+  }
+
+  private _addItemClick() {
+    fireEvent(this, 'show-dialog', {
+      dialogTag: 'scheduler-editor-dialog',
+      dialogImport: () => import('./editor/scheduler-editor'),
+      dialogParams: {
+        config: this._config,
+        editItem: null,
+        entities: [],
+        actions: [],
+        schedule: undefined,
+      },
+    });
+  }
+
+  async _editItemClick(editItem: string) {
+    if (!this.hass || !this._config) return;
+
+    const data = await fetchScheduleItem(this.hass, editItem);
     if (!data) return;
-    const entities = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id || e.service))));
-    this.entities = entities.map(e => parseEntity(e, this._hass!, this._config!));
-    let actions = computeActions(entities, this._hass, this._config);
+    const entityIds = unique(flatten(data.timeslots.map(e => e.actions.map(e => e.entity_id || e.service))));
+    const entities = entityIds.map(e => parseEntity(e, this.hass!, this._config!));
+    let actions = computeActions(entityIds, this.hass, this._config);
     const usedActions = unique(flatten(data.timeslots.map(e => e.actions)));
-    let extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e, true)));
+    const extraActions = usedActions.filter(e => !actions.some(a => compareActions(a, e, true)));
     if (extraActions.length) {
       //actions that are not in the card
-      unique(extraActions).forEach(e => actions.push(importAction(e, this._hass!)));
+      unique(extraActions).forEach(e => actions.push(importAction(e, this.hass!)));
     }
 
-    this.actions = actions;
-
-    this.schedule = {
+    let schedule: ScheduleConfig = {
       weekdays: data.weekdays,
       timeslots: data.timeslots,
       repeat_type: data.repeat_type,
@@ -379,54 +548,144 @@ export class SchedulerCard extends LitElement {
       start_date: data.start_date,
       end_date: data.end_date,
     };
-    this.editItem = data.schedule_id!;
 
-    if (!this.entities.length || !this.schedule.timeslots.length) {
+    if (!entities.length || !schedule.timeslots.length) {
       const result = await new Promise(resolve => {
-        fireEvent(this, 'show-dialog', {
-          dialogTag: 'dialog-delete-defective',
-          dialogImport: () => import('./components/dialog-delete-defective'),
-          dialogParams: {
-            cancel: () => {
-              resolve(false);
-            },
-            confirm: () => {
-              resolve(true);
-            },
+        const params: DialogParams = {
+          title: 'Defective entity',
+          description:
+            'This schedule is defective and cannot be edited with the card. Consider to delete the item and recreate it. If the problem persists, please report the issue on GitHub.',
+          primaryButtonLabel: this.hass!.localize('ui.common.delete'),
+          primaryButtonCritical: true,
+          secondaryButtonLabel: this.hass!.localize('ui.dialogs.generic.cancel'),
+          cancel: () => {
+            resolve(false);
           },
+          confirm: () => {
+            resolve(true);
+          },
+        };
+        fireEvent(this, 'show-dialog', {
+          dialogTag: 'generic-dialog',
+          dialogImport: () => import('./components/generic-dialog'),
+          dialogParams: params,
         });
       });
-      if (result) this._deleteItemClick();
-      else this._cancelEditClick();
+      if (result) {
+        deleteSchedule(this.hass, data.schedule_id!).catch(e => handleError(e, this, this.hass!));
+      }
       return;
     }
 
-    if (this.schedule.timeslots.every(e => e.stop)) {
-      this.schedule = { ...this.schedule, timeslots: calculateTimeline(this.schedule!.timeslots, this._hass!) };
-      if (!this.actions.length)
-        handleError(
-          { error: '', body: { message: `Could not compute actions for the schedule #${ev.detail}.` } },
-          this
+    if (schedule.timeslots.every(e => e.stop)) {
+      schedule = { ...schedule!, timeslots: calculateTimeline(schedule!.timeslots, this.hass!) };
+      if (!actions.length)
+        return handleError(
+          { error: '', body: { message: `Could not compute actions for the schedule #${editItem}.` } },
+          this,
+          this.hass
         );
-      else this._view = EViews.TimeScheme;
     } else {
-      this.actions = this.actions
+      actions = actions
         .filter(e => usedActions.find(a => compareActions(e, a, true)))
         .reduce((_acc: Action[], e) => [e], []);
-      if (!this.actions.length)
-        handleError({ error: '', body: { message: `Could not compute actions for schedule #${ev.detail}.` } }, this);
-      else this._view = EViews.TimePicker;
+      if (!actions.length)
+        return handleError(
+          { error: '', body: { message: `Could not compute actions for schedule #${editItem}.` } },
+          this,
+          this.hass
+        );
     }
-  }
-  _gotoOptionsClick(ev: CustomEvent): void {
-    this.schedule = ev.detail as ScheduleConfig;
-    this._view = EViews.Options;
+
+    fireEvent(this, 'show-dialog', {
+      dialogTag: 'scheduler-editor-dialog',
+      dialogImport: () => import('./editor/scheduler-editor'),
+      dialogParams: {
+        config: this._config,
+        editItem: data.schedule_id!,
+        actions: actions,
+        entities: entities,
+        schedule: schedule,
+      },
+    });
   }
 
-  _optionsBackClick(ev: CustomEvent): void {
-    this.schedule = ev.detail as ScheduleConfig;
+  static styles = css`
+    ${commonStyle}
+    hui-warning {
+      padding: 10px 0px;
+    }
 
-    if (this.schedule.timeslots.every(e => e.stop)) this._view = EViews.TimeScheme;
-    else this._view = EViews.TimePicker;
-  }
+    button.show-more {
+      color: var(--primary-color);
+      text-align: left;
+      cursor: pointer;
+      background: none;
+      border-width: initial;
+      border-style: none;
+      border-color: initial;
+      border-image: initial;
+      font: inherit;
+    }
+    button.show-more:focus {
+      outline: none;
+      text-decoration: underline;
+    }
+
+    div.schedule-row {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      cursor: pointer;
+      margin: 20px 0px;
+    }
+    div.schedule-row .info {
+      margin-left: 16px;
+      flex: 1 0 60px;
+    }
+    div.schedule-row .info,
+    div.schedule-row .info > * {
+      color: var(--primary-text-color);
+      transition: color 0.2s ease-in-out;
+    }
+    div.schedule-row .secondary {
+      display: block;
+      color: var(--secondary-text-color);
+      transition: color 0.2s ease-in-out;
+    }
+    div.schedule-row ha-icon {
+      flex: 0 0 40px;
+      color: var(--state-icon-color);
+      transition: color 0.2s ease-in-out;
+    }
+    div.schedule-row ha-switch {
+      padding: 13px 5px;
+    }
+    div.schedule-row hui-warning {
+      flex: 1 0 40px;
+    }
+    div.schedule-row span.filter-tag {
+      background: rgba(var(--rgb-primary-color), 0.54);
+      color: var(--primary-text-color);
+      height: 24px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 18px;
+      padding: 0px 10px;
+      display: inline-flex;
+      align-items: center;
+      box-sizing: border-box;
+      margin: 4px 2px 0px 2px;
+      transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+    }
+    div.schedule-row.disabled {
+      --primary-text-color: var(--disabled-text-color);
+      --secondary-text-color: var(--disabled-text-color);
+      --state-icon-color: var(--disabled-text-color);
+    }
+    div.schedule-row span.filter-tag {
+      background: rgba(var(--rgb-primary-color), 0.3);
+    }
+  `;
 }

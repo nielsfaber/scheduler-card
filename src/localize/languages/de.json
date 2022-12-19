@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Entität entfernen?",
         "description": "Bist du dir sicher, dass du diese Entität löschen möchtest?"
+      },
+      "confirm_migrate": {
+        "title": "Zeitplan ändern",
+        "description": "Einige Einstellungen gehen durch diese Änderung verloren. Möchten Sie fortfahren?"
       }
     },
     "panel": {
       "common": {
-        "title": "Zeitplaner"
+        "title": "Zeitplaner",
+        "new_schedule": "Neuer Zeitplan",
+        "default_name": "Zeitplan #{id}"
       },
       "overview": {
         "no_entries": "Es gibt keine Einträge, die angezeigt werden können",

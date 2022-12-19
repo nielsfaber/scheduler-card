@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Vuoi rimuovere l'entità?",
         "description": "Sei sicuro di voler rimuovere questa entità?"
+      },
+      "confirm_migrate": {
+        "title": "Modifica orario",
+        "description": "Alcune impostazioni andranno perse con questa azione. Vuoi procedere?"
       }
     },
     "panel": {
       "common": {
-        "title": "Schedulatore"
+        "title": "Schedulatore",
+        "new_schedule": "Nuovo orario",
+        "default_name": "Orario #{id}"
       },
       "overview": {
         "no_entries": "Non ci sono oggetti da visualizzare",

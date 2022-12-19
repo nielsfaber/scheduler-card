@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Ștergeți entitatea?",
         "description": "Sigur doriți să eliminați această entitate?"
+      },
+      "confirm_migrate": {
+        "title": "Modificați programul",
+        "description": "Unele setări se vor pierde prin această acțiune. Vrei sa continui?"
       }
     },
     "panel": {
       "common": {
-        "title": "Planificator"
+        "title": "Planificator",
+        "new_schedule": "Noul program",
+        "default_name": "Program #{id}"
       },
       "overview": {
         "no_entries": "Nu există elemente de afișat",

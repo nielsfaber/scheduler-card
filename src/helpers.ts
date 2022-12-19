@@ -205,3 +205,22 @@ export function AsArray<TValue>(value: TValue | TValue[] | null | undefined): TV
   else if (value !== null && value !== undefined) return [value];
   else return [];
 }
+
+export function deepCopy<T>(obj: T): T {
+  if (obj == null) return obj;
+
+  if (obj instanceof Array) {
+    return obj.reduce((arr, item, i) => {
+      arr[i] = deepCopy(item);
+      return arr;
+    }, []);
+  }
+
+  if (obj instanceof Object) {
+    return Object.keys(obj).reduce((newObj, key) => {
+      newObj[key] = deepCopy(obj[key]);
+      return newObj;
+    }, {} as T);
+  }
+  return obj;
+}

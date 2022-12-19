@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Usunąć encję?",
         "description": "Czy na pewno chcesz usunąć tę encję?"
+      },
+      "confirm_migrate": {
+        "title": "Zmodyfikuj harmonogram",
+        "description": "Ta czynność spowoduje utratę niektórych ustawień. Czy chcesz kontynuować?"
       }
     },
     "panel": {
       "common": {
-        "title": "Harmonogram"
+        "title": "Harmonogram",
+        "new_schedule": "Nowy harmonogram",
+        "default_name": "Harmonogram #{id}"
       },
       "overview": {
         "no_entries": "Nie ma elementów do pokazania",

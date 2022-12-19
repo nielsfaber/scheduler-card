@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Supprimer l'entité ?",
         "description": "Voulez-vous vraiment supprimer cette entité ?"
+      },
+      "confirm_migrate": {
+        "title": "Modifier l'horaire",
+        "description": "Certains paramètres seront perdus par ce changement. Voulez-vous poursuivre?"
       }
     },
     "panel": {
       "common": {
-        "title": "Planificateur"
+        "title": "Planificateur",
+        "new_schedule": "Nouveau horaire",
+        "default_name": "Horaire #{id}"
       },
       "overview": {
         "no_entries": "il n'y a pas d'entrée à montrer",

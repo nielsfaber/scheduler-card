@@ -1,6 +1,7 @@
 import { HomeAssistant, fireEvent } from 'custom-card-helpers';
 import { Schedule, ScheduleConfig, TagEntry } from '../types';
 import { html, TemplateResult } from 'lit';
+import { DialogParams } from '../components/generic-dialog';
 
 export const fetchSchedules = (hass: HomeAssistant): Promise<Schedule[]> =>
   hass.callWS({
@@ -33,20 +34,27 @@ export const fetchTags = (hass: HomeAssistant): Promise<TagEntry[]> =>
     type: 'scheduler/tags',
   });
 
-export function showErrorDialog(target: HTMLElement, error: string | TemplateResult) {
+export function showErrorDialog(target: HTMLElement, error: string | TemplateResult, hass: HomeAssistant) {
+  const params: DialogParams = {
+    title: hass.localize('state_badge.default.error'),
+    description: error,
+    primaryButtonLabel: hass.localize('ui.dialogs.generic.ok'),
+    confirm: () => {},
+    cancel: () => {},
+  };
   fireEvent(target, 'show-dialog', {
-    dialogTag: 'dialog-error',
-    dialogImport: () => import('../components/dialog-error'),
-    dialogParams: { error: error },
+    dialogTag: 'generic-dialog',
+    dialogImport: () => import('../components/generic-dialog'),
+    dialogParams: params,
   });
 }
 
-export function handleError(err: { body: { message: string }; error: string }, el: HTMLElement) {
+export function handleError(err: { body: { message: string }; error: string }, el: HTMLElement, hass: HomeAssistant) {
   const errorMessage = html`
     <b>Something went wrong!</b><br />
     ${err.body.message}<br /><br />
     ${err.error}<br /><br />
     Please <a href="https://github.com/nielsfaber/scheduler-card/issues">report</a> the bug.
   `;
-  showErrorDialog(el, errorMessage);
+  showErrorDialog(el, errorMessage, hass);
 }

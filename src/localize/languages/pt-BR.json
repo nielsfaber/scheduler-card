@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Remover entidade?",
         "description": "Tem certeza de que deseja remover esta entidade?"
+      },
+      "confirm_migrate": {
+        "title": "Modificar horário",
+        "description": "Algumas configurações serão perdidas por esta ação. Você quer prosseguir?"
       }
     },
     "panel": {
       "common": {
-        "title": "Agenda"
+        "title": "Agenda",
+        "new_schedule": "Novo horário",
+        "default_name": "Horário #{id}"
       },
       "overview": {
         "no_entries": "Não existem itens para mostrar",

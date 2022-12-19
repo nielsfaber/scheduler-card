@@ -1,15 +1,25 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { LitElement, html, css, CSSResultGroup, TemplateResult } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant } from 'custom-card-helpers';
 import { mdiClose } from '@mdi/js';
 
-@customElement('dialog-delete-defective')
-export class DialogDeleteDefective extends LitElement {
+export type DialogParams = {
+  title: string;
+  description: string | TemplateResult;
+  primaryButtonLabel: string;
+  secondaryButtonLabel?: string;
+  primaryButtonCritical?: boolean;
+  cancel: () => void;
+  confirm: () => void;
+};
+
+@customElement('generic-dialog')
+export class GenericDialog extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private _params?: any;
+  @state() private _params?: DialogParams;
 
-  public async showDialog(params: any): Promise<void> {
+  public async showDialog(params: DialogParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
   }
@@ -27,36 +37,39 @@ export class DialogDeleteDefective extends LitElement {
           <ha-header-bar>
             <ha-icon-button slot="navigationIcon" dialogAction="cancel" .path=${mdiClose}> </ha-icon-button>
             <span slot="title">
-              Defective entity
+              ${this._params.title}
             </span>
           </ha-header-bar>
         </div>
         <div class="wrapper">
-          This schedule is defective and cannot be edited with the card. Consider to delete the item and recreate it. If
-          the problem persists, please report the issue on GitHub.
+          ${this._params.description}
         </div>
 
-        <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-          ${this.hass.localize('ui.dialogs.generic.cancel')}
-        </mwc-button>
+        ${this._params.secondaryButtonLabel
+          ? html`
+              <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
+                ${this._params.secondaryButtonLabel}
+              </mwc-button>
+            `
+          : ''}
         <mwc-button
           slot="secondaryAction"
-          style="float: left; --mdc-theme-primary: var(--error-color)"
+          style="${this._params.primaryButtonCritical ? '--mdc-theme-primary: var(--error-color)' : ''}"
           @click=${this.confirmClick}
           dialogAction="close"
         >
-          ${this.hass.localize('ui.common.delete')}
+          ${this._params.primaryButtonLabel}
         </mwc-button>
       </ha-dialog>
     `;
   }
 
   confirmClick() {
-    this._params.confirm();
+    this._params!.confirm();
   }
 
   cancelClick() {
-    this._params.cancel();
+    this._params!.cancel();
   }
 
   static get styles(): CSSResultGroup {

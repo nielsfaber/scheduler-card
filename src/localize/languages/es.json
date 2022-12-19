@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "¿Eliminar entidad?",
         "description": "¿Estás seguro de que deseas eliminar esta entidad?"
+      },
+      "confirm_migrate": {
+        "title": "Modificar horario",
+        "description": "Algunas configuraciones se perderán con este cambio. Quieres proceder?"
       }
     },
     "panel": {
       "common": {
-        "title": "Programador"
+        "title": "Programador",
+        "new_schedule": "Nuevo horario",
+        "default_name": "Horario #{id}"
       },
       "overview": {
         "no_entries": "No hay ningún elemento que mostrar",

@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Poistetaanko kohde?",
         "description": "Haluatko varmasti poistaa tämän kohteen?"
+      },
+      "confirm_migrate": {
+        "title": "Muokkaa aikataulua",
+        "description": "Jotkut asetukset menetetään tämän muutoksen seurauksena. Haluatko edetä?"
       }
     },
     "panel": {
       "common": {
-        "title": "Ajastin"
+        "title": "Ajastin",
+        "new_schedule": "Uusi aikataulu",
+        "default_name": "Aikataulu #{id}"
       },
       "overview": {
         "no_entries": "Ei näytettäviä kohteita",

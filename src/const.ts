@@ -15,12 +15,10 @@ export const WorkdaySensor = 'binary_sensor.workday_sensor';
 
 export const NotifyDomain = 'notify';
 
-export enum EViews {
-  Overview = 'OVERVIEW',
-  NewSchedule = 'NEW_SCHEDULE',
-  TimePicker = 'TIME_PICKER',
-  TimeScheme = 'TIME_SCHEME',
-  Options = 'OPTIONS',
+export enum ETabOptions {
+  Entity = 'entity',
+  Time = 'time',
+  Options = 'options',
 }
 
 export const DefaultCardConfig: CardConfig = {

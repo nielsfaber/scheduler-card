@@ -1,9 +1,8 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { mdiClose, mdiPencil } from '@mdi/js';
+import { mdiPencil } from '@mdi/js';
 
 import { localize } from '../localize/localize';
-//import { Config } from '../config';
 import {
   EConditionType,
   CardConfig,
@@ -14,7 +13,6 @@ import {
   ListVariableOption,
   Dictionary,
   ERepeatType,
-  Timeslot,
   EVariableType,
   ListVariable,
   LevelVariable,
@@ -36,9 +34,6 @@ import {
   isDefined,
 } from '../helpers';
 
-import '../components/button-group';
-import '../components/variable-picker';
-import '../components/scheduler-selector';
 import { computeEntities } from '../data/entities/compute_entities';
 import { listVariableDisplay } from '../data/variables/list_variable';
 import { levelVariableDisplay } from '../data/variables/level_variable';
@@ -47,6 +42,10 @@ import { fetchTags } from '../data/websockets';
 import { loadHaForm } from '../load-ha-form';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { formatDate } from '../data/date-time/format_date';
+
+import '../components/button-group';
+import '../components/variable-picker';
+import '../components/scheduler-selector';
 
 const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
   let output: Dictionary<ListVariableOption> = {};
@@ -94,8 +93,8 @@ const getMatchTypes = (hass: HomeAssistant, filter?: EConditionMatchType[]) => {
   return output;
 };
 
-@customElement('scheduler-options-card')
-export class SchedulerOptionsCard extends LitElement {
+@customElement('scheduler-editor-options')
+export class SchedulerEditorOptions extends LitElement {
   @property()
   hass?: HomeAssistant;
 
@@ -118,7 +117,10 @@ export class SchedulerOptionsCard extends LitElement {
   conditionValue?: string | number;
 
   @property()
-  editItem?: number;
+  editConditionItem?: number;
+
+  @property({ type: Boolean })
+  editItem = false;
 
   @property()
   addCondition = false;
@@ -149,6 +151,19 @@ export class SchedulerOptionsCard extends LitElement {
     this.endDate = this.schedule?.end_date || formatDate(new Date(), getLocale(this.hass!), true);
   }
 
+  shouldUpdate(changedProps: PropertyValues): boolean {
+    if (changedProps.get('schedule')) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            schedule: this.schedule,
+          },
+        })
+      );
+    }
+    return true;
+  }
+
   render() {
     if (!this.hass || !this.config || !this.schedule) return html``;
 
@@ -175,179 +190,182 @@ export class SchedulerOptionsCard extends LitElement {
     }
 
     return html`
-      <ha-card>
-        <div class="card-header">
-          <div class="name">
-            ${this.config.title
-              ? typeof this.config.title == 'string'
-                ? this.config.title
-                : localize('ui.panel.common.title', getLocale(this.hass))
-              : ''}
-          </div>
-          <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
-        </div>
-        <div class="card-content">
-          ${!this.addCondition
-            ? html`
-                <div class="header">
-                  ${this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.conditions')}
-                  ${!this.schedule.timeslots[0].conditions || this.schedule.timeslots[0].conditions.length < 2
-                    ? ''
-                    : html`
-                        <div class="switch">
-                          ${localize('ui.panel.conditions.any', getLocale(this.hass))}
-                          <ha-switch
-                            style="margin: 0px 10px"
-                            @change=${this.conditionTypeSwitchClick}
-                            ?checked=${this.schedule.timeslots[0].condition_type == EConditionType.All}
-                          ></ha-switch>
-                          ${localize('ui.panel.conditions.all', getLocale(this.hass))}
-                        </div>
-                      `}
-                </div>
-                ${this.renderConditions()}
+        <div class="content">
+          ${
+            !this.addCondition
+              ? html`
+                  <div class="header">
+                    ${this.hass.localize('ui.panel.config.automation.editor.actions.type.choose.conditions')}
+                    ${!this.schedule.timeslots[0].conditions || this.schedule.timeslots[0].conditions.length < 2
+                      ? ''
+                      : html`
+                          <div class="switch">
+                            ${localize('ui.panel.conditions.any', getLocale(this.hass))}
+                            <ha-switch
+                              style="margin: 0px 10px"
+                              @change=${this.conditionTypeSwitchClick}
+                              ?checked=${this.schedule.timeslots[0].condition_type == EConditionType.All}
+                            ></ha-switch>
+                            ${localize('ui.panel.conditions.all', getLocale(this.hass))}
+                          </div>
+                        `}
+                  </div>
+                  ${this.renderConditions()}
 
-                <div class="condition-options">
-                  <div style="flex: 1">
-                    <mwc-button @click=${this.addConditionClick}>
-                      <ha-icon icon="mdi:plus-circle-outline" class="padded-right"></ha-icon>
-                      ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
-                    </mwc-button>
-                  </div>
-                  <div class="track-conditions">
-                    ${this.schedule.timeslots[0].stop &&
-                    this.schedule.timeslots[0].conditions &&
-                    this.schedule.timeslots[0].conditions.length > 0
-                      ? html`
-                          <ha-checkbox
-                            id="track_conditions"
-                            ?checked=${this.schedule.timeslots[0].track_conditions}
-                            @change=${this.trackConditionsClick}
-                          ></ha-checkbox>
-                          <span
-                            @click=${() =>
-                              (this.shadowRoot!.querySelector('#track_conditions')! as HTMLElement).click()}
-                          >
-                            ${localize('ui.panel.conditions.track_conditions', getLocale(this.hass))}
-                          </span>
-                        `
-                      : ''}
-                  </div>
-                </div>
-
-                <div class="header">${localize('ui.panel.options.period', getLocale(this.hass))}</div>
-                <div class="checkbox-container">
-                  <div class="checkbox">
-                    <ha-checkbox ?checked=${isDefined(this.schedule.start_date)} @change=${this.toggleEnableDateRange}>
-                    </ha-checkbox>
-                  </div>
-                  <div class="slider date-range">
-                    <div>
-                      <span>
-                        ${PrettyPrintName(
-                          localize('ui.components.date.days_range', getLocale(this.hass))
-                            .split('{')
-                            .shift()
-                            ?.trim() || ''
-                        )}
-                      </span>
-                      <ha-date-input
-                        .locale=${this.hass.locale}
-                        value=${this.startDate}
-                        .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
-                        @value-changed=${this._setStartDate}
-                        ?disabled=${!isDefined(this.schedule.start_date)}
-                      >
-                      </ha-date-input>
+                  <div class="condition-options">
+                    <div style="flex: 1">
+                      <mwc-button @click=${this.addConditionClick}>
+                        <ha-icon icon="mdi:plus-circle-outline" class="padded-right"></ha-icon>
+                        ${this.hass.localize('ui.dialogs.helper_settings.input_select.add')}
+                      </mwc-button>
                     </div>
-
-                    <div>
-                      <span>
-                        ${PrettyPrintName(
-                          localize('ui.components.date.days_range', getLocale(this.hass))
-                            .split('}')[1]
-                            .split('{')
-                            .shift()
-                            ?.trim() || ''
-                        )}
-                      </span>
-                      <ha-date-input
-                        .locale=${this.hass.locale}
-                        value=${this.endDate}
-                        .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
-                        @value-changed=${this._setEndDate}
-                        ?disabled=${!isDefined(this.schedule.start_date)}
-                      >
-                      </ha-date-input>
+                    <div class="track-conditions">
+                      ${this.schedule.timeslots[0].stop &&
+                      this.schedule.timeslots[0].conditions &&
+                      this.schedule.timeslots[0].conditions.length > 0
+                        ? html`
+                            <ha-checkbox
+                              id="track_conditions"
+                              ?checked=${this.schedule.timeslots[0].track_conditions}
+                              @change=${this.trackConditionsClick}
+                            ></ha-checkbox>
+                            <span
+                              @click=${() =>
+                                (this.shadowRoot!.querySelector('#track_conditions')! as HTMLElement).click()}
+                            >
+                              ${localize('ui.panel.conditions.track_conditions', getLocale(this.hass))}
+                            </span>
+                          `
+                        : ''}
                     </div>
                   </div>
-                </div>
 
-                <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
-                <ha-textfield
-                  value=${this.schedule.name || ''}
-                  placeholder=${this.schedule.name
-                    ? ''
-                    : this.hass.localize('ui.components.area-picker.add_dialog.name')}
-                  @input=${this.updateName}
-                ></ha-textfield>
-
-                ${this.config.tags
-                  ? html`
-                      <div class="header">${this.hass.localize('ui.panel.config.tag.caption')}</div>
-                      <scheduler-selector
-                        .items=${this.getTagOptions()}
-                        .value=${this.schedule.tags || []}
-                        @value-changed=${this.updateTags}
-                        label=${this.hass.localize('ui.panel.config.tag.add_tag')}
+                  <div class="header">${localize('ui.panel.options.period', getLocale(this.hass))}</div>
+                  <div class="checkbox-container">
+                    <div class="checkbox">
+                      <ha-checkbox
+                        ?checked=${isDefined(this.schedule.start_date)}
+                        @change=${this.toggleEnableDateRange}
                       >
-                      </scheduler-selector>
-                    `
-                  : ''}
+                      </ha-checkbox>
+                    </div>
+                    <div class="slider date-range">
+                      <div>
+                        <span>
+                          ${PrettyPrintName(
+                            localize('ui.components.date.days_range', getLocale(this.hass))
+                              .split('{')
+                              .shift()
+                              ?.trim() || ''
+                          )}
+                        </span>
+                        <ha-date-input
+                          .locale=${this.hass.locale}
+                          value=${this.startDate}
+                          .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
+                          @value-changed=${this._setStartDate}
+                          ?disabled=${!isDefined(this.schedule.start_date)}
+                        >
+                        </ha-date-input>
+                      </div>
 
-                <div class="header">${localize('ui.panel.options.repeat_type', getLocale(this.hass))}</div>
-                <button-group
-                  .items=${repeatTypes}
-                  value="${this.schedule.repeat_type}"
-                  @change=${this.updateRepeatType}
-                >
-                </button-group>
-              `
-            : this.renderAddCondition()}
+                      <div>
+                        <span>
+                          ${PrettyPrintName(
+                            localize('ui.components.date.days_range', getLocale(this.hass))
+                              .split('}')[1]
+                              .split('{')
+                              .shift()
+                              ?.trim() || ''
+                          )}
+                        </span>
+                        <ha-date-input
+                          .locale=${this.hass.locale}
+                          value=${this.endDate}
+                          .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
+                          @value-changed=${this._setEndDate}
+                          ?disabled=${!isDefined(this.schedule.start_date)}
+                        >
+                        </ha-date-input>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}</div>
+                  <ha-textfield
+                    value=${this.schedule.name || ''}
+                    placeholder=${this.schedule.name
+                      ? ''
+                      : this.hass.localize('ui.components.area-picker.add_dialog.name')}
+                    @input=${this.updateName}
+                  ></ha-textfield>
+
+                  ${this.config.tags
+                    ? html`
+                        <div class="header">${this.hass.localize('ui.panel.config.tag.caption')}</div>
+                        <scheduler-selector
+                          .items=${this.getTagOptions()}
+                          .value=${this.schedule.tags || []}
+                          @value-changed=${this.updateTags}
+                          label=${this.hass.localize('ui.panel.config.tag.add_tag')}
+                        >
+                        </scheduler-selector>
+                      `
+                    : ''}
+
+                  <div class="header">${localize('ui.panel.options.repeat_type', getLocale(this.hass))}</div>
+                  <button-group
+                    .items=${repeatTypes}
+                    value="${this.schedule.repeat_type}"
+                    @change=${this.updateRepeatType}
+                  >
+                  </button-group>
+                `
+              : this.renderAddCondition()
+          }
         </div>
-        <div class="card-actions">
-          ${!this.addCondition
-            ? html`
-                <mwc-button
-                  @click=${this.saveClick}
-                  ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
-                >
-                  ${this.hass.localize('ui.common.save')}
-                </mwc-button>
-                <mwc-button @click=${this.backClick} style="float: right"
-                  >${this.hass.localize('ui.common.back')}</mwc-button
-                >
-              `
-            : html`
-                <mwc-button
-                  @click=${this.confirmConditionClick}
-                  ?disabled=${!this.selectedEntity ||
-                    !this.conditionMatchType ||
-                    !isDefined(this.conditionValue) ||
-                    (typeof this.conditionValue == 'string' && !this.conditionValue.trim().length)}
-                  >${this.hass.localize('ui.common.save')}</mwc-button
-                >
-                ${this.editItem !== undefined
-                  ? html`
-                      <mwc-button class="warning" @click=${this.deleteConditionClick}
-                        >${this.hass.localize('ui.common.delete')}</mwc-button
-                      >
-                    `
-                  : ''}
-                <mwc-button @click=${this.cancelConditionClick} style="float: right"
-                  >${this.hass.localize('ui.common.cancel')}</mwc-button
-                >
-              `}
+        <div class="buttons ${!this.addCondition && !this.editItem ? 'centered' : ''}">
+          ${
+            !this.addCondition
+              ? html`
+                  ${this.editItem
+                    ? html`
+                        <mwc-button
+                          class="warning"
+                          @click=${() => this.dispatchEvent(new CustomEvent('deleteClick', { detail: this.schedule }))}
+                        >
+                          ${this.hass.localize('ui.common.delete')}
+                        </mwc-button>
+                      `
+                    : ''}
+                  <mwc-button
+                    @click=${() => this.dispatchEvent(new CustomEvent('saveClick', { detail: this.schedule }))}
+                    ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
+                  >
+                    ${this.hass.localize('ui.common.save')}
+                  </mwc-button>
+                `
+              : html`
+                  <mwc-button
+                    @click=${this.confirmConditionClick}
+                    ?disabled=${!this.selectedEntity ||
+                      !this.conditionMatchType ||
+                      !isDefined(this.conditionValue) ||
+                      (typeof this.conditionValue == 'string' && !this.conditionValue.trim().length)}
+                    >${this.hass.localize('ui.common.save')}</mwc-button
+                  >
+                  ${this.editConditionItem !== undefined
+                    ? html`
+                        <mwc-button class="warning" @click=${this.deleteConditionClick}
+                          >${this.hass.localize('ui.common.delete')}</mwc-button
+                        >
+                      `
+                    : ''}
+                  <mwc-button @click=${this.cancelConditionClick} style="float: right"
+                    >${this.hass.localize('ui.common.cancel')}</mwc-button
+                  >
+                `
+          }
         </div>
       </ha-card>
     `;
@@ -530,8 +548,8 @@ export class SchedulerOptionsCard extends LitElement {
       ? this.schedule.timeslots[0].condition_type
       : EConditionType.Any;
 
-    if (this.editItem === undefined) conditions.push(condition);
-    else conditions.splice(this.editItem, 1, condition);
+    if (this.editConditionItem === undefined) conditions.push(condition);
+    else conditions.splice(this.editConditionItem, 1, condition);
 
     this.schedule = {
       ...this.schedule,
@@ -543,19 +561,19 @@ export class SchedulerOptionsCard extends LitElement {
       ),
     };
     this.addCondition = false;
-    this.editItem = undefined;
+    this.editConditionItem = undefined;
   }
 
   cancelConditionClick() {
     this.addCondition = false;
-    this.editItem = undefined;
+    this.editConditionItem = undefined;
   }
 
   editConditionClick(index: number) {
     if (!this.schedule || !this.schedule.timeslots[0].conditions || !this.hass || !this.config) return;
     const item = this.schedule.timeslots[0].conditions[index];
     if (!item) return;
-    this.editItem = index;
+    this.editConditionItem = index;
 
     const hassEntities = computeEntities(this.hass, this.config, { filterActions: false, filterStates: true });
     const groups = entityGroups(hassEntities, this.config, this.hass);
@@ -568,9 +586,9 @@ export class SchedulerOptionsCard extends LitElement {
   }
 
   deleteConditionClick() {
-    if (!this.config || !this.hass || !this.schedule || this.editItem === undefined) return;
+    if (!this.config || !this.hass || !this.schedule || this.editConditionItem === undefined) return;
     const conditions = this.schedule.timeslots[0].conditions?.length ? [...this.schedule.timeslots[0].conditions] : [];
-    conditions.splice(this.editItem, 1);
+    conditions.splice(this.editConditionItem, 1);
 
     this.schedule = {
       ...this.schedule,
@@ -581,7 +599,7 @@ export class SchedulerOptionsCard extends LitElement {
       ),
     };
     this.addCondition = false;
-    this.editItem = undefined;
+    this.editConditionItem = undefined;
   }
 
   conditionTypeSwitchClick(e: Event) {
@@ -687,26 +705,13 @@ export class SchedulerOptionsCard extends LitElement {
     };
   }
 
-  cancelClick() {
-    if (this.addCondition) {
-      this.addCondition = !this.addCondition;
-    } else {
-      const myEvent = new CustomEvent('cancelClick');
-      this.dispatchEvent(myEvent);
-    }
-  }
-
   saveClick() {
-    const myEvent = new CustomEvent('saveClick', {
-      detail: this.schedule,
-    });
+    const myEvent = new CustomEvent('saveClick', { detail: this.schedule });
     this.dispatchEvent(myEvent);
   }
 
-  backClick() {
-    const myEvent = new CustomEvent('backClick', {
-      detail: this.schedule,
-    });
+  deleteClick() {
+    const myEvent = new CustomEvent('deleteClick', { detail: this.schedule });
     this.dispatchEvent(myEvent);
   }
 

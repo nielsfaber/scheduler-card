@@ -113,11 +113,17 @@
       "confirm_delete": {
         "title": "Entiteit verwijderen?",
         "description": "Weet je zeker dat je dit item wilt verwijderen?"
+      },
+      "confirm_migrate": {
+        "title": "Schema bijwerken",
+        "description": "Door deze actie gaan vorige instellingen verloren. Wil je doorgaan?"
       }
     },
     "panel": {
       "common": {
-        "title": "Tijdplanner"
+        "title": "Tijdplanner",
+        "new_schedule": "Nieuw schema",
+        "default_name": "Schema #{id}"
       },
       "overview": {
         "no_entries": "Er zijn geen items aangemaakt",

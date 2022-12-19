@@ -1,20 +1,20 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain } from 'custom-card-helpers';
-import { CardConfig, EntityElement } from '../types';
-import { getLocale, sortAlphabetically, AsArray, PrettyPrintIcon, pick } from '../helpers';
-import { localize } from '../localize/localize';
-import { DefaultCardConfig, DefaultTimeStep } from '../const';
-import { commonStyle } from '../styles';
-import { fetchSchedules, fetchTags } from '../data/websockets';
+import { CardConfig, EntityElement } from './types';
+import { getLocale, sortAlphabetically, AsArray, PrettyPrintIcon, pick } from './helpers';
+import { localize } from './localize/localize';
+import { DefaultCardConfig, DefaultTimeStep } from './const';
+import { commonStyle } from './styles';
+import { fetchSchedules, fetchTags } from './data/websockets';
 
-import { loadHaForm } from '../load-ha-form';
-import { computeActions } from '../data/actions/compute_actions';
-import { computeEntities } from '../data/entities/compute_entities';
-import { parseEntity } from '../data/entities/parse_entity';
-import { domainIcons } from '../standard-configuration/standardIcon';
-import { standardStates } from '../standard-configuration/standardStates';
-import { entityFilter } from '../data/entities/entity_filter';
+import { loadHaForm } from './load-ha-form';
+import { computeActions } from './data/actions/compute_actions';
+import { computeEntities } from './data/entities/compute_entities';
+import { parseEntity } from './data/entities/parse_entity';
+import { domainIcons } from './standard-configuration/standardIcon';
+import { standardStates } from './standard-configuration/standardStates';
+import { entityFilter } from './data/entities/entity_filter';
 
 @customElement('scheduler-card-editor')
 export class SchedulerCardEditor extends LitElement implements LovelaceCardEditor {

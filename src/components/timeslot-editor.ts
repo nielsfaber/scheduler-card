@@ -430,12 +430,14 @@ export class TimeslotEditor extends LitElement {
   }
 
   private _updateTooltips() {
+    const windowLeft = this.offsetLeft;
     const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
     const tooltips = (this.shadowRoot?.querySelectorAll('.tooltip') as unknown) as HTMLElement[];
 
     const getBounds = (el: HTMLElement) => {
       const width = el.offsetWidth;
-      const left = el.parentElement!.offsetLeft + el.offsetLeft - 15;
+      const left = el.parentElement!.offsetLeft + el.offsetLeft - windowLeft;
+
       if (el.parentElement!.classList.contains('left')) return [left + width / 2, left + (3 * width) / 2];
       else if (el.parentElement!.classList.contains('right')) return [left - width / 2, left + width / 2];
       return [left, left + width];
@@ -450,7 +452,7 @@ export class TimeslotEditor extends LitElement {
         if (visible) container.classList.remove('visible');
       } else {
         const left = tooltip.parentElement!.offsetLeft;
-        if (left < 0 || left > fullWidth + 15) {
+        if (left < 0 || left > fullWidth + 2 * windowLeft) {
           if (visible) container.classList.remove('visible');
         } else {
           if (!visible) container.classList.add('visible');
