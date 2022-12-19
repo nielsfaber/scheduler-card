@@ -1,41 +1,36 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValues } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { HomeAssistant, computeEntity, fireEvent } from 'custom-card-helpers';
-import { mdiClose } from '@mdi/js';
+import { HomeAssistant, computeEntity } from 'custom-card-helpers';
 import { localize } from '../localize/localize';
 import {
   CardConfig,
   EntityElement,
-  EVariableType,
   EDayType,
   ScheduleConfig,
   Timeslot,
   WeekdayType,
   Action,
-  LevelVariable,
   ServiceCall,
   ETimeEvent,
 } from '../types';
 import { PrettyPrintIcon, PrettyPrintName, capitalize, sortAlphabetically, omit, isEqual, getLocale } from '../helpers';
 import { DefaultTimeStep, DefaultActionIcon } from '../const';
-
-import '../components/time-picker';
-import '../components/timeslot-editor';
-import '../components/variable-picker';
-import '../components/dialog-delete-confirm';
 import { commonStyle } from '../styles';
 import { computeActionDisplay } from '../data/actions/compute_action_display';
 import { startOfWeek } from '../data/date-time/start_of_week';
 import { weekdayArray, formatWeekday } from '../data/date-time/format_weekday';
 import { weekdayType } from '../data/date-time/weekday_type';
 import { compareActions } from '../data/actions/compare_actions';
-import { importAction } from '../data/actions/import_action';
 import { assignAction } from '../data/actions/assign_action';
 import { parseRelativeTime, stringToTime } from '../data/date-time/time';
 import { absToRelTime, relToAbsTime } from '../data/date-time/relative_time';
 
-@customElement('scheduler-timepicker-card')
-export class SchedulerTimepickerCard extends LitElement {
+import '../components/time-picker';
+import '../components/timeslot-editor';
+import '../components/variable-picker';
+
+@customElement('scheduler-editor-time')
+export class SchedulerEditorTime extends LitElement {
   @property()
   hass?: HomeAssistant;
 
@@ -80,72 +75,74 @@ export class SchedulerTimepickerCard extends LitElement {
     this.actions = actions;
   }
 
+  shouldUpdate(changedProps: PropertyValues): boolean {
+    if (changedProps.get('schedule')) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            schedule: this.schedule,
+          },
+        })
+      );
+    }
+    return true;
+  }
+
   render() {
     if (!this.hass || !this.config || !this.entities || !this.actions) return html``;
     return html`
-      <ha-card>
-        <div class="card-header">
-          <div class="name">
-            ${this.config.title
-              ? typeof this.config.title == 'string'
-                ? this.config.title
-                : localize('ui.panel.common.title', getLocale(this.hass))
-              : ''}
-          </div>
-          <ha-icon-button .path=${mdiClose} @click=${this.cancelClick}> </ha-icon-button>
+      <div class="content">
+        <div class="header">
+          ${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}
         </div>
-        <div class="card-content">
-          <div class="header">
-            ${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}
-          </div>
-          ${this.renderSummary()}
-          ${!this.timeslots
-            ? html`
-                ${this.getVariableEditor()} ${this.renderDays()}
-                <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
-                <time-picker
-                  .hass=${this.hass}
-                  .value=${this.schedule.timeslots[0].start}
-                  stepSize=${this.config.time_step || DefaultTimeStep}
-                  @change=${(ev: Event) => this.updateActiveEntry({ start: (ev.target as HTMLInputElement).value })}
-                >
-                </time-picker>
-              `
-            : html`
-                ${this.renderDays()}
-                <div class="header">${localize('ui.panel.time_picker.time_scheme', getLocale(this.hass))}</div>
+        ${this.renderSummary()}
+        ${!this.timeslots
+          ? html`
+              ${this.getVariableEditor()} ${this.renderDays()}
+              <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
+              <time-picker
+                .hass=${this.hass}
+                .value=${this.schedule.timeslots[0].start}
+                stepSize=${this.config.time_step || DefaultTimeStep}
+                @change=${(ev: Event) => this.updateActiveEntry({ start: (ev.target as HTMLInputElement).value })}
+              >
+              </time-picker>
+            `
+          : html`
+              ${this.renderDays()}
+              <div class="header">${localize('ui.panel.time_picker.time_scheme', getLocale(this.hass))}</div>
 
-                <timeslot-editor
-                  .hass=${this.hass}
-                  .actions=${this.actions}
-                  .slots=${this.schedule.timeslots}
-                  stepSize=${this.config.time_step || DefaultTimeStep}
-                  @update=${this.handlePlannerUpdate}
-                >
-                </timeslot-editor>
+              <timeslot-editor
+                .hass=${this.hass}
+                .actions=${this.actions}
+                .slots=${this.schedule.timeslots}
+                stepSize=${this.config.time_step || DefaultTimeStep}
+                @update=${this.handlePlannerUpdate}
+              >
+              </timeslot-editor>
 
-                ${this.renderMarkerOptions()} ${this.renderActions()} ${this.getVariableEditor()}
-              `}
-        </div>
-        <div class="card-actions">
-          <mwc-button
-            @click=${this.saveClick}
-            ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
-          >
-            ${this.hass.localize('ui.common.save')}
-          </mwc-button>
-          ${this.editItem
-            ? html`
-                <mwc-button class="warning" @click=${this.deleteClick}
-                  >${this.hass.localize('ui.common.delete')}</mwc-button
-                >
-              `
-            : ''}
-          <mwc-button @click="${this.optionsClick}" style="float: right"
-            >${this.hass.localize('ui.dialogs.helper_settings.input_select.options')}</mwc-button
-          >
-        </div>
-      </ha-card>
+              ${this.renderMarkerOptions()} ${this.renderActions()} ${this.getVariableEditor()}
+            `}
+      </div>
+
+      <div class="buttons ${!this.editItem ? 'centered' : ''}">
+        ${this.editItem
+          ? html`
+              <mwc-button
+                class="warning"
+                @click=${() => this.dispatchEvent(new CustomEvent('deleteClick', { detail: this.schedule }))}
+              >
+                ${this.hass.localize('ui.common.delete')}
+              </mwc-button>
+            `
+          : ''}
+        <mwc-button
+          @click=${() => this.dispatchEvent(new CustomEvent('saveClick', { detail: this.schedule }))}
+          ?disabled=${!this.schedule.timeslots.filter(e => e.actions.length).length}
+        >
+          ${this.hass.localize('ui.common.save')}
+        </mwc-button>
+      </div>
     `;
   }
 
@@ -153,7 +150,7 @@ export class SchedulerTimepickerCard extends LitElement {
     if (!this.entities || !this.actions) return html``;
     return html`
       <div class="summary">
-        <div class="summary-entity" @click=${this.editActionClick}>
+        <div class="summary-entity">
           ${this.entities.map(
             entity => html`
               <div>
@@ -170,7 +167,7 @@ export class SchedulerTimepickerCard extends LitElement {
         <div class="summary-arrow">
           <ha-icon icon="mdi:arrow-right"> </ha-icon>
         </div>
-        <div class="summary-action" @click=${this.editActionClick}>
+        <div class="summary-action">
           ${this.timeslots
             ? html`
                 <div>
@@ -446,48 +443,6 @@ export class SchedulerTimepickerCard extends LitElement {
     };
   }
 
-  cancelClick() {
-    const myEvent = new CustomEvent('cancelClick');
-    this.dispatchEvent(myEvent);
-  }
-
-  saveClick() {
-    const myEvent = new CustomEvent('saveClick', { detail: this.schedule });
-    this.dispatchEvent(myEvent);
-  }
-
-  optionsClick() {
-    const myEvent = new CustomEvent('optionsClick', { detail: this.schedule });
-    this.dispatchEvent(myEvent);
-  }
-
-  editActionClick() {
-    const myEvent = new CustomEvent('editActionClick', { detail: this.schedule });
-    this.dispatchEvent(myEvent);
-  }
-
-  async deleteClick(ev) {
-    const element = ev.target as HTMLElement;
-    const result = await new Promise(resolve => {
-      fireEvent(element, 'show-dialog', {
-        dialogTag: 'dialog-delete-confirm',
-        dialogImport: () => import('../components/dialog-delete-confirm'),
-        dialogParams: {
-          cancel: () => {
-            resolve(false);
-          },
-          confirm: () => {
-            resolve(true);
-          },
-        },
-      });
-    });
-    if (result) {
-      const myEvent = new CustomEvent('deleteClick');
-      this.dispatchEvent(myEvent);
-    }
-  }
-
   static styles = css`
     ${commonStyle}
     div.summary {
@@ -521,7 +476,6 @@ export class SchedulerTimepickerCard extends LitElement {
       position: relative;
       display: flex;
       flex-direction: column;
-      cursor: pointer;
       background: rgba(var(--rgb-primary-color), 0.15);
       border-radius: 4px;
       align-items: center;

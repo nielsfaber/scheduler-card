@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "להסיר את הישות?",
         "description": "האם בוודאות ברצונך להסיר ישות זו?"
+      },
+      "confirm_migrate": {
+        "title": "שנה את לוח הזמנים",
+        "description": "חלק מההגדרות יאבדו על ידי פעולה זו. האם אתה רוצה להמשיך?"
       }
     },
     "panel": {
       "common": {
-        "title": "לוח זמנים"
+        "title": "לוח זמנים",
+        "new_schedule": "לוח זמנים חדש",
+        "default_name": "לוח זמנים #{id}"
       },
       "overview": {
         "no_entries": "אין פריטים להצגה",

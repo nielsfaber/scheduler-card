@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Ali želite odstraniti entiteto?",
         "description": "Ali ste prepričani, da želite odstraniti to entiteto?"
+      },
+      "confirm_migrate": {
+        "title": "Spremenite urnik",
+        "description": "Nekatere nastavitve bodo s tem dejanjem izgubljene. Želite nadaljevati?"
       }
     },
     "panel": {
       "common": {
-        "title": "Urnik"
+        "title": "Urnik",
+        "new_schedule": "Nov urnik",
+        "default_name": "Urnik #{id}"
       },
       "overview": {
         "no_entries": "Ni vpisov za prikaz",

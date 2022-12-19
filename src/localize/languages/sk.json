@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Odstrániť entitu?",
         "description": "Naozaj chcete odstrániť túto entitu?"
+      },
+      "confirm_migrate": {
+        "title": "Upravte plán",
+        "description": "Touto akciou sa stratia niektoré nastavenia. Chcete pokračovať?"
       }
     },
     "panel": {
       "common": {
-        "title": "Plánovač"
+        "title": "Plánovač",
+        "new_schedule": "Nový plán",
+        "default_name": "Plán #{id}"
       },
       "overview": {
         "no_entries": "Žiadne položky k zobrazeniu",

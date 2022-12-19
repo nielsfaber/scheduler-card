@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Vil du fjerne entiteten?",
         "description": "Er du sikker på at du vil fjerne denne entiteten?"
+      },
+      "confirm_migrate": {
+        "title": "Endre tidsplanen",
+        "description": "Noen innstillinger vil gå tapt ved denne handlingen. Vil du fortsette?"
       }
     },
     "panel": {
       "common": {
-        "title": "Tidsplan"
+        "title": "Tidsplan",
+        "new_schedule": "Ny tidsplan",
+        "default_name": "Tidsplan #{id}"
       },
       "overview": {
         "no_entries": "Det er ingen definerte tidsplaner å vise",

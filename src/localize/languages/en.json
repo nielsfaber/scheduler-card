@@ -112,11 +112,17 @@
       "confirm_delete": {
         "title": "Remove entity?",
         "description": "Are you sure you want to remove this entity?"
+      },
+      "confirm_migrate": {
+        "title": "Update schedule",
+        "description": "Some settings will be lost by this change. Do you want to continue?"
       }
     },
     "panel": {
       "common": {
-        "title": "Scheduler"
+        "title": "Scheduler",
+        "new_schedule": "New schedule",
+        "default_name": "Schedule #{id}"
       },
       "overview": {
         "no_entries": "There are no items to show",
