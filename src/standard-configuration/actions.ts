@@ -40,6 +40,9 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
     alarm_arm_custom_bypass: {
       supported_feature: 16,
     },
+    alarm_arm_vacation: {
+      supported_feature: 32,
+    },
   },
   automation: {
     turn_on: {},

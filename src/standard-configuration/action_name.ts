@@ -11,6 +11,7 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     alarm_arm_away: 'ui.card.alarm_control_panel.arm_away',
     alarm_arm_night: 'ui.card.alarm_control_panel.arm_night',
     alarm_arm_custom_bypass: 'ui.card.alarm_control_panel.arm_custom_bypass',
+    alarm_arm_vacation: 'ui.card.alarm_control_panel.arm_vacation',
   },
   automation: {
     turn_on: 'ui.card.vacuum.actions.turn_on',

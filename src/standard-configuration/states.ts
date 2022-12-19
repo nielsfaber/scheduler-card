@@ -13,6 +13,7 @@ export const statesList: Record<string, VariableConfig> = {
       if (supported & 1) modes = [...modes, 'armed_home'];
       if (supported & 4) modes = [...modes, 'armed_night'];
       if (supported & 16) modes = [...modes, 'armed_custom_bypass'];
+      if (supported & 32) modes = [...modes, 'armed_vacation'];
       return { options: modes };
     },
   },

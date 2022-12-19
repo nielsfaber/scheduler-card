@@ -29,6 +29,7 @@ const actionIcons: IconList = {
     alarm_arm_away: 'mdi:exit-run',
     alarm_arm_night: 'mdi:power-sleep',
     alarm_arm_custom_bypass: 'mdi:shield-lock-outline',
+    arm_vacation: 'mdi:shield-airplane',
   },
   automation: {
     turn_on: 'mdi:power',
