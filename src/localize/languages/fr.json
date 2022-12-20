@@ -121,12 +121,12 @@
     "panel": {
       "common": {
         "title": "Planificateur",
-        "new_schedule": "Nouveau horaire",
+        "new_schedule": "Nouvel horaire",
         "default_name": "Horaire #{id}"
       },
       "overview": {
         "no_entries": "il n'y a pas d'entrée à montrer",
-        "backend_error": "Impossible de se connecter au composant du planificateur. Elle doit être installée en tant qu'intégration avant que cette carte puisse être utilisée.",
+        "backend_error": "Impossible de se connecter au composant du planificateur. Il doit être installé en tant qu'intégration avant que cette carte ne puisse être utilisée.",
         "excluded_items": "{number} {if number is 1}entrée exclue{else}entrées exclues",
         "hide_excluded": "cacher les entrées exclues",
         "additional_tasks": "{number} {if number is 1}tâche à venir{else}tâches à venir"
@@ -148,8 +148,8 @@
       "conditions": {
         "equal_to": "égal à",
         "unequal_to": "pas égal à",
-        "all": "tous",
-        "any": "tout",
+        "all": "toutes",
+        "any": "une",
         "no_conditions_defined": "Il n'y a pas de condition définie",
         "track_conditions": "Ré-évaluer lorsque la condition change"
       },
