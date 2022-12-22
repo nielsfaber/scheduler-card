@@ -1,6 +1,6 @@
 import { LitElement, html, PropertyValues, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { computeCardSize, fireEvent, HomeAssistant, LovelaceCard, LovelaceCardEditor } from 'custom-card-helpers';
 import { CardConfig, ScheduleConfig, Action, Schedule, SchedulerEventData } from './types';
 import { CARD_VERSION, DefaultCardConfig, WebsocketEvent } from './const';
 import {
@@ -296,9 +296,23 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
     this._config = config;
   }
 
-  public getCardSize() {
-    if (!this._config) return 0;
-    return (this._config.title || this._config.show_header_toggle ? 2 : 0) + (this._config.entities.length || 1);
+  public async getCardSize() {
+    return new Promise(res => {
+      let retries = 0;
+      const wait = setInterval(() => {
+        retries++;
+        if (!this._config || (!this.schedules && !this.connectionError && retries < 50)) return;
+        let cardSize = this._config!.title || this._config!.show_header_toggle ? 3 : 1;
+        if (this._config.show_add_button) cardSize += 1;
+        const rowSize = ((AsArray(this._config.display_options.secondary_info || []).length || 2) + 1) / 2;
+        if (this.schedules)
+          cardSize += this.showDiscovered
+            ? this.schedules.length * rowSize
+            : this.schedules.filter(e => isIncluded(e, this._config!)).length * rowSize;
+        clearInterval(wait);
+        res(Math.round(cardSize));
+      }, 50);
+    });
   }
 
   render() {
