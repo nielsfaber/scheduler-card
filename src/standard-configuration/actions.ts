@@ -4,6 +4,7 @@ import { levelVariable } from '../data/variables/level_variable';
 import { listAttribute, numericAttribute } from './attribute';
 import { VariableConfig } from './variables';
 import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
+import { isDefined } from '../helpers';
 
 export type ActionItem = {
   supported_feature?: number | ((stateObj?: HassEntity) => number);
@@ -83,6 +84,22 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('heat'),
     },
+    _heat: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'heat_cool',
+      },
+      variables: {
+        temperature: {
+          template: temperatureVariable,
+        },
+      },
+      condition: stateObj =>
+        listAttribute(stateObj, 'hvac_modes').includes('heat_cool') &&
+        isDefined(numericAttribute(stateObj, 'temperature')) &&
+        !isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
+        !isDefined(numericAttribute(stateObj, 'target_temp_high')),
+    },
     cool: {
       service: 'set_temperature',
       service_data: {
@@ -108,7 +125,10 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
           template: temperatureVariable,
         },
       },
-      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('heat_cool'),
+      condition: stateObj =>
+        listAttribute(stateObj, 'hvac_modes').includes('heat_cool') &&
+        isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
+        isDefined(numericAttribute(stateObj, 'target_temp_high')),
     },
     set_mode: {
       service: 'set_hvac_mode',
