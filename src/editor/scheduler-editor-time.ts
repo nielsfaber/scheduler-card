@@ -58,6 +58,9 @@ export class SchedulerEditorTime extends LitElement {
   @property({ type: Boolean })
   editItem = false;
 
+  @property({ type: Boolean })
+  large = false;
+
   firstUpdated() {
     if (!this.actions || !this.hass) return;
     if (!this.timeslots) this.activeEntry = 0;
@@ -117,6 +120,7 @@ export class SchedulerEditorTime extends LitElement {
                 .actions=${this.actions}
                 .slots=${this.schedule.timeslots}
                 stepSize=${this.config.time_step || DefaultTimeStep}
+                .large=${this.large}
                 @update=${this.handlePlannerUpdate}
               >
               </timeslot-editor>

@@ -124,6 +124,7 @@ export class SchedulerEditorDialog extends LitElement {
                 .actions=${this.actions}
                 ?timeslots=${useTimeScheme}
                 ?editItem=${this.editItem !== null}
+                .large=${this.large}
                 @change=${this._handleUpdateParams}
                 @saveClick=${this._handleSaveClick}
                 @deleteClick=${this._handleDeleteClick}

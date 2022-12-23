@@ -52,6 +52,9 @@ export class TimeslotEditor extends LitElement {
 
   zoomFactor = 1;
 
+  @property({ type: Boolean })
+  large = false;
+
   constructor() {
     super();
     this.handleResize = this.handleResize.bind(this);
