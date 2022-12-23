@@ -1,6 +1,6 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain } from 'custom-card-helpers';
+import { HomeAssistant, LovelaceCardEditor, fireEvent, computeDomain, LovelaceCardConfig } from 'custom-card-helpers';
 import { CardConfig, EntityElement } from './types';
 import { getLocale, sortAlphabetically, AsArray, PrettyPrintIcon, pick } from './helpers';
 import { localize } from './localize/localize';
@@ -36,8 +36,8 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   @property()
   selectedDomain = '';
 
-  public setConfig(config: CardConfig): void {
-    this._config = config;
+  public setConfig(config: LovelaceCardConfig | CardConfig): void {
+    this._config = config as CardConfig;
   }
 
   async firstUpdated() {
@@ -261,7 +261,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 <ha-checkbox
                   ?checked=${AsArray(
                     (this._config.display_options || DefaultCardConfig.display_options).secondary_info
-                  ).includes('days-tasks')}
+                  ).includes('days')}
                   value="days"
                   @change=${this._setDisplayOptionsSecondary}
                 ></ha-checkbox>

@@ -268,22 +268,21 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
-    const oldConfig = changedProps.get('config') as CardConfig | undefined;
-    if (oldHass && changedProps.size == 1) {
+    const oldConfig = changedProps.get('_config') as CardConfig | undefined;
+    if (oldHass && changedProps.size == 1 && !this.translationsLoaded) {
       if (!oldHass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')) {
         this.translationsLoaded = true;
       }
+    }
+    if (oldConfig && this._config) {
+      const changedKeys = Object.keys(oldConfig).filter(e => oldConfig[e] !== this._config![e]);
+      if (changedKeys.some(e => ['tags', 'discover_existing', 'sort_by', 'display_options'].includes(e)))
+        (async () => await this.loadSchedules())();
     }
     if (oldHass && changedProps.size == 1 && this.schedules)
       return this.schedules!.some(
         e => JSON.stringify(oldHass.states[e.entity_id]) !== JSON.stringify(this.hass!.states[e.entity_id])
       );
-    else if (
-      oldConfig &&
-      this._config &&
-      (oldConfig.discover_existing !== this._config.discover_existing || oldConfig.tags !== this._config.tags)
-    )
-      (async () => await this.loadSchedules())();
     return true;
   }
 
@@ -339,9 +338,17 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         ${this._config.show_add_button !== false
           ? html`
               <div class="card-actions">
-                <mwc-button @click=${this._addItemClick} ?disabled=${this.connectionError}
-                  >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
-                </mwc-button>
+                ${!this.connectionError
+                  ? html`
+                      <mwc-button @click=${this._addItemClick}
+                        >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
+                      </mwc-button>
+                    `
+                  : html`
+                      <mwc-button @click=${this._retryConnection}
+                        >${this.hass.localize('ui.common.refresh')}
+                      </mwc-button>
+                    `}
               </div>
             `
           : ''}
@@ -622,6 +629,14 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         schedule: schedule,
       },
     });
+  }
+
+  _retryConnection() {
+    setTimeout(async () => {
+      await this.loadSchedules();
+    }, 100);
+    this.connectionError = false;
+    this.requestUpdate();
   }
 
   static styles = css`
