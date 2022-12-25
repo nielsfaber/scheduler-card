@@ -38,6 +38,7 @@
   - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
   - [Customizing built-in actions](#customizing-built-in-actions)
 - [Troubleshooting](#troubleshooting)
+  - [Checking card version](#checking-card-version)
 - [Say thank you](#say-thank-you)
 
 ## Introduction
