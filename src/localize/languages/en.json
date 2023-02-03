@@ -209,7 +209,7 @@
           },
           "show_header_toggle": {
             "heading": "Show header toggle",
-            "description": "Show toggle switch at the top of the card for enabling/enabling all entities"
+            "description": "Show toggle switch at the top of the card for enabling/disabling all entities"
           },
           "tags": {
             "heading": "Tags",
