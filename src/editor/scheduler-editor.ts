@@ -74,7 +74,7 @@ export class SchedulerEditorDialog extends LitElement {
 
     if (!this._params) return html``;
     return html`
-      <ha-dialog open @closed=${this.closeDialog} .heading=${name} hideActions>
+      <ha-dialog open @closed=${this.closeDialog} .heading=${name} hideActions scrimClickAction="">
         <div slot="heading" class="heading">
           <ha-header-bar>
             <ha-icon-button
