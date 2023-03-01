@@ -252,8 +252,16 @@ export class SchedulerEditorEntity extends LitElement {
     const value = typeof ev == 'object' ? AsArray(((ev as Event).target as HTMLInputElement).value) : AsArray(ev);
     let action = this.selectedAction;
     if (action) {
-      const availableActions = this.getActionsForEntity(value);
-      action = availableActions.find(e => compareActions(e, action!));
+      let availableActions = this.getActionsForEntity(value);
+      //handle case of script entities, where service is equal to the entity ID
+      if (this.entities.every(e => computeDomain(e) == 'script') && this.entities.includes(action.service)) {
+        action = { ...action, service: 'script.script' };
+        availableActions = availableActions.map(a =>
+          value.includes(a.service) ? { ...a, service: 'script.script' } : a
+        );
+        action = availableActions.find(e => compareActions(e, action!));
+        action = { ...action, service: value[0] };
+      } else action = availableActions.find(e => compareActions(e, action!));
     } else action = undefined;
 
     if (this.schedule && value.length && (this.timeSchemeSelected || this.selectedAction)) {
