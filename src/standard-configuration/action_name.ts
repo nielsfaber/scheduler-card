@@ -27,6 +27,7 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     cool: 'services.climate.set_temperature_hvac_mode_cool',
     heat_cool: 'services.climate.set_temperature_hvac_mode_heat_cool',
     heat_cool_range: 'services.climate.set_temperature_hvac_mode_heat_cool_range',
+    auto: 'services.climate.set_temperature_hvac_mode_auto',
     set_temperature: 'services.climate.set_temperature',
     set_mode: 'services.climate.set_hvac_mode',
     set_preset: 'services.climate.set_preset_mode',

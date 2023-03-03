@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "охлаждение[ {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "обогрев/охлаждение[ {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "обогрев/охлаждение[ {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "aвто[ {temperature}]",
       "set_hvac_mode": "установить режим[ {hvac_mode}]",
       "set_preset_mode": "выбрать набор настроек[ {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

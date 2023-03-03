@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "jäähdytä[ {temperature} asteeseen]",
       "set_temperature_hvac_mode_heat_cool": "lämmitä/jäähdytä[ {temperature} asteeseen]",
       "set_temperature_hvac_mode_heat_cool_range": "lämmitä/jäähdytä[ välillä {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "automaatilla[ {temperature} asteeseen]",
       "set_hvac_mode": "aseta tilaksi[ {hvac_mode}]",
       "set_preset_mode": "aseta esivalinta[ {preset_mode}]",
       "set_fan_mode": "aseta tuuletus[ {fan_mode}]"

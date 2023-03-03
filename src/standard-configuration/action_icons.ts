@@ -46,6 +46,7 @@ const actionIcons: IconList = {
     heat_cool: 'mdi:thermometer',
     heat_cool_range: 'mdi:thermometer',
     set_temperature: 'mdi:thermometer',
+    auto: 'mdi:autorenew',
     set_mode: 'mdi:cog-transfer-outline',
     set_preset: 'mdi:cloud-download-outline',
     set_fan_mode: 'mdi:fan',

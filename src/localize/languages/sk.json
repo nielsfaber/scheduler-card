@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "chladenie[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "vykurovanie/chladenie[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "vykurovanie/chladenie[ na {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "automatika[ na {temperature}]",
       "set_hvac_mode": "nastaviť režim[ na {hvac_mode}]",
       "set_preset_mode": "nastaviť predvoľbu[ {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

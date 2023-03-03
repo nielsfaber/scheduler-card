@@ -70,7 +70,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       supported_feature: 1,
       condition: stateObj =>
-        !['heat', 'cool', 'heat_cool'].some(e => listAttribute(stateObj, 'hvac_modes').includes(e)),
+        !['heat', 'cool', 'heat_cool', 'auto'].some(e => listAttribute(stateObj, 'hvac_modes').includes(e)),
     },
     heat: {
       service: 'set_temperature',
@@ -130,6 +130,20 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
         isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
         isDefined(numericAttribute(stateObj, 'target_temp_high')),
     },
+    auto: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'auto',
+      },
+      variables: {
+        temperature: {
+          template: (stateObj, hass) => {
+            return levelVariable({ ...temperatureVariable(stateObj, hass), optional: true });
+          },
+        },
+      },
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('auto'),
+    },
     set_mode: {
       service: 'set_hvac_mode',
       variables: {
@@ -137,7 +151,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
           template: stateObj => {
             const supportedFeatures = numericAttribute(stateObj, 'supported_features') || 0;
             let modes = listAttribute(stateObj, 'hvac_modes');
-            modes = modes.filter(e => !['heat', 'cool', 'heat_cool', 'off'].includes(e));
+            modes = modes.filter(e => !['heat', 'cool', 'heat_cool', 'auto', 'off'].includes(e));
             return { options: modes };
           },
         },

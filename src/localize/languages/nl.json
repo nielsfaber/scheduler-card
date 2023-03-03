@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "koelen[ naar {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "verwarmen/koelen[ naar {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "verwarmen/koelen[ naar {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "automatisch[ naar {temperature}]",
       "set_hvac_mode": "modus aanpassen[ naar {hvac_mode}]",
       "set_preset_mode": "programma[ {preset_mode}] instellen",
       "set_fan_mode": "ventilatiemodus aanpassen[ naar {fan_mode}]"

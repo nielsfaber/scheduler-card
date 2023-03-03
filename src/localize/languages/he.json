@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "קירור[ ל {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "חימום/קירור[ ל {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "חימום/קירור[ ל {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "אוטומטי[ ל {temperature}]",
       "set_hvac_mode": "קבע מצב עבודה[ ל {hvac_mode}]",
       "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

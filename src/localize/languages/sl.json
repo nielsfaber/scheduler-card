@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "ohladi[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "ogrej/ohladi[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "ogrej/ohladi[ na {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "samodejno[ na {temperature}]",
       "set_hvac_mode": "nastavi način[ na {hvac_mode}]",
       "set_preset_mode": "nastavi preset[ na {preset_mode}]",
       "set_fan_mode": "nastavi ventilator[ na {fan_mode}]"

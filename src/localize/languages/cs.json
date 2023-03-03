@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "chlazení[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "topení/chlazení[ na {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "topení/chlazení[ na {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "automatika[ na {temperature}]",
       "set_hvac_mode": "nastavit režim[ na {hvac_mode}]",
       "set_preset_mode": "nastavit předvolbu[ {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

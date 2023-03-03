@@ -10,6 +10,7 @@
       "set_temperature_hvac_mode_cool": "refroidit[ à {temperature}]",
       "set_temperature_hvac_mode_heat_cool": "chauffe/refroidit[ à {temperature}]",
       "set_temperature_hvac_mode_heat_cool_range": "chauffe/refroidit[ à {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "auto[ à {temperature}]",
       "set_hvac_mode": "ajuster le mode[ à {hvac_mode}]",
       "set_preset_mode": "choisir le pré-réglage[ {preset_mode}]",
       "set_fan_mode": "ajuster le mode de ventilation[ à {fan_mode}]"
