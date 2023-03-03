@@ -8,7 +8,8 @@
       "set_temperature": "Temperatur einstellen[ auf {temperature}]",
       "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
       "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regulieren[ auf {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "heizen/kühlen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "heizen/kühlen[ auf {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
       "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

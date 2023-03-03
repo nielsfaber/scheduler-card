@@ -8,7 +8,8 @@
       "set_temperature": "встановити температуру[ to {temperature}]",
       "set_temperature_hvac_mode_heat": "нагрів[ to {temperature}]",
       "set_temperature_hvac_mode_cool": "охолодження[ to {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "нагрів/охолодження[ to {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "нагрів/охолодження[ to {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "встановити режим[ to {hvac_mode}]",
       "set_preset_mode": "вибрати пресет[ to {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

@@ -8,7 +8,8 @@
       "set_temperature": "setare temperatură[ la {temperature}]",
       "set_temperature_hvac_mode_heat": "încălzire[ la {temperature}]",
       "set_temperature_hvac_mode_cool": "răcire[ la {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regulate[ to {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "încălzire/răcire[ la {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "încălzire/răcire[ la {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "setare mod[ la {hvac_mode}]",
       "set_preset_mode": "setare preset[ {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

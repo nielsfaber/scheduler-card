@@ -84,7 +84,19 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('heat'),
     },
-    _heat: {
+    cool: {
+      service: 'set_temperature',
+      service_data: {
+        hvac_mode: 'cool',
+      },
+      variables: {
+        temperature: {
+          template: temperatureVariable,
+        },
+      },
+      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('cool'),
+    },
+    heat_cool: {
       service: 'set_temperature',
       service_data: {
         hvac_mode: 'heat_cool',
@@ -100,19 +112,7 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
         !isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
         !isDefined(numericAttribute(stateObj, 'target_temp_high')),
     },
-    cool: {
-      service: 'set_temperature',
-      service_data: {
-        hvac_mode: 'cool',
-      },
-      variables: {
-        temperature: {
-          template: temperatureVariable,
-        },
-      },
-      condition: stateObj => listAttribute(stateObj, 'hvac_modes').includes('cool'),
-    },
-    regulate: {
+    heat_cool_range: {
       service: 'set_temperature',
       service_data: {
         hvac_mode: 'heat_cool',

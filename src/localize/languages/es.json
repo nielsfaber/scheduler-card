@@ -8,7 +8,8 @@
       "set_temperature": "establecer temperatura[ a {temperature}]",
       "set_temperature_hvac_mode_heat": "calefacción[ a {temperature}]",
       "set_temperature_hvac_mode_cool": "frío[ a {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regular[ entre {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "calefacción/frío[ a {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "calefacción/frío[ a {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "establecer modo[ a {hvac_mode}]",
       "set_preset_mode": "establecer preajuste[ {preset_mode}]",
       "set_fan_mode": "set fan mode[ to {fan_mode}]"

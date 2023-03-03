@@ -8,7 +8,8 @@
       "set_temperature": "definir temperatura[ para {temperature}]",
       "set_temperature_hvac_mode_heat": "aquecimento[ para {temperature}]",
       "set_temperature_hvac_mode_cool": "arrefecimento[ para {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "regulate[ para {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "aquecimento/arrefecimento[ para {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "aquecimento/arrefecimento[ para {target_temp_low} - {target_temp_high}]",
       "set_hvac_mode": "definir modo[ para {hvac_mode}]",
       "set_preset_mode": "definir predefinição[ {preset_mode}]",
       "set_fan_mode": "definir modo do ventilador[ para {fan_mode}]"
