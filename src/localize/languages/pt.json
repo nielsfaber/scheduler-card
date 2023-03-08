@@ -140,7 +140,7 @@
         "no_entity_selected": "Selecione uma entidade primeiro",
         "no_actions_for_entity": "Não existem ações para esta entidade",
         "make_scheme": "criar esquema",
-        "multiple""
+        "multiple": "multiplos"
       },
       "time_picker": {
         "no_timeslot_selected": "É necessário selecionar um período horário para escolher uma ação",
