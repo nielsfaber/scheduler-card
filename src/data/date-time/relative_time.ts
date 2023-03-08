@@ -27,8 +27,7 @@ export const absToRelTime = (
   options: { stepSize?: number } = {}
 ) => {
   const res = parseRelativeTime(timeStr);
-
-  if (res) return timeStr;
+  if (res) timeStr = relToAbsTime(timeStr, hass);
 
   const ts = stringToTime(timeStr, hass);
 
@@ -45,6 +44,6 @@ export const absToRelTime = (
       : stringToTime(sunEntity.attributes.next_setting, hass);
 
   let offset = ts - ts_ref;
-  if (options.stepSize) offset = roundTime(offset, options.stepSize, { maxHours: 2 });
+  if (options.stepSize) offset = roundTime(offset, options.stepSize, { maxHours: 6 });
   return `${event}${offset > 0 ? '+' : '-'}${timeToString(Math.abs(offset))}`;
 };

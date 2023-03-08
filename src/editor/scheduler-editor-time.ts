@@ -274,13 +274,13 @@ export class SchedulerEditorTime extends LitElement {
         value: ETimeEvent.Sunrise,
         name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise'),
         icon: 'mdi:weather-sunny',
-        disabled: Math.abs(deltaSunrise) > 7200,
+        disabled: Math.abs(deltaSunrise) > 3600 * 6,
       },
       {
         value: ETimeEvent.Sunset,
         name: this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunset'),
         icon: 'mdi:weather-night',
-        disabled: Math.abs(deltaSunset) > 7200,
+        disabled: Math.abs(deltaSunset) > 3600 * 6,
       },
     ];
 

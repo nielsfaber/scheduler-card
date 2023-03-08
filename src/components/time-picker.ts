@@ -20,7 +20,7 @@ export class TimePicker extends LitElement {
 
   @property() _time!: number;
 
-  maxOffset = 2;
+  maxOffset = 6;
 
   get time() {
     if (this._time >= 0) return this._time;
@@ -193,8 +193,8 @@ export class TimePicker extends LitElement {
 
       let offset = this.event == ETimeEvent.Sunrise ? this._time - ts_sunrise : this._time - ts_sunset;
 
-      if (offset > 7200) offset = 7200;
-      else if (offset < -7200) offset = -7200;
+      if (offset > this.maxOffset * 3600) offset = this.maxOffset * 3600;
+      else if (offset < -this.maxOffset * 3600) offset = -this.maxOffset * 3600;
       this.time = offset;
     } else {
       this.time = this.event == ETimeEvent.Sunrise ? this._time + ts_sunrise : this._time + ts_sunset;
