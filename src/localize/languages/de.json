@@ -129,7 +129,7 @@
       "overview": {
         "no_entries": "Es gibt keine Einträge, die angezeigt werden können",
         "backend_error": "Es konnte keine Verbindung mit der Schedulerkomponente hergestellt werden. Es muss als Integration installiert werden, bevor diese Karte verwendet werden kann.",
-        "excluded_items": "{number}{if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
+        "excluded_items": "{number} {if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
         "hide_excluded": "Verstecke ausgeschlossene Einträge",
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
