@@ -2,6 +2,7 @@ import { HomeAssistant, fireEvent } from 'custom-card-helpers';
 import { Schedule, ScheduleConfig, TagEntry } from '../types';
 import { html, TemplateResult } from 'lit';
 import { DialogParams } from '../components/generic-dialog';
+import { ProvideHassElement, showDialog } from './custom_dialog';
 
 export const fetchSchedules = (hass: HomeAssistant): Promise<Schedule[]> =>
   hass.callWS({
@@ -34,7 +35,12 @@ export const fetchTags = (hass: HomeAssistant): Promise<TagEntry[]> =>
     type: 'scheduler/tags',
   });
 
-export function showErrorDialog(target: HTMLElement, error: string | TemplateResult, hass: HomeAssistant) {
+export function showErrorDialog(
+  target: HTMLElement & ProvideHassElement,
+  error: string | TemplateResult,
+  hass: HomeAssistant,
+  useAlternativeDialog?: boolean
+) {
   const params: DialogParams = {
     title: hass.localize('state_badge.default.error'),
     description: error,
@@ -42,19 +48,28 @@ export function showErrorDialog(target: HTMLElement, error: string | TemplateRes
     confirm: () => {},
     cancel: () => {},
   };
-  fireEvent(target, 'show-dialog', {
-    dialogTag: 'generic-dialog',
-    dialogImport: () => import('../components/generic-dialog'),
-    dialogParams: params,
-  });
+  showDialog(
+    target,
+    {
+      dialogTag: 'generic-dialog',
+      dialogImport: () => import('../components/generic-dialog'),
+      dialogParams: params,
+    },
+    useAlternativeDialog
+  );
 }
 
-export function handleError(err: { body: { message: string }; error: string }, el: HTMLElement, hass: HomeAssistant) {
+export function handleError(
+  err: { body: { message: string }; error: string },
+  el: HTMLElement & ProvideHassElement,
+  hass: HomeAssistant,
+  useAlternativeDialog?: boolean
+) {
   const errorMessage = html`
     <b>Something went wrong!</b><br />
     ${err.body.message}<br /><br />
     ${err.error}<br /><br />
     Please <a href="https://github.com/nielsfaber/scheduler-card/issues">report</a> the bug.
   `;
-  showErrorDialog(el, errorMessage, hass);
+  showErrorDialog(el, errorMessage, hass, useAlternativeDialog);
 }

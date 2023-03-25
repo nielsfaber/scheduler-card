@@ -9,6 +9,7 @@ import { deleteSchedule, editSchedule, fetchScheduleItem, handleError, saveSched
 import { ETabOptions } from '../const';
 import { DialogParams } from '../components/generic-dialog';
 import { localize } from '../localize/localize';
+import { showDialog } from '../data/custom_dialog';
 
 import './scheduler-editor-entity';
 import './scheduler-editor-time';
@@ -20,6 +21,7 @@ export type ScheduleDialogParams = {
   actions: Action[];
   schedule: ScheduleConfig;
   editItem: string | null;
+  cardEmbeddedInPopup: boolean;
 };
 
 @customElement('scheduler-editor-dialog')
@@ -45,6 +47,12 @@ export class SchedulerEditorDialog extends LitElement {
   @state() private _currTab: ETabOptions = ETabOptions.Entity;
   _tabs = [ETabOptions.Entity, ETabOptions.Time, ETabOptions.Options];
 
+  cardEmbeddedInPopup?: boolean;
+
+  provideHass(el: any) {
+    el.hass = this.hass;
+  }
+
   public async showDialog(params: ScheduleDialogParams): Promise<void> {
     this._params = params;
     this._config = params.config;
@@ -52,6 +60,8 @@ export class SchedulerEditorDialog extends LitElement {
     this.actions = params.actions;
     this.schedule = params.schedule;
     this.editItem = params.editItem;
+    this.cardEmbeddedInPopup = params.cardEmbeddedInPopup;
+
     this._currTab = this.editItem !== null ? ETabOptions.Time : ETabOptions.Entity;
 
     await this.updateComplete;
@@ -107,6 +117,7 @@ export class SchedulerEditorDialog extends LitElement {
                 .entities=${this.entities?.map(e => e.id)}
                 .schedule=${this.schedule}
                 .actions=${this.actions}
+                .cardEmbeddedInPopup=${this.cardEmbeddedInPopup}
                 ?editItem=${this.editItem !== null}
                 @change=${this._handleUpdateParams}
                 @saveClick=${this._handleSaveClick}
@@ -228,24 +239,28 @@ export class SchedulerEditorDialog extends LitElement {
                 resolve(true);
               },
             };
-            fireEvent(this, 'show-dialog', {
-              dialogTag: 'generic-dialog',
-              dialogImport: () => import('../components/generic-dialog'),
-              dialogParams: params,
-            });
+            showDialog(
+              this,
+              {
+                dialogTag: 'generic-dialog',
+                dialogImport: () => import('../components/generic-dialog'),
+                dialogParams: params,
+              },
+              this.cardEmbeddedInPopup
+            );
           });
           if (result) this.hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
         }
         if (IsDefaultName(schedule.name)) schedule = { ...schedule, name: '' };
         editSchedule(this.hass, { ...schedule, schedule_id: this.editItem })
-          .catch(e => handleError(e, this, this.hass))
+          .catch(e => handleError(e, this, this.hass, this.cardEmbeddedInPopup))
           .then(() => {
             this.closeDialog();
           });
       }
     } else {
       saveSchedule(this.hass, schedule)
-        .catch(e => handleError(e, this, this.hass))
+        .catch(e => handleError(e, this, this.hass, this.cardEmbeddedInPopup))
         .then(() => {
           this.closeDialog();
         });
@@ -268,15 +283,19 @@ export class SchedulerEditorDialog extends LitElement {
           resolve(true);
         },
       };
-      fireEvent(element, 'show-dialog', {
-        dialogTag: 'generic-dialog',
-        dialogImport: () => import('../components/generic-dialog'),
-        dialogParams: params,
-      });
+      showDialog(
+        this,
+        {
+          dialogTag: 'generic-dialog',
+          dialogImport: () => import('../components/generic-dialog'),
+          dialogParams: params,
+        },
+        this.cardEmbeddedInPopup
+      );
     });
     if (result) {
       deleteSchedule(this.hass, this.editItem)
-        .catch(e => handleError(e, this, this.hass))
+        .catch(e => handleError(e, this, this.hass, this.cardEmbeddedInPopup))
         .then(() => {
           this.closeDialog();
         });

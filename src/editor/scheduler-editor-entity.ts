@@ -33,6 +33,7 @@ import { ETabOptions } from '../const';
 import '../components/button-group';
 import '../components/generic-dialog';
 import { DialogParams } from '../components/generic-dialog';
+import { showDialog } from '../data/custom_dialog';
 
 const defaultTimeslots = [
   {
@@ -85,6 +86,12 @@ export class SchedulerEditorEntity extends LitElement {
 
   @property({ type: Boolean })
   editItem = false;
+
+  cardEmbeddedInPopup?: boolean;
+
+  provideHass(el: any) {
+    el.hass = this.hass;
+  }
 
   async firstUpdated() {
     this.scheduleEntities = (await fetchSchedules(this.hass!)).map(e => e.entity_id);
@@ -446,11 +453,15 @@ export class SchedulerEditorEntity extends LitElement {
             resolve(output);
           },
         };
-        fireEvent(this, 'show-dialog', {
-          dialogTag: 'generic-dialog',
-          dialogImport: () => import('../components/generic-dialog'),
-          dialogParams: params,
-        });
+        showDialog(
+          this,
+          {
+            dialogTag: 'generic-dialog',
+            dialogImport: () => import('../components/generic-dialog'),
+            dialogParams: params,
+          },
+          this.cardEmbeddedInPopup
+        );
       } else resolve(output);
     });
   }

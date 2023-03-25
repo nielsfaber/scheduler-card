@@ -32,6 +32,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html';
 import { localize } from './localize/localize';
 import { commonStyle } from './styles';
 import { DialogParams } from './components/generic-dialog';
+import { isEmbeddedInPopup, showDialog } from './data/custom_dialog';
 
 import './editor/scheduler-editor';
 import './scheduler-card-editor';
@@ -206,6 +207,10 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         this.hass!.localize;
       });
     }
+  }
+
+  provideHass(el: any) {
+    el.hass = this.hass;
   }
 
   private async updateScheduleItem(ev: SchedulerEventData): Promise<void> {
@@ -532,7 +537,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
   }
 
   private _addItemClick() {
-    fireEvent(this, 'show-dialog', {
+    showDialog(this, {
       dialogTag: 'scheduler-editor-dialog',
       dialogImport: () => import('./editor/scheduler-editor'),
       dialogParams: {
@@ -586,7 +591,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
             resolve(true);
           },
         };
-        fireEvent(this, 'show-dialog', {
+        showDialog(this, {
           dialogTag: 'generic-dialog',
           dialogImport: () => import('./components/generic-dialog'),
           dialogParams: params,
@@ -618,7 +623,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         );
     }
 
-    fireEvent(this, 'show-dialog', {
+    showDialog(this, {
       dialogTag: 'scheduler-editor-dialog',
       dialogImport: () => import('./editor/scheduler-editor'),
       dialogParams: {
@@ -627,6 +632,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         actions: actions,
         entities: entities,
         schedule: schedule,
+        cardEmbeddedInPopup: isEmbeddedInPopup(this),
       },
     });
   }
