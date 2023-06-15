@@ -157,21 +157,8 @@ export const dialogStyle = css`
     --dialog-content-position: static;
     --vertical-align-dialog: flex-start;
   }
-  ha-header-bar {
-    --mdc-theme-on-primary: var(--primary-text-color);
-    --mdc-theme-primary: var(--mdc-theme-surface);
-    flex-shrink: 0;
-    display: block;
-  }
   .content {
     outline: none;
-  }
-  @media all and (max-width: 450px), all and (max-height: 500px) {
-    ha-header-bar {
-      --mdc-theme-primary: var(--app-header-background-color);
-      --mdc-theme-on-primary: var(--app-header-text-color, white);
-      border-bottom: none;
-    }
   }
   .heading {
     border-bottom: 1px solid var(--mdc-dialog-scroll-divider-color, rgba(0, 0, 0, 0.12));
@@ -186,20 +173,10 @@ export const dialogStyle = css`
       --dialog-surface-margin-top: 40px;
       --mdc-dialog-max-height: calc(100% - 72px);
     }
-    .main-title {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: default;
-    }
     :host([large]) ha-dialog {
       --mdc-dialog-min-width: 90vw;
       --mdc-dialog-max-width: 90vw;
     }
-  }
-  :host([tab='info']) ha-dialog[data-domain='camera'] {
-    --dialog-content-padding: 0;
-    /* max height of the video is full screen, minus the height of the header of the dialog and the padding of the dialog (mdc-dialog-max-height: calc(100% - 72px)) */
-    --video-max-height: calc(100vh - 113px - 72px);
   }
   mwc-tab[disabled] {
     --mdc-tab-text-label-color-default: var(--material-disabled-text-color);

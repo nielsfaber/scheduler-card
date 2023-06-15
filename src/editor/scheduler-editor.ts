@@ -83,32 +83,31 @@ export class SchedulerEditorDialog extends LitElement {
     };
 
     if (!this._params) return html``;
+    customElements.get('ha-dialog-header');
     return html`
-      <ha-dialog open @closed=${this.closeDialog} .heading=${name} hideActions scrimClickAction="">
-        <div slot="heading" class="heading">
-          <ha-header-bar>
-            <ha-icon-button
-              slot="navigationIcon"
-              dialogAction="cancel"
-              .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
-              .path=${mdiClose}
-            ></ha-icon-button>
-            <div slot="title" class="main-title" @click=${this._enlarge}>
-              ${this.editItem
+      <ha-dialog open @closed=${this.closeDialog} .heading=${true} hideActions scrimClickAction="">
+        <ha-dialog-header slot="heading">
+          <ha-icon-button
+            slot="navigationIcon"
+            dialogAction="cancel"
+            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .path=${mdiClose}
+          ></ha-icon-button>
+          <span slot="title" @click=${this._enlarge}>
+            ${this.editItem
+              ? this.schedule?.name
                 ? this.schedule?.name
-                  ? this.schedule?.name
-                  : localize('ui.panel.common.default_name', getLocale(this.hass), '{id}', this.editItem)
-                : localize('ui.panel.common.new_schedule', getLocale(this.hass))}
-            </div>
-          </ha-header-bar>
-          <mwc-tab-bar .activeIndex=${this._tabs.indexOf(this._currTab)} @MDCTabBar:activated=${this._handleTabChanged}>
-            ${this._tabs.map(
-              tab => html`
-                <mwc-tab .label=${tabLabel(tab)} ?disabled=${tab != ETabOptions.Entity && !this.schedule}></mwc-tab>
-              `
-            )}
-          </mwc-tab-bar>
-        </div>
+                : localize('ui.panel.common.default_name', getLocale(this.hass), '{id}', this.editItem)
+              : localize('ui.panel.common.new_schedule', getLocale(this.hass))}
+          </span>
+        </ha-dialog-header>
+        <mwc-tab-bar .activeIndex=${this._tabs.indexOf(this._currTab)} @MDCTabBar:activated=${this._handleTabChanged}>
+          ${this._tabs.map(
+            tab => html`
+              <mwc-tab .label=${tabLabel(tab)} ?disabled=${tab != ETabOptions.Entity && !this.schedule}></mwc-tab>
+            `
+          )}
+        </mwc-tab-bar>
         ${this._currTab == ETabOptions.Entity
           ? html`
               <scheduler-editor-entity
