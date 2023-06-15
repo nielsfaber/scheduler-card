@@ -5,12 +5,12 @@ type IconList = Record<string, Record<string, Record<string, string>>>;
 export const variableOptions: IconList = {
   climate: {
     hvac_mode: {
-      off: 'component.climate.state._.off',
-      heat: 'component.climate.state._.heat',
-      cool: 'component.climate.state._.cool',
-      heat_cool: 'component.climate.state._.heat_cool',
-      dry: 'component.climate.state._.dry',
-      fan_only: 'component.climate.state._.fan_only',
+      off: 'component.climate.entity_component._.state.off',
+      heat: 'component.climate.entity_component._.state.heat',
+      cool: 'component.climate.entity_component._.state.cool',
+      heat_cool: 'component.climate.entity_component._.state.heat_cool',
+      dry: 'component.climate.entity_component._.state.dry',
+      fan_only: 'component.climate.entity_component._.state.fan_only',
     },
     preset_mode: {
       activity: 'state_attributes.climate.preset_mode.activity',
@@ -48,13 +48,13 @@ export const variableOptions: IconList = {
   },
   water_heater: {
     operation_mode: {
-      off: 'component.water_heater.state._.off',
-      eco: 'component.water_heater.state._.eco',
-      electric: 'component.water_heater.state._.electric',
-      gas: 'component.water_heater.state._.gas',
-      heat_pump: 'component.water_heater.state._.heat_pump',
-      high_demand: 'component.water_heater.state._.high_demand',
-      performance: 'component.water_heater.state._.performance',
+      off: 'component.water_heater.entity_component._.state.off',
+      eco: 'component.water_heater.entity_component._.state.eco',
+      electric: 'component.water_heater.entity_component._.state.electric',
+      gas: 'component.water_heater.entity_component._.state.gas',
+      heat_pump: 'component.water_heater.entity_component._.state.heat_pump',
+      high_demand: 'component.water_heater.entity_component._.state.high_demand',
+      performance: 'component.water_heater.entity_component._.state.performance',
     },
     away_mode: {
       on: 'state.default.on',

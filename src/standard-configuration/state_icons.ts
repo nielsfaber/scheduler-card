@@ -109,6 +109,11 @@ export const stateIcons: IconList = {
     on: 'mdi:flash',
     off: 'mdi:flash-off',
   },
+  timer: {
+    active: 'mdi:play',
+    paused: 'mdi:pause',
+    idle: 'mdi:sleep',
+  },
 };
 
 export const stateIcon = (stateObj: HassEntity, state: string | undefined, hass: HomeAssistant, fallback?: string) => {

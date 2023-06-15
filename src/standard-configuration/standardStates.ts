@@ -52,8 +52,8 @@ const getStateName = (stateObj: HassEntity, state: string, hass: HomeAssistant) 
   const domain = computeDomain(stateObj.entity_id);
   return (
     (stateObj.attributes.device_class &&
-      hass.localize(`component.${domain}.state.${stateObj.attributes.device_class}.${state}`)) ||
-    hass.localize(`component.${domain}.state._.${state}`) ||
+      hass.localize(`component.${domain}.entity_component._.${stateObj.attributes.device_class}.state.${state}`)) ||
+    hass.localize(`component.${domain}.entity_component._.state.${state}`) ||
     state
   );
 };

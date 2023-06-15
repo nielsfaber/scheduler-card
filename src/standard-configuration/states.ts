@@ -73,6 +73,9 @@ export const statesList: Record<string, VariableConfig> = {
   },
   sun: { options: ['below_horizon', 'above_horizon'] },
   switch: onOffType,
+  timer: {
+    options: ['active', 'paused', 'idle'],
+  },
   water_heater: {
     options: 'operation_list',
   },
