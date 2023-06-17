@@ -5,6 +5,7 @@ import { listAttribute, numericAttribute } from './attribute';
 import { VariableConfig } from './variables';
 import { computeSupportedFeatures } from '../data/entities/compute_supported_features';
 import { isDefined } from '../helpers';
+import { hasOwnProperty } from '@formatjs/intl-utils';
 
 export type ActionItem = {
   supported_feature?: number | ((stateObj?: HassEntity) => number);
@@ -24,6 +25,12 @@ const temperatureVariable = (stateObj: HassEntity | undefined, hass: HomeAssista
     step: numericAttribute(stateObj, 'target_temp_step', isFahrenHeit ? 1 : 0.1),
     unit: tempUnit,
   });
+};
+
+export const hasProperty = (stateObj: HassEntity | undefined, attribute: string) => {
+  return (
+    isDefined(stateObj) && hasOwnProperty(stateObj, 'attributes') && hasOwnProperty(stateObj.attributes, attribute)
+  );
 };
 
 export const actionList: Record<string, Record<string, ActionItem>> = {
@@ -108,9 +115,9 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       condition: stateObj =>
         listAttribute(stateObj, 'hvac_modes').includes('heat_cool') &&
-        isDefined(numericAttribute(stateObj, 'temperature')) &&
-        !isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
-        !isDefined(numericAttribute(stateObj, 'target_temp_high')),
+        hasProperty(stateObj, 'temperature') &&
+        !hasProperty(stateObj, 'target_temp_low') &&
+        !hasProperty(stateObj, 'target_temp_high'),
     },
     heat_cool_range: {
       service: 'set_temperature',
@@ -127,8 +134,8 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
       condition: stateObj =>
         listAttribute(stateObj, 'hvac_modes').includes('heat_cool') &&
-        isDefined(numericAttribute(stateObj, 'target_temp_low')) &&
-        isDefined(numericAttribute(stateObj, 'target_temp_high')),
+        hasProperty(stateObj, 'target_temp_low') &&
+        hasProperty(stateObj, 'target_temp_high'),
     },
     auto: {
       service: 'set_temperature',
