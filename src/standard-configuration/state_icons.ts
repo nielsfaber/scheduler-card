@@ -94,8 +94,8 @@ export const stateIcons: IconList = {
     off: 'mdi:lightbulb-off',
   },
   lock: {
-    unlocked: 'mdi:lock-outline',
-    locked: 'mdi:lock-open-variant-outline',
+    unlocked: 'mdi:lock-open-variant-outline',
+    locked: 'mdi:lock-outline',
   },
   person: personIcon,
   sensor: {
