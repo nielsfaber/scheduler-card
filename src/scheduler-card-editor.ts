@@ -54,10 +54,10 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
     }
 
     return html`
-      <mwc-tab-bar .activeIndex=${this._cardTab ? 1 : 0} @MDCTabBar:activated=${this._selectTab}>
-        <mwc-tab .label=${localize('ui.panel.card_editor.tabs.entities', getLocale(this.hass))}></mwc-tab>
-        <mwc-tab .label=${localize('ui.panel.card_editor.tabs.other', getLocale(this.hass))}></mwc-tab>
-      </mwc-tab-bar>
+      <paper-tabs .selected=${this._cardTab ? 1 : 0} @iron-activate=${this._selectTab}>
+        <paper-tab>${localize('ui.panel.card_editor.tabs.entities', getLocale(this.hass))}</paper-tab>
+        <paper-tab>${localize('ui.panel.card_editor.tabs.other', getLocale(this.hass))}</paper-tab>
+      </paper-tabs>
 
       <div class="card-config">
         ${!this._cardTab
@@ -319,7 +319,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   }
 
   private _selectTab(ev: CustomEvent): void {
-    this._cardTab = ev.detail.index === 1;
+    this._cardTab = ev.detail.selected === 1;
   }
 
   private _updateConfig(changes: Partial<CardConfig>) {
@@ -520,6 +520,16 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
   static get styles(): CSSResultGroup {
     return css`
       ${commonStyle}
+
+      paper-tabs {
+        --paper-tabs-selection-bar-color: var(--primary-color);
+        --paper-tab-ink: var(--primary-color);
+        text-transform: uppercase;
+        font-size: 0.875rem;
+      }
+      paper-tab.iron-selected {
+        color: var(--primary-color);
+      }
       div.row {
         display: flex;
         align-items: center;
