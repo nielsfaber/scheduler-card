@@ -158,6 +158,71 @@
       "options": {
         "repeat_type": "správanie sa po spustení",
         "period": "obdobie"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entity",
+          "other": "Iné"
+        },
+        "fields": {
+          "title": {
+            "heading": "Názov karty",
+            "options": {
+              "standard": "standard",
+              "hidden": "hidden",
+              "custom": "custom"
+            },
+            "custom_title": "Custom title"
+          },
+          "discover_existing": {
+            "heading": "Zobraziť všetky plány",
+            "description": "Tým sa nastaví parameter „objaviť existujúce“. Predtým vytvorené plány sa automaticky pridajú na kartu."
+          },
+          "time_step": {
+            "heading": "Časový krok",
+            "description": "Rozlíšenie (v minútach) pre vytváranie plánov"
+          },
+          "sort_by": {
+            "heading": "Možnosti triedenia",
+            "description": "Poradie, v akom sa rozvrhy zobrazujú na karte",
+            "options": {
+              "relative_time": "Zostávajúci čas do ďalšej akcie",
+              "title": "Zobrazený názov rozvrhu",
+              "state": "Zobraziť aktívne plány navrchu"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Zobrazené primárne informácie",
+            "description": "V prehľade nakonfigurujte, ktorý štítok sa použije pre plány",
+            "options": {
+              "default": "Názov rozvrhu",
+              "entity_action": "Zhrnutie úlohy"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Zobrazené sekundárne informácie",
+            "description": "Nakonfigurujte, ktoré ďalšie vlastnosti sú viditeľné v prehľade",
+            "options": {
+              "relative_time": "Zostávajúci čas do ďalšej akcie",
+              "time": "Nastavený čas pre ďalšiu akciu",
+              "days": "Opakované dni v týždni",
+              "additional_tasks": "Počet dodatočných úloh"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Zobraziť prepínač hlavičky",
+            "description": "Zobraziť prepínač v hornej časti karty na povolenie/zakázanie všetkých entít"
+          },
+          "tags": {
+            "heading": "Tagy",
+            "description": "Použite štítky na rozdelenie plánov medzi viacero kariet"
+          },
+          "entities": {
+            "heading": "Zahrnuté entity",
+            "description": "Vyberte entity, ktoré chcete ovládať pomocou plánovača. Kliknutím na skupinu ju otvoríte. Upozorňujeme, že niektoré entity (napríklad senzory) možno použiť iba na podmienky, nie na akcie.",
+            "included_number": "{number}/{total} vybraný"
+          }
+        }
       }
     }
   }
