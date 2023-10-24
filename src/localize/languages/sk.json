@@ -13,7 +13,7 @@
       "set_temperature_hvac_mode_auto": "automatika[ na {temperature}]",
       "set_hvac_mode": "nastaviť režim[ na {hvac_mode}]",
       "set_preset_mode": "nastaviť predvoľbu[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "nastaviť režim ventilátora[ to {fan_mode}]"
     },
     "cover": {
       "close_cover": "zatvoriť",
@@ -46,7 +46,7 @@
       "select_source": "vybrať zdroj[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "notify": "poslať notifikáciu"
     },
     "script": {
       "script": "spustiť"
@@ -61,15 +61,15 @@
   },
   "domains": {
     "alarm_control_panel": "ovládací panel alarmu",
-    "binary_sensor": "binary sensors",
+    "binary_sensor": "binárny snímač",
     "climate": "klimatizácia",
     "cover": "rolety",
     "fan": "ventilátory",
     "group": "skupiny",
     "humidifier": "zvlhčovače",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
+    "input_boolean": "vstup boolean",
+    "input_number": "vstup číslo",
+    "input_select": "vstup voľba",
     "light": "svetlá",
     "lock": "zámky",
     "media_player": "mediálne prehrávače",
@@ -145,7 +145,7 @@
       "time_picker": {
         "no_timeslot_selected": "Najprv vyberte časový úsek",
         "time_scheme": "Schému",
-        "time_input_mode": "Time control mode"
+        "time_input_mode": "Režim ovládania času"
       },
       "conditions": {
         "equal_to": "je",
@@ -153,7 +153,7 @@
         "all": "Všetko",
         "any": "žiadny",
         "no_conditions_defined": "Nie sú definované žiadne podmienky",
-        "track_conditions": "Re-evaluate when conditions change"
+        "track_conditions": "Prehodnoťte, keď sa zmenia podmienky"
       },
       "options": {
         "repeat_type": "správanie sa po spustení",
@@ -168,11 +168,11 @@
           "title": {
             "heading": "Názov karty",
             "options": {
-              "standard": "standard",
-              "hidden": "hidden",
-              "custom": "custom"
+              "standard": "štandardné",
+              "hidden": "skryté",
+              "custom": "vlastné"
             },
-            "custom_title": "Custom title"
+            "custom_title": "Vlastný názov"
           },
           "discover_existing": {
             "heading": "Zobraziť všetky plány",
