@@ -66,7 +66,7 @@ export class VariableSlider extends LitElement {
     if (!this.disabled) {
       return html`
         <ha-slider
-          pin
+          labeled
           min=${this.min}
           max=${this.max}
           step=${this.step}
@@ -77,7 +77,7 @@ export class VariableSlider extends LitElement {
     } else {
       return html`
         <ha-slider
-          pin
+          labeled
           min=${this.min}
           max=${this.max}
           step=${this.step}
