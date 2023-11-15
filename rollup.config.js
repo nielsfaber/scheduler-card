@@ -1,10 +1,10 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 import babel from 'rollup-plugin-babel';
-import json from '@rollup/plugin-json';
+import json from 'rollup-plugin-json';
 import { terser } from 'rollup-plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
-import { visualizer } from 'rollup-plugin-visualizer';
+import commonjs from 'rollup-plugin-commonjs';
+import visualizer from 'rollup-plugin-visualizer';
 
 
 const plugins = [
