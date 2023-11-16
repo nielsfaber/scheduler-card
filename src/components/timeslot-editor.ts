@@ -126,6 +126,27 @@ export class TimeslotEditor extends LitElement {
       const availableWidth = w * width - leftMargin - rightMargin;
       start += w * width;
 
+      const content = (() => {
+        if (actionText && (availableWidth > textWidth / 3 || availableWidth > 50) && availableWidth > 30) {
+          return html`
+            <span style="margin-left: ${leftMargin.toFixed(2)}px; margin-right: ${rightMargin.toFixed(2)}px">
+              ${actionText}
+            </span>
+          `;
+        }
+
+        const icons = this.computeActionIcons(e);
+        if (!!icons) {
+          return html`
+            <span style="margin-left: auto; margin-right: auto">
+                ${icons.map((icon) => html`<ha-icon icon="${icon}"></ha-icon>`)}
+            </span>
+          `;
+        }
+
+        return '';
+      })();
+
       return html`
         <div
           class="slot${this.activeSlot == i && this.activeMarker === null ? ' active' : ''} ${w * width < 2
@@ -150,12 +171,7 @@ export class TimeslotEditor extends LitElement {
               `
             : ''}
           ${i > 0 ? this.renderTooltip(i) : ''}
-
-          <span style="margin-left: ${leftMargin.toFixed(2)}px; margin-right: ${rightMargin.toFixed(2)}px">
-            ${actionText && (availableWidth > textWidth / 3 || availableWidth > 50) && availableWidth > 30
-              ? actionText
-              : ''}
-          </span>
+          ${content}
         </div>
       `;
     });
@@ -235,6 +251,37 @@ export class TimeslotEditor extends LitElement {
         );
       })
     ).join(', ');
+  }
+
+  computeActionIcons(entry: Timeslot) {
+    if (!this.hass) return;
+    if (!entry.actions) return;
+
+    return unique(
+      entry.actions.map(action => {
+        const actionConfig = this.actions.find(e => compareActions(e, action, true));
+        if (!actionConfig) return [];
+
+        if (
+          actionConfig.variables &&
+          Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)
+        ) {
+          return Object.entries(actionConfig.variables)
+            .filter(([field]) => action.service_data && field in action.service_data)
+            .map(([field, variable]) => {
+              const value = action.service_data![field];
+              if (variable.type == EVariableType.List) {
+                variable = variable as ListVariable;
+                const listItem = variable.options.find(e => e.value == value);
+                return listItem?.icon;
+              } else return undefined;
+            });
+        }
+        return [actionConfig.icon];
+      })
+      .reduce((prev, icons) => [...prev, ...icons], [])
+      .filter((icon) => !!icon)
+    );
   }
 
   @eventOptions({ passive: true })
@@ -336,6 +383,7 @@ export class TimeslotEditor extends LitElement {
   _selectSlot(ev: Event) {
     if (this.isDragging) return;
     let el = ev.target as HTMLElement;
+    if (el.tagName.toLowerCase() == 'ha-icon') el = el.parentElement as HTMLElement;
     if (el.tagName.toLowerCase() == 'span') el = el.parentElement as HTMLElement;
     if (el.classList.contains('handle')) el = el.parentElement as HTMLElement;
     const slot = Number(el.getAttribute('slot'));
