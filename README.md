@@ -33,6 +33,7 @@
     - [Conditions](#conditions)
   - [Display options](#display-options)
   - [Tags](#tags)
+  - [Timeslot styles](#timeslot-styles)
 - [Translations](#translations)
 - [Tips & Tricks](#tips--tricks)
   - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
@@ -314,6 +315,8 @@ Configuration is not *necessary*, except for defining a set of entities which yo
 | `display_options`        | dictionary     | none                        | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                                                                                           |
 | `tags`                   | string/list    | none                        | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                                     |
 | `exclude_tags`           | string/list    | none                        | Eliminate items from the schedules filtered by `tags`.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                    |
+| `timeslot_style`         | function       | none                        | JavaScript function to be called for each timeslot. Returns a style object that will be applied to the timeslot.<br>See [timeslot styles](#timeslot-styles) for more info.
+
 ### Standard configuration
 
 The card includes a _standard configuration_.
@@ -709,6 +712,85 @@ The `exclude_tags` function works on top of the `tags` function, so you can elim
 * All schedules which occur in the weekend are assigned with tag `weekend`.
 * By assigning `tags: weekend` and `exlude_tags: holiday` only the weekend schedules which are not part of the holiday program will be shown.
 
+### Timeslot Styles
+
+*This is an advanced feature and requires knowledge of JavaScript*
+
+The timeslots displayed in the scheduler card can be customized using css styling. This can make distinguishing different actions for the different timeslots more obvious at a glance.
+
+For example, you may wish to use a different background color for timeslots with different temperatures when using a scheduler card to control your heating.
+
+The JavaScript function takes the arguments ``timeslot``, ``i``, and ``active``. It should return a style object that will be added to the timeslot's CSS style.
+
+| Argument    | Type       | Remarks                                                    |
+| ----------- | ---------- | ---------------------------------------------------------- |
+| timeslot    | object     | Object describing the timeslot, see below for more details |
+| i           | number     | Timeslot index, zero based                                 |
+| active      | bolean     | True if the timeslot is currently selected                 |
+
+The ``timeslot`` object has, among others, the following attributes:
+
+| Attribute   | Type       | Remarks                                                    |
+| ----------- | ---------- | ---------------------------------------------------------- |
+| start       | string     | Timeslot start time                                        |
+| stop        | string     | Timeslot stop time                                         |
+| actions     | array      | Array of action objects, see below for more details        |
+
+The ``action`` objects have, among others, the following attributes:
+
+| Attribute    | Type       | Remarks                                                    |
+| ------------ | ---------- | ---------------------------------------------------------- |
+| service      | string     | Service to be called                                       |
+| entity_id    | string     | Entity id the service will be called for                   |
+| service_data | object     | Service data, specific to the service being called         |
+
+*Tip:* The easiest way to see exactly the structure of the ``timeslot`` object is to log it to the console in your function.
+
+**Example usage**
+
+Changing the background color for different presets:
+
+```yaml
+type: custom:scheduler-card
+#...rest of card configuration
+timeslot_style: |
+  (timeslot, i, active) => {
+    if (!active) {
+      for (const action of timeslot.actions) {
+        if (action.service === 'climate.set_preset_mode') {
+          if (action.service_data['preset_mode'] === 'eco') {
+              return {"background": "green !important"};
+          } else if (action.service_data['preset_mode'] === 'comfort') {
+              return {"background": "orange !important"};
+          }
+        }
+      }
+    }
+  }
+```
+
+Changing the background color to highlight different set temperatures:
+
+```yaml
+type: custom:scheduler-card
+#...rest of card configuration
+timeslot_style: |
+  (timeslot, i, active) => {
+    if (!active) {
+      for (const action of timeslot.actions) {
+        if (action.service === 'climate.set_temperature') {
+          if (action.service_data['temperature'] < 18) {
+              return {"background": "green !important"};
+          } else if (action?.service_data['temperature'] >= 18) {
+              return {"background": "orange !important"};
+          }
+        }
+      }
+    }
+  }
+```
+
+*Tip:* Any errors that occur when calling the JavaScript function are logged to the brower's console window.
 
 ## Translations
 
