@@ -221,6 +221,10 @@
             "heading": "Included entities",
             "description": "Select the entities that you want to control using the scheduler. You can click on a group to open it. Note that some entities (such as sensors) can only be used for conditions, not for actions.",
             "included_number": "{number}/{total} selected"
+          },
+          "timeslot_style": {
+            "heading": "Timeslot style function",
+            "description": "Javascript function that can be used to customize timeslot styles."
           }
         }
       }

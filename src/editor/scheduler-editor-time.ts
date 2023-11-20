@@ -32,7 +32,7 @@ import '../components/variable-picker';
 @customElement('scheduler-editor-time')
 export class SchedulerEditorTime extends LitElement {
   @property()
-  hass?: HomeAssistant;
+  hass!: HomeAssistant;
 
   @property()
   config?: CardConfig;
@@ -117,6 +117,7 @@ export class SchedulerEditorTime extends LitElement {
 
               <timeslot-editor
                 .hass=${this.hass}
+                .config=${this.config}
                 .actions=${this.actions}
                 .slots=${this.schedule.timeslots}
                 stepSize=${this.config.time_step || DefaultTimeStep}

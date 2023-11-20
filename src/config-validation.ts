@@ -103,6 +103,7 @@ export function ValidateConfig(config: any) {
   Optional(config, 'show_header_toggle', 'boolean');
   Optional(config, 'show_add_button', 'boolean');
   Optional(config, 'sort_by', ['string', 'array']);
+  Optional(config, 'timeslot_style', 'string');
 
   Optional(config, 'include', 'array');
   RequiredArrayType(config, 'include', 'string');

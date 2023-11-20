@@ -1,9 +1,10 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { customElement, property, eventOptions } from 'lit/decorators';
+import { styleMap } from 'lit/directives/style-map';
 import { mdiUnfoldMoreVertical } from '@mdi/js';
 import { HomeAssistant } from 'custom-card-helpers';
 
-import { Timeslot, Action, EVariableType, LevelVariable, ListVariable } from '../types';
+import { Timeslot, CardConfig, Action, EVariableType, LevelVariable, ListVariable } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { compareActions } from '../data/actions/compare_actions';
 import { levelVariableDisplay } from '../data/variables/level_variable';
@@ -12,14 +13,20 @@ import { localize } from '../localize/localize';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { formatAmPm, formatTime, TimeFormat } from '../data/date-time/format_time';
 import { absToRelTime } from '../data/date-time/relative_time';
+import { showErrorDialog } from '../data/websockets';
+
 
 const SEC_PER_DAY = 86400;
 const SEC_PER_HOUR = 3600;
 
+
 @customElement('timeslot-editor')
 export class TimeslotEditor extends LitElement {
   @property()
-  hass?: HomeAssistant;
+  hass!: HomeAssistant;
+
+  @property()
+  config?: CardConfig;
 
   @property({ type: Array })
   slots: Timeslot[] = [];
@@ -52,8 +59,14 @@ export class TimeslotEditor extends LitElement {
 
   zoomFactor = 1;
 
+  timeSlotStyleFunction?: ((timeslot: Timeslot, i: number, active: boolean) => object) | null = null;
+
   @property({ type: Boolean })
   large = false;
+
+  provideHass(el: any) {
+    el.hass = this.hass;
+  }
 
   constructor() {
     super();
@@ -69,6 +82,38 @@ export class TimeslotEditor extends LitElement {
 
   firstUpdated() {
     window.addEventListener('resize', this.handleResize);
+    this.timeSlotStyleFunction = this.compileTimeSlotStyleFunction(this.config?.timeslot_style);
+  }
+
+  compileTimeSlotStyleFunction(template?: string) {
+    if (!template) {
+      return null;
+    }
+
+    try {
+      const func = new Function('timeslot', 'i', 'active', `return (${template})(timeslot, i, active)`);
+      return (timeslot: Timeslot, i: number, active: boolean) => {
+          try {
+            return {
+              ...func.call(null, timeslot, i, active)
+            };
+          }
+          catch (e) {
+            console.error(`Error calling 'timeslot_style' function for timeslot ${i}:\n`, e.stack);
+            return {};
+          }
+      }
+    }
+    catch (e) {
+      const errorMessage = html`
+        <b>Error compiling timeslot style function</b><br /><br />
+        <code>${e.message}</code><br /><br />
+        Please check the timeslot_style in the card config.
+      `;
+      showErrorDialog(this, errorMessage, this.hass, false);
+      console.error('Error compiling timeslot style function:', e.stack);
+      return null;
+    }
   }
 
   public disconnectedCallback() {
@@ -147,12 +192,20 @@ export class TimeslotEditor extends LitElement {
         return '';
       })();
 
+      const style = (() => {
+        const tsStyle = this.timeSlotStyleFunction ? this.timeSlotStyleFunction(e, i, this.activeSlot == i) : undefined;
+        return {
+          width: `${Math.floor(w * 10000) / 100}%`,
+          ...tsStyle
+        }
+      })();
+
       return html`
         <div
           class="slot${this.activeSlot == i && this.activeMarker === null ? ' active' : ''} ${w * width < 2
             ? 'noborder'
             : ''}"
-          style="width: ${Math.floor(w * 10000) / 100}%"
+          style="${styleMap(style)}"
           @click=${this._selectSlot}
           slot="${i}"
         >
