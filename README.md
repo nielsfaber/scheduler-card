@@ -1,4 +1,5 @@
 # scheduler-card <!-- omit in TOC -->
+
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)  
 
 - [Introduction](#introduction)
@@ -42,6 +43,7 @@
 - [Say thank you](#say-thank-you)
 
 ## Introduction
+
 This is a Lovelace card for Home Assistant that can be used to create a time schedule for your smart devices.
 You can create new rules, modify existing rules and temporarily disable rules.
 
@@ -52,24 +54,25 @@ See it in action:
 ![alt text](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/Demonstration.gif?raw=true "demonstration video")
 
 ## Installation
+
 <details>
 <summary>click to show installation instructions </summary>
 
 HACS installation:
 
 Note: Ensure you have a www folder created as in config/www or the installation will succeed but fails silently
+
 1. Open the [HACS](https://hacs.xyz/) panel in HA and go to the 'Frontend' section.
 2. Search for scheduler-card and click download.
 3. Follow the instructions provided to complete the installation.
 
 Note: Ensure to install [`https://github.com/nielsfaber/scheduler-component`](https://github.com/nielsfaber/scheduler-component) and add the integration in order for the scheduler to work properly.
 
-
 Manual installation:
 
 1. Download the latest release of `scheduler-card.js` [here](https://github.com/nielsfaber/scheduler-card/releases) and place it into `www/scheduler-card`.
 2. Follow the instructions [here](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/) to add the card to HA. Example URL: `/local/scheduler-card/scheduler-card.js?v=0`.
- 3. Add the card in the view where you want it to be shown by editing `ui-lovelace.yaml` (or use the card editor):
+3. Add the card in the view where you want it to be shown by editing `ui-lovelace.yaml` (or use the card editor):
 
   ```yaml
  type: custom:scheduler-card
@@ -97,7 +100,6 @@ Use `git pull` for manual installation updates.
 
 Since most browsers will cache the Lovelace card code, you can force a refresh of the browser by editing the entry in the Lovelace resources section, by updating the URL to `?v=(n+1)` (where `n` the current value).
 
-
 </details>
 
 ---
@@ -105,9 +107,11 @@ Since most browsers will cache the Lovelace card code, you can force a refresh o
 ## Usage
 
 ### Creating a schedule
+
 Click the button 'add item' in the bottom of the card, to start creating a schedule.
 
 #### Choosing an entity and action
+
 The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view.
 
 __Groups__
@@ -115,7 +119,7 @@ Since HA may contain many entities, the card divides the entities into different
 Clicking a group automatically will show the entities contained in the group.
 
 The groups that are displayed are depending on your HA configuration.
-Typically the groups are based on the _domain_ of your entities.
+Typically the groups are based on the *domain* of your entities.
 If you want to make changes to the groups, you can do this by defining [groups](#groups) configuration.
 
 __Entities__
@@ -128,42 +132,37 @@ __Actions__
 The actions that you can perform for the selected entity show up here.
  Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself using the [customize](#customization) configuration.
 
-
  Actions can contain a variable setting (e.g. turn on a lamp at specific brightness, or change the setpoint for a thermostat).
 These can be defined in the next page.
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/instructions_select_entity.png?raw=true" width="500">
 
 #### Choosing the days
+
 After clicking the 'next' button, a new view appears.
-This view is used for choosing _when_ the schedule should be active.
+This view is used for choosing *when* the schedule should be active.
 
 Choose the days of the week for which the schedule should be active.
-
 
 __Every day__
  the default option. The schedule will perform the action every day at the specified time.
 
 __Workdays__
-perform action only on Monday thru Friday. 
+perform action only on Monday thru Friday.
 If you have the [workday integration](https://www.home-assistant.io/integrations/workday/) installed, you can use it to define your own set of workdays.
 The workday integration and its settings will be automatically detected if it is installed.
 Note that if you define holidays, they will be excluded from workdays.
 
 __Weekend__
-perform action only on Saturday and Sunday. 
+perform action only on Saturday and Sunday.
 If you have the workday integration installed, the weekend will be considered as the inverse as workdays. This means that holidays and your 'fixed day off' are included in the weekend setting.
-
 
 __Custom__
 choose your own days. A list with all days of the week appears. You can select one or more days by clicking them.
 
-
 #### Choosing the time
 
 The time at which you want schedule to be activated can be set using the time picker.
-
-
 
 The time picker shows the current time setting, and features arrow buttons to increase or decrease the hour and minutes. Note that you can infinitely loop through time.
 The step size for minutes is 10 minutes by default, but can be configured to your preference.
@@ -172,42 +171,42 @@ If you have the AM/PM option enabled, 12-hour format will be used. You can click
 
 __Sunrise / sunset mode__
 
-If you have the [sun](https://www.home-assistant.io/integrations/sun/) integration in HA, a button with sun/moon icon shows up on the right. This is the _mode button_, which allows you to switch from a fixed time, to time relative to sunrise or sunset.  
+If you have the [sun](https://www.home-assistant.io/integrations/sun/) integration in HA, a button with sun/moon icon shows up on the right. This is the *mode button*, which allows you to switch from a fixed time, to time relative to sunrise or sunset.  
 The card allows you to choose a time that is 2 hours around sunrise or sunset. The button will be disabled if the current time is not in this range.
 
 In sunrise/sunset mode, the time picker will show the offset relative to sunrise/sunset. The time offset is automatically calculated from fixed time.
-The _sunrise/sunrise button_ will show a sun icon when offset is relative to sunrise, or a moon icon when offset is relative sunset.
-The _before/after button_ indicates whether the offset is applied in positive direction (so triggers after sunrise/sunset), or in negative direction (before sunrise/sunset).
+The *sunrise/sunrise button* will show a sun icon when offset is relative to sunrise, or a moon icon when offset is relative sunset.
+The *before/after button* indicates whether the offset is applied in positive direction (so triggers after sunrise/sunset), or in negative direction (before sunrise/sunset).
 Also here, buttons can be clicked to toggle.
 
-:warning: **Important**: _What you see is what you get_ here. If you want to store time as relative to sunrise or sunset, make sure that you have this _mode_ activated when you click the save button.
+:warning: __Important__: *What you see is what you get* here. If you want to store time as relative to sunrise or sunset, make sure that you have this *mode* activated when you click the save button.
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/instructions_timepicker.png?raw=true" width="400">
 
 ---
-
 
 ### Creating a time scheme
 
 A time scheme is a more advanced type of schedule, which allows multiple actions during the day through the use of timeslots.
 
 #### Timeslots
+
 A timeslot defines a time range during which you want an entity to be in a certain state.
 Every timeslot has a start time and end time, together with an action.
 
-An action defined for a timeslot will *normally* be executed when the time reaches the starting time of the slot. 
+An action defined for a timeslot will *normally* be executed when the time reaches the starting time of the slot.
 So in this sense the behaviour is not different compared to a a normal schedule.
 
 But there are differences:
-* If you create (or edit) a new time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
-* If you enable a disabled time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
-* If HA is restarted: the schedule will determine which timeslot is active, and trigger this action immediately.
-* If the entity (used in the action) is *unavailable* when the action needs to be triggered: the schedule will wait for this entity to become *available* (anything other than *unavailable*), and then trigger the action. Of course only while the timeslot is active.
+- If you create (or edit) a new time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
+- If you enable a disabled time scheme: the schedule will determine which timeslot is active, and trigger this action immediately.
+- If HA is restarted: the schedule will determine which timeslot is active, and trigger this action immediately.
+- If the entity (used in the action) is *unavailable* when the action needs to be triggered: the schedule will wait for this entity to become *available* (anything other than *unavailable*), and then trigger the action. Of course only while the timeslot is active.
 
 After a timeslot has triggered the action, the schedule will wait for the next timeslot.
 So, you can keep controlling your entity as you want without worrying that the schedule will not re-trigger its action again.
 
-:warning: **Note** At the end of the timeslot, there is no action executed.
+:warning: __Note__ At the end of the timeslot, there is no action executed.
 This means that if you turn on a device during a timeslot, you will have to add a second timeslot to turn it off.
 It is *highly recommended* (but not required) to assign actions to every timeslot, such that the behaviour for the whole day is defined.
 
@@ -228,13 +227,15 @@ When a timeslot is selected, you can assign an action to it.
 __Divide or merging of timeslots__
 When a timeslot is selected, you can click the '+' or '-' buttons to either divide (split in two) or merge (combine with the next slot)) the selected timeslot.
 
-:warning: **Note** Due to the limited width of the Lovelace cards in HA, it might be difficult to make a short timeslot. 
+:warning: __Note__ Due to the limited width of the Lovelace cards in HA, it might be difficult to make a short timeslot.
 Since there is not really a way to fix this, it's recommended to use a PC or use your phone on landscape mode when creating a time scheme.
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/timescheme_example.png?raw=true" width="600">
 
 ---
+
 ### Options panel
+
 The options panel gives you access to additional settings that you can set up for schedules.
 
 The options panel is called the way it is, because all settings here are *optional*. So it is OK to ignore it if you don't miss any of its functions.
@@ -250,35 +251,35 @@ You can combine multiple entities if needed.
 All entities having `states` configured will show up in the editor.
 For more information on this, see [conditions](#conditions).
 
-:warning: **Note**: Conditions are only evaluated at the time the actions should fire. This means that if the conditions are not met, the timer event will be skipped. It will not be re-evaluated when any of the entities involved in the conditions change.
+:warning: __Note__: Conditions are only evaluated at the time the actions should fire. This means that if the conditions are not met, the timer event will be skipped. It will not be re-evaluated when any of the entities involved in the conditions change.
 
 #### Period
+
 The *period* option allows you to define a range of dates (or a single date) for which the schedule needs to be active.
 
 If the *period* option:
-* is not used, a schedule will repeat on a daily/weekly basis as defined by the [days](#choosing-the-days) input (unless it is configured to do otherwise via [trigger behaviour](#behaviour-after-completion)).
-* Is used, a schedule will only be executed within the defined date range (which may be a single date). This can be combined with [days](#choosing-the-days) input to provide additional restrictions.
+- is not used, a schedule will repeat on a daily/weekly basis as defined by the [days](#choosing-the-days) input (unless it is configured to do otherwise via [trigger behaviour](#behaviour-after-completion)).
+- Is used, a schedule will only be executed within the defined date range (which may be a single date). This can be combined with [days](#choosing-the-days) input to provide additional restrictions.
 
-If the combination of the defined end date + time(s) is in the past, the schedule becomes *completed*. 
+If the combination of the defined end date + time(s) is in the past, the schedule becomes *completed*.
 A completed schedule will:
-* Show up with grey text in the scheduler-card in the overview and appears in the bottom of the list with the time to the next triggering in the past.
-* Not perform any actions and needs to be manually editted to become useful again.
+- Show up with grey text in the scheduler-card in the overview and appears in the bottom of the list with the time to the next triggering in the past.
+- Not perform any actions and needs to be manually editted to become useful again.
 
 #### Behaviour after completion
 
 The *behaviour after completion* option can be used to control repetition behaviour of a schedule.
 
 Completion of a schedule is defined as follows:
-* For a normal schedule (having a single time), completion is reached after the configured time has passed (and after the corresponding action(s) have been executed).
-* For a time scheme (having one or more timeslots), completion is reached after the last timeslot has passed.
-* In case a [period](#period) is assigned to a schedule, completion is reached when the configured time (or last timeslot) on the end date has passed. In this case the *repeat* option is not available (for more info see [period](#period)).
+- For a normal schedule (having a single time), completion is reached after the configured time has passed (and after the corresponding action(s) have been executed).
+- For a time scheme (having one or more timeslots), completion is reached after the last timeslot has passed.
+- In case a [period](#period) is assigned to a schedule, completion is reached when the configured time (or last timeslot) on the end date has passed. In this case the *repeat* option is not available (for more info see [period](#period)).
 
 | Selected Option  | Behaviour                                                                                                                                  |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | Repeat (default) | Schedule will repeat again on the next allowed day (as defined by the [days](#choosing-the-days)).                                         |
 | Stop             | Schedule will disable (turn off) itself after completion.<br>It has to be re-enabled by the user or through automation in order to repeat. |
 | Delete           | Schedule will remove itself after completion.                                                                                              |
-
 
 #### Name
 
@@ -299,11 +300,11 @@ Configuration is not *necessary*, except for defining a set of entities which yo
 
 | Name                     | Type           | Default                     | Description                                                                                                                                                                                                                                                                                                   |
 | ------------------------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`                   | string         | **Required**                | `custom:scheduler-card`                                                                                                                                                                                                                                                                                       |
+| `type`                   | string         | __Required__                | `custom:scheduler-card`                                                                                                                                                                                                                                                                                       |
 | `standard_configuration` | boolean        | *true*                      | Use the [standard configuration](#standard-configuration) as a base configuration.                                                                                                                                                                                                                            |
 | `discover_existing`      | boolean        | *true*                      | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info.                                                                    |
 | `include`                | list           | none                        | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                                                                                               |
-| `exclude`                | list           | none                        | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                                                                                       |
+| `exclude`                | list           | none                        | List of filters to determine which HA entities are __not__ available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                                                                                       |
 | `groups`                 | list           | none                        | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                                                                                          |
 | `customize`              | dictionary     | none                        | Customize the available actions or visualization of entities.   <br>See [customize](#customize) for more info.                                                                                                                                                                                                |
 | `title`                  | boolean/string | *true*                      | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                                                                                        |
@@ -314,20 +315,20 @@ Configuration is not *necessary*, except for defining a set of entities which yo
 | `display_options`        | dictionary     | none                        | Configure which properties are displayed in the overview.<br>See [display options](#display-options) for more info.                                                                                                                                                                                           |
 | `tags`                   | string/list    | none                        | Filter schedules on one or more tags.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                                     |
 | `exclude_tags`           | string/list    | none                        | Eliminate items from the schedules filtered by `tags`.<br>See [tags](#tags) for more info.                                                                                                                                                                                                                    |
+
 ### Standard configuration
 
-The card includes a _standard configuration_.
+The card includes a *standard configuration*.
 It is intended to make setting up the card easy.
 The standard configuration consists of the following features:
-* Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
-* Defining actions per entity based on their capabilities
-* Icons for groups, entities and actions
+- Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
+- Defining actions per entity based on their capabilities
+- Icons for groups, entities and actions
 
 When including an entity, the standard configuration will automatically detect which actions are supported by it, and will make these available.
 Also it has icons for most entity types and actions.
 
-:warning: **Warning**: You can provide `standard_configuration:false` in the card configuration to disable it completely for full control. If so, you will need to configure all actions and properties via `customize`.
-
+:warning: __Warning__: You can provide `standard_configuration:false` in the card configuration to disable it completely for full control. If so, you will need to configure all actions and properties via `customize`.
 
 ### Adding entities
 
@@ -348,6 +349,7 @@ include:
   - "*garden*" # include all entities containing the word 'garden'
   ...
 ```
+
 #### Exclude
 
 The `exclude` configuration allows you to remove entities from your HA config from appearing in the scheduler.
@@ -356,7 +358,6 @@ The `exclude` list works on top of the `include` list, so it behaves like *'ADD 
 
 Like with `include`, you can either provide the full `entity_id` of the entities, or the domain, or use wildcards.
 
-
 ```yaml
 include:
   - light # include all light entities
@@ -364,12 +365,12 @@ exclude:
   - light.my_light_that_i_never_use # exclude
 ```
 
-
 ### Groups
+
 The `groups` configuration provides the capability of organizing the entities.
 To be clear, they have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
 
-By default, entities will be grouped based on their type (domain). 
+By default, entities will be grouped based on their type (domain).
 Entities that are assigned to your own defined group will not be grouped by type.
 
 | Name    | Type   | Default            | Description                                                                                                                                                                                 |
@@ -382,6 +383,7 @@ Entities that are assigned to your own defined group will not be grouped by type
 <u>Example:</u>
 
 *Place all `light` entities in group labelled "lighting"*
+
 ```yaml
 groups:
   - name: "Lighting"
@@ -389,6 +391,7 @@ groups:
     include:
       - light
 ```
+
 Result:
 
 ![groups example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/groups_example.png?raw=true)
@@ -397,7 +400,7 @@ Result:
 
 The card checks for the created schedules in your HA config and show them in the overview page.
 
-The schedule discovery is a feature that will ensure that **all** your schedules will be there.
+The schedule discovery is a feature that will ensure that __all__ your schedules will be there.
 
 What is the benefit of this feature?
 
@@ -412,25 +415,28 @@ The feature can be turned on/off through the `discover_existing` option.
 
 For your protection, it is enabled by default.
 
-:warning: **Tip**: You should set `discover_existing:false` if you want to use multiple cards. Else you will see each created schedule in every card.
-
+:warning: __Tip__: You should set `discover_existing:false` if you want to use multiple cards. Else you will see each created schedule in every card.
 
 ### Customize
+
 With the `customize` configuration you can specify configuration for specific HA entities.
 
-:warning: **Tip**: You can use entities `configuration` in combination with the standard configuration. The configurations will be merged.
+:warning: __Tip__: You can use entities `configuration` in combination with the standard configuration. The configurations will be merged.
 
 #### Options
+
 | Name            | Type        | Default               | Description                                                                                                                                                                                                       |
 | --------------- | ----------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity          | key         | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities.                                                                                                       |
+| entity          | key         | __Required__          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities.                                                                                                       |
 | actions         | list        | none                  | See [actions](#actions)                                                                                                                                                                                           |
 | name            | string      | (take from HA config) | Displayed name for entity                                                                                                                                                                                         |
 | icon            | string      | (take from HA config) | Displayed icon for entity                                                                                                                                                                                         |
 | states          | list or map | none                  | Possible states of this entities, for using it in a condition.<br> See [conditions](#conditions) for more info.                                                                                                   |
 | exclude_actions | list        | none                  | Hide actions from the card.<br>Enter a list with names of actions to hide as they displayed in the card (including translation).<br>E.g. '*turn on at 40%*' would hide the created action from the example below. |
+
 #### Actions
-An action defines **what** needs to be done when a schedule timer expires.
+
+An action defines __what__ needs to be done when a schedule timer expires.
 
 An action is similar to a [service call](https://www.home-assistant.io/docs/scripts/service-calls/) in HA. It requires a `service` with optionally additional parameters given by `service_data`.
 
@@ -438,17 +444,18 @@ Actions are linked to their entities, so the entity ID is sent together with the
 
 | Name         | Type   | Default           | Description                                            |
 | ------------ | ------ | ----------------- | ------------------------------------------------------ |
-| service      | string | **Required**      | Service to be executed                                 |
+| service      | string | __Required__      | Service to be executed                                 |
 | service_data | map    | none              | Additional parameters to use for the service call      |
 | variables    | map    | none              | Add variables. See [action variable](#action-variable) |
 | name         | string | (same as service) | Displayed name for action                              |
 | icon         | string | "flash"           | Displayed icon for action                              |
 
-:warning: **Note**: Templates (jinja code) are not supported at this point.
+:warning: __Note__: Templates (jinja code) are not supported at this point.
 
 <u>Example:</u>
 
 *Adding an action to turn on a light with 40% brightness*
+
   ```yaml
 customize:
     light.my_lamp:
@@ -461,21 +468,20 @@ customize:
           name: "Turn on at 40%"
           icon: "hass:lightbulb-on-outline"
   ```
+
 Result:
 
 ![customize example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/entities_example.png?raw=true)
 
-
 **Customizing actions from standard configuration**
 
 How actions in customize are processed:
-* If the action matches with a previously defined action, your action will replace the default action.
-* If the action does not match with an existing action, the card will create a new action.
+- If the action matches with a previously defined action, your action will replace the default action.
+- If the action does not match with an existing action, the card will create a new action.
 
 Actions are compared based on matching `service` and `service_data` (note that variables are not considered).
 
-
-:warning: **Note**: If a match is found, your action will *replace* (and not *modify*) the default action.<br>This means that you are expected to (re-)define name, icon, and variable configuration.
+:warning: __Note__: If a match is found, your action will *replace* (and not *modify*) the default action.<br>This means that you are expected to (re-)define name, icon, and variable configuration.
 
 #### Numeric action variable
 
@@ -485,19 +491,20 @@ By providing an action variable, the card allows you to choose the setting you w
 
 | Name                                 | Type    | Default       | Description                                                                                                                                                                                           |
 | ------------------------------------ | ------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| field                                | map     | **Required**  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
+| field                                | map     | __Required__  | field name in the `service_data` that is represented by this variable                                                                                                                                 |
 | &nbsp;&nbsp;&nbsp;&nbsp;name         | string  | same as field | Name under which the variable is visible in the card                                                                                                                                                  |
 | &nbsp;&nbsp;&nbsp;&nbsp;unit         | string  | " "           | Displayed unit                                                                                                                                                                                        |
-| &nbsp;&nbsp;&nbsp;&nbsp;min          | number  | **Required**  | Minimum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
-| &nbsp;&nbsp;&nbsp;&nbsp;max          | number  | **Required**  | Maximum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
-| &nbsp;&nbsp;&nbsp;&nbsp;step         | number  | **Optional**  | Step size                                                                                                                                                                                             |
-| &nbsp;&nbsp;&nbsp;&nbsp;scale_factor | number  | **Optional**  | Scale factor to apply when calling service.<br>E.g. scale_factor for `brightness` of a light is set to 2.55, since it is defined in HA in range 0-255, while the card displays 0-100.                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;min          | number  | __Required__  | Minimum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;max          | number  | __Required__  | Maximum value that can be set. If not provided, it will be read from the entity attributes.                                                                                                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;step         | number  | __Optional__  | Step size                                                                                                                                                                                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;scale_factor | number  | __Optional__  | Scale factor to apply when calling service.<br>E.g. scale_factor for `brightness` of a light is set to 2.55, since it is defined in HA in range 0-255, while the card displays 0-100.                 |
 | &nbsp;&nbsp;&nbsp;&nbsp;optional     | boolean | false         | Setting the variable is optional, the action can also be executed without this variable. <br>If `optional:true` is provided, a checkbox will be shown that needs to be selected to apply the variable |
 
 **Example**
 
 The Xiaomi Air Purifier can be controlled using the [Xiaomi Miio](https://www.home-assistant.io/integrations/xiaomi_miio/#service-xiaomi_miiofan_set_favorite_level-air-purifiers-only) integration.
 To be able to set the speed of this device in your action, you can use:
+
 ```yaml
 customize:
   fan.xiaomi_purifier:
@@ -510,6 +517,7 @@ customize:
             min: 1
             max: 16
 ```
+
 You can now select the speed for this action in the schedule editor:
 
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/action_variable_example.png?raw=true)
@@ -523,10 +531,10 @@ By providing the list variable, the card allows you to choose the option when yo
 
 | Name                                                  | Type   | Default       | Description                                                                   |
 | ----------------------------------------------------- | ------ | ------------- | ----------------------------------------------------------------------------- |
-| field                                                 | map    | **Required**  | field name in the `service_data` that is represented by this variable         |
+| field                                                 | map    | __Required__  | field name in the `service_data` that is represented by this variable         |
 | &nbsp;&nbsp;&nbsp;&nbsp;name                          | string | same as field | Name under which the variable is visible in the card                          |
-| &nbsp;&nbsp;&nbsp;&nbsp;options                       | list   | **Required**  | List of options to choose from                                                |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value | string | **Required**  | Option value (which is passed with together with the field as `service_data`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;options                       | list   | __Required__  | List of options to choose from                                                |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value | string | __Required__  | Option value (which is passed with together with the field as `service_data`) |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name  | string | same as value | Name to show for the option                                                   |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon  | string | none          | Icon to show with the option                                                  |
 
@@ -534,7 +542,7 @@ By providing the list variable, the card allows you to choose the option when yo
 
 Setting the operation mode of a thermostat.
 
-Note that this configuration will already be set up when using _standard configuration_.
+Note that this configuration will already be set up when using *standard configuration*.
 
 ```yaml
 customize:
@@ -556,10 +564,10 @@ customize:
               - value: "off"
                 icon: "hass:power"
 ```
+
 Now the list of options become visible when you set up the action:
 
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/action_variable_list_example.png?raw=true)
-
 
 #### Conditions
 
@@ -568,12 +576,14 @@ If you want to use a specific entity as a condition in a schedule, this can be c
 To do so, you will need to tell the card which states the entity can have, which is done using the `states` parameter.
 
 There are two options for this:
+
 1. Define a list of possible states
 2. Define a numeric range for the state
 
 If an entity has its states defined, it will automatically show up when creating a condition.
 
 Example of defining a state list:
+
 ```yaml
 customize:
   input_boolean.my_condition_entity:
@@ -581,18 +591,19 @@ customize:
 ```
 
 Example of defining a numeric range:
+
 ```yaml
 customize:
   sensor.my_other_condition_entity:
     states: {min: 0, max: 100, step: 1, unit: '%'}
 ```
 
-
 ### Display options
+
 From v1.9.0, it is possible to configure what is displayed in the overview list.
 By default, the card will display the entity + action on the first line, and on the second line the remaining time until the schedule will be triggered. For timeslots, there will be a display of the extra actions.
 
-:warning: **Note**: This is a YAML-only feature currently, Not available in the UI editor.
+:warning: __Note__: This is a YAML-only feature currently, Not available in the UI editor.
 
 Supported options for `display_options`:
 | Name             | Type           | Default                                          | Description                                                            |
@@ -605,8 +616,7 @@ For creating multiple lines, enter a list of multiple properties. Empty items wi
 
 For combining multiple properties in a single line, use wildcards (with property in brackets). Make sure to wrap your text in quotes.
 
-:warning: **Pro-tip**: You can use HTML for formatting the lines. So for example: `<b>{entity}</b>` will print the name in bold text.
-
+:warning: __Pro-tip__: You can use HTML for formatting the lines. So for example: `<b>{entity}</b>` will print the name in bold text.
 
 The following properties are available:
 | Name               | Description                                                                                                                                        |
@@ -623,6 +633,7 @@ The following properties are available:
 <sup>1</sup> For *time schemes*, the displayed value corresponds to the closest timeslot.
 
 Example (this is actually the default format):
+
 ```yaml
 display_options:
   primary_info:
@@ -632,15 +643,15 @@ display_options:
   icon: "hass:action"
 ```
 
-
 ### Tags
+
 If you want to use multiple scheduler-cards in your Lovelace dashboard, it can be difficult to separate the schedules which show up in each card (with [include](#include) you can only control which <u>entities</u> are controlled by which cards).
 With `tags` you can filter out schedules and assign them to their own cards.
-
 
 To start using tags, edit the card configuration and assign `tags` to the scheduler card.
 
 *Example:*
+
 ```yaml
 type: custom:scheduler-card
 #...rest of card configuration
@@ -648,24 +659,27 @@ tags: holiday
 ```
 
 The effect of assigning tags:
+
 - Only schedules with a matching tag will show up (unless `discover_existing` is set to *true*.
 - All schedules created with this card will be automatically assigned with this tag.
 - You can modify tags of a schedule by clicking 'Options' when editing/creating a schedule.
 
 **Notes:**
-- You can also assign multiple tags to the card. In this case they will not be automatically applied to newly created  (you should choose this via 'options'). 
+
+- You can also assign multiple tags to the card. In this case they will not be automatically applied to newly created  (you should choose this via 'options').
 - You can also assign multiple tags to a schedule. This allows you to make them appear in multiple cards (each with card having its own tag).
 - You can assign `tags: none` to a card if you want to have only schedules without a tag showing up here.
 - You can assign `tags: enabled` or `tags: disabled` to a card if you want to include (respectively) all enabled or disabled schedules.
 - The option to assign tags on schedules is only available on cards which have the `tags` option set.
 
-:warning: **Tip**: If you want to start using tags you will have to go through your current schedules and assign them with tags.
+:warning: __Tip__: If you want to start using tags you will have to go through your current schedules and assign them with tags.
  You can  temporarily set `discover_existing: true` to make also schedules accessible which don't have the correct tag (yet).
 You can also make the tags for schedules show up in the overview through `display_options`.
 
 **Example usage**:
 
 Consider the following situation:
+
 - Card A should contain all normal (everyday) schedules.
 - Card B should contain only holiday schedules.
 - The normal schedules contain tasks to turn on the garden lights at 19:00 and turn them off again at 23:00.
@@ -673,16 +687,19 @@ Consider the following situation:
 
 Since both cards have the light domain [included](#include), the created schedules would normally show up in both cards, which is not desirable.
 
-Now by assigning `tags` to the card configurations, you can filter them. 
+Now by assigning `tags` to the card configurations, you can filter them.
 
 Config for card A:
+
 ```yaml
 type: custom:scheduler-card
 title: Normal schedule
 #...rest of card configuration
 tags: none
 ```
+
 Config for card B:
+
 ```yaml
 type: custom:scheduler-card
 title: Holiday schedule
@@ -694,7 +711,6 @@ Result:
 
 ![tags example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/tags_example.png?raw=true)
 
-
 **Excluding tags**
 
 For more advanced filtering it is possible to define `exclude_tags` to the card.
@@ -705,10 +721,9 @@ The `exclude_tags` function works on top of the `tags` function, so you can elim
 
 *Example use-case*
 
-* All schedules for the holiday program are assigned with tag `holiday`.
-* All schedules which occur in the weekend are assigned with tag `weekend`.
-* By assigning `tags: weekend` and `exlude_tags: holiday` only the weekend schedules which are not part of the holiday program will be shown.
-
+- All schedules for the holiday program are assigned with tag `holiday`.
+- All schedules which occur in the weekend are assigned with tag `weekend`.
+- By assigning `tags: weekend` and `exlude_tags: holiday` only the weekend schedules which are not part of the holiday program will be shown.
 
 ## Translations
 
@@ -720,12 +735,13 @@ Currently the following languages are supported:
 | ----------- | ---------- | ----------------- |
 | Čeština     | cs         |                   |
 | Deutsch     | de         |                   |
-| **English** | en         | Default language. |
+| __English__ | en         | Default language. |
 | Eesti       | et         |                   |
 | Español     | es, es_419 |                   |
 | Français    | fr         |                   |
 | עִברִית       | he         |                   |
 | Italiano    | it         |                   |
+| Latviešu    | lv         |                   |
 | Magyar      | hu         |                   |
 | Polski      | pl         |                   |
 | Português   | pt, pt-br  |                   |
@@ -762,8 +778,6 @@ scheduler-card configuration:
 
 (note that `customize` is only available in YAML editing mode):
 
-
-
 ```yaml
 customize:
   script.set_climate_livingroom:
@@ -798,6 +812,7 @@ customize:
 ```
 
 In `scripts.yaml`:
+
 ```yaml
 set_climate_livingroom:
   alias: Set climate livingroom
@@ -843,6 +858,7 @@ However, in mode `heat` the TS0601 will remain continuously heating, i.e. it doe
 Instead, the `heat` action needs to be modified to use mode `auto` instead (in which it does properly regulate temperature).
 
 This can be done via `customize` as follows:
+
 ```yaml
 customize:
   climate.my_tuya_thermostat:
@@ -863,7 +879,6 @@ customize:
         icon: 'hass:fire'
         name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
 ```
-
 
 ---
 
@@ -888,15 +903,14 @@ In case this version does not match with the version which is installed, your br
 HA uses aggressive caching of the frontend, this has nothing to do with the card.
 
 Potential ways to solve this:
-* In HACS, after installing/updating the card you are asked if you want to reload your browser (and yes, you do). You can also look for the existing installation of scheduler card (under Frontend) and choose redownload (in the top right menu) to get the option again.
-* Do a force refresh of the page: On windows you can do CTRL + F5 and on Apple hold down ⌘ Cmd and ⇧ Shift key and then press R.
-* Clear the browser cache: [here's](https://www.refreshyourcache.com/en/home/) a good guide on how to do this on various browsers.
-
+- In HACS, after installing/updating the card you are asked if you want to reload your browser (and yes, you do). You can also look for the existing installation of scheduler card (under Frontend) and choose redownload (in the top right menu) to get the option again.
+- Do a force refresh of the page: On windows you can do CTRL + F5 and on Apple hold down ⌘ Cmd and ⇧ Shift key and then press R.
+- Clear the browser cache: [here's](https://www.refreshyourcache.com/en/home/) a good guide on how to do this on various browsers.
 
 ---
 
-
 ## Say thank you
+
 If you want to make donation as appreciation of my work, you can do so via PayPal (preferred) or buy me a coffee. Thank you!
 
 <a href="https://www.paypal.com/donate/?business=CLL4T6Y8ACXNN&no_recurring=0&item_name=Thank+you+for+supporting+my+work+on+the+Scheduler+project%2E+it+is+much+appreciated%21&currency_code=EUR" target="_blank"><img src="https://pics.paypal.com/00/s/YzlhMzI2ZjYtZDQxMi00NzNiLThmZTktOTk3MmEyYTA2Zjc0/file.PNG" width="150" /></a>
