@@ -12,8 +12,8 @@
       "set_temperature_hvac_mode_heat_cool_range": "sildīt/atdzesēt[ uz {target_temp_low} - {target_temp_high}]",
       "set_temperature_hvac_mode_auto": "auto[ uz {temperature}]",
       "set_hvac_mode": "iestatīt[ uz {hvac_mode}]",
-      "set_preset_mode": "set preset[ uz {preset_mode}]",
-      "set_fan_mode": "set fan mode[ uz {fan_mode}]"
+      "set_preset_mode": "iestatīt režīmu[ uz {preset_mode}]",
+      "set_fan_mode": "iestatīt ventilatora režīmu[ uz {fan_mode}]"
     },
     "cover": {
       "close_cover": "aizvērt",
@@ -75,7 +75,7 @@
     "media_player": "multivides atskaņotāji",
     "notify": "paziņojums",
     "switch": "slēdži",
-    "vacuum": "vakuumi",
+    "vacuum": "putekļu sūcēji",
     "water_heater": "ūdens sildītāji"
   },
   "ui": {
