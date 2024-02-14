@@ -65,7 +65,7 @@
     "climate": "klimats",
     "cover": "pārsegi",
     "fan": "ventilatori",
-    "group": "entitāšu grupas",
+    "group": "vienību grupas",
     "humidifier": "mitrinātāji",
     "input_boolean": "ievades binārais lauks",
     "input_number": "ievades numurs",
@@ -219,7 +219,7 @@
           },
           "entities": {
             "heading": "Iekļautās vienības",
-            "description": "Izvēlieties vienības, kuras vēlaties kontrolēt, izmantojot plānotāju. Jūs varat noklikšķināt uz grupas, lai to atvērtu. Ņemiet vērā, ka dažas entitātes (piemēram, sensori) var tikt izmantotas tikai nosacījumiem, nevis darbībām.",
+            "description": "Izvēlieties vienības, kuras vēlaties kontrolēt, izmantojot plānotāju. Jūs varat noklikšķināt uz grupas, lai to atvērtu. Ņemiet vērā, ka dažas vienības (piemēram, sensori) var tikt izmantotas tikai nosacījumiem, nevis darbībām.",
             "included_number": "{number}/{total} izvēlēts"
           }
         }
