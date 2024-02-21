@@ -726,6 +726,7 @@ Currently the following languages are supported:
 | Français    | fr         |                   |
 | עִברִית       | he         |                   |
 | Italiano    | it         |                   |
+| Latviešu    | lv         |                   |
 | Magyar      | hu         |                   |
 | Polski      | pl         |                   |
 | Português   | pt, pt-br  |                   |
