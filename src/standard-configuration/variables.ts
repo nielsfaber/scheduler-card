@@ -41,14 +41,14 @@ export const parseVariable = (
   const res =
     'template' in config && isDefined(config.template)
       ? { ...omit(config, 'template'), ...config.template(stateObj, hass) }
-      : <ListVariableConfig | LevelVariableConfig | TextVariableConfig>{ ...config };
+      : ({ ...config } as ListVariableConfig | LevelVariableConfig | TextVariableConfig);
 
   if ('options' in res) {
     return parseListVariable(res, stateObj);
   } else if ('min' in res && 'max' in res) {
     return parseLevelVariable(res, stateObj);
   } else {
-    return <TextVariableConfig>res;
+    return res as TextVariableConfig;
   }
 };
 
