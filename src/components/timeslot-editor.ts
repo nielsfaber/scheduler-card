@@ -139,7 +139,12 @@ export class TimeslotEditor extends LitElement {
         if (!!icons) {
           return html`
             <span style="margin-left: auto; margin-right: auto">
-                ${icons.map((icon) => html`<ha-icon icon="${icon}"></ha-icon>`)}
+              ${icons.map(
+                icon =>
+                  html`
+                    <ha-icon icon="${icon}"></ha-icon>
+                  `
+              )}
             </span>
           `;
         }
@@ -170,8 +175,7 @@ export class TimeslotEditor extends LitElement {
                 </div>
               `
             : ''}
-          ${i > 0 ? this.renderTooltip(i) : ''}
-          ${content}
+          ${i > 0 ? this.renderTooltip(i) : ''} ${content}
         </div>
       `;
     });
@@ -258,29 +262,30 @@ export class TimeslotEditor extends LitElement {
     if (!entry.actions) return;
 
     return unique(
-      entry.actions.map(action => {
-        const actionConfig = this.actions.find(e => compareActions(e, action, true));
-        if (!actionConfig) return [];
+      entry.actions
+        .map(action => {
+          const actionConfig = this.actions.find(e => compareActions(e, action, true));
+          if (!actionConfig) return [];
 
-        if (
-          actionConfig.variables &&
-          Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)
-        ) {
-          return Object.entries(actionConfig.variables)
-            .filter(([field]) => action.service_data && field in action.service_data)
-            .map(([field, variable]) => {
-              const value = action.service_data![field];
-              if (variable.type == EVariableType.List) {
-                variable = variable as ListVariable;
-                const listItem = variable.options.find(e => e.value == value);
-                return listItem?.icon;
-              } else return undefined;
-            });
-        }
-        return [actionConfig.icon];
-      })
-      .reduce((prev, icons) => [...prev, ...icons], [])
-      .filter((icon) => !!icon)
+          if (
+            actionConfig.variables &&
+            Object.keys(actionConfig.variables).some(field => action.service_data && field in action.service_data)
+          ) {
+            return Object.entries(actionConfig.variables)
+              .filter(([field]) => action.service_data && field in action.service_data)
+              .map(([field, variable]) => {
+                const value = action.service_data![field];
+                if (variable.type == EVariableType.List) {
+                  variable = variable as ListVariable;
+                  const listItem = variable.options.find(e => e.value == value);
+                  return listItem?.icon;
+                } else return undefined;
+              });
+          }
+          return [actionConfig.icon];
+        })
+        .reduce((prev, icons) => [...prev, ...icons], [])
+        .filter(icon => !!icon)
     );
   }
 
