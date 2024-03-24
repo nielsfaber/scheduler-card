@@ -1,9 +1,10 @@
 import { computeEntity } from 'custom-card-helpers';
-import { Action, EVariableType, LevelVariable, ListVariable, TextVariable } from '../../types';
+import { Action, EVariableType, LevelVariable, ListVariable, TextVariable, TimeVariable } from '../../types';
 import { levelVariableDisplay } from '../variables/level_variable';
 import { PrettyPrintName } from '../../helpers';
 import { listVariableDisplay } from '../variables/list_variable';
 import { textVariableDisplay } from '../variables/text_variable';
+import { timeVariableDisplay } from '../variables/time_variable';
 
 const wildcardPattern = /\{([^\}]+)\}/;
 const parameterPattern = /\[([^\]]+)\]/;
@@ -26,6 +27,8 @@ export function computeActionDisplay(action: Action) {
         replacement = levelVariableDisplay(action.service_data![field], action.variables![field] as LevelVariable);
       else if (action.variables![field].type == EVariableType.List)
         replacement = listVariableDisplay(action.service_data![field], action.variables![field] as ListVariable);
+      else if (action.variables![field].type == EVariableType.Time)
+        replacement = timeVariableDisplay(action.service_data![field], action.variables![field] as TimeVariable);
       else replacement = textVariableDisplay(action.service_data![field], action.variables![field] as TextVariable);
     } else {
       replacement = action.service_data![field];

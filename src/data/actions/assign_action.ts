@@ -1,4 +1,12 @@
-import { Action, EVariableType, LevelVariable, ListVariable, ServiceCall, TextVariable } from '../../types';
+import {
+  Action,
+  EVariableType,
+  LevelVariable,
+  ListVariable,
+  ServiceCall,
+  TextVariable,
+  TimeVariable,
+} from '../../types';
 import { omit } from '../../helpers';
 
 export const assignAction = (entity_id: string, action: Action) => {
@@ -30,6 +38,15 @@ export const assignAction = (entity_id: string, action: Action) => {
         service_data: {
           ...output.service_data,
           [key]: config.options.length ? config.options[0].value : undefined,
+        },
+      };
+    } else if (config.type == EVariableType.Time) {
+      config = config as TimeVariable;
+      output = {
+        ...output,
+        service_data: {
+          ...output.service_data,
+          [key]: config.enable_seconds ? '00:00:00' : '00:00',
         },
       };
     } else if (config.type == EVariableType.Text) {

@@ -4,6 +4,7 @@ import { DefaultActionIcon } from '../const';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 import { textVariable } from '../data/variables/text_variable';
+import { timeVariable } from '../data/variables/time_variable';
 import { getLocale, isDefined } from '../helpers';
 import { localize } from '../localize/localize';
 import { Variable } from '../types';
@@ -43,6 +44,8 @@ export function standardStates(entity_id: string, hass: HomeAssistant): Variable
     return listVariable(stateConfig);
   } else if ('min' in stateConfig && isDefined(stateConfig.min) && 'max' in stateConfig && isDefined(stateConfig.max)) {
     return levelVariable(stateConfig);
+  } else if ('enable_seconds' in stateConfig && isDefined(stateConfig.enable_seconds)) {
+    return timeVariable(stateConfig);
   } else {
     return textVariable(stateConfig);
   }

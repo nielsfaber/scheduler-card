@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable } from '../types';
+import { HomeAssistant } from 'custom-card-helpers';
+import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable, TimeVariable } from '../types';
 
 import './variable-slider';
 import './button-group';
@@ -8,6 +9,9 @@ import { fireEvent } from 'custom-card-helpers';
 
 @customElement('scheduler-variable-picker')
 export class SchedulerVariablePicker extends LitElement {
+  @property()
+  hass?: HomeAssistant;
+
   @property()
   variable?: Variable | null;
 
@@ -28,6 +32,7 @@ export class SchedulerVariablePicker extends LitElement {
     else if (this.variable.type == EVariableType.Level) return this.renderLevelVariable();
     else if (this.variable.type == EVariableType.List) return this.renderListVariable();
     else if (this.variable.type == EVariableType.Text) return this.renderTextVariable();
+    else if (this.variable.type == EVariableType.Time) return this.renderTimeVariable();
     else return html``;
   }
 
@@ -83,9 +88,33 @@ export class SchedulerVariablePicker extends LitElement {
     `;
   }
 
+  renderTimeVariable() {
+    if (!this.hass || !this.variable) {
+      console.warn(`${this.renderTimeVariable.name}() not rendering: undefined references`);
+      return html``;
+    }
+    const variable = this.variable as TimeVariable;
+    const value = this.value;
+
+    return html`
+      <ha-time-input
+        .enableSecond=${variable.enable_seconds}
+        .value=${value}
+        .locale=${this.hass.locale}
+        @value-changed=${this.listVariableUpdated}
+      ></ha-time-input>
+      <div class="key">${variable.enable_seconds ? 'Hours:Minutes:Seconds' : 'Hours:Minutes'}</div>
+    `;
+  }
+
   static styles = css`
     ha-textfield {
       width: 100%;
+    }
+    div.key {
+      color: var(--mdc-text-field-label-ink-color, rgba(0, 0, 0, 0.6));
+      font-style: italic;
+      font-size: 0.75rem;
     }
   `;
 }

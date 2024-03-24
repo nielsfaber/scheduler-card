@@ -3,10 +3,11 @@ import { customElement, property, eventOptions } from 'lit/decorators';
 import { mdiUnfoldMoreVertical } from '@mdi/js';
 import { HomeAssistant } from 'custom-card-helpers';
 
-import { Timeslot, Action, EVariableType, LevelVariable, ListVariable } from '../types';
+import { Timeslot, Action, EVariableType, LevelVariable, ListVariable, TimeVariable } from '../types';
 import { stringToTime, timeToString, roundTime, parseRelativeTime } from '../data/date-time/time';
 import { compareActions } from '../data/actions/compare_actions';
 import { levelVariableDisplay } from '../data/variables/level_variable';
+import { timeVariableDisplay } from '../data/variables/time_variable';
 import { unique, PrettyPrintName, getLocale } from '../helpers';
 import { localize } from '../localize/localize';
 import { stringToDate } from '../data/date-time/string_to_date';
@@ -246,6 +247,9 @@ export class TimeslotEditor extends LitElement {
                 variable = variable as ListVariable;
                 const listItem = variable.options.find(e => e.value == value);
                 return PrettyPrintName(listItem && listItem.name ? listItem.name : String(value));
+              } else if (variable.type == EVariableType.Time) {
+                variable = variable as TimeVariable;
+                return timeVariableDisplay(value, variable);
               } else return '';
             })
             .join(', ');

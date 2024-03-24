@@ -51,6 +51,9 @@
     "script": {
       "script": "execute"
     },
+    "time": {
+      "set_value": "set value[ to {time}]"
+    },
     "vacuum": {
       "start_pause": "start / pause"
     },
@@ -76,6 +79,7 @@
     "media_player": "media players",
     "notify": "notification",
     "switch": "switches",
+    "time": "time",
     "vacuum": "vacuums",
     "water_heater": "water heaters"
   },

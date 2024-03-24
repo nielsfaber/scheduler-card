@@ -132,6 +132,7 @@ export enum EVariableType {
   Level = 'LEVEL',
   List = 'LIST',
   Text = 'TEXT',
+  Time = 'TIME',
 }
 
 export interface Variable {
@@ -163,7 +164,11 @@ export interface TextVariable extends Variable {
   multiline: boolean;
 }
 
-export type VariableDictionary = Dictionary<LevelVariable | ListVariable | TextVariable>;
+export interface TimeVariable extends Variable {
+  enable_seconds: boolean;
+}
+
+export type VariableDictionary = Dictionary<LevelVariable | ListVariable | TextVariable | TimeVariable>;
 
 /* entries */
 

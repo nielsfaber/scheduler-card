@@ -396,6 +396,15 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
     turn_on: {},
     turn_off: {},
   },
+  time: {
+    set_value: {
+      variables: {
+        time: {
+          enable_seconds: true,
+        },
+      },
+    },
+  },
   vacuum: {
     turn_on: { supported_feature: 1 },
     start: {
