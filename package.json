@@ -4,9 +4,8 @@
   "description": "Scheduler card for Lovelace",
   "main": "dist/scheduler-card.js",
   "scripts": {
-    "build": "npm run lint && npm run rollup && npm run babel",
+    "build": "npm run lint && npm run format && npm run rollup",
     "rollup": "rollup -c",
-    "babel": "babel dist/scheduler-card.js --out-file dist/scheduler-card.js",
     "lint": "eslint src/**/*.ts --fix",
     "format": "prettier --write '**/*.ts'",
     "start": "rollup -c --watch"
@@ -22,9 +21,6 @@
   },
   "homepage": "https://github.com/nielsfaber/scheduler-card#readme",
   "dependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@formatjs/intl-utils": "^3.8.4",
     "@mdi/js": "^6.4.95",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
@@ -38,7 +34,6 @@
     "home-assistant-js-websocket": "^5.7.0",
     "lit": "^2.0.0",
     "rollup": "^1.32.1",
-    "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
@@ -49,7 +44,6 @@
     "typescript": "^3.6.4"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "eslint": "^6.8.0",
     "prettier": "1.19.1",
     "rollup-plugin-visualizer": "^4.2.0"
