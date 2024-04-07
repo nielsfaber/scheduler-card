@@ -227,7 +227,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
           ...this.scheduleDisplayInfo,
           [schedule.schedule_id!]: getScheduleDisplayInfo(schedule, this._config!, this.hass!),
         };
-      } catch (_e) {}
+      } catch (_e) { }
 
       if (!schedule || !isIncludedOrExcluded(schedule, this._config!)) {
         //schedule is not in the list, remove if it was in the list
@@ -260,7 +260,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
               ...scheduleInfo,
               [schedules[e].schedule_id]: getScheduleDisplayInfo(schedules[e], this._config!, this.hass!),
             };
-          } catch (_e) {}
+          } catch (_e) { }
         });
         this.scheduleDisplayInfo = scheduleInfo;
         this.schedules = this.sortSchedules(schedules);
@@ -326,37 +326,37 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         <div class="card-header">
           <div class="name">
             ${this._config.title
-              ? typeof this._config.title == 'string'
-                ? this._config.title
-                : localize('ui.panel.common.title', getLocale(this.hass))
-              : ''}
+        ? typeof this._config.title == 'string'
+          ? this._config.title
+          : localize('ui.panel.common.title', getLocale(this.hass))
+        : ''}
           </div>
           ${this.schedules.length && this._config.show_header_toggle
-            ? html`
+        ? html`
                 <ha-switch ?checked=${this.computeHeaderToggleState()} @change=${this.toggleDisableAll}> </ha-switch>
               `
-            : ''}
+        : ''}
         </div>
         <div class="card-content">
           ${this.renderRows()}
         </div>
         ${this._config.show_add_button !== false
-          ? html`
+        ? html`
               <div class="card-actions">
                 ${!this.connectionError
-                  ? html`
+            ? html`
                       <mwc-button @click=${this._addItemClick}
-                        >${this.hass.localize('ui.components.area-picker.add_dialog.add')}
+                        >${this.hass.localize('ui.common.add')}
                       </mwc-button>
                     `
-                  : html`
+            : html`
                       <mwc-button @click=${this._retryConnection}
                         >${this.hass.localize('ui.common.refresh')}
                       </mwc-button>
                     `}
               </div>
             `
-          : ''}
+        : ''}
       </ha-card>
     `;
   }
@@ -391,16 +391,16 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
                 <button
                   class="show-more"
                   @click=${() => {
-                    this.showDiscovered = true;
-                  }}
+              this.showDiscovered = true;
+            }}
                 >
                   +
                   ${localize(
-                    'ui.panel.overview.excluded_items',
-                    getLocale(this.hass),
-                    '{number}',
-                    excludedEntities.length
-                  )}
+              'ui.panel.overview.excluded_items',
+              getLocale(this.hass),
+              '{number}',
+              excludedEntities.length
+            )}
                 </button>
               </div>
             `
@@ -410,8 +410,8 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
                 <button
                   class="show-more"
                   @click=${() => {
-                    this.showDiscovered = false;
-                  }}
+              this.showDiscovered = false;
+            }}
                 >
                   ${capitalize(localize('ui.panel.overview.hide_excluded', getLocale(this.hass)))}
                 </button>
@@ -449,9 +449,9 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         <ha-icon
           icon="${PrettyPrintIcon(displayInfo.icon)}"
           @click=${(ev: Event) =>
-            fireEvent(ev.target as HTMLElement, 'hass-more-info', {
-              entityId: schedule.entity_id,
-            })}
+        fireEvent(ev.target as HTMLElement, 'hass-more-info', {
+          entityId: schedule.entity_id,
+        })}
         ></ha-icon>
         <div class="info" @click=${() => this._editItemClick(schedule.schedule_id!)}>
           ${this.renderDisplayItems(schedule, displayInfo.primaryInfo)}
