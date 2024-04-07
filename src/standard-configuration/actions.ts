@@ -308,6 +308,17 @@ export const actionList: Record<string, Record<string, ActionItem>> = {
       },
     },
   },
+  lawn_mower: {
+    start_mowing: {
+      supported_feature: 1,
+    },
+    pause: {
+      supported_feature: 2,
+    },
+    dock: {
+      supported_feature: 4,
+    }
+  },
   light: {
     turn_on: {
       condition: stateObj => computeSupportedFeatures(stateObj) == 0,

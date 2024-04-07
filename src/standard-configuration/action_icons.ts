@@ -84,6 +84,11 @@ const actionIcons: IconList = {
   input_select: {
     select_option: 'mdi:counter',
   },
+  lawn_mower: {
+    start_mowing: 'mdi:play',
+    pause: 'mdi:pause',
+    dock: 'mdi:home-import-outline'
+  },
   light: {
     turn_on: 'mdi:lightbulb',
     turn_off: 'mdi:lightbulb-off',

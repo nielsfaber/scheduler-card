@@ -61,6 +61,7 @@ export const domainIcons: Record<string, string> = {
   input_select: 'mdi:format-list-bulleted',
   select: 'mdi:format-list-bulleted',
   input_text: 'mdi:textbox',
+  lawn_mower: 'mdi:robot-mower',
   light: 'mdi:lightbulb-outline',
   lock: 'mdi:lock-open-outline',
   media_player: 'mdi:cast-connected',

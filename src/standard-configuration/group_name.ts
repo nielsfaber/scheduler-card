@@ -15,6 +15,7 @@ const domainNames: Record<string, string> = {
   input_boolean: 'domains.input_boolean',
   input_number: 'domains.input_number',
   input_select: 'domains.input_select',
+  lawn_mower: 'domains.lawn_mower',
   light: 'domains.light',
   lock: 'domains.lock',
   media_player: 'domains.media_player',

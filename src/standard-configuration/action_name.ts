@@ -66,6 +66,11 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
   input_select: {
     select_option: 'services.input_select.select_option',
   },
+  lawn_mower: {
+    start_mowing: 'ui.card.lawn_mower.actions.start_mowing',
+    pause: 'ui.card.timer.actions.pause',
+    dock: 'ui.card.lawn_mower.actions.dock'
+  },
   light: {
     turn_on: 'ui.card.vacuum.actions.turn_on',
     turn_off: 'ui.card.vacuum.actions.turn_off',
