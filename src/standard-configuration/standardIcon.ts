@@ -75,6 +75,7 @@ export const domainIcons: Record<string, string> = {
   sensor: 'mdi:eye',
   sun: 'mdi:white-balance-sunny',
   switch: 'mdi:flash',
+  time: 'mdi:clock',
   timer: 'mdi:timer',
   vacuum: 'mdi:robot-vacuum',
   water_heater: 'mdi:water-boiler',

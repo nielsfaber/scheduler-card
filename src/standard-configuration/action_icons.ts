@@ -123,6 +123,9 @@ const actionIcons: IconList = {
     turn_on: 'mdi:flash',
     turn_off: 'mdi:flash-off',
   },
+  time: {
+    set_value: 'mdi:clock-outline',
+  },
   vacuum: {
     turn_on: 'mdi:power',
     start: 'mdi:play-circle-outline',
