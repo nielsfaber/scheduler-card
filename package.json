@@ -21,31 +21,25 @@
   },
   "homepage": "https://github.com/nielsfaber/scheduler-card#readme",
   "dependencies": {
-    "@formatjs/intl-utils": "^3.8.4",
-    "@mdi/js": "^6.4.95",
-    "@typescript-eslint/eslint-plugin": "^2.6.0",
-    "@typescript-eslint/parser": "^2.6.0",
-    "custom-card-helpers": "1.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.5.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.1",
-    "fecha": "^4.2.1",
-    "home-assistant-js-websocket": "^5.7.0",
-    "lit": "^2.0.0",
+    "@mdi/js": "^7.4.47",
+    "fecha": "^4.2.3",
+    "home-assistant-js-websocket": "^8.0.1",
+    "lit": "^2.7.4",
     "rollup": "^1.32.1",
+    "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-ignore": "^1.0.10",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-uglify": "^6.0.3",
-    "typescript": "^3.6.4"
+    "rollup-plugin-visualizer": "^4.2.0"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "prettier": "1.19.1",
-    "rollup-plugin-visualizer": "^4.2.0"
+    "@parcel/transformer-inline-string": "^2.8.3",
+    "@rollup/plugin-dynamic-import-vars": "^2.1.2",
+    "parcel": "^2.8.3"
   }
 }

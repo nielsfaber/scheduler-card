@@ -1,0 +1,76 @@
+import { sortByName } from "../../lib/sort";
+import { HomeAssistant } from "../../lib/types";
+import { CardConfig, DisplayItem, Schedule } from "../../types";
+import { computeScheduleDisplay } from "../format/compute_schedule_display";
+
+const sortByRelativeTime = (scheduleA: Schedule & { entity_id: string }, scheduleB: Schedule & { entity_id: string }) => {
+
+  const remainingA = new Date(scheduleA.timestamps[scheduleA.next_entries[0]]).valueOf();
+  const remainingB = new Date(scheduleB.timestamps[scheduleB.next_entries[0]]).valueOf();
+  const now = new Date().valueOf();
+
+  const reverse = remainingA < now && remainingB < now;
+
+  if (remainingA !== null && remainingB !== null) {
+    if (remainingA < now && remainingB >= now) return 1;
+    else if (remainingA >= now && remainingB < now) return -1;
+    else if (remainingA > remainingB) return reverse ? -1 : 1;
+    else if (remainingA < remainingB) return reverse ? 1 : -1;
+    else return scheduleA.entity_id < scheduleB.entity_id ? 1 : -1;
+  } else if (remainingB !== null) return 1;
+  else if (remainingA !== null) return -1;
+  else return scheduleA.entity_id < scheduleB.entity_id ? 1 : -1;
+};
+
+
+const sortByTitle = (scheduleA: Schedule, scheduleB: Schedule, displayFormat: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant) => {
+  //if (!displayInfo[.schedule_id!]) return displayInfo[b.schedule_id!] ? 1 : -1;
+  const titleA = computeScheduleDisplay(scheduleA, displayFormat, hass).join();
+  const titleB = computeScheduleDisplay(scheduleB, displayFormat, hass).join();
+  return sortByName(titleA, titleB);
+};
+
+
+const sortByState = (scheduleA: Schedule & { entity_id: string }, scheduleB: Schedule & { entity_id: string }, hass: HomeAssistant, expiredSchedulesLast: boolean) => {
+
+  const stateA = hass.states[scheduleA.entity_id]?.state;
+  const stateB = hass.states[scheduleB.entity_id]?.state;
+
+  const scheduleA_active = ['on', 'triggered'].includes(stateA);
+  const scheduleB_active = ['on', 'triggered'].includes(stateB);
+
+  if (scheduleA_active && !scheduleB_active) return -1;
+  else if (!scheduleA_active && scheduleB_active) return 1;
+
+  if (expiredSchedulesLast) {
+    if (stateA != 'off' && stateB == 'off') return 1;
+    else if (stateA == 'off' && stateB != 'off') return -1;
+  }
+
+  return 0;
+};
+
+export const sortSchedules = (schedules: Record<string, Schedule & { entity_id: string }>, config: CardConfig, hass: HomeAssistant) => {
+
+  const sortingOptions = [config.sort_by].flat();
+
+  if (sortingOptions.includes('relative-time')) {
+    schedules = Object.entries(schedules)
+      .sort(([, a], [, b]) => sortByRelativeTime(a, b))
+      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+  }
+
+  if (sortingOptions.includes('title')) {
+    schedules = Object.entries(schedules)
+      .sort(([, a], [, b]) => sortByTitle(a, b, config.display_options.primary_info, hass))
+      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+  }
+
+  if (sortingOptions.includes('state')) {
+    schedules = Object.entries(schedules)
+      .sort(([, a], [, b]) => sortByState(a, b, hass, sortingOptions.includes('relative-time')))
+      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+  }
+
+  return schedules;
+}

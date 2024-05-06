@@ -20,7 +20,8 @@ import * as sk from './languages/sk.json';
 import * as sl from './languages/sl.json';
 import * as uk from './languages/uk.json';
 import * as zh_Hans from './languages/zh-Hans.json';
-import { FrontendTranslationData } from 'custom-card-helpers';
+
+import { HomeAssistant } from '../lib/types';
 
 const languages: any = {
   cs: cs,
@@ -52,14 +53,14 @@ const languages: any = {
 
 export function localize(
   string: string,
-  locale: FrontendTranslationData,
-  search: string | (string | number)[] | number = '',
-  replace: string | (string | number)[] | number = ''
+  hass: HomeAssistant,
+  search: string | (string | number)[] | number = [],
+  replace: string | (string | number)[] | number = []
 ) {
   let translated: string;
+
   try {
-    if (locale.language == 'test') return 'TRANSLATED';
-    translated = string.split('.').reduce((o, i) => o[i], languages[locale.language]);
+    translated = string.split('.').reduce((o, i) => o[i], languages[hass.locale.language]);
     if (!translated) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   } catch (e) {
     try {
@@ -69,10 +70,12 @@ export function localize(
     }
   }
 
-  if (search !== '' && replace !== '' && translated) {
-    if (!Array.isArray(search)) search = [search];
-    if (!Array.isArray(replace)) replace = [replace];
+  search = [search || []].flat();
+  replace = [replace || []].flat();
+  if (search.length && replace.length && translated) {
+
     for (let i = 0; i < (search as string[]).length; i++) {
+
       translated = translated.replace(String(search[i]), String(replace[i]));
       const res = translated.match(/\{if ([a-z]+) is ([^\}]+)\}\ ?([^\{]+)\ ?\{else\}\ ?([^\{]+)/i);
       if (res && String(search[i]).replace(/[\{\}']+/g, '') == res[1]) {
@@ -83,8 +86,15 @@ export function localize(
     }
   }
 
-  // if (!translated) {
-  //   console.log(`missing translation for ${string}`);
-  // }
+  const res = /\[([^\]]+)\]/.exec(translated);
+  if (res) {
+    const hasUnassignedWildcards = /\{([^\}]+)\}/.exec(res[1]);
+    if (hasUnassignedWildcards) translated = translated.replace(res[0], '');
+    else translated = translated.replace(res[0], res[1]);
+  }
+
+  if (!translated) {
+    console.log(`missing translation for ${string}`);
+  }
   return translated;
 }

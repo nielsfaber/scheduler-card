@@ -119,6 +119,12 @@
       "confirm_migrate": {
         "title": "Update schedule",
         "description": "Some settings will be lost by this change. Do you want to continue?"
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -133,6 +139,20 @@
         "excluded_items": "{number} excluded {if number is 1} item {else} items",
         "hide_excluded": "hide excluded items",
         "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+      },
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "add_condition": "Add condition",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "entity_picker": {
         "no_groups_defined": "There are no groups defined",
@@ -149,8 +169,10 @@
         "time_input_mode": "Time control mode"
       },
       "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is not",
+        "is": "Equal to",
+        "not": "Unequal to",
+        "above": "Above",
+        "below": "Below",
         "all": "all",
         "any": "any",
         "no_conditions_defined": "There are no conditions defined",
