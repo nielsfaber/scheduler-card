@@ -2092,7 +2092,7 @@ function(e){return(({finisher:e,descriptor:t})=>(i,a)=>{var s;if(void 0===a){con
           </mwc-button>
 
           <span class="beta">
-            ${"v4.0.0b"}
+            ${"v4.0.0.b0"}
           </span>
         </div>
       </ha-card>
@@ -2149,4 +2149,4 @@ function(e){return(({finisher:e,descriptor:t})=>(i,a)=>{var s;if(void 0===a){con
       font-style: italic;
       color: var(--error-color);
     }
-  `,t([de({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([de()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.0b".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
+  `,t([de({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([de()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.0.b0".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
