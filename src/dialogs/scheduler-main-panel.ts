@@ -1,4 +1,4 @@
-import { mdiClose, mdiPencil } from "@mdi/js";
+import { mdiChevronLeft, mdiChevronRight, mdiClose, mdiDelete, mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { CSSResultGroup, LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, TimeMode, Timeslot } from "../types";
@@ -7,11 +7,11 @@ import { formatWeekdayDisplay } from "../data/days";
 import { defaultSelectorValue } from "../data/selectors/default_selector_value";
 import { isSupportedSelector } from "../data/selectors/is_supported_selector";
 import { selectorConfig } from "../data/selectors/selector_config";
-import { Selector } from "../lib/selector";
+import { NumberSelector, Selector } from "../lib/selector";
 import { DialogSelectActionParams } from "./dialog-select-action";
 import { DialogSelectWeekdayParams } from "./dialog-select-weekdays";
 
-import { computeDomain, computeEntity } from "../lib/entity";
+import { computeDomain, computeEntity, friendlyName } from "../lib/entity";
 import { timeToString } from "../data/time/time_to_string";
 import { parseTimeString } from "../data/time/parse_time_string";
 import { addTimeOffset } from "../data/time/add_time_offset";
@@ -24,16 +24,17 @@ import { formatFieldDisplay } from "../data/format/format_field_display";
 import { formatActionDisplay } from "../data/format/format_action_display";
 import { computeActionIcon } from "../data/format/compute_action_icon";
 import { fireEvent } from "../lib/fire_event";
+import { useAmPm } from "../lib/use_am_pm";
 
 import "../components/timeslot-editor";
 import "../components/time-picker";
 import "../components/entity-picker";
-import "../components/weekday-picker";
 import '../dialogs/dialog-select-weekdays';
 import '../dialogs/dialog-select-action';
 import '../components/collapsible-section';
 import '../components/settings-row';
 import '../components/combo-selector';
+import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -42,7 +43,7 @@ export class SchedulerMainPanel extends LitElement {
 
   @state() schedule!: Schedule;
   @state() selectedEntry: number | null = 0;
-  @state() selectedSlot: number | null = 0;
+  @state() selectedSlot: number | null = null;
 
   @property({ type: Boolean })
   large = false;
@@ -53,8 +54,10 @@ export class SchedulerMainPanel extends LitElement {
 
       <div class="editor-header">
       <div class="weekdays">
-        ${localize('ui.panel.editor.repeated_days', this.hass)}:
-        ${formatWeekdayDisplay(entry.weekdays, this.hass)}
+        <span>
+          ${localize('ui.panel.editor.repeated_days', this.hass)}:
+          ${formatWeekdayDisplay(entry.weekdays, 'short', this.hass)}
+        </span>
         <ha-icon-button .path=${mdiPencil} @click=${(ev: Event) => this._showWeekdayDialog(ev, num)}></ha-icon-button>
       </div>
 
@@ -64,6 +67,7 @@ export class SchedulerMainPanel extends LitElement {
 
       <scheduler-timeslot-editor
         .hass=${this.hass}
+        .config=${this.config}
         .schedule=${entry}
         .selectedSlot=${this.selectedSlot}
         @update=${(ev: CustomEvent) => this._handleUpdate(ev, num)}
@@ -89,28 +93,31 @@ export class SchedulerMainPanel extends LitElement {
 
     return html`
       <div class="actions">
-        <mwc-button @click=${this._addTimeslot} ?disabled=${delta < 1800}>
-          <ha-icon icon="mdi:plus"></ha-icon>
-          ${this.hass.localize('ui.common.add')}
-        </mwc-button>
-        <mwc-button @click=${this._removeTimeslot} ?disabled=${this.schedule.entries[this.selectedEntry].slots.length <= 2}>
-          <ha-icon icon="mdi:minus"></ha-icon>
-          ${this.hass.localize('ui.common.remove')}
-        </mwc-button>
+        <ha-icon-button .path=${mdiChevronLeft} @click=${() => { this.selectedSlot = this.selectedSlot! - 1 }} ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}>
+        </ha-icon-button> 
+        <ha-icon-button .path=${mdiChevronRight} @click=${() => { this.selectedSlot = this.selectedSlot! + 1 }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
+        </ha-icon-button> 
+        <ha-icon-button .path=${mdiPlus} @click=${this._addTimeslot} ?disabled=${delta < 1800}>
+        </ha-icon-button>
+        <ha-icon-button .path=${mdiMinus} @click=${this._removeTimeslot} ?disabled=${this.schedule.entries[this.selectedEntry].slots.length <= 2}>
+        </ha-icon-button> 
       </div>
     `;
   }
 
   renderSlot() {
-    if (this.selectedEntry === null || this.selectedSlot === null) return;
+    if (this.selectedEntry === null || this.selectedSlot === null) {
+      return html`
+        <div class="slot-placeholder"> 
+          ${localize('ui.panel.editor.select_timeslot', this.hass)}
+        </div>
+      `;
+    }
     const slot = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot];
-
-
-    // <mwc-checkbox
-    //   ?checked=${slot.stop !== undefined}
-    //   @change=${this._toggleStopTime}
-    // >
-    // </mwc-checkbox>
+    let endTime = slot.stop;
+    if (!endTime && (this.selectedSlot < this.schedule.entries[this.selectedEntry].slots.length - 1))
+      endTime = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot + 1].start;
+    if (!endTime) endTime = slot.start;
 
     return html`
 
@@ -122,18 +129,29 @@ export class SchedulerMainPanel extends LitElement {
             ?disabled=${this.selectedSlot == 0}
             .time=${slot.start}
             @value-changed=${this._startTimeChanged}
+            ?useAmPm=${useAmPm(this.hass.locale)}
           >
           </scheduler-time-picker>
         </div>
         <div class="column">
+
+          <div style="display: flex; flex-direction: row">
+          <mwc-checkbox
+            ?checked=${slot.stop !== undefined}
+            @change=${this._toggleStopTime}
+          >
+          </mwc-checkbox>
+
           <scheduler-time-picker
             .hass=${this.hass}
             label="${localize('ui.panel.editor.stop_time', this.hass)}:"
             ?disabled=${slot.stop === undefined || this.selectedSlot == (this.schedule.entries[this.selectedEntry!].slots.length - 1)}
-            .time=${slot.stop || slot.start}
+            .time=${endTime}
             @value-changed=${this._stopTimeChanged}
+            ?useAmPm=${useAmPm(this.hass.locale)}
           >
           </scheduler-time-picker>
+          </div>
         </div>
       </div>
 
@@ -157,13 +175,21 @@ export class SchedulerMainPanel extends LitElement {
     `;
 
     const domain = computeDomain(action.service);
-    const key = computeEntity(action.service);
-    const hassConfig = this.hass.services[domain][key];
-    const config = actionConfig(action.service);
+    const config = actionConfig(action, this.config.customize);
     if (config === undefined) return html``;
 
     //if (!config || !config.fields) return html``;
-    const fields = Object.keys(config.fields || {}).filter(e => isSupportedSelector(action.service, action.target.entity_id, e, this.hass!));
+    const fields = Object.keys(config.fields || {}).filter(e => isSupportedSelector(action, e, this.hass!, this.config.customize));
+
+    let heading = '';
+
+    let entityIds = [action.target?.entity_id || []].flat();
+
+    if (entityIds.length) {
+      heading += entityIds.map(e => friendlyName(e, this.hass.states[e]?.attributes)).join(", ");
+      heading += ': ';
+    }
+    heading += formatActionDisplay(action, this.hass, this.config.customize);
 
     return html`
       <collapsible-section
@@ -172,11 +198,12 @@ export class SchedulerMainPanel extends LitElement {
       >
         <span slot="header">
           <ha-icon slot="icon" icon="${computeActionIcon(action, this.hass)}"></ha-icon>
-          ${formatActionDisplay(action, this.hass)}
+          ${capitalizeFirstLetter(heading)}
         </span>
-        <ha-icon-button slot="contextMenu" .path=${mdiClose} @click=${this._removeAction}></ha-icon-button>
+        <ha-icon-button slot="contextMenu" .path=${mdiDelete} @click=${this._removeAction}></ha-icon-button>
         <div slot="content">
 
+          ${config.target ? html`
           <settings-row>
             <span slot="heading">${this.hass.localize("ui.components.entity.entity-picker.entity")}</span>
             <scheduler-entity-picker
@@ -184,19 +211,23 @@ export class SchedulerMainPanel extends LitElement {
               .config=${this.config}
               .domain=${domain}
               @value-changed=${this._selectEntity}
-              .value=${Array.isArray(action.target.entity_id) ? undefined : action.target.entity_id}
+              .value=${Array.isArray(action.target?.entity_id) ? undefined : action.target?.entity_id}
+              .valueMultiple=${Array.isArray(action.target?.entity_id) ? action.target?.entity_id : []}
+              ?allowMultiple=${true}
             >
             </scheduler-entity-picker>
-
           </settings-row>
+          `
+        : ''}
 
           ${fields.map(field => {
-      const selector = selectorConfig(action.service, action.target.entity_id, field, this.hass!);
-      if (selector === null) return '';
-      const checked = config.fields![field].optional ? Object.keys(action.service_data).includes(field) : true;
-      return html`
-            <settings-row>
-              ${config.fields![field].optional ? html`
+          const selector = selectorConfig(action.service, action.target?.entity_id, field, this.hass!, this.config.customize);
+          if (selector === null) return '';
+          let optional: boolean | undefined = config.fields![field].optional || ((selector as NumberSelector).number || {}).optional;
+          const checked = optional ? Object.keys(action.service_data).includes(field) : true;
+          return html`
+            <settings-row ?showPrefix=${optional}>
+              ${optional ? html`
                 <ha-checkbox
                   slot="prefix"
                   ?checked=${checked}
@@ -205,7 +236,7 @@ export class SchedulerMainPanel extends LitElement {
                 </ha-checkbox>
               ` : ''}
               <span slot="heading">
-                ${formatFieldDisplay(action.service, field, this.hass)}
+                ${formatFieldDisplay(action, field, this.hass, this.config.customize)}
               </span>
               <combo-selector
                 .hass=${this.hass}
@@ -217,7 +248,7 @@ export class SchedulerMainPanel extends LitElement {
               </combo-selector>
             </settings-row>
           `
-    })
+        })
       }
         </div>
       </collapsible-section>
@@ -251,7 +282,8 @@ export class SchedulerMainPanel extends LitElement {
   }
 
   _selectEntity(ev: CustomEvent) {
-    const entity = ev.detail.value as string | undefined;
+    const entity = ev.detail.value as string | string[] | undefined;
+    if (!entity) return;
 
     this.schedule.entries[this.selectedEntry!].slots.forEach((slot, idx) => {
       if (!slot.actions.length) return;
@@ -326,12 +358,24 @@ export class SchedulerMainPanel extends LitElement {
 
 
   async _showActionDialog(ev: Event) {
-    const filteredDomains = this.schedule.entries.map(e => e.slots.map(f => f.actions.map(g => g.service.split(".")[0])).flat()).flat();
-    await new Promise<string | null>(resolve => {
+    let filteredDomains: string[] = [];
+
+    this.schedule.entries.forEach(entry => {
+      entry.slots.forEach(slot => {
+        slot.actions.forEach(action => {
+          let domains = [computeDomain(action.service), ...[action.target?.entity_id || []].flat()].map(computeDomain);
+          domains = domains.filter(e => !filteredDomains.includes(e));
+          if (domains.length) filteredDomains = [...filteredDomains, ...domains];
+        });
+      });
+    });
+
+
+    await new Promise<Action | null>(resolve => {
       const params: DialogSelectActionParams = {
         cancel: () => resolve(null),
-        confirm: (out: string) => resolve(out),
-        domain: filteredDomains.length ? filteredDomains[0] : undefined,
+        confirm: (out: Action) => resolve(out),
+        domainFilter: filteredDomains.length ? filteredDomains : undefined,
         cardConfig: this.config
       };
 
@@ -341,15 +385,12 @@ export class SchedulerMainPanel extends LitElement {
         dialogParams: params,
       });
     })
-      .then((res: string | null) => {
+      .then((res: Action | null) => {
         if (!res) return;
         const slot: Timeslot = { ...this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot!] };
-        const target = this.schedule.entries[this.selectedEntry!].slots.find(e => e.actions.length ? e.actions[0].target.entity_id : undefined);
-        const action: Action = {
-          service: res,
-          service_data: {},
-          target: target ? target.actions[0].target : {}
-        };
+        const target = this.schedule.entries[this.selectedEntry!].slots.find(e => e.actions.length ? e.actions[0].target?.entity_id : undefined);
+        let action = { ...res };
+        if (target && action.target) action = { ...action, target: target.actions[0].target };
         this._updateSlot({ actions: [action] });
       });
   }
@@ -417,7 +458,7 @@ export class SchedulerMainPanel extends LitElement {
           start: timeToString(stopTime),
           stop: slots[slotIdx].stop,
           actions: [],
-          conditions: slots[slotIdx - 1].conditions
+          conditions: slots[slotIdx].conditions
         },
         ...slots.slice(slotIdx + 1)
       ];
@@ -460,17 +501,22 @@ export class SchedulerMainPanel extends LitElement {
   .weekdays {
     display: flex;
     flex: 1;
-    padding: 12px 0px;
-    align-items: end;
-  }
-  .weekdays ha-icon-button {
-    height: 32px;
-    --mdc-icon-size: 20px;
-    margin-top: -12px;
+    align-items: center;
   }
   div.actions {
     display: flex;
     align-items: end;
+  }
+  @media all and (max-width: 450px) {
+    div.editor-header {
+      flex-direction: column;
+    }
+    div.actions {
+      align-self: flex-end;
+    }
+  }
+  div.slot-placeholder {
+    padding: 20px 0px 0px 0px;
   }
     `;
   }

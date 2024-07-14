@@ -2,17 +2,17 @@ import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { mdiChevronLeft, mdiClose } from '@mdi/js';
 import { computeActionDomains } from '../data/actions/compute_action_domains';
-import { computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
+import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
 import { sortByName } from '../lib/sort';
 import { styleMap } from 'lit/directives/style-map';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
-import { CardConfig } from '../types';
+import { Action, CardConfig } from '../types';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
-  confirm: (res: string) => void;
-  domain?: string;
+  confirm: (res: Action) => void;
+  domainFilter?: string[];
   cardConfig: CardConfig
 };
 
@@ -29,8 +29,11 @@ export class DialogSelectWeekdays extends LitElement {
   @state() private _width?: number;
   @state() private _height?: number;
 
+  @state() lockDomain = false;
+
   public async showDialog(params: DialogSelectActionParams): Promise<void> {
     this._params = params;
+    if (params.domainFilter) this.lockDomain = true;
     await this.updateComplete;
   }
 
@@ -60,7 +63,7 @@ export class DialogSelectWeekdays extends LitElement {
       >
         <div slot="heading">
           <ha-dialog-header>
-            ${this._params.domain !== undefined
+            ${this._params.domainFilter !== undefined && !this.lockDomain
         ? html`
             <ha-icon-button
               slot="navigationIcon"
@@ -136,7 +139,7 @@ export class DialogSelectWeekdays extends LitElement {
   }
 
   _renderOptions() {
-    if (!this._params?.domain) {
+    if (!this._params?.domainFilter) {
       let domains = computeActionDomains(this.hass, this._params!.cardConfig);
       domains.sort((a, b) => sortByName(a.name, b.name));
 
@@ -178,11 +181,11 @@ export class DialogSelectWeekdays extends LitElement {
       `;
     }
     else {
-      let result = computeActionsForDomain(this.hass, this._params.domain);
+      let result = this._params.domainFilter.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig.customize)).flat();
       return (Object.keys(result)).map((key) => html`
         <mwc-list-item
           graphic="icon"
-          @click=${() => this._handleActionClick(result[key].key)}
+          @click=${() => this._handleActionClick(result[key])}
           twoline
         >
           <ha-icon slot="graphic" icon="${result[key].icon}"></ha-icon>
@@ -194,17 +197,17 @@ export class DialogSelectWeekdays extends LitElement {
   }
 
   _handleDomainClick(key: string) {
-    this._params = { ...this._params!, domain: key };
+    this._params = { ...this._params!, domainFilter: [key] };
     this._clearSearch();
   }
 
   _clearDomain() {
-    this._params = { ...this._params!, domain: undefined };
+    this._params = { ...this._params!, domainFilter: undefined };
     this._clearSearch();
   }
 
-  _handleActionClick(key: string) {
-    this._params!.confirm(`${this._params!.domain}.${key}`);
+  _handleActionClick(item: actionItem) {
+    this._params!.confirm(item.action);
     this._params = undefined;
     this._clearSearch();
   }

@@ -9,6 +9,8 @@ export const computeActionIcon = (action: Action, _hass: HomeAssistant): string 
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
+  if (action.icon) return action.icon;
+
   if (!Object.keys(serviceIcons).includes(domain) || !Object.keys(serviceIcons[domain].services).includes(domainService)) return FALLBACK_ICON;
 
   if (serviceIcons[domain].attributes !== undefined) {

@@ -73,7 +73,7 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
         //move timeslot if it is overlapping with previous
         slots = Object.assign(slots, { [i]: { ...slot, start: startTime } });
       }
-      startTime = slot.stop!;
+      startTime = slot.stop || slot.start;
     }
     const endOfDay = 24 * 3600;
 

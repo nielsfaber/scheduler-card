@@ -1,5 +1,3 @@
-import { Selector, SelectorTemplate } from "../../lib/selector";
-
 
 export type ActionConfig = {
   supported_features?: number,
@@ -52,9 +50,16 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   climate: {
     turn_off: {
-      target: {}
+      target: {},
+      supported_features: 128
+    },
+    turn_on: {
+      target: {},
+      supported_features: 256
     },
     set_hvac_mode: {
+      translation_key: 'services.climate.set_hvac_mode',
+      target: {},
       fields: {
         hvac_mode: {}
       }
@@ -83,6 +88,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_preset_mode: {
+      translation_key: 'services.climate.set_preset_mode',
       target: {},
       fields: {
         preset_mode: {
@@ -90,6 +96,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_fan_mode: {
+      translation_key: 'services.climate.set_fan_mode',
       target: {},
       fields: {
         fan_mode: {
@@ -104,7 +111,8 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     open_cover: {
       target: {}
     },
-    set_position: {
+    set_cover_position: {
+      translation_key: 'services.cover.set_cover_position',
       target: {},
       fields: {
         position: {
@@ -112,6 +120,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_tilt_position: {
+      translation_key: 'services.cover.set_cover_tilt_position',
       target: {},
       fields: {
         tilt_position: {
@@ -127,24 +136,28 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {}
     },
     set_percentage: {
+      translation_key: 'services.fan.set_percentage',
       target: {},
       fields: {
         percentage: {}
       }
     },
     oscillate: {
+      translation_key: 'services.fan.oscillate',
       target: {},
       fields: {
         oscillating: {}
       }
     },
     set_direction: {
+      translation_key: 'services.fan.set_direction',
       target: {},
       fields: {
         direction: {}
       }
     },
     set_preset_mode: {
+      translation_key: 'services.climate.set_preset_mode',
       target: {},
       fields: {
         preset_mode: {
@@ -160,6 +173,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {}
     },
     set_humidity: {
+      translation_key: 'services.humidifier.set_humidity',
       target: {},
       fields: {
         humidity: {
@@ -167,10 +181,10 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_mode: {
+      translation_key: 'services.humidifier.set_mode',
       target: {},
       fields: {
-        mode: {
-        }
+        mode: {}
       }
     },
   },
@@ -189,20 +203,25 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   input_number: {
     set_value: {
+      translation_key: 'services.input_number.set_value',
       target: {},
+      fields: {
+        value: {}
+      }
     }
   },
   input_select: {
     select_option: {
+      translation_key: 'services.input_select.select_option',
       target: {},
       fields: {
-        option: {
-        }
+        option: {}
       }
     },
   },
   light: {
     turn_on: {
+      translation_key: 'services.light.turn_on',
       target: {},
       fields: {
         brightness: {
@@ -230,6 +249,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {}
     },
     select_source: {
+      translation_key: 'services.media_player.select_source',
       target: {},
       fields: {
         source: {
@@ -238,21 +258,21 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
   },
   notify: {
-    '{any}': {
+    '{entity_id}': {
       fields: {
         title: {
+          optional: true
         },
-        message: {
-        }
+        message: {}
       }
     },
   },
   number: {
     set_value: {
+      translation_key: 'services.input_number.set_value',
       target: {},
       fields: {
-        value: {
-        }
+        value: {}
       }
     },
   },
@@ -262,16 +282,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
   },
   script: {
-    turn_on: {
-      target: {}
-    },
-    turn_off: {
-      target: {}
-    },
     '{entity_id}': {},
   },
   select: {
     select_option: {
+      translation_key: 'services.input_select.select_option',
       target: {},
       fields: {
         option: {
@@ -300,6 +315,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   water_heater: {
     set_temperature: {
+      translation_key: 'services.climate.set_temperature',
       target: {},
       fields: {
         temperature: {
@@ -307,6 +323,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_operation_mode: {
+      translation_key: 'services.water_heater.set_operation_mode',
       target: {},
       fields: {
         operation_mode: {
@@ -314,6 +331,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     set_away_mode: {
+      translation_key: 'services.water_heater.set_away_mode',
       target: {},
       fields: {
         away_mode: {

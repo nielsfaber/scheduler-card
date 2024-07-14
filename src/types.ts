@@ -11,28 +11,37 @@ export interface CardConfig {
     secondary_info: (DisplayItem | string)[] | DisplayItem | string;
   };
   sort_by: string[] | string;
-  customize: Record<string, any>;
+  customize: CustomConfig;
+  tags: string[] | string;
+  exclude_tags: string[] | string;
+}
+
+export interface ConditionConfig {
+  type: TConditionLogicType,
+  items: Condition[],
+  track_changes: boolean
+
 }
 
 export interface Timeslot {
   start: string;
   stop?: string;
   actions: Action[];
-  conditions: {
-    type: TConditionLogicType,
-    items: Condition[]
-  }
+  conditions: ConditionConfig
 }
 
 export interface Schedule {
   entries: ScheduleEntry[];
   entity_id?: string;
+  schedule_id?: string;
   next_entries: number[];
   timestamps: string[];
   start_date?: string;
   end_date?: string;
   repeat_type: TRepeatType;
   name?: string;
+  tags?: string[];
+  enabled: boolean;
 }
 
 export interface ScheduleEntry {
@@ -41,31 +50,31 @@ export interface ScheduleEntry {
 }
 
 export interface Action {
-  //name: string;
-  //icon: string;
+  name?: string;
+  icon?: string;
   service: string;
   service_data: Record<string, any>;
-  target: {
+  target?: {
     entity_id?: string[] | string
   }
 }
 
 export enum TWeekday {
-  Daily = 'Daily',
-  Workday = 'Workday',
-  Weekend = 'Weekend',
-  Monday = 'Monday',
-  Tuesday = 'Tuesday',
-  Wednesday = 'Wednesday',
-  Thursday = 'Thursday',
-  Friday = 'Friday',
-  Saturday = 'Saturday',
-  Sunday = 'Sunday',
+  Daily = 'daily',
+  Workday = 'workday',
+  Weekend = 'weekend',
+  Monday = 'monday',
+  Tuesday = 'tuesday',
+  Wednesday = 'wednesday',
+  Thursday = 'thursday',
+  Friday = 'friday',
+  Saturday = 'saturday',
+  Sunday = 'sunday',
 }
 
 export enum TConditionLogicType {
-  Any = 'or',
-  All = 'and',
+  Or = 'or',
+  And = 'and',
 }
 
 export enum TConditionMatchType {
@@ -137,7 +146,6 @@ export interface SchedulerEventData {
   event: SchedulerEvent;
 }
 
-
 export enum TRepeatType {
   Repeat = 'repeat',
   Pause = 'pause',
@@ -155,3 +163,37 @@ export type Time = {
   hours: number,
   minutes: number
 };
+
+export type CustomConfig = Record<string, CustomEntityConfig>;
+
+export interface CustomEntityConfig {
+  actions?: CustomActionConfig[]
+}
+
+
+export type VariableConfig = {
+  name?: string;
+  options: {
+    value: string;
+    icon?: string;
+    name?: string;
+  }[]
+} | {
+  name?: string;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  scale_factor: number;
+  optional: boolean;
+} | {
+  name?: string;
+};
+
+export interface CustomActionConfig extends Action {
+  name?: string;
+  icon?: string;
+  service: string;
+  service_data: Record<string, any>;
+  variables: Record<string, VariableConfig>
+}

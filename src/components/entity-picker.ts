@@ -1,4 +1,4 @@
-import { css, html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeDomain, friendlyName } from "../lib/entity";
@@ -6,6 +6,7 @@ import { sortByName } from "../lib/sort";
 import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
+import { mdiExpandAll, mdiMinus, mdiPlus, mdiUnfoldLessHorizontal, mdiUnfoldLessVertical, mdiUnfoldMoreHorizontal, mdiUnfoldMoreVertical } from "@mdi/js";
 
 interface TRowItem {
   entity_id: string;
@@ -18,7 +19,7 @@ type HassEntityWithCachedName = HassEntity & { friendly_name: string };
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
 
-  @property() hass!: HomeAssistant;
+  @property({ attribute: false }) hass!: HomeAssistant;
   @property() domain?: string;
   @property() config?: { include: string[], exclude: string[], customize: Record<string, any> };
 
@@ -27,10 +28,28 @@ export class SchedulerEntityPicker extends LitElement {
   @property() public valueMultiple: string[] = [];
 
   @property() public multiple: boolean = false;
+  @property() public allowMultiple: boolean = false;
+
+  @property() initialValue = "";
+
+  firstUpdated() {
+    if (this.value) this.initialValue = this.value;
+    if (this.valueMultiple.length > 1) this.multiple = true;
+  }
 
   protected render(): TemplateResult {
     return html`
       ${this.renderChips()}
+      <div class="wrapper">
+      ${(this.multiple && this.valueMultiple.length > 1) || (!this.multiple && !this.value) || !this.allowMultiple
+        ? ''
+        : html` 
+      <ha-icon-button
+        .path=${this.multiple ? mdiUnfoldLessHorizontal : mdiUnfoldMoreHorizontal}
+        @click=${this._toggleMultiple}
+      >
+      </ha-icon-button>`
+      }
       <ha-combo-box
         .hass=${this.hass}
         label=${this.hass.localize("ui.components.entity.entity-picker.entity")}
@@ -41,8 +60,10 @@ export class SchedulerEntityPicker extends LitElement {
         @filter-changed=${this._filterChanged}
         @value-changed=${this._valueChanged}
         .value=${this.value || ""}
+        allow-custom-value
       >
       </ha-combo-box>
+      </div>
     `;
   }
 
@@ -57,7 +78,7 @@ export class SchedulerEntityPicker extends LitElement {
             .stateObj=${stateObj}
             .hass=${this.hass}
           ></ha-state-icon>
-          <span class="label">${friendlyName(entityId, this.hass.states[entityId].attributes)}</span>
+          <span class="label">${friendlyName(entityId, this.hass.states[entityId]?.attributes)}</span>
           <ha-icon icon="mdi:close" @click=${() => this._removeValue(entityId)} ></ha-icon>
         </div>
       `;
@@ -88,14 +109,18 @@ export class SchedulerEntityPicker extends LitElement {
   }
 
   private _valueChanged(ev: CustomEvent) {
+    let value = ev.detail.value;
     if (this.multiple) {
-      this.valueMultiple = [...this.valueMultiple, ev.detail.value];
+      if (!value) return;
+      this.valueMultiple = [...this.valueMultiple, value];
       (ev.target as any).setInputValue(undefined);
+      fireEvent(this, "value-changed", { value: this.valueMultiple });
     }
     else {
-      this.value = ev.detail.value;
+      this.value = value;
       fireEvent(this, "value-changed", { value: this.value });
     }
+    ev.stopPropagation();
   }
 
 
@@ -116,13 +141,32 @@ export class SchedulerEntityPicker extends LitElement {
       });
     }
 
-    let entities: HassEntityWithCachedName[] = entityIds.map(e => Object({ ...this.hass.states[e], friendly_name: friendlyName(e, this.hass.states[e].attributes) }));
+    if (this.initialValue && !entityIds.includes(this.initialValue) && !this.valueMultiple.includes(this.initialValue)) {
+      entityIds = [...entityIds, this.initialValue];
+    }
+
+    let entities: HassEntityWithCachedName[] = entityIds.map(e => Object({ ...this.hass.states[e], friendly_name: friendlyName(e, this.hass.states[e]?.attributes) }));
     entities.sort((a, b) => sortByName(a.friendly_name, b.friendly_name));
     return entities;
   }
 
   private _removeValue = (value: string) => {
     this.valueMultiple = this.valueMultiple.filter(e => e != value);
+    fireEvent(this, "value-changed", { value: this.valueMultiple });
+  }
+
+  private _toggleMultiple() {
+    if (!this.multiple) {
+      this.multiple = true;
+      this.valueMultiple = [this.value!];
+      this.value = undefined;
+    }
+    else {
+      this.multiple = false;
+      this.value = this.valueMultiple.shift();
+      this.valueMultiple = [];
+    }
+
   }
 
   static styles = css`
@@ -167,6 +211,11 @@ export class SchedulerEntityPicker extends LitElement {
         display: inline-flex;
         align-items: center;
         margin-right: -6px !important;
+    }
+    div.wrapper {
+      display: flex;
+      flex: 1 0 auto;
+      align-items: center;
     }
   `;
 }

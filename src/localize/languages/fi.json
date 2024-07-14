@@ -116,9 +116,15 @@
         "title": "Poistetaanko kohde?",
         "description": "Haluatko varmasti poistaa tämän kohteen?"
       },
-      "confirm_migrate": {
-        "title": "Muokkaa aikataulua",
-        "description": "Jotkut asetukset menetetään tämän muutoksen seurauksena. Haluatko edetä?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "piilota poissuljetut kohteet",
         "additional_tasks": "{number} {if number is 1} tehtävä {else} tehtävää"
       },
-      "entity_picker": {
-        "no_groups_defined": "Ryhmiä ei ole luotu",
-        "no_group_selected": "Valitse ryhmä ensin",
-        "no_entities_for_group": "Ryhmässä ei ole kohteita",
-        "no_entity_selected": "Valitse kohde ensin",
-        "no_actions_for_entity": "Kohteelle ei ole toimintoja",
-        "make_scheme": "luo aikataulu",
-        "multiple": "Monta kohdetta"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Valitse aikaikkuna ensin",
-        "time_scheme": "Aikataulu",
-        "time_input_mode": "Ajastustapa"
-      },
-      "conditions": {
-        "equal_to": "yhtä kuin",
-        "unequal_to": "ei yhtä kuin",
-        "all": "kaikki",
-        "any": "mikä tahansa",
-        "no_conditions_defined": "Ehtoja ei ole määritetty",
-        "track_conditions": "Uudelleentarkista kun ehdot muuttuvat"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Valitse aikaikkuna ensin",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Ajanjakso",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "toiminta tapahtuman jälkeen",
-        "period": "ajanjakso"
+        "tags": "Tags"
       },
       "card_editor": {
         "tabs": {

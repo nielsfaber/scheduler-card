@@ -1,4 +1,4 @@
-import { mdiArrowLeft, mdiArrowRight, mdiClose, mdiCog } from "@mdi/js";
+import { mdiArrowLeft, mdiArrowRight, mdiClose, mdiCog, mdiDotsVertical, mdiTuneVariant, mdiWrench, mdiWrenchOutline } from "@mdi/js";
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { CardConfig, Schedule } from "../types";
@@ -15,6 +15,10 @@ import { fireEvent } from "../lib/fire_event";
 import './scheduler-main-panel';
 import './scheduler-options-panel';
 import './generic-dialog';
+import { updateSchedule } from "../data/store/update_schedule";
+import { fetchScheduleItem } from "../data/store/fetch_item";
+import { deepCompare } from "../lib/deep_compare";
+import { parseTimeBar } from "../data/time/parse_time_bar";
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
@@ -39,13 +43,14 @@ export class DialogSchedulerEditor extends LitElement {
   public async showDialog(params: any): Promise<void> {
     this._params = params;
     this.schedule = params.schedule;
+    this._panel = "main";
+    this.large = false;
     await this.updateComplete;
   }
 
   public async closeDialog() {
     this._params = undefined;
   }
-
 
   protected willUpdate(): void {
     (this.hass as any).loadBackendTranslation("config");
@@ -65,7 +70,7 @@ export class DialogSchedulerEditor extends LitElement {
           <ha-icon-button
             slot="actionItems"
             .label=""
-            .path=${this._panel == "main" ? mdiArrowRight : mdiArrowLeft}
+            .path=${this._panel == "main" ? mdiTuneVariant : mdiArrowLeft}
             @click=${this._toggleOptionsPanel}
           ></ha-icon-button>
 
@@ -124,7 +129,7 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   private async _handleSaveClick(ev: Event) {
-    const error = validateSchedule(this.schedule, this.hass);
+    const error = validateSchedule(this.schedule, this.hass, this._params!.cardConfig.customize);
     if (error) {
       await new Promise<boolean>(resolve => {
         const params: GenericDialogParams = {
@@ -141,6 +146,43 @@ export class DialogSchedulerEditor extends LitElement {
           dialogParams: params,
         });
       });
+    }
+    else if (this.schedule.schedule_id) {
+      const oldSchedule = parseTimeBar(await fetchScheduleItem(this.hass, this.schedule.schedule_id!), this.hass);
+      //do not save if there are no changes made
+      if (deepCompare(this.schedule, oldSchedule)) {
+        this.closeDialog();
+        return;
+      }
+
+      if (!oldSchedule.enabled) {
+        const result = await new Promise(resolve => {
+          const params: GenericDialogParams = {
+            title: localize('ui.dialog.enable_schedule.title', this.hass),
+            description: localize('ui.dialog.enable_schedule.description', this.hass),
+            primaryButtonLabel: this.hass.localize('ui.common.yes'),
+            secondaryButtonLabel: this.hass.localize('ui.common.no'),
+            cancel: () => {
+              resolve(false);
+            },
+            confirm: () => {
+              resolve(true);
+            },
+          };
+          fireEvent(ev.target as HTMLElement, 'show-dialog', {
+            dialogTag: 'scheduler-generic-dialog',
+            dialogImport: () => import('./generic-dialog'),
+            dialogParams: params,
+          });
+        });
+        if (result) this.hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
+      }
+
+      updateSchedule(this.hass, this.schedule as Schedule & { schedule_id: string })
+        .catch(e => handleWebsocketError(e, this, this.hass))
+        .then(() => {
+          this.closeDialog();
+        });
     }
     else {
       saveSchedule(this.hass, this.schedule)

@@ -1,6 +1,6 @@
 import { sortByName } from "../../lib/sort";
 import { HomeAssistant } from "../../lib/types";
-import { CardConfig, DisplayItem, Schedule } from "../../types";
+import { CardConfig, CustomConfig, DisplayItem, Schedule } from "../../types";
 import { computeScheduleDisplay } from "../format/compute_schedule_display";
 
 const sortByRelativeTime = (scheduleA: Schedule & { entity_id: string }, scheduleB: Schedule & { entity_id: string }) => {
@@ -23,10 +23,10 @@ const sortByRelativeTime = (scheduleA: Schedule & { entity_id: string }, schedul
 };
 
 
-const sortByTitle = (scheduleA: Schedule, scheduleB: Schedule, displayFormat: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant) => {
+const sortByTitle = (scheduleA: Schedule, scheduleB: Schedule, displayFormat: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant, customize?: CustomConfig) => {
   //if (!displayInfo[.schedule_id!]) return displayInfo[b.schedule_id!] ? 1 : -1;
-  const titleA = computeScheduleDisplay(scheduleA, displayFormat, hass).join();
-  const titleB = computeScheduleDisplay(scheduleB, displayFormat, hass).join();
+  const titleA = computeScheduleDisplay(scheduleA, displayFormat, hass, customize).join();
+  const titleB = computeScheduleDisplay(scheduleB, displayFormat, hass, customize).join();
   return sortByName(titleA, titleB);
 };
 
@@ -62,7 +62,7 @@ export const sortSchedules = (schedules: Record<string, Schedule & { entity_id: 
 
   if (sortingOptions.includes('title')) {
     schedules = Object.entries(schedules)
-      .sort(([, a], [, b]) => sortByTitle(a, b, config.display_options.primary_info, hass))
+      .sort(([, a], [, b]) => sortByTitle(a, b, config.display_options.primary_info, hass, config.customize))
       .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
   }
 

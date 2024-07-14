@@ -13,15 +13,17 @@ export const DefaultCardConfig: CardConfig = {
     secondary_info: ['relative-time', 'additional-tasks'],
   },
   sort_by: ['relative-time', 'state'],
-  customize: {}
+  customize: {},
+  tags: [],
+  exclude_tags: []
 };
 
 const defaultSlotConfig = {
   actions: [],
   conditions: {
-    type: TConditionLogicType.Any,
-    items: [
-    ]
+    type: TConditionLogicType.Or,
+    items: [],
+    track_changes: false
   }
 }
 
@@ -50,5 +52,6 @@ export const defaultScheduleConfig: Schedule = {
   ],
   repeat_type: TRepeatType.Repeat,
   next_entries: [],
-  timestamps: []
+  timestamps: [],
+  enabled: true
 };

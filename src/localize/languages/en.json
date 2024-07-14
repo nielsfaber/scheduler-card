@@ -22,7 +22,7 @@
       "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
+      "set_percentage": "set speed[ to {percentage}]",
       "set_direction": "set direction[ to {direction}]",
       "oscillate": "set oscillation[ to {oscillate}]"
     },
@@ -116,9 +116,9 @@
         "title": "Remove entity?",
         "description": "Are you sure you want to remove this entity?"
       },
-      "confirm_migrate": {
-        "title": "Update schedule",
-        "description": "Some settings will be lost by this change. Do you want to continue?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
       },
       "entity_picker": {
         "title": "Choose entities"
@@ -146,7 +146,7 @@
         "stop_time": "End time",
         "action": "Action",
         "add_action": "Add action",
-        "add_condition": "Add condition",
+        "select_timeslot": "Select a timeslot",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
@@ -154,33 +154,29 @@
           "missing_action": "Schedule has no actions"
         }
       },
-      "entity_picker": {
-        "no_groups_defined": "There are no groups defined",
-        "no_group_selected": "Select a group first",
-        "no_entities_for_group": "There are no entities in this group",
-        "no_entity_selected": "Select an entity first",
-        "no_actions_for_entity": "There are no actions for this entity",
-        "make_scheme": "make scheme",
-        "multiple": "Multiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Select a timeslot first",
-        "time_scheme": "Scheme",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "is": "Equal to",
-        "not": "Unequal to",
-        "above": "Above",
-        "below": "Below",
-        "all": "all",
-        "any": "any",
-        "no_conditions_defined": "There are no conditions defined",
-        "track_conditions": "Re-evaluate when conditions change"
-      },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Period",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "behaviour after completion",
-        "period": "period"
+        "tags": "Tags"
       },
       "card_editor": {
         "tabs": {

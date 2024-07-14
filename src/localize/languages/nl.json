@@ -22,7 +22,7 @@
       "set_cover_tilt_position": "hellingshoek instellen[ naar {tilt_position}]"
     },
     "fan": {
-      "set_speed": "snelheid instellen[ op {speed}]",
+      "set_percentage": "snelheid instellen[ op {percentage}]",
       "set_direction": "richting instellen[ naar {direction}]",
       "oscillate": "zet oscillatie[ naar {oscillate}]"
     },
@@ -70,7 +70,6 @@
     "input_boolean": "input_boolean",
     "input_number": "input_number",
     "input_select": "input_select",
-    "select": "select",
     "lawn_mower": "lawn mower",
     "light": "verlichting",
     "lock": "sloten",
@@ -117,9 +116,15 @@
         "title": "Entiteit verwijderen?",
         "description": "Weet je zeker dat je dit item wilt verwijderen?"
       },
-      "confirm_migrate": {
-        "title": "Schema bijwerken",
-        "description": "Door deze actie gaan vorige instellingen verloren. Wil je doorgaan?"
+      "weekday_picker": {
+        "title": "Herhaalde dagen voor tijdschema",
+        "choose": "Kies..."
+      },
+      "entity_picker": {
+        "title": "Kies entiteiten"
+      },
+      "action_picker": {
+        "title": "Kies actie"
       }
     },
     "panel": {
@@ -135,31 +140,43 @@
         "hide_excluded": "verberg uitgesloten items",
         "additional_tasks": "{number} overige {if number is 1} taak {else} taken"
       },
-      "entity_picker": {
-        "no_group_selected": "Selecteer eerst een groep",
-        "no_entity_selected": "Selecteer eerst een entiteit",
-        "no_groups_defined": "Er zijn geen groepen gedefinieerd",
-        "no_entities_for_group": "Deze groep heeft geen entiteiten",
-        "no_actions_for_entity": "Deze entiteit heeft geen acties",
-        "make_scheme": "maak schema",
-        "multiple": "Meerdere"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Kies eerst een tijdsslot",
-        "time_scheme": "Schema",
-        "time_input_mode": "Invoermodus voor tijd"
-      },
-      "conditions": {
-        "equal_to": "is",
-        "unequal_to": "is niet",
-        "all": "en",
-        "any": "of",
-        "no_conditions_defined": "Er zijn geen voorwaarden gedefinieerd",
-        "track_conditions": "Herevalueer wanneer condities veranderen"
+      "editor": {
+        "repeated_days": "Herhaling",
+        "start_time": "Starttijd",
+        "stop_time": "Eindtijd",
+        "action": "Actie",
+        "add_action": "Actie toevoegen",
+        "select_timeslot": "Selecteer een tijdslot...",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
-        "repeat_type": "gedrag na voltooiing",
-        "period": "periode"
+        "conditions": {
+          "header": "Condities",
+          "add_condition": "Conditie toevoegen",
+          "types": {
+            "equal_to": "{entity} is gelijk aan {value}",
+            "unequal_to": "{entity} is ongelijk aan {value}",
+            "above": "{entity} is hoger dan {value}",
+            "below": "{entity} is lager dan {value}"
+          },
+          "options": {
+            "logic_and": "Alle condities moeten zijn voldaan",
+            "logic_or": "Een van de condities moet zijn voldaan",
+            "track_changes": "Herevalueer als de condities veranderen"
+          }
+        },
+        "period": {
+          "header": "Periode",
+          "start_date": "Vanaf",
+          "end_date": "Tot"
+        },
+        "repeat_type": "Gedrag na voltooiing",
+        "tags": "Tags"
       }
     }
   }

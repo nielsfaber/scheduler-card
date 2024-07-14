@@ -116,9 +116,15 @@
         "title": "Vai dzēst vienību?",
         "description": "Vai tiešām vēlaties dzēst šo vienību?"
       },
-      "confirm_migrate": {
-        "title": "Atjaunināt grafiku",
-        "description": "Šīs izmaiņas rezultātā daži iestatījumi tiks zaudēti. Vai vēlaties turpināt?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "paslēpt izslēgtās vienības",
         "additional_tasks": "{number} papildu {if number is 1} uzdevums {else} uzdevumi"
       },
-      "entity_picker": {
-        "no_groups_defined": "Nav definētas grupas",
-        "no_group_selected": "Vispirms izvēlieties grupu",
-        "no_entities_for_group": "Šajā grupā nav vienību",
-        "no_entity_selected": "Vispirms izvēlieties vienību",
-        "no_actions_for_entity": "Šai vienībai nav darbību",
-        "make_scheme": "izveidot shēmu",
-        "multiple": "Vairāki"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Vispirms izvēlieties laika slotu",
-        "time_scheme": "Shēma",
-        "time_input_mode": "Laika kontroles režīms"
-      },
-      "conditions": {
-        "equal_to": "ir",
-        "unequal_to": "nav",
-        "all": "visi",
-        "any": "jebkuru",
-        "no_conditions_defined": "Nav definēti nosacījumi",
-        "track_conditions": "Pārvērtēt, kad mainās nosacījumi"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Vispirms izvēlieties laika slotu",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Pārvērtēt, kad mainās nosacījumi"
+          }
+        },
+        "period": {
+          "header": "Periods",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "uzvedība pēc beigām",
-        "period": "periods"
+        "tags": "Tags"
       },
       "card_editor": {
         "tabs": {

@@ -3,21 +3,24 @@ import { listSelector } from "./list_selector";
 import { numericSelector } from "./numeric_selector";
 import { HomeAssistant } from "../../lib/types";
 import { computeDomain } from "../../lib/entity";
+import { CustomActionConfig, CustomConfig } from "../../types";
+import { matchPattern } from "../../lib/patterns";
 
-export const selectorConfig = (_service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant) => {
-  const entityIds = [entityId || []].flat();
+export const selectorConfig = (service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
+  const domain = computeDomain(service);
+  const entityIds = ['script', 'notify'].includes(domain) ? [service] : [entityId || []].flat();
   let loadedCfg = entityIds.map(e => selectorConfigFromEntity(e, field, hass));
-
   let selector: Selector | null = mergeSelectors(loadedCfg);
 
-  return selector;
+  let customCfg = entityIds.map(e => selectorConfigFromCustomConfig(service, e, field, customize));
+  let customSelector: Selector | null = mergeSelectors(customCfg);
+
+  return customSelector || selector;
 }
 
 const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAssistant): Selector | null => {
-  if (!Object.keys(hass.states).includes(entityId)) return null;
-
-  const stateObj = hass.states[entityId];
-  const attr = stateObj.attributes;
+  const stateObj = Object.keys(hass.states).includes(entityId) ? hass.states[entityId] : null;
+  const attr = stateObj?.attributes || {};
   const domain = computeDomain(entityId);
   const searchKey = `${domain}.${field}`;
 
@@ -25,7 +28,8 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'climate.temperature':
     case 'climate.target_temp_low':
     case 'climate.target_temp_high':
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step, unit_of_measurement: `${hass.config.unit_system.temperature}` });
+      const isOptional = searchKey == 'climate.temperature' ? ((attr.supported_features || 0) & 2) == 1 : ((attr.supported_features || 0) & 1) == 1;
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
     case 'climate.hvac_mode':
       return listSelector({ options: attr.hvac_modes, translation_key: 'component.climate.entity_component._.state.${value}' });
     case 'climate.preset_mode':
@@ -56,6 +60,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return numericSelector({ min: 0, max: 255, step: 1 });
     case 'media_player.source':
     case 'notify.title':
+      return <StringSelector>{ text: {} };
     case 'notify.message':
       return <StringSelector>{ text: {} };
     case 'water_heater.temperature':
@@ -66,6 +71,33 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return <BooleanSelector>{ boolean: {} };
   }
 
+  return null;
+}
+
+const selectorConfigFromCustomConfig = (service: string, entityId: string, field: string, customize?: CustomConfig) => {
+  const actionConfig: CustomActionConfig[] = Object.entries(customize || {})
+    .filter(([a]) => matchPattern(a, [entityId].flat().pop()!))
+    .sort((a, b) => b[0].length - a[0].length)
+    .map(([, b]) => b.actions || [])
+    .filter(e => e !== undefined)
+    .flat();
+
+  if (actionConfig.length) {
+    let res = (actionConfig.map(customConfig => {
+      if (customConfig.service != service || !Object.keys(customConfig.variables).includes(field)) return;
+      let variableConfig = customConfig.variables[field];
+      if (Object.keys(variableConfig).includes('options')) {
+        return listSelector({ options: (variableConfig as any).options.map(e => e.value) });
+        //TODO: handle custom name+icon
+      } else if (Object.keys(variableConfig).includes('min') && Object.keys(variableConfig).includes('max')) {
+        return numericSelector(variableConfig as any);
+      } else {
+        return <StringSelector>{ text: {} };
+      }
+    }) as Selector[])
+      .filter(e => e !== undefined);
+    return mergeSelectors(res);
+  }
   return null;
 }
 
@@ -82,7 +114,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
 
     return <SelectSelector>{
       select: {
-        options: commonOptions.length ? commonOptions : undefined,
+        options: commonOptions.length ? commonOptions : [],
         translation_key: translationKeyLists.length && isUnique(translationKeyLists) ? translationKeyLists[0] : undefined
       }
     }
@@ -94,6 +126,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
     const stepList = (input as NumberSelector[]).map(e => e.number!.step).filter(e => e !== undefined) as number[];
     const modeList = (input as NumberSelector[]).map(e => e.number!.mode).filter(e => e !== undefined) as string[];
     const uomList = (input as NumberSelector[]).map(e => e.number!.unit_of_measurement).filter(e => e !== undefined) as string[];
+    const optionalList = (input as NumberSelector[]).map(e => e.number!.optional);
 
     return <NumberSelector>{
       number: {
@@ -102,6 +135,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
         step: stepList.length ? Math.max(...stepList) : undefined,
         mode: modeList.length && isUnique(modeList) ? modeList[0] : undefined,
         unit_of_measurement: uomList.length && isUnique(uomList) ? uomList[0] : undefined,
+        optional: optionalList.every(e => e)
       }
     };
   }

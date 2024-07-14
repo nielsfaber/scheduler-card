@@ -31,6 +31,8 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   @state() showDiscovered: boolean = false;
 
+  translationsLoaded = false;
+
   setConfig(userConfig: Partial<CardConfig>) {
     userConfig = validateConfig(userConfig);
     this._config = {
@@ -41,6 +43,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   firstUpdated() {
     (async () => await loadHaForm())();
+    //this._addClick(new Event('test'));
   }
 
   protected willUpdate(): void {
@@ -73,17 +76,22 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
         (async () => await this.loadSchedules())();
     }
 
+    if (!this.translationsLoaded && this.hass.localize(`component.input_boolean.services.turn_on.name`).length) {
+      this.translationsLoaded = true;
+      return true;
+    }
+
     //only reload card if a schedule entity has changed
-    if (oldHass && changedProps.size == 1 && this.schedules)
+    if (oldHass && changedProps.size == 1 && this.schedules) {
       return Object.values(this.schedules).some(
         e => JSON.stringify(oldHass.states[e.entity_id!]) !== JSON.stringify(this.hass!.states[e.entity_id!])
       );
+    }
 
     return true;
   }
 
   render() {
-
     let items = { ...this.schedules };
     let includedItems = Object.keys(this.schedules || {}).filter(e => isIncludedSchedule((items)[e], this._config));
 
@@ -175,6 +183,10 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
           <mwc-button @click=${this._addClick}
             >${this.hass.localize('ui.common.add')}
           </mwc-button>
+
+          <span class="beta">
+            ${CARD_VERSION}
+          </span>
         </div>
       </ha-card>
     `;
@@ -240,9 +252,9 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
   }
 
   private _addClick(_ev: Event) {
-
+    const defaultTags = [this._config.tags || []].flat().filter(e => !['none', 'disabled', 'enabled'].includes(e));
     const params: SchedulerDialogParams = {
-      schedule: defaultScheduleConfig,
+      schedule: { ...defaultScheduleConfig, tags: defaultTags.length == 1 ? defaultTags : [] },
       cardConfig: this._config
     };
 
@@ -257,7 +269,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
     if (!this.hass || !this.schedules) return;
     const checked = (ev.target as HTMLInputElement).checked;
 
-    const items = Object.values(this.schedules).filter(el => this.showDiscovered ? true : isIncludedSchedule(el, this._config));
+    const items = Object.values(this.schedules).filter(el => this.showDiscovered || isIncludedSchedule(el, this._config));
     items.forEach(el => {
       this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
     });
@@ -310,6 +322,16 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
     button.show-more:focus {
       outline: none;
       text-decoration: underline;
+    }
+    .card-actions, .card-actions > * { 
+      display: flex;
+    }
+    .beta {
+      flex: 1 0 auto;
+      align-self: center;
+      justify-content: flex-end;
+      font-style: italic;
+      color: var(--error-color);
     }
   `;
 }

@@ -116,9 +116,15 @@
         "title": "¿Eliminar entidad?",
         "description": "¿Estás seguro de que deseas eliminar esta entidad?"
       },
-      "confirm_migrate": {
-        "title": "Modificar horario",
-        "description": "Algunas configuraciones se perderán con este cambio. Quieres proceder?"
+      "weekday_picker": {
+        "title": "Días repetidos para el horario",
+        "choose": "Elegir..."
+      },
+      "entity_picker": {
+        "title": "Elegir entidades"
+      },
+      "action_picker": {
+        "title": "Elige Acción"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "ocultar elementos excluidos",
         "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
       },
-      "entity_picker": {
-        "no_groups_defined": "No hay ningún grupo definido",
-        "no_group_selected": "selecciona un grupo primero",
-        "no_entities_for_group": "no hay ninguna entidad en este grupo",
-        "no_entity_selected": "selecciona una entidad primero",
-        "no_actions_for_entity": "no hay acciones para esta entidad",
-        "make_scheme": "crear planificación",
-        "multiple": "Múltiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "selecciona un bloque de tiempo primero",
-        "time_scheme": "Planificación",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "igual a",
-        "unequal_to": "desigual a",
-        "all": "todos",
-        "any": "cualquiera",
-        "no_conditions_defined": "no hay ninguna condición definida",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Días repetidos",
+        "start_time": "Inicio",
+        "stop_time": "Finalización",
+        "action": "Acción",
+        "add_action": "Agregar acción",
+        "select_timeslot": "selecciona un bloque de tiempo",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Condiciones",
+          "add_condition": "Agregar condición",
+          "types": {
+            "equal_to": "{entity} es igual a {value}",
+            "unequal_to": "{entity} es desigual a {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "Todas condiciones deben ser válidas",
+            "logic_or": "Cualquier condición debe ser válida",
+            "track_changes": "Reevaluar si una condición cambia"
+          }
+        },
+        "period": {
+          "header": "Período",
+          "start_date": "De",
+          "end_date": "A"
+        },
         "repeat_type": "acción después de la finalización",
-        "period": "período"
+        "tags": "Tags"
       }
     }
   }

@@ -6,11 +6,13 @@ import { computeConditionDomains } from '../data/compute_condition_domains';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { styleMap } from 'lit/directives/style-map';
+import { CardConfig } from '../types';
 
 export type DialogSelectConditionParams = {
   cancel: () => void;
   confirm: (res: string) => void;
   domain?: string;
+  cardConfig: CardConfig
 };
 
 @customElement('dialog-select-condition')
@@ -64,7 +66,7 @@ export class DialogSelectCondition extends LitElement {
               .path=${mdiClose}
             ></ha-icon-button>
             <span slot="title">
-              ${localize('ui.panel.editor.add_condition', this.hass)}
+              ${localize('ui.panel.options.conditions.add_condition', this.hass)}
             </span>
           </ha-dialog-header>
 
@@ -128,7 +130,7 @@ export class DialogSelectCondition extends LitElement {
 
   _renderOptions() {
     //if (!this._params?.domain) {
-    let domains = computeConditionDomains(this.hass);
+    let domains = computeConditionDomains(this.hass, this._params!.cardConfig!);
 
     domains.sort((a, b) => sortByName(a.name, b.name));
 

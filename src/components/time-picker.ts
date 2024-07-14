@@ -34,21 +34,15 @@ export class SchedulerTimePicker extends LitElement {
 
   @property({ type: String }) label = "";
 
-  @state() useAmPm: boolean = false;
-
-  firstUpdated() {
-    this.useAmPm = useAmPm(this.hass.locale);
-  }
+  @property({ type: Boolean }) useAmPm = false;
 
   protected render(): TemplateResult {
     return html`
       <div class="time-input-wrap">
 
+
+        <span class="label">${this.label}</span>
         ${this._renderTimeModeOptions()}
-
-        <div class="column">
-
-          <span class="label">${this.label}</span>
           <div class="input">
         <ha-textfield
           id="hour"
@@ -107,7 +101,6 @@ export class SchedulerTimePicker extends LitElement {
             <mwc-list-item value="PM">PM</mwc-list-item>
           </ha-select>
         `}
-          </div>
         </div>
       </div>
     `;
@@ -291,8 +284,11 @@ export class SchedulerTimePicker extends LitElement {
     }
     div.column {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 4px;
+    }
+    :host([useAmPm]) div.column {
+      flex-direction: column;
     }
     div.input {
       display: flex;
@@ -322,6 +318,8 @@ export class SchedulerTimePicker extends LitElement {
     }
     .label {
       display: flex;
+      justify-content: center;
+      align-self: center;
     }
     ha-button-menu {
       display: flex;

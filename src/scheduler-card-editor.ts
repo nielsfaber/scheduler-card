@@ -10,6 +10,11 @@ import { fireEvent } from "./lib/fire_event";
 import './dialogs/dialog-select-entities';
 import "./components/entity-picker";
 import "./components/collapsible-section";
+import './components/combo-selector';
+import { SelectSelector } from "./lib/selector";
+import { fetchTags } from "./data/store/fetch_tags";
+import { sortByName } from "./lib/sort";
+
 
 @customElement("scheduler-card-editor")
 export class SchedulerCardEditor extends LitElement {
@@ -25,18 +30,27 @@ export class SchedulerCardEditor extends LitElement {
   @property()
   title: string = "";
 
-  firstUpdated() {
+  @property()
+  tagOptions: string[] = [];
+
+  async firstUpdated() {
     this.title = typeof this._config.title == "string"
       ? this._config.title
       : "";
 
+    const tagOptions = (await fetchTags(this.hass!)).map(e => e.name);
+    tagOptions.sort(sortByName);
+    this.tagOptions = tagOptions;
   }
 
   render() {
-    const options = [
-      'standard',
-      'hidden'
-    ];
+    const tagSelector = <SelectSelector>{
+      select: {
+        options: this.tagOptions,
+        multiple: true,
+        custom_value: true
+      }
+    };
 
     return html`
       <div class="card-config">
@@ -189,11 +203,21 @@ export class SchedulerCardEditor extends LitElement {
             >
             </ha-checkbox>
           </ha-formfield>
-
-
         </div>
 
         </div>
+
+        <settings-row>
+          <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
+
+          <combo-selector
+            .hass=${this.hass}
+            .config=${tagSelector}
+            .value=${[this._config.tags || []].flat()}
+            @value-changed=${(ev: CustomEvent) => { this._updateConfig({ tags: ev.detail.value }) }}
+          >
+          </combo-selector>
+        </settings-row>
 
       </div>
     `;
@@ -256,13 +280,15 @@ export class SchedulerCardEditor extends LitElement {
   }
 
   async _showIncludedEntitiesDialog(ev: Event) {
+    let domains = this._config.include.filter(e => !e.includes('.'));
+    let entities = this._config.include.filter(e => e.includes('.'));
 
     await new Promise<{ domains: string[], entities: string[] } | null>(resolve => {
       const params: DialogSelectEntitiesParams = {
         cancel: () => resolve(null),
         confirm: (out: { domains: string[], entities: string[] }) => resolve(out),
-        domains: [],
-        entities: []
+        domains: domains,
+        entities: entities
       };
 
       fireEvent(ev.target as HTMLElement, 'show-dialog', {
@@ -329,7 +355,9 @@ export class SchedulerCardEditor extends LitElement {
     div.two-columns .column > * {
       display: flex; 
       flex-direction: column; 
-    
+    }
+    combo-selector {
+      min-width: 240px;
     }
   `;
 }

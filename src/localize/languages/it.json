@@ -116,9 +116,15 @@
         "title": "Vuoi rimuovere l'entità?",
         "description": "Sei sicuro di voler rimuovere questa entità?"
       },
-      "confirm_migrate": {
-        "title": "Modifica orario",
-        "description": "Alcune impostazioni andranno perse con questa azione. Vuoi procedere?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "Nascondi oggetti esclusi",
         "additional_tasks": "{number} attività in più"
       },
-      "entity_picker": {
-        "no_groups_defined": "Non ci sono gruppi definiti",
-        "no_group_selected": "Seleziona prima un gruppo",
-        "no_entities_for_group": "Non ci sono entità in questo gruppo",
-        "no_entity_selected": "Seleziona prima un'entità",
-        "no_actions_for_entity": "Non ci sono azioni per questa entità",
-        "make_scheme": "crea schema",
-        "multiple": "Multiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Seleziona prima una fascia oraria",
-        "time_scheme": "Schema",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "uguale",
-        "unequal_to": "non uguale",
-        "all": "tutte",
-        "any": "qualunque",
-        "no_conditions_defined": "Non ci sono condizioni definite",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Seleziona una fascia oraria",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Periodo",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "comportamento dopo il completamento",
-        "period": "periodo"
+        "tags": "Tags"
       }
     }
   }

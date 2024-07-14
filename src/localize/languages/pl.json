@@ -116,9 +116,15 @@
         "title": "Usunąć encję?",
         "description": "Czy na pewno chcesz usunąć tę encję?"
       },
-      "confirm_migrate": {
-        "title": "Zmodyfikuj harmonogram",
-        "description": "Ta czynność spowoduje utratę niektórych ustawień. Czy chcesz kontynuować?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "ukryj wykluczone pozycje",
         "additional_tasks": "{number} dodatkowe {if number is 1} zadanie {else} zadań(nia)"
       },
-      "entity_picker": {
-        "no_groups_defined": "Nie ma zdefiniowanych grup",
-        "no_group_selected": "Najpierw wybierz grupę",
-        "no_entities_for_group": "Nie ma encji w tej grupie",
-        "no_entity_selected": "Najpierw wybierz encję",
-        "no_actions_for_entity": "Nie ma akcji dla tej encji",
-        "make_scheme": "stwórz schemat",
-        "multiple": "Multiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Najpierw wybierz przedział czasowy",
-        "time_scheme": "Schemat",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "jest równe ",
-        "unequal_to": "nie jest równe",
-        "all": "wszystkie",
-        "any": "dowolny",
-        "no_conditions_defined": "Nie ma zdefiniowanych warunków",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Najpierw wybierz przedział czasowy",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Okres",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "zachowanie po zakończeniu",
-        "period": "okres"
+        "tags": "Tags"
       }
     }
   }

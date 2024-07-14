@@ -1,6 +1,6 @@
 import { NumberSelector } from "../../lib/selector";
 
-export const numericSelector = (input: { min?: any, max?: any, step?: any, mode?: any, unit_of_measurement?: any }): NumberSelector => {
+export const numericSelector = (input: { min?: any, max?: any, step?: any, mode?: any, unit_of_measurement?: any, optional?: any }): NumberSelector => {
   let cfg: NumberSelector = {
     number: {}
   };
@@ -15,6 +15,8 @@ export const numericSelector = (input: { min?: any, max?: any, step?: any, mode?
     cfg = { ...cfg, number: { ...cfg.number, mode: input.mode } };
   if (Object.keys(input).includes('unit_of_measurement') && input.unit_of_measurement)
     cfg = { ...cfg, number: { ...cfg.number, unit_of_measurement: input.unit_of_measurement } };
+  if (Object.keys(input).includes('optional'))
+    cfg = { ...cfg, number: { ...cfg.number, optional: Boolean(input.optional) } };
 
   return cfg;
 }

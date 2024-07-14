@@ -116,9 +116,15 @@
         "title": "Remover a entidade?",
         "description": "Tem a certeza que deseja remover esta entidade?"
       },
-      "confirm_migrate": {
-        "title": "Modificar horário",
-        "description": "Algumas configurações serão perdidas por esta ação. Você quer prosseguir?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "ocultar itens excluídos",
         "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
       },
-      "entity_picker": {
-        "no_groups_defined": "Não existem grupos definidos",
-        "no_group_selected": "Selecione um grupo primeiro",
-        "no_entities_for_group": "Não existem entidades neste grupo",
-        "no_entity_selected": "Selecione uma entidade primeiro",
-        "no_actions_for_entity": "Não existem ações para esta entidade",
-        "make_scheme": "criar esquema",
-        "multiple": "multiplos"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "É necessário selecionar um período horário para escolher uma ação",
-        "time_scheme": "Esquema",
-        "time_input_mode": "Modo de controlo de tempo"
-      },
-      "conditions": {
-        "equal_to": "é",
-        "unequal_to": "não é",
-        "all": "todos(as)",
-        "any": "qualquer",
-        "no_conditions_defined": "Não existem condições definidas",
-        "track_conditions": "Revaliar em caso de alterações"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Selecionar um período horário",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Revaliar em caso de alterações"
+          }
+        },
+        "period": {
+          "header": "Período",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "comportamento após a conclusão",
-        "period": "período"
+        "tags": "Tags"
       }
     }
   }

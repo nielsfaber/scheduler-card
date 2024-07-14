@@ -116,9 +116,15 @@
         "title": "Odebrat entitu?",
         "description": "Opravdu chcete tuto entitu odebrat?"
       },
-      "confirm_migrate": {
-        "title": "Aktualizovat plán",
-        "description": "Některá nastavení budou touto změnou ztracena. Chceš pokračovat?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "skrýt vyloučené položky",
         "additional_tasks": "{number} a více {if number is 1} úkol {else} úkolů"
       },
-      "entity_picker": {
-        "no_groups_defined": "Nejsou definovány žádné skupiny",
-        "no_group_selected": "Nejprve vyberte skupinu",
-        "no_entities_for_group": "V této skupině nejsou žádné entity",
-        "no_entity_selected": "Nejprve vyberte entitu",
-        "no_actions_for_entity": "Pro tuto entitu neexistují žádné akce",
-        "make_scheme": "vytvořit schéma",
-        "multiple": "Multiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Nejprve vyberte časový úsek",
-        "time_scheme": "Schéma",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "je",
-        "unequal_to": "není",
-        "all": "Vše",
-        "any": "žádný",
-        "no_conditions_defined": "Nejsou definovány žádné podmínky",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Nejprve vyberte časový úsek",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
-        "repeat_type": "chování po spuštění",
-        "period": "období"
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Období",
+          "start_date": "From",
+          "end_date": "To"
+        },
+        "repeat_type": "behaviour after completion",
+        "tags": "Tags"
       }
     }
   }

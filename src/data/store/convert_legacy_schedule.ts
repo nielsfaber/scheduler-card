@@ -1,5 +1,6 @@
-import { HomeAssistant } from "../../lib/types";
-import { Action, Condition, Schedule, TConditionLogicType, TConditionMatchType, TWeekday, Timeslot } from "../../types";
+import { deepCompare } from "../../lib/deep_compare";
+import { computeDomain } from "../../lib/entity";
+import { Action, ConditionConfig, Schedule, TConditionLogicType, TConditionMatchType, TRepeatType, TWeekday, Timeslot } from "../../types";
 
 
 interface Dictionary<TValue> {
@@ -30,12 +31,6 @@ export interface LegacyTimeslot {
 
 export type WeekdayType = ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun' | 'workday' | 'weekend' | 'daily');
 
-export enum ERepeatType {
-  Repeat = 'repeat',
-  Pause = 'pause',
-  Single = 'single',
-}
-
 export interface LegacySchedule {
   schedule_id?: string;
   weekdays: WeekdayType[];
@@ -44,7 +39,7 @@ export interface LegacySchedule {
   entity_id: string;
   timestamps: string[];
   next_entries: number[];
-  repeat_type: ERepeatType;
+  repeat_type: TRepeatType;
   name?: string;
   tags?: string[];
   start_date?: string;
@@ -55,11 +50,12 @@ export interface LegacySchedule {
 export interface LegacyScheduleConfig {
   weekdays: WeekdayType[];
   timeslots: LegacyTimeslot[];
-  repeat_type: ERepeatType;
+  repeat_type: TRepeatType;
   name?: string;
   tags: string[];
   start_date?: string;
   end_date?: string;
+  schedule_id?: string;
 }
 
 
@@ -69,7 +65,7 @@ const parseAction = (input: ServiceCall): Action => {
     service: input.service,
     service_data: input.service_data,
     target: {
-      entity_id: input.entity_id
+      entity_id: input.entity_id ? input.entity_id : undefined
     }
   }
 }
@@ -78,10 +74,11 @@ const parseTimeslot = (input: LegacyTimeslot): Timeslot => {
   return <Timeslot>{
     start: input.start,
     stop: input.stop,
-    actions: input.actions.map(parseAction),
-    conditions: {
-      type: input.condition_type == 'and' ? TConditionLogicType.All : TConditionLogicType.Any,
-      items: (input.conditions || [])
+    actions: computeUniqueActions(input.actions.map(parseAction)),
+    conditions: <ConditionConfig>{
+      type: input.condition_type == 'and' ? TConditionLogicType.And : TConditionLogicType.Or,
+      items: (input.conditions || []),
+      track_changes: Boolean(input.track_conditions)
     }
   }
 }
@@ -121,8 +118,22 @@ export const convertLegacySchedule = (input: LegacySchedule): Schedule & { entit
     ],
     entity_id: input.entity_id,
     next_entries: input.next_entries,
-    timestamps: input.timestamps
+    timestamps: input.timestamps,
+    tags: input.tags,
+    enabled: input.enabled,
+    schedule_id: input.schedule_id
   };
 }
 
 
+const computeUniqueActions = (actions: Action[]): Action[] => {
+  //combine entityIds of different actions
+  if (actions.length == 1) return actions;
+
+  if (actions.every(e => deepCompare({ ...e, target: undefined }, { ...actions[0], target: undefined }))) {
+    const entityIds: string[] = [...new Set(actions.map(e => e.target?.entity_id).filter(e => e !== undefined) as string[])];
+    let output: Action = { ...actions[0], target: { entity_id: entityIds.length ? entityIds : undefined } };
+    return [output];
+  }
+  return actions;
+}

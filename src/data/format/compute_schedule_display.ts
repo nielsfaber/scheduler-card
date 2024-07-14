@@ -1,23 +1,24 @@
 import { html } from "lit";
 import { friendlyName } from "../../lib/entity";
 import { HomeAssistant } from "../../lib/types";
-import { DisplayItem, Schedule } from "../../types";
+import { CustomConfig, DisplayItem, Schedule } from "../../types";
 import { computeTimeDisplay } from "./compute_time_display";
 import { formatActionDisplay } from "./format_action_display";
 import { localize } from "../../localize/localize";
-import { computeDaysDisplay } from "./compute_days_display";
+import { computeDayDisplay } from "./compute_days_display";
+import { capitalizeFirstLetter } from "../../lib/capitalize_first_letter";
 
 
-export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant) => {
+export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant, customize?: CustomConfig) => {
 
   const computeDisplay = (item: DisplayItem | string) => {
 
     switch (item) {
       case DisplayItem.Action:
         const action = schedule.entries[0].slots[schedule.next_entries![0]].actions[0];
-        return formatActionDisplay(action, hass);
+        return formatActionDisplay(action, hass, customize);
       case DisplayItem.Days:
-        return computeDaysDisplay(schedule.entries[0].weekdays, hass);
+        return schedule.entries[0].weekdays.map(e => computeDayDisplay(e, hass)).join(', ');
       case DisplayItem.Name:
         return schedule.name || '';
       case DisplayItem.AdditionalTasks:
@@ -27,8 +28,8 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
           : '';
       case DisplayItem.Entity:
         const nextAction = schedule.entries[0].slots[schedule.next_entries![0]].actions[0];
-        const entityIds = [nextAction.target.entity_id || []].flat();
-        const entityDisplay = entityIds.map(e => friendlyName(e, hass.states[e].attributes)).join(", ");
+        const entityIds = [nextAction.target?.entity_id || []].flat();
+        const entityDisplay = entityIds.map(e => friendlyName(e, hass.states[e]?.attributes)).join(", ");
         return entityDisplay;
 
       case DisplayItem.RelativeTime:
@@ -45,7 +46,10 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
         const slot = schedule.entries[0].slots[schedule.next_entries[0]];
         return computeTimeDisplay(slot.start, slot.stop);
       case DisplayItem.Default:
-        return computeDisplay(DisplayItem.Name) || `${computeDisplay(DisplayItem.Entity)}: ${computeDisplay(DisplayItem.Action)}`;
+        const nameDisplay = computeDisplay(DisplayItem.Name) || computeDisplay(DisplayItem.Entity);
+        return nameDisplay
+          ? `${capitalizeFirstLetter(nameDisplay)}: ${computeDisplay(DisplayItem.Action)}`
+          : `${capitalizeFirstLetter(computeDisplay(DisplayItem.Action))}`;
       default:
         const regex = /(\{[a-z\-]+\})/g;
         if (item.match(regex)) {

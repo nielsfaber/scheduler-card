@@ -116,9 +116,15 @@
         "title": "Ștergeți entitatea?",
         "description": "Sigur doriți să eliminați această entitate?"
       },
-      "confirm_migrate": {
-        "title": "Modificați programul",
-        "description": "Unele setări se vor pierde prin această acțiune. Vrei sa continui?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "ascunde elementele excluse",
         "additional_tasks": "{if number is 1}o sarcină suplimentară {else}{number} sarcini suplimentare"
       },
-      "entity_picker": {
-        "no_groups_defined": "Nu există grupuri definite",
-        "no_group_selected": "Prima dată selectați un grup",
-        "no_entities_for_group": "Nu există entități definite în acest grup",
-        "no_entity_selected": "Prima dată selectați o entitate",
-        "no_actions_for_entity": "Nu există acțiuni pentru această entitate",
-        "make_scheme": "creare schemă",
-        "multiple": "Multiple"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Prima dată selectați un interval orar",
-        "time_scheme": "Schemă",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "este",
-        "unequal_to": "nu este",
-        "all": "tot",
-        "any": "oricare",
-        "no_conditions_defined": "Nu există condiții definite",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Selectați un interval orar",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "Perioadă",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "comportament după declanșare",
-        "period": "perioadă"
+        "tags": "Tags"
       }
     }
   }

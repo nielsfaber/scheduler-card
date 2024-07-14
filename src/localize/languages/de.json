@@ -116,9 +116,15 @@
         "title": "Entität entfernen?",
         "description": "Bist du dir sicher, dass du diese Entität löschen möchtest?"
       },
-      "confirm_migrate": {
-        "title": "Zeitplan ändern",
-        "description": "Einige Einstellungen gehen durch diese Änderung verloren. Möchten Sie fortfahren?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "Verstecke ausgeschlossene Einträge",
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
-      "entity_picker": {
-        "no_groups_defined": "Es gibt keine Gruppe",
-        "no_group_selected": "Wähle zuerst eine Gruppe aus",
-        "no_entities_for_group": "Es gibt keine Entities in dieser Gruppe",
-        "no_entity_selected": "Wähle zuerst eine Entity aus",
-        "no_actions_for_entity": "Es gibt keine Aktionen für diese Entity",
-        "make_scheme": "Erstelle Zeitplan",
-        "multiple": "mehrere"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Wähle zuerst ein Zeitfenster aus",
-        "time_scheme": "Zeitplan",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "ist",
-        "unequal_to": "ist nicht",
-        "all": "alle",
-        "any": "eine",
-        "no_conditions_defined": "Es sind keine Bedingungen definiert",
-        "track_conditions": "Erneut prüfen wenn sich die Zustände ändern"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Wähle ein Zeitfenster aus",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} ist {value}",
+            "unequal_to": "{entity} ist nicht {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Erneut prüfen wenn sich die Zustände ändern"
+          }
+        },
+        "period": {
+          "header": "Zeitraum",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "Verhalten nach Abschluß",
-        "period": "Zeitraum"
+        "tags": "Tags"
       }
     }
   }

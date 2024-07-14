@@ -116,9 +116,15 @@
         "title": "Удалить объект?",
         "description": "Вы уверены, что хотите удалить этот объект?"
       },
-      "confirm_migrate": {
-        "title": "Изменить расписание",
-        "description": "При этом некоторые настройки будут потеряны. Вы хотите продолжить?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "скрыть исключенные элементы",
         "additional_tasks": "{number} больше {if number is 1} задача {else} задач"
       },
-      "entity_picker": {
-        "no_groups_defined": "Не определены группы",
-        "no_group_selected": "Выберите группу",
-        "no_entities_for_group": "Отсутствуют элементы в группе",
-        "no_entity_selected": "Выберите элемент",
-        "no_actions_for_entity": "Нет действий для этого элемента",
-        "make_scheme": "создать схему",
-        "multiple": "Множественный"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Выберите временной слот",
-        "time_scheme": "Cхему",
-        "time_input_mode": "Time control mode"
-      },
-      "conditions": {
-        "equal_to": "равно",
-        "unequal_to": "не равно",
-        "all": "все",
-        "any": "любое",
-        "no_conditions_defined": "Не определены условия",
-        "track_conditions": "Re-evaluate when conditions change"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Выберите временной слот",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Re-evaluate when conditions change"
+          }
+        },
+        "period": {
+          "header": "период",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "поведение после срабатывания",
-        "period": "период"
+        "tags": "Tags"
       }
     }
   }

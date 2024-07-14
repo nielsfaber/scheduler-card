@@ -28,9 +28,9 @@ export class ScheduleItemRow extends LitElement {
         class="info ${disabled ? 'disabled' : ''}"
         @click=${this._handleItemClick}
       >
-        ${computeScheduleDisplay(this.schedule, this.config.display_options.primary_info, this.hass)}
+        ${computeScheduleDisplay(this.schedule, this.config.display_options.primary_info, this.hass, this.config.customize)}
         <div class="secondary">
-        ${computeScheduleDisplay(this.schedule, this.config.display_options.secondary_info, this.hass)}
+        ${computeScheduleDisplay(this.schedule, this.config.display_options.secondary_info, this.hass, this.config.customize)}
         </div>
       </div>
       <div class="state">

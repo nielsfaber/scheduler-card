@@ -9,6 +9,7 @@ import { HomeAssistant } from '../lib/types';
 import { computeConditionDomains } from '../data/compute_condition_domains';
 import { computeDomain, friendlyName } from '../lib/entity';
 import { computeEntityIcon } from '../data/format/compute_entity_icon';
+import { domainIcon } from '../data/actions/domain_icon';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
@@ -25,23 +26,38 @@ interface listItem {
 }
 
 const computeDomains = (hass: HomeAssistant) => {
-  let domains = computeActionDomains(hass, {});
-  let conditionDomains = computeConditionDomains(hass);
+  let domains = computeActionDomains(hass, { include: ['*'] });
+  let conditionDomains = computeConditionDomains(hass, { include: ['*'] });
   conditionDomains = conditionDomains.filter(e => !domains.map(f => f.key).includes(e.key));
   return [...domains, ...conditionDomains];
 };
 
 const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
-  const entities = Object.keys(hass.states).filter(e => computeDomain(e) == domain);
 
-  let entityList: listItem[] = entities.map(e => Object({
-    key: e,
-    name: friendlyName(e, hass.states[e].attributes),
-    description: "",
-    icon: computeEntityIcon(e, hass)
-  }));
+  if (['script', 'notify'].includes(domain)) {
+    const entities = Object.keys(hass.services[domain]);
 
-  return entityList;
+    let entityList: listItem[] = entities.map(e => Object({
+      key: `${domain}.${e}`,
+      name: hass.states[`${domain}.${e}`] ? friendlyName(`${domain}.${e}`, hass.states[`${domain}.${e}`]?.attributes) : hass.services[domain][e].name,
+      description: "",
+      icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, hass) : domainIcon(domain)
+    }));
+
+    return entityList;
+  }
+  else {
+    const entities = Object.keys(hass.states).filter(e => computeDomain(e) == domain);
+
+    let entityList: listItem[] = entities.map(e => Object({
+      key: e,
+      name: friendlyName(e, hass.states[e]?.attributes),
+      description: "",
+      icon: computeEntityIcon(e, hass)
+    }));
+
+    return entityList;
+  }
 
 }
 
@@ -281,6 +297,7 @@ export class DialogSelectEntities extends LitElement {
 
   _handleDomainClick(domain: string) {
     this.selectedDomain = domain;
+    this._clearSearch();
   }
 
   _clearDomain() {

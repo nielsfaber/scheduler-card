@@ -71,6 +71,14 @@ export const validateConfig = (config: any) => {
     errors.push(`'customize' must be a struct`);
   }
 
+  if (hasKey(config, 'tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
+    errors.push(`'tags' must be a string or list of strings`);
+  }
+
+  if (hasKey(config, 'exclude_tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
+    errors.push(`'exclude_tags' must be a string or list of strings`);
+  }
+
   if (errors.length) {
     throw new Error(
       `Invalid configuration provided (${errors.length} error${errors.length > 1 ? 's' : ''}): ${errors.join(', ')}.`

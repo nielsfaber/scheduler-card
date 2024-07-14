@@ -1,17 +1,16 @@
-import { Action } from "../../types";
+import { Action, CustomConfig } from "../../types";
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { localize } from "../../localize/localize";
 import { actionConfig } from "../actions/action_config";
 import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 
+export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false) => {
+  const config = actionConfig(action, customize);
 
-export const formatActionDisplay = (action: Action, hass: HomeAssistant, formatShort = false) => {
+  let actionDisplay = action.name || '';
 
-  const config = actionConfig(action.service);
-  let actionDisplay = '';
-
-  if (config?.translation_key) {
+  if (config?.translation_key && !actionDisplay) {
     const translationKey = Array.isArray(config.translation_key)
       ? config.translation_key.filter(e => {
         const sections = e.split(".").slice(4);
@@ -24,6 +23,7 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, formatS
 
     let attributes = formatSelectorDisplay(action, hass);
     actionDisplay = localize(translationKey, hass, Object.keys(attributes).map(e => `{${e}}`), Object.values(attributes));
+
     if (formatShort) {
       if (Object.keys(attributes).length > 1) {
         const sortAttributes = (fieldA: string, fieldB: string) => {
@@ -36,17 +36,16 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, formatS
         attributes = Object.fromEntries(
           Object.entries(attributes).sort(([a,], [b,]) => sortAttributes(a, b))
         )
+        return Object.values(attributes).shift();
       }
-      return Object.values(attributes).shift();
     }
   }
   else {
     const domain = computeDomain(action.service);
     const service = computeEntity(action.service);
-
-    actionDisplay = hass.localize(`component.${domain}.services.${service}.name`) ||
-      hass.services[domain][service].name ||
-      service.replace(/_/g, ' ');
+    if (!actionDisplay) actionDisplay = hass.localize(`component.${domain}.services.${service}.name`);
+    if (!actionDisplay && Object.keys(hass.services[domain] || {}).includes(service)) actionDisplay = hass.services[domain][service].name || '';
+    if (!actionDisplay) actionDisplay = service.replace(/_/g, ' ');
   }
 
   return actionDisplay;

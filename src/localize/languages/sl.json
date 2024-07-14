@@ -116,9 +116,15 @@
         "title": "Ali želite odstraniti entiteto?",
         "description": "Ali ste prepričani, da želite odstraniti to entiteto?"
       },
-      "confirm_migrate": {
-        "title": "Spremenite urnik",
-        "description": "Nekatere nastavitve bodo s tem dejanjem izgubljene. Želite nadaljevati?"
+      "weekday_picker": {
+        "title": "Repeated days for schedule",
+        "choose": "Choose..."
+      },
+      "entity_picker": {
+        "title": "Choose entities"
+      },
+      "action_picker": {
+        "title": "Choose action"
       }
     },
     "panel": {
@@ -134,31 +140,43 @@
         "hide_excluded": "skrij izločene predmete",
         "additional_tasks": "še {number}{if number is 1} opravilo {else} opravil"
       },
-      "entity_picker": {
-        "no_groups_defined": "Ni definiranih skupin",
-        "no_group_selected": "Najprej izberite skupino",
-        "no_entities_for_group": "V tej skupini ni entitet",
-        "no_entity_selected": "Najprej izberite entiteto",
-        "no_actions_for_entity": "Za to entiteto ni akcij",
-        "make_scheme": "izdelaj shemo",
-        "multiple": "Večkratno"
-      },
-      "time_picker": {
-        "no_timeslot_selected": "Najprej izberi časovni okvir",
-        "time_scheme": "Shema",
-        "time_input_mode": "Način časovnega nadzora"
-      },
-      "conditions": {
-        "equal_to": "je enako",
-        "unequal_to": "ni enako",
-        "all": "vse",
-        "any": "karkoli",
-        "no_conditions_defined": "Ni definiranih pogojev",
-        "track_conditions": "Ponovno preglej ko se pogoji spremenijo"
+      "editor": {
+        "repeated_days": "Repeated days",
+        "start_time": "Start time",
+        "stop_time": "End time",
+        "action": "Action",
+        "add_action": "Add action",
+        "select_timeslot": "Najprej izberi časovni okvir",
+        "validation_errors": {
+          "overlapping_time": "Schedule has overlapping timeslots",
+          "missing_target_entity": "One or more actions are missing a target entity",
+          "missing_service_parameter": "One or more actions are missing a required setting",
+          "missing_action": "Schedule has no actions"
+        }
       },
       "options": {
+        "conditions": {
+          "header": "Conditions",
+          "add_condition": "Add condition",
+          "types": {
+            "equal_to": "{entity} is equal to {value}",
+            "unequal_to": "{entity} is unequal to {value}",
+            "above": "{entity} is above {value}",
+            "below": "{entity} is below {value}"
+          },
+          "options": {
+            "logic_and": "All conditions must be true",
+            "logic_or": "Any condition must be true",
+            "track_changes": "Ponovno preglej ko se pogoji spremenijo"
+          }
+        },
+        "period": {
+          "header": "Perioda",
+          "start_date": "From",
+          "end_date": "To"
+        },
         "repeat_type": "obnašanje, ko končaš",
-        "period": "perioda"
+        "tags": "Tags"
       },
       "card_editor": {
         "tabs": {
