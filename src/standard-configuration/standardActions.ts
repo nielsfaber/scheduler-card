@@ -8,6 +8,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { levelVariable } from '../data/variables/level_variable';
 import { listVariable } from '../data/variables/list_variable';
 import { textVariable } from '../data/variables/text_variable';
+import { timeVariable } from '../data/variables/time_variable';
 import { actionName } from './action_name';
 import { actionIcon } from './action_icons';
 import { getVariableName } from './variable_name';
@@ -124,6 +125,8 @@ const parseActionVariable = (
     return listVariable(config);
   } else if ('min' in config && isDefined(config.min) && 'max' in config && isDefined(config.max)) {
     return levelVariable(config);
+  } else if ('enable_seconds' in config && isDefined(config.enable_seconds)) {
+    return timeVariable(config);
   } else {
     return textVariable(config);
   }

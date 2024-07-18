@@ -105,6 +105,9 @@ const actionNamesList: Record<string, Record<string, string | actionNameTemplate
     turn_on: 'ui.card.vacuum.actions.turn_on',
     turn_off: 'ui.card.vacuum.actions.turn_off',
   },
+  time: {
+    set_value: 'services.time.set_value',
+  },
   vacuum: {
     turn_on: 'ui.card.vacuum.actions.turn_on',
     start: 'ui.card.vacuum.start_cleaning',
