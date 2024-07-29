@@ -62,6 +62,7 @@ export interface NumberSelector {
     mode?: "box" | "slider";
     unit_of_measurement?: string;
     optional?: boolean;
+    scale_factor?: number;
   } | null;
 }
 

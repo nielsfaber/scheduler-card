@@ -5,6 +5,8 @@ import { computeActionIcon } from "../data/format/compute_action_icon";
 import { HomeAssistant } from "../lib/types";
 import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
 
+import './scheduler-relative-time';
+
 @customElement("schedule-item-row")
 export class ScheduleItemRow extends LitElement {
 
@@ -15,12 +17,13 @@ export class ScheduleItemRow extends LitElement {
 
   render() {
     const stateObj = this.hass.states[this.schedule.entity_id!];
+    if (!stateObj) return html``;
     const disabled = stateObj.state == 'off';
-    const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries![0]].actions[0];
+    const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
     return html`
       <ha-icon
-        icon="${computeActionIcon(nextAction, this.hass)}"
+        icon="${computeActionIcon(nextAction, this.config.customize)}"
       >
       </ha-icon>
 
@@ -110,6 +113,23 @@ export class ScheduleItemRow extends LitElement {
         --secondary-text-color: var(--disabled-text-color);
         --state-icon-color: var(--disabled-text-color);
         color: var(--disabled-text-color);
+      }
+      div.tags {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      span.tag {
+        height: 28px;
+        border-radius: 14px;
+        background: rgba(var(--rgb-primary-color), 0.40);
+        color: var(--primary-text-color);
+        line-height: 1.25rem;
+        font-size: 0.875rem;
+        padding: 0px 12px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
       }
     `;
   }

@@ -1,5 +1,5 @@
 import { mdiArrowLeft, mdiArrowRight, mdiClose, mdiCog, mdiDotsVertical, mdiTuneVariant, mdiWrench, mdiWrenchOutline } from "@mdi/js";
-import { LitElement, html } from "lit";
+import { LitElement, PropertyValueMap, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { CardConfig, Schedule } from "../types";
 import { EditorDialogStyles } from "../card.styles";
@@ -94,6 +94,7 @@ export class DialogSchedulerEditor extends LitElement {
             .config=${this._params.cardConfig}
             .schedule=${this.schedule}
             .large=${this.large}
+            @change=${this._updateSchedule}
           >
           </scheduler-main-panel>
             `
@@ -102,6 +103,7 @@ export class DialogSchedulerEditor extends LitElement {
             .hass=${this.hass}
             .config=${this._params.cardConfig}
             .schedule=${this.schedule}
+            @change=${this._updateSchedule}
           >
           </scheduler-options-panel>
         `
@@ -119,10 +121,13 @@ export class DialogSchedulerEditor extends LitElement {
         </div>
       </ha-dialog>
     `;
-
   }
 
-
+  _updateSchedule(ev: CustomEvent) {
+    let schedule = ev.detail.schedule;
+    if (!schedule) return;
+    this.schedule = schedule;
+  }
 
   private _toggleOptionsPanel() {
     this._panel = this._panel == "main" ? "options" : "main";

@@ -46,7 +46,6 @@ export class SchedulerTimePicker extends LitElement {
           <div class="input">
         <ha-textfield
           id="hour"
-          type="number"
           inputmode="numeric"
           .value=${this.formatHours()}
           label=""
@@ -62,6 +61,13 @@ export class SchedulerTimePicker extends LitElement {
           .disabled=${this.disabled}
           suffix=":"
           class="hasSuffix"
+          .validityTransform=${(value: any, _nativeValidity: any) => {
+        const valid = value.match(/[\+|\-]?[0-9]+/) !== null;
+        return {
+          valid: valid,
+          customError: !valid
+        }
+      }}
         >
         </ha-textfield>
         <ha-textfield
@@ -234,6 +240,7 @@ export class SchedulerTimePicker extends LitElement {
     const isNegative = this.hours < 0 || this.minutes < 0;
     let hours = this.useAmPm && this.mode == TimeMode.Fixed ? convertTo12Hour(this.hours).hours : this.hours;
     if (isNegative) return '-' + Math.abs(hours).toFixed();
+    else if (this.mode != TimeMode.Fixed) return '+' + Math.abs(hours).toFixed();
     else return hours.toFixed();
   }
 

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/nielsfaber/scheduler-card#readme",
   "dependencies": {
+    "@formatjs/intl-utils": "^3.8.4",
     "@mdi/js": "^7.4.47",
     "fecha": "^4.2.3",
     "home-assistant-js-websocket": "^8.0.1",

@@ -15,10 +15,10 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
 
     switch (item) {
       case DisplayItem.Action:
-        const action = schedule.entries[0].slots[schedule.next_entries![0]].actions[0];
+        const action = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
         return formatActionDisplay(action, hass, customize);
       case DisplayItem.Days:
-        return schedule.entries[0].weekdays.map(e => computeDayDisplay(e, hass)).join(', ');
+        return schedule.entries[0].weekdays.map(e => computeDayDisplay(e, 'long', hass)).join(', ');
       case DisplayItem.Name:
         return schedule.name || '';
       case DisplayItem.AdditionalTasks:
@@ -27,24 +27,27 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
           localize('ui.panel.overview.additional_tasks', hass, '{number}', String(schedule.entries[0].slots.length - 1))
           : '';
       case DisplayItem.Entity:
-        const nextAction = schedule.entries[0].slots[schedule.next_entries![0]].actions[0];
+        const nextAction = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
         const entityIds = [nextAction.target?.entity_id || []].flat();
         const entityDisplay = entityIds.map(e => friendlyName(e, hass.states[e]?.attributes)).join(", ");
         return entityDisplay;
 
       case DisplayItem.RelativeTime:
-        const ts = schedule.timestamps![schedule.next_entries![0]];
+        const ts = schedule.timestamps![schedule.next_entries[0] || 0];
         return html`
-          <ha-relative-time
+          <scheduler-relative-time
             .hass=${hass}
-            .datetime=${ts}
+            .datetime=${new Date(ts)}
           >
-          </ha-relative-time>`;
+          </scheduler-relative-time>`;
       case DisplayItem.Tags:
-        return '';
+        return html`
+          <div class="tags">
+            ${schedule.tags?.map(e => html`<span class="tag">${e}</span>`)}
+          </div>`;
       case DisplayItem.Time:
-        const slot = schedule.entries[0].slots[schedule.next_entries[0]];
-        return computeTimeDisplay(slot.start, slot.stop);
+        const slot = schedule.entries[0].slots[schedule.next_entries[0] || 0];
+        return computeTimeDisplay(slot.start, slot.stop, hass);
       case DisplayItem.Default:
         const nameDisplay = computeDisplay(DisplayItem.Name) || computeDisplay(DisplayItem.Entity);
         return nameDisplay

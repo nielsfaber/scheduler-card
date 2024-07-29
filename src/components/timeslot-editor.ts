@@ -128,7 +128,7 @@ export class SchedulerTimeslotEditor extends LitElement {
           ? actionText && (slotWidth > textWidth / 3 || slotWidth > 50) && slotWidth > 30
             ? html`<span style="margin-left: ${leftMargin}px; margin-right: ${rightMargin}px">${actionText}</span>`
             : slotWidth > 16
-              ? html`<ha-icon icon="${computeActionIcon(slot.actions[0], this.hass)}"></ha-icon>`
+              ? html`<ha-icon icon="${computeActionIcon(slot.actions[0], this.config.customize)}"></ha-icon>`
               : ''
           : ''
         }
@@ -205,7 +205,7 @@ export class SchedulerTimeslotEditor extends LitElement {
 
     let ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 1].stop || this.schedule!.slots[slotIdx + 1].start, this.hass) || SEC_PER_DAY) - 15 * 60;
     if (this.schedule!.slots[slotIdx + 1].stop === undefined) {
-      ts_max = computeTimestamp(this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start, this.hass) - 15 * 60;
+      ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start, this.hass) || SEC_PER_DAY) - 15 * 60;
     }
 
     const timeInputMode = parseTimeString(this.schedule!.slots[slotIdx + 1].start).mode;

@@ -1,6 +1,7 @@
 import { HomeAssistant } from "../lib/types";
 import { localize } from "../localize/localize";
 import { TWeekday } from "../types";
+import { computeDayDisplay } from "./format/compute_days_display";
 
 const supportLocaleString = () => {
   try {
@@ -62,32 +63,6 @@ const weekdayList = [
 // 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday.
 
 export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' | 'long', hass: HomeAssistant) => {
-
-  const computeDayDisplay = (weekday: TWeekday) => {
-    switch (weekday) {
-      case TWeekday.Daily:
-        return localize(`ui.components.date.day_types_${formatType}.daily`, hass);
-      case TWeekday.Workday:
-        return localize(`ui.components.date.day_types_${formatType}.workdays`, hass);
-      case TWeekday.Weekend:
-        return localize(`ui.components.date.day_types_${formatType}.weekend`, hass);
-      case TWeekday.Monday:
-      case TWeekday.Tuesday:
-      case TWeekday.Wednesday:
-      case TWeekday.Thursday:
-      case TWeekday.Friday:
-      case TWeekday.Saturday:
-      case TWeekday.Sunday:
-        let date = new Date(2017, 1, 26);
-        let dayNumber = weekdayList.findIndex(e => e == weekday);
-        if (!supportLocaleString()) return weekdayList[dayNumber];
-        date.setDate(date.getDate() + dayNumber);
-        return date.toLocaleDateString(hass.locale.language, { weekday: formatType });
-      default:
-        return '';
-    }
-  }
-
   const startOfWeek = computeStartOfWeek(hass);
   const rotateArray = (arr: any[], k: number) => arr.concat(arr).slice(k, k + arr.length);
   let weekdayListOrdered = rotateArray(weekdayList, startOfWeek);
@@ -106,7 +81,7 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
 
     if (weekdayNums.length == 6) {
       const missing = [0, 1, 2, 3, 4, 5, 6].filter(e => !weekdayNums.includes(e));
-      const missingDay = computeDayDisplay(weekdayListOrdered[missing.pop()!]);
+      const missingDay = computeDayDisplay(weekdayListOrdered[missing.pop()!], formatType, hass);
       return localize(
         'ui.components.date.repeated_days_except',
         hass,
@@ -115,7 +90,7 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
       )
     }
 
-    const dayNames = weekdayNums.map(e => computeDayDisplay(weekdayListOrdered[e]));
+    const dayNames = weekdayNums.map(e => computeDayDisplay(weekdayListOrdered[e], formatType, hass));
 
     if (weekdayNums.length >= 3 && longestSequence >= 3) {
       const start = seq.reduce((obj, e, i) => (e == longestSequence ? i : obj), 0);
@@ -142,5 +117,5 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
       : localize('ui.components.date.repeated_days', hass, '{days}', daysString);
   };
 
-  return weekdays.map(computeDayDisplay).join(', ');
+  return weekdays.map(e => computeDayDisplay(e, formatType, hass)).join(', ');
 }

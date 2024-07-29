@@ -8,7 +8,9 @@ export type ActionConfig = {
       optional?: boolean
     }
   },
-  target?: object
+  target?: object,
+  name?: string,
+  icon?: string
 }
 
 export const supportedActions: Record<string, Record<string, ActionConfig>> = {

@@ -52,7 +52,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
     icon: domainIcon(domain),
     action: <Action>{
       service: e.includes('.') ? e : `${domain}.${e}`,
-      service_data: {}
+      service_data: {},
+      target: hass.services[domain][e].target ? {} : undefined
     }
   }));
 
@@ -69,6 +70,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
       action: <Action>{
         service: action.service.includes('.') ? action.service : `${domain}.${action.service}`,
         service_data: action.service_data || {},
+        target: action.target ? {} : undefined,
         name: action.name,
         icon: action.icon
       }

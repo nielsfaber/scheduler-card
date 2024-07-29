@@ -110,18 +110,13 @@ const parseWeekdays = (input: WeekdayType): TWeekday => {
 
 export const convertLegacySchedule = (input: LegacySchedule): Schedule & { entity_id: string } => {
   return <Schedule & { entity_id: string }>{
+    ...Object.fromEntries(Object.entries(input).filter(([key]) => !['slots', 'weekdays'].includes(key))),
     entries: [
       {
         slots: input.timeslots.map(parseTimeslot),
         weekdays: input.weekdays.map(parseWeekdays),
       }
-    ],
-    entity_id: input.entity_id,
-    next_entries: input.next_entries,
-    timestamps: input.timestamps,
-    tags: input.tags,
-    enabled: input.enabled,
-    schedule_id: input.schedule_id
+    ]
   };
 }
 

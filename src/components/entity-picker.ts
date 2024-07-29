@@ -6,7 +6,7 @@ import { sortByName } from "../lib/sort";
 import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
-import { mdiExpandAll, mdiMinus, mdiPlus, mdiUnfoldLessHorizontal, mdiUnfoldLessVertical, mdiUnfoldMoreHorizontal, mdiUnfoldMoreVertical } from "@mdi/js";
+import { mdiUnfoldLessHorizontal, mdiUnfoldMoreHorizontal } from "@mdi/js";
 
 interface TRowItem {
   entity_id: string;
@@ -60,7 +60,6 @@ export class SchedulerEntityPicker extends LitElement {
         @filter-changed=${this._filterChanged}
         @value-changed=${this._valueChanged}
         .value=${this.value || ""}
-        allow-custom-value
       >
       </ha-combo-box>
       </div>
@@ -74,12 +73,12 @@ export class SchedulerEntityPicker extends LitElement {
       const stateObj = this.hass.states[entityId];
       return html`
         <div class="chip">
-          <ha-state-icon
-            .stateObj=${stateObj}
-            .hass=${this.hass}
-          ></ha-state-icon>
+          ${stateObj
+          ? html`<ha-state-icon .stateObj=${stateObj} .hass=${this.hass} class="icon"></ha-state-icon>`
+          : html`<ha-icon icon="mdi:help-circle-outline" class="icon"></ha-icon>`
+        }
           <span class="label">${friendlyName(entityId, this.hass.states[entityId]?.attributes)}</span>
-          <ha-icon icon="mdi:close" @click=${() => this._removeValue(entityId)} ></ha-icon>
+          <ha-icon icon="mdi:close" @click=${() => this._removeValue(entityId)} class="marker"></ha-icon>
         </div>
       `;
     }
@@ -94,11 +93,10 @@ export class SchedulerEntityPicker extends LitElement {
   rowRenderer = (item: HassEntityWithCachedName) =>
     html`
       <mwc-list-item graphic="avatar" twoline>
-        <state-badge
-          slot="graphic"
-          .stateObj=${item}
-          .hass=${this.hass}
-        ></state-badge>
+        ${item.state
+        ? html`<state-badge slot="graphic" .stateObj=${item} .hass=${this.hass} color="var(--icon-primary-color)"></state-badge>`
+        : html`<ha-icon slot="graphic" icon="mdi:help-circle-outline"></ha-icon>`
+      }
         <span>${item.friendly_name}</span>
         <span slot="secondary">${item.entity_id}</span>
       </mwc-list-item>
@@ -145,7 +143,7 @@ export class SchedulerEntityPicker extends LitElement {
       entityIds = [...entityIds, this.initialValue];
     }
 
-    let entities: HassEntityWithCachedName[] = entityIds.map(e => Object({ ...this.hass.states[e], friendly_name: friendlyName(e, this.hass.states[e]?.attributes) }));
+    let entities: HassEntityWithCachedName[] = entityIds.map(e => Object({ ...this.hass.states[e], entity_id: e, friendly_name: friendlyName(e, this.hass.states[e]?.attributes) }));
     entities.sort((a, b) => sortByName(a.friendly_name, b.friendly_name));
     return entities;
   }
@@ -170,6 +168,13 @@ export class SchedulerEntityPicker extends LitElement {
   }
 
   static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+    }
+    div.chips {
+      flex: 1 0 auto;
+    }
     div.chip {
       height: 32px;
       border-radius: 16px;
@@ -183,7 +188,7 @@ export class SchedulerEntityPicker extends LitElement {
       box-sizing: border-box;
       margin: 4px;
     }
-    div.chip ha-state-icon {
+    div.chip .icon {
         vertical-align: middle;
         outline: none;
         display: flex;
@@ -198,7 +203,7 @@ export class SchedulerEntityPicker extends LitElement {
     div.chip .label {
         margin: 0px 4px;
     }
-    div.chip ha-icon {
+    div.chip .marker {
         cursor: pointer;
         background: var(--secondary-text-color);
         border-radius: 50%;

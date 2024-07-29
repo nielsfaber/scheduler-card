@@ -9,7 +9,8 @@ export const compareActions = (actionA: Action, actionB: Action) => {
   const serviceDataA = actionA.service_data || {};
   const serviceDataB = actionB.service_data || {};
 
-  const serviceArgs = [...new Set([...Object.keys(serviceDataA), ...Object.keys(serviceDataB)])];
+  let serviceArgs = [...new Set([...Object.keys(serviceDataA), ...Object.keys(serviceDataB)])];
+  serviceArgs = serviceArgs.filter(e => e != 'entity_id');
 
   if (!serviceArgs.every(key => {
     if (!Object.keys(serviceDataA).includes(key) || !Object.keys(serviceDataB).includes(key)) return false;

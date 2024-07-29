@@ -1,5 +1,5 @@
 import { mdiChevronLeft, mdiChevronRight, mdiClose, mdiDelete, mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
-import { CSSResultGroup, LitElement, css, html } from "lit";
+import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, TimeMode, Timeslot } from "../types";
 import { actionConfig } from "../data/actions/action_config";
@@ -47,6 +47,15 @@ export class SchedulerMainPanel extends LitElement {
 
   @property({ type: Boolean })
   large = false;
+
+  shouldUpdate(changedProps: PropertyValues): boolean {
+    if (changedProps.get('schedule')) {
+      this.dispatchEvent(
+        new CustomEvent('change', { detail: { schedule: this.schedule } })
+      );
+    }
+    return true;
+  }
 
   render() {
     return html`
@@ -197,7 +206,7 @@ export class SchedulerMainPanel extends LitElement {
         ?disabled=${true}
       >
         <span slot="header">
-          <ha-icon slot="icon" icon="${computeActionIcon(action, this.hass)}"></ha-icon>
+          <ha-icon slot="icon" icon="${computeActionIcon(action, this.config.customize)}"></ha-icon>
           ${capitalizeFirstLetter(heading)}
         </span>
         <ha-icon-button slot="contextMenu" .path=${mdiDelete} @click=${this._removeAction}></ha-icon-button>
@@ -369,7 +378,7 @@ export class SchedulerMainPanel extends LitElement {
         });
       });
     });
-
+    filteredDomains = [...new Set(filteredDomains)];
 
     await new Promise<Action | null>(resolve => {
       const params: DialogSelectActionParams = {

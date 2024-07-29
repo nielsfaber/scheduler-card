@@ -46,11 +46,7 @@ class SettingsRow extends LitElement {
       padding-right: 16x;
       padding-inline-end: 16px;
       overflow: hidden;
-      display: var(--layout-vertical_-_display);
-      flex-direction: var(--layout-vertical_-_flex-direction);
-      justify-content: var(--layout-center-justified_-_justify-content);
-      flex: var(--layout-flex_-_flex);
-      flex-basis: var(--layout-flex_-_flex-basis);
+      align-content: center;
     }
     .body > * {
       overflow: hidden;
@@ -58,8 +54,7 @@ class SettingsRow extends LitElement {
       white-space: nowrap;
     }
     .content {
-      display: contents;
-      display: var(--settings-row-content-display, flex);
+      display: flex;
       justify-content: flex-end;
       flex: 1;
       padding: 8px 0;
@@ -68,7 +63,8 @@ class SettingsRow extends LitElement {
       width: var(--settings-row-content-width);
     }
     .prefix-wrap {
-      display: contents;
+      display: flex;
+      flex-direction: row;
     }
     .prefix {
       display: flex;
@@ -78,6 +74,20 @@ class SettingsRow extends LitElement {
       display: flex;
       align-items: center;
     }
+    @media all and (max-width: 450px) {
+      :host {
+        align-items: normal;
+        flex-direction: column;
+        border-top: 1px solid var(--divider-color);
+        padding: 8px 16px;
+      }
+      .prefix-wrap {
+        display: flex;
+        align-items: center;
+      }
+      .content ::slotted(*) {
+        width: 100%;
+      }
     `;
   }
 }

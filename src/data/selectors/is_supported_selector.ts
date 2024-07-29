@@ -14,6 +14,11 @@ export const isSupportedSelector = (action: Action, field: string, hass: HomeAss
 
   if (selectorConfig(service, entityId, field, hass, customize) === null) return false;
 
+  if (Object.keys(action.service_data || {}).includes(field)) {
+    //allow modifying a previously set parameter 
+    return true;
+  }
+
   if (fieldConfig.supported_features) {
     const entityIds = [entityId || []].flat();
     if (!entityIds.every(e => {

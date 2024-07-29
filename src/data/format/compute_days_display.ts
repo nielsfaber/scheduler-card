@@ -13,14 +13,36 @@ const supportLocaleString = () => {
 
 const weekdayList = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-export const computeDayDisplay = (weekday: TWeekday, hass: HomeAssistant) => {
+export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 'long', hass: HomeAssistant) => {
+  let weekday: TWeekday;
+
+  if (input instanceof Date) {
+
+    console.log('------');
+    let day = input.getDay();
+    console.log(day);
+    weekday = TWeekday.Friday;
+
+    if (supportLocaleString()) {
+      return input.toLocaleDateString(hass.locale.language, { weekday: formatType });
+    }
+    else {
+      let day = input.getDay();
+      weekday = TWeekday.Friday;
+    }
+  }
+  else {
+    weekday = input;
+  }
+
+
   switch (weekday) {
     case TWeekday.Daily:
-      return localize('ui.components.date.day_types_long.daily', hass);
+      return localize(`ui.components.date.day_types_${formatType}.daily`, hass);
     case TWeekday.Workday:
-      return localize('ui.components.date.day_types_long.workdays', hass);
+      return localize(`ui.components.date.day_types_${formatType}.workdays`, hass);
     case TWeekday.Weekend:
-      return localize('ui.components.date.day_types_long.weekend', hass);
+      return localize(`ui.components.date.day_types_${formatType}.weekend`, hass);
     case TWeekday.Monday:
     case TWeekday.Tuesday:
     case TWeekday.Wednesday:
@@ -32,7 +54,7 @@ export const computeDayDisplay = (weekday: TWeekday, hass: HomeAssistant) => {
       let dayNumber = weekdayList.findIndex(e => e == weekday);
       if (!supportLocaleString()) return weekdayList[dayNumber];
       date.setDate(date.getDate() + dayNumber);
-      return date.toLocaleDateString(hass.locale.language, { weekday: 'long' });
+      return date.toLocaleDateString(hass.locale.language, { weekday: formatType });
     default:
       return '';
   }

@@ -36,9 +36,14 @@ export const actionConfig = (action: Action, customize?: CustomConfig) => {
     actionConfig.forEach(customConfig => {
       const match = compareActions(customConfig, action);
       if (!match) return;
-      Object.keys(customConfig.variables).forEach(key => {
+      Object.keys(customConfig.variables || {}).forEach(key => {
         config = { ...config, fields: { ...config.fields || {}, [key]: {} } };
       });
+      config = {
+        ...config,
+        name: customConfig.name || config.name,
+        icon: customConfig.icon || config.icon,
+      };
     })
   }
 

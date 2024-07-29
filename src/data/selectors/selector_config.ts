@@ -57,7 +57,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'select.option':
       return listSelector({ options: attr.options });
     case 'light.brightness':
-      return numericSelector({ min: 0, max: 255, step: 1 });
+      return numericSelector({ min: 0, max: 100, step: 1, unit_of_measurement: '%', scale_factor: 2.55 });
     case 'media_player.source':
     case 'notify.title':
       return <StringSelector>{ text: {} };
@@ -103,7 +103,7 @@ const selectorConfigFromCustomConfig = (service: string, entityId: string, field
 
 
 const mergeSelectors = (input: (Selector | null)[]) => {
-  const isUnique = (input: any[]) => new Set(input).size == input.length;
+  const isUnique = (input: any[]) => new Set(input).size == 1;
 
   if (input.some(e => e === null) || !input.length) return null;
 
@@ -127,17 +127,20 @@ const mergeSelectors = (input: (Selector | null)[]) => {
     const modeList = (input as NumberSelector[]).map(e => e.number!.mode).filter(e => e !== undefined) as string[];
     const uomList = (input as NumberSelector[]).map(e => e.number!.unit_of_measurement).filter(e => e !== undefined) as string[];
     const optionalList = (input as NumberSelector[]).map(e => e.number!.optional);
+    const scaleFactorList = (input as NumberSelector[]).map(e => e.number!.scale_factor).filter(e => e !== undefined) as number[];
 
-    return <NumberSelector>{
+    let res = <NumberSelector>{
       number: {
         min: minList.length ? Math.max(...minList) : undefined,
         max: maxList.length ? Math.min(...maxList) : undefined,
         step: stepList.length ? Math.max(...stepList) : undefined,
         mode: modeList.length && isUnique(modeList) ? modeList[0] : undefined,
         unit_of_measurement: uomList.length && isUnique(uomList) ? uomList[0] : undefined,
-        optional: optionalList.every(e => e)
+        optional: optionalList.every(e => e),
+        scale_factor: scaleFactorList.length && isUnique(scaleFactorList) ? scaleFactorList[0] : undefined
       }
     };
+    return res;
   }
   else if (input.every(e => e!.hasOwnProperty('boolean'))) {
     return <BooleanSelector>{

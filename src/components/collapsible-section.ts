@@ -93,7 +93,6 @@ class CollapsibleSection extends LitElement {
         margin: 8px 0px;
         position: relative;
       }
-
       .header {
         display: flex;
         width: 100%;
@@ -105,10 +104,13 @@ class CollapsibleSection extends LitElement {
       :host([disabled]) .header {
         cursor: default;
       }
-
       .header .title {
         font-weight: 600;
         padding: 0px 8px;
+      }
+      .header ::slotted(span) {
+        display: flex;
+        margin-right: 32px;
       }
       .header.focused {
         background: var(--input-fill-color);
@@ -142,6 +144,11 @@ class CollapsibleSection extends LitElement {
       }
       .container.expanded {
         height: auto;
+      }
+      @media all and (max-width: 450px) {
+        .container {
+          padding: 0px;
+        }
       }
     `;
   }

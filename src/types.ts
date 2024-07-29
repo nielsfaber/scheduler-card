@@ -34,7 +34,7 @@ export interface Schedule {
   entries: ScheduleEntry[];
   entity_id?: string;
   schedule_id?: string;
-  next_entries: number[];
+  next_entries: number[] | [];
   timestamps: string[];
   start_date?: string;
   end_date?: string;
@@ -50,8 +50,6 @@ export interface ScheduleEntry {
 }
 
 export interface Action {
-  name?: string;
-  icon?: string;
   service: string;
   service_data: Record<string, any>;
   target?: {

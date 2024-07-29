@@ -43,7 +43,8 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   firstUpdated() {
     (async () => await loadHaForm())();
-    //this._addClick(new Event('test'));
+    const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
+    el._loadFragmentTranslations(this.hass.language, 'config');
   }
 
   protected willUpdate(): void {
@@ -64,19 +65,16 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
     const oldConfig = changedProps.get('_config') as CardConfig | undefined;
 
-    // if (oldHass && changedProps.size == 1 && !this.translationsLoaded) {
-    //   if (!oldHass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')) {
-    //     this.translationsLoaded = true;
-    //   }
-    // }
-
     if (oldConfig && this._config) {
       const changedKeys = Object.keys(oldConfig).filter(e => oldConfig[e] !== this._config![e]);
       if (changedKeys.some(e => ['tags', 'discover_existing', 'sort_by', 'display_options'].includes(e)))
         (async () => await this.loadSchedules())();
     }
 
-    if (!this.translationsLoaded && this.hass.localize(`component.input_boolean.services.turn_on.name`).length) {
+    if (!this.translationsLoaded
+      && this.hass.localize(`component.input_boolean.services.turn_on.name`).length
+      && this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').length
+    ) {
       this.translationsLoaded = true;
       return true;
     }
@@ -223,7 +221,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
       } else if (!oldSchedule) {
         //add a new schedule and sort the list
         schedules = sortSchedules({ ...schedules, [ev.schedule_id]: schedule }, this._config, this.hass);
-      } else if (oldSchedule.timestamps[oldSchedule.next_entries[0]] == schedule.timestamps[schedule.next_entries[0]]) {
+      } else if (oldSchedule.timestamps[oldSchedule.next_entries[0] || 0] == schedule.timestamps[schedule.next_entries[0] || 0]) {
         //only overwrite the existing schedule
         schedules = { ...schedules, [ev.schedule_id]: schedule };
       } else {

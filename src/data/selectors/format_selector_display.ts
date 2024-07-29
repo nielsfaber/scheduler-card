@@ -16,6 +16,9 @@ export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, custo
 
       if (Object.keys(selector).includes('number') && (selector as NumberSelector).number) {
         const config = (selector as NumberSelector).number;
+        value = Number(value);
+        if (typeof config?.scale_factor === 'number') value = value / config.scale_factor;
+        if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
         if (config?.unit_of_measurement) return [field, `${value}${config.unit_of_measurement}`];
       }
       return [field, value];

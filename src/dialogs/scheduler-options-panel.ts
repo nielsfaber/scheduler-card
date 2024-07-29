@@ -1,4 +1,4 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { CardConfig, Condition, Schedule, ScheduleEntry, TConditionLogicType, TConditionMatchType, TRepeatType, Timeslot } from '../types';
 import { DialogSelectConditionParams } from './dialog-select-condition';
@@ -58,6 +58,15 @@ export class SchedulerOptionsPanel extends LitElement {
       ...storedTags,
       ...configTags.filter(e => !storedTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),
     ];
+  }
+
+  shouldUpdate(changedProps: PropertyValues): boolean {
+    if (changedProps.get('schedule')) {
+      this.dispatchEvent(
+        new CustomEvent('change', { detail: { schedule: this.schedule } })
+      );
+    }
+    return true;
   }
 
   render() {
@@ -493,7 +502,7 @@ export class SchedulerOptionsPanel extends LitElement {
 
   updateName(ev: InputEvent) {
     const value = (ev.target as HTMLInputElement).value;
-    this.schedule = { ...this.schedule, name: value };
+    this.schedule = { ...this.schedule, name: value.trim() };
   }
 
   tagsUpdated(ev: CustomEvent) {

@@ -1,6 +1,16 @@
 import { NumberSelector } from "../../lib/selector";
 
-export const numericSelector = (input: { min?: any, max?: any, step?: any, mode?: any, unit_of_measurement?: any, optional?: any }): NumberSelector => {
+type NumericSelectorConfig = {
+  min?: any,
+  max?: any,
+  step?: any,
+  mode?: any,
+  unit_of_measurement?: any,
+  optional?: any,
+  scale_factor?: any
+};
+
+export const numericSelector = (input: NumericSelectorConfig): NumberSelector => {
   let cfg: NumberSelector = {
     number: {}
   };
@@ -17,6 +27,8 @@ export const numericSelector = (input: { min?: any, max?: any, step?: any, mode?
     cfg = { ...cfg, number: { ...cfg.number, unit_of_measurement: input.unit_of_measurement } };
   if (Object.keys(input).includes('optional'))
     cfg = { ...cfg, number: { ...cfg.number, optional: Boolean(input.optional) } };
+  if (Object.keys(input).includes('scale_factor') && !isNaN(Number(input.scale_factor)))
+    cfg = { ...cfg, number: { ...cfg.number, scale_factor: Number(input.scale_factor) } };
 
   return cfg;
 }

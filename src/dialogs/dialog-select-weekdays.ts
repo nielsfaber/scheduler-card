@@ -137,7 +137,7 @@ export class DialogSelectWeekdays extends LitElement {
             ${capitalizeFirstLetter(localize('ui.dialog.weekday_picker.choose', this.hass))}
             ${isSelectedOption(key) ? html`<span class="badge">${this.selectedWeekdays.length}</span>` : ''}
             `
-          : capitalizeFirstLetter(computeDayDisplay(key as TWeekday, this.hass))
+          : capitalizeFirstLetter(computeDayDisplay(key as TWeekday, 'long', this.hass))
         }
 
           ${key == WeekdayTypeCustom

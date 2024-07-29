@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import { NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
@@ -36,6 +36,9 @@ export class ComboSelector extends LitElement {
 
       const filteredItems = (): SelectOption[] => {
         let options: (string | SelectOption)[] = [...config?.options];
+        let selectedValue = [this.value || []].flat().map(String);
+        options = [...options, ...selectedValue.filter(e => !options.find(f => typeof f === 'object' ? f.value == e : f == e))];
+
         if (Array.isArray(this.value)) options = options.filter(e => typeof e === 'object' ? !values.includes(e.value) : !values.includes(e));
 
         const computeItemLabel = (value: string) => {
@@ -53,12 +56,12 @@ export class ComboSelector extends LitElement {
       }
 
       return html`
+          <div class="select-wrapper">
         ${config.multiple ? html`
           <div class="chips">
           ${renderChips()}
           </div>
-        `
-          : ''}
+        ` : ''}
         <ha-combo-box
           .hass=${this.hass}
           label=""
@@ -72,22 +75,42 @@ export class ComboSelector extends LitElement {
           ?allow-custom-value=${config.custom_value}
         >
         </ha-combo-box>
+        </div>
       `;
     }
     else if ((this.config as NumberSelector).number) {
       const config = (this.config as NumberSelector).number!;
+      let min = config.min || 0;
+      let max = config.max || 255;
+      let value = typeof this.value == 'number' ? this.value : min;
+
+      if (typeof config.scale_factor == 'number') value = parseFloat((value / config.scale_factor).toPrecision(12));
+      if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
+
+      const valueChanged = (ev: Event) => {
+        let value = Number((ev.target as HTMLInputElement).value);
+
+        if (typeof config.scale_factor == 'number')
+          value = value * config.scale_factor;
+
+        if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
+        value = parseFloat(value.toFixed(2));
+
+        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+      }
+
       return html`
         <div class="slider-wrapper">
         <ha-slider
           labeled
-          .min=${config.min}
-          .max=${config.max}
-          .step=${config.step}
-          .value=${this.value || config.min}
-          @change=${this._valueChanged}
+          .min=${min}
+          .max=${max}
+          .step=${config.step || 1}
+          .value=${value}
+          @change=${valueChanged}
           ?disabled=${this.disabled}
         ></ha-slider>
-        <span class="value">${this.value || config.min}${config.unit_of_measurement || ''}</span>
+        <span class="value">${value}${config.unit_of_measurement || ''}</span>
         </div>
       `
     }
@@ -106,18 +129,31 @@ export class ComboSelector extends LitElement {
   }
 
   static styles = css`
+      :host {
+        display: flex;
+        width: 100%;
+      }
       div.slider-wrapper {
         display: flex;
         flex-direction: row;
+        width: 100%;
       }
       div.slider-wrapper > * {
         display: flex;
+      }
+      div.slider-wrapper ha-slider {
+        flex: 1;
       }
       div.slider-wrapper span {
         justify-content: center;
         align-self: center;
         min-width: 45px;
         text-align: end;
+      }
+      div.select-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
       }
       div.chip {
         height: 32px;

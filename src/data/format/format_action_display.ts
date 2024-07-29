@@ -5,21 +5,38 @@ import { actionConfig } from "../actions/action_config";
 import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 
+
+const translationKeyOverlap = (key: string, action: Action): number => {
+
+  const serviceName = computeEntity(action.service);
+  if (key.indexOf(serviceName) != -1) key = key.substring(key.indexOf(serviceName) + serviceName.length + 1);
+
+  return Object.keys(action.service_data).reduce((acc, arg) => {
+    if (key.indexOf(arg) == -1) return acc;
+    let subKey = key.substring(key.indexOf(arg) + arg.length + 1);
+    if (subKey == action.service_data[arg]) return acc + key.length + subKey.length + 1;
+    return acc;
+  }, 0);
+};
+
 export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false) => {
   const config = actionConfig(action, customize);
 
-  let actionDisplay = action.name || '';
+  let actionDisplay = config.name || '';
+
 
   if (config?.translation_key && !actionDisplay) {
-    const translationKey = Array.isArray(config.translation_key)
-      ? config.translation_key.filter(e => {
-        const sections = e.split(".").slice(4);
-        const props = Object.fromEntries(
-          sections.map((el, i) => i % 2 == 0 ? [el, sections[i + 1]] : []).filter(el => el.length)
-        );
-        return Object.keys(props).every(e => Object.keys(action.service_data).includes(e) && action.service_data[e] == props[e]);
-      }).reduce((a, b) => a.length > b.length ? a : b)
-      : config.translation_key;
+    let translationKey: string = "";
+    if (Array.isArray(config.translation_key)) {
+      let translations = config.translation_key;
+      translations.sort((a, b) => {
+        let overlapA = translationKeyOverlap(a, action);
+        let overlapB = translationKeyOverlap(b, action);
+        if (overlapA != overlapB) return overlapB - overlapA;
+        return a.length - b.length;
+      });
+      translationKey = translations[0];
+    } else translationKey = config.translation_key;
 
     let attributes = formatSelectorDisplay(action, hass);
     actionDisplay = localize(translationKey, hass, Object.keys(attributes).map(e => `{${e}}`), Object.values(attributes));
@@ -37,6 +54,9 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
           Object.entries(attributes).sort(([a,], [b,]) => sortAttributes(a, b))
         )
         return Object.values(attributes).shift();
+      }
+      else if (Object.keys(attributes).length) {
+        return Object.values(attributes)[0];
       }
     }
   }
