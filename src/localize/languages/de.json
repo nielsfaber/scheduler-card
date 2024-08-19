@@ -159,6 +159,71 @@
       "options": {
         "repeat_type": "Verhalten nach Abschluß",
         "period": "Zeitraum"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entitäten",
+          "other": "Sonstiges"
+        },
+        "fields": {
+          "title": {
+            "heading": "Titel der Karte",
+            "options": {
+              "standard": "standard",
+              "hidden": "versteckt",
+              "custom": "benutzerdefiniert"
+            },
+            "custom_title": "Benutzerdefinierter Titel"
+          },
+          "discover_existing": {
+            "heading": "Alle Zeitpläne anzeigen",
+            "description": "Hiermit wird der Parameter 'Vorhandenes entdecken' festgelegt. Zuvor erstellte Zeitpläne werden automatisch zur Karte hinzugefügt. "
+          },
+          "time_step": {
+            "heading": "Zeitschritt",
+            "description": "Auflösung (in Minuten) für die Erstellung von Zeitplänen"
+          },
+          "sort_by": {
+            "heading": "Sortieroptionen",
+            "description": "Reihenfolge, in der die Zeitpläne auf der Karte erscheinen",
+            "options": {
+              "relative_time": "Verbleibende Zeit bis zur nächsten Aktion",
+              "title": "Angezeigter Titel des Zeitplans",
+              "state": "Aktive Zeitpläne oben anzeigen"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Angezeigte primäre Info",
+            "description": "Konfigurieren Sie, welche Bezeichnung für Zeitpläne in der Übersicht verwendet werden soll",
+            "options": {
+              "default": "Name des Zeitplans",
+              "entity_action": "Zusammenfassung der Aufgabe"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Angezeigte sekundäre Infos",
+            "description": "Konfigurieren Sie, welche zusätzlichen Eigenschaften in der Übersicht sichtbar sind",
+            "options": {
+              "relative_time": "Verbleibende Zeit bis zur nächsten Aktion",
+              "time": "Konfigurierte Zeit für die nächste Aktion",
+              "days": "Wiederholte Wochentage",
+              "additional_tasks": "Anzahl der zusätzlichen Aufgaben"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Kopfzeilen-Kippschalter anzeigen",
+            "description": "Kippschalter am oberen Rand der Karte anzeigen, um alle Einheiten zu aktivieren/deaktivieren"
+          },
+          "tags": {
+            "heading": "Tags",
+            "description": "Tags verwenden, um Zeitpläne auf mehrere Karten aufzuteilen"
+          },
+          "entities": {
+            "heading": "Enthaltene Entitäten",
+            "description": "Wählen Sie die Einheiten aus, die Sie mit dem Scheduler steuern möchten. Sie können auf eine Gruppe klicken, um sie zu öffnen. Beachten Sie, dass einige Objekte (z. B. Sensoren) nur für Bedingungen, nicht aber für Aktionen verwendet werden können.",
+            "included_number": "{Anzahl}/{Gesamt} ausgewählt"
+          }
+        }
       }
     }
   }
