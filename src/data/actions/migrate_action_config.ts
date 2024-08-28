@@ -46,6 +46,7 @@ export const migrateActionConfig = (
             );
           else return null;
 
+        case EVariableType.Time:
         case EVariableType.Text:
           //keep the selected text variable
           return output.map(e =>
