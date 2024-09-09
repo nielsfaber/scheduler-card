@@ -46,7 +46,7 @@
       "select_source": "wybierz źródło[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "notify": "wyślij powiadomienie"
     },
     "script": {
       "script": "wykonaj"
@@ -61,23 +61,23 @@
   },
   "domains": {
     "alarm_control_panel": "panel kontrolny alarmu",
-    "binary_sensor": "binary sensors",
+    "binary_sensor": "sensor binarny",
     "climate": "klimatyzacja",
-    "cover": "rolety",
-    "fan": "wentylatory",
-    "group": "grupy",
-    "humidifier": "nawilżacze",
-    "input_boolean": "wejście logiczne",
-    "input_number": "wejście liczbowe",
-    "input_select": "wybór wejścia",
-    "lawn_mower": "lawn mower",
-    "light": "światła",
-    "lock": "zamki",
-    "media_player": "odtwarzacze",
-    "notify": "notification",
-    "switch": "przełączniki",
-    "vacuum": "odkurzacze",
-    "water_heater": "podgrzewacze wody"
+    "cover": "roleta",
+    "fan": "wentylator",
+    "group": "grupa",
+    "humidifier": "nawilżacz",
+    "input_boolean": "pole wartości logicznej",
+    "input_number": "pole numeryczne",
+    "input_select": "pole wyboru",
+    "lawn_mower": "kosiarka",
+    "light": "światło",
+    "lock": "zamkek",
+    "media_player": "odtwarzacz",
+    "notify": "powiadomienie",
+    "switch": "przełącznik",
+    "vacuum": "odkurzacz",
+    "water_heater": "podgrzewacz wody"
   },
   "ui": {
     "components": {
@@ -97,13 +97,13 @@
         "repeated_days": "co {days} dni",
         "repeated_days_except": "coddziennie z wyjątkiem {excludedDays}",
         "days_range": "od {startDay} do {endDay}",
-        "next_week_day": "następna {weekday}"
+        "next_week_day": "następny/a {weekday}"
       },
       "time": {
         "absolute": "o {time}",
         "interval": "od {startTime} do {endTime}",
         "at_midnight": "o północ",
-        "at_noon": "o południe",
+        "at_noon": "w południe",
         "at_sun_event": "o {sunEvent}"
       }
     },
@@ -118,13 +118,13 @@
       },
       "weekday_picker": {
         "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "choose": "Wybierz..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Wybierz encje"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Wybierz akcje"
       }
     },
     "panel": {
@@ -144,8 +144,8 @@
         "repeated_days": "Repeated days",
         "start_time": "Start time",
         "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "action": "Akcja",
+        "add_action": "Dodaj akcję",
         "select_timeslot": "Najpierw wybierz przedział czasowy",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
@@ -156,8 +156,8 @@
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
+          "header": "Warunki",
+          "add_condition": "Dodaj warunek",
           "types": {
             "equal_to": "{entity} is equal to {value}",
             "unequal_to": "{entity} is unequal to {value}",
@@ -172,11 +172,11 @@
         },
         "period": {
           "header": "Okres",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "Od",
+          "end_date": "Do"
         },
         "repeat_type": "zachowanie po zakończeniu",
-        "tags": "Tags"
+        "tags": "Tagi"
       }
     }
   }
