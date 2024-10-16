@@ -738,6 +738,7 @@ Currently the following languages are supported:
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn |                   |
 | 简体中文    | zh-Hans    |                   |
+| Catalan     | ca         |                   |
 
 The translations are maintained by users.
 If you are missing a translation, or a translation needs to be improved, please contribute. Take the [english](https://github.com/nielsfaber/scheduler-card/blob/main/src/localize/languages/en.json) file as a starting point.

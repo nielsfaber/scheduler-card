@@ -1,0 +1,165 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} a {value}",
+      "action_with_parameter": "{action} amb {parameter}"
+    },
+    "climate": {
+      "set_temperature": "establir temperatura[ a {temperature}]",
+      "set_temperature_hvac_mode_heat": "calefacció[ a {temperature}]",
+      "set_temperature_hvac_mode_cool": "fred[ a {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "calor/fred[ a {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "calor/fred[ a {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "automàtic[ a {temperature}]",
+      "set_hvac_mode": "establir mode[ a {hvac_mode}]",
+      "set_preset_mode": "establir preajust[ {preset_mode}]",
+      "set_fan_mode": "establir mode ventilació[ to {fan_mode}]"
+    },
+    "cover": {
+      "close_cover": "tancat",
+      "open_cover": "obert",
+      "set_cover_position": "establir posició[ a {position}]",
+      "set_cover_tilt_position": "establir inclinació[ a {tilt_position}]"
+    },
+    "fan": {
+      "set_speed": "establir velocitat [ a {speed}]",
+      "set_direction": "establir direcció[ a {direction}]",
+      "oscillate": "establir oscil·lació[ a {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "establir humitat[ a {humidity}]",
+      "set_mode": "establir mode[ a {mode}]"
+    },
+    "input_number": {
+      "set_value": "establir valor[ a {value}]"
+    },
+    "input_select": {
+      "select_option": "seleccionar opció[ {option}]"
+    },
+    "select": {
+      "select_option": "seleccionar opció[ {option}]"
+    },
+    "light": {
+      "turn_on": "encendre[ amb la lluminositat a {brightness}]"
+    },
+    "media_player": {
+      "select_source": "seleccionar origen[ {source}]"
+    },
+    "notify": {
+      "notify": "enviar notificació"
+    },
+    "script": {
+      "script": "executar"
+    },
+    "vacuum": {
+      "start_pause": "iniciar / pausar"
+    },
+    "water_heater": {
+      "set_operation_mode": "establir mode[ a {operation_mode}]",
+      "set_away_mode": "establir mode fora de casa"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "taulell de control de l'alarma",
+    "binary_sensor": "sensors binaris",
+    "climate": "climatizació",
+    "cover": "cortines",
+    "fan": "ventiladors",
+    "group": "grups",
+    "humidifier": "humidificadors",
+    "input_boolean": "entrada booleana",
+    "input_number": "entrada oscil·lació",
+    "input_select": "entrada de selecció",
+    "lawn_mower": "tallagespa",
+    "light": "llums",
+    "lock": "panys",
+    "media_player": "reproductors",
+    "notify": "notificacions",
+    "switch": "interruptors",
+    "vacuum": "aspiradores",
+    "water_heater": "calentadors d'aigua"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "diàriament",
+          "workdays": "días laborables",
+          "weekend": "caps de setmana"
+        },
+        "day_types_long": {
+          "daily": "tots els días",
+          "workdays": "en dies laborables",
+          "weekend": "en caps de setmana"
+        },
+        "days": "dies",
+        "tomorrow": "demà",
+        "repeated_days": "cada {days}",
+        "repeated_days_except": "cada dia excepte {excludedDays}",
+        "days_range": "de {startDay} a {endDay}",
+        "next_week_day": "pròxim {weekday}"
+      },
+      "time": {
+        "absolute": "a les {time}",
+        "interval": "entre les {startTime} i les {endTime}",
+        "at_midnight": "a mitjanit",
+        "at_noon": "al migdia",
+        "at_sun_event": "a la {sunEvent}"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Completa las modificacions",
+        "description": "L'horari que se ha indicat está actualment deshabilitat. Vol habilitar-lo?"
+      },
+      "confirm_delete": {
+        "title": "Eliminar entitat?",
+        "description": "Està segur que desitja eliminar aquesta entitat?"
+      },
+      "confirm_migrate": {
+        "title": "Modificar horari",
+        "description": "Algunes configuracions es perdran amb aquest. Vol procedir?"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Planificador",
+        "new_schedule": "Nou horari",
+        "default_name": "Horari #{id}"
+      },
+      "overview": {
+        "no_entries": "No hi ha cap element per mostrar",
+        "backend_error": "Error de connexió amb el component 'Scheduler component'. El component s'ha d'instalar com una integració per poder ser utilitzada.",
+        "excluded_items": "{number} {if number is 1} element exclòs {else} elements exclosos",
+        "hide_excluded": "ocultar elements exclosos",
+        "additional_tasks": "{number} {if number is 1} tasca adicional {else} tasques adicionals"
+      },
+      "entity_picker": {
+        "no_groups_defined": "No hi ha cap grup definit",
+        "no_group_selected": "selecciona un grup primer",
+        "no_entities_for_group": "no hi ha cap entitat amb aquest grup",
+        "no_entity_selected": "selecciona una entitat primer",
+        "no_actions_for_entity": "no hi ha accions per aquesta entitat",
+        "make_scheme": "crear planificació",
+        "multiple": "Múltiple"
+      },
+      "time_picker": {
+        "no_timeslot_selected": "selecciona un bloc de temps primer",
+        "time_scheme": "Planificació",
+        "time_input_mode": "Mode de control del temps"
+      },
+      "conditions": {
+        "equal_to": "igual a",
+        "unequal_to": "desigual a",
+        "all": "tots",
+        "any": "qualsevol",
+        "no_conditions_defined": "no hi ha cap condició definida",
+        "track_conditions": "Revaluar quan les condicions canviïn"
+      },
+      "options": {
+        "repeat_type": "acció despres de la finalització",
+        "period": "període"
+      }
+    }
+  }
+}

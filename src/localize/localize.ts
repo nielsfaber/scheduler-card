@@ -19,6 +19,7 @@ import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
 import * as sl from './languages/sl.json';
 import * as uk from './languages/uk.json';
+import * as ca from './languages/ca.json';
 import * as zh_Hans from './languages/zh-Hans.json';
 import { FrontendTranslationData } from 'custom-card-helpers';
 
@@ -27,6 +28,7 @@ const languages: any = {
   de: de,
   en: en,
   es: es,
+  ca: ca,
   et: et,
   es_419: es,
   fi: fi,
