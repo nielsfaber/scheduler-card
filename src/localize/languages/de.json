@@ -8,30 +8,30 @@
       "set_temperature": "Temperatur einstellen[ auf {temperature}]",
       "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
       "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "heizen/kühlen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat_cool_range": "heizen/kühlen[ auf {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_heat_cool": "heizen / kühlen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "heizen / kühlen[ auf {target_temp_low} - {target_temp_high}]",
       "set_temperature_hvac_mode_auto": "automatisch[ auf {temperature}]",
-      "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
-      "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_hvac_mode": "Modus einstellen[ auf {hvac_mode}]",
+      "set_preset_mode": "Voreinstellung einstellen[ auf {preset_mode}]",
+      "set_fan_mode": "Lüftermodus einstellen[ auf {fan_mode}]"
     },
     "cover": {
       "close_cover": "schließen",
       "open_cover": "öffnen",
-      "set_cover_position": "Position setzen[ auf {position}]",
-      "set_cover_tilt_position": "Tilt Position setzen[ auf {tilt_position}]"
+      "set_cover_position": "Position speichern[ für {position}]",
+      "set_cover_tilt_position": "Lamellenneigung einstellen[ auf {tilt_position}]"
     },
     "fan": {
-      "set_speed": "Geschwindigkeit speed[ auf {speed}]",
-      "set_direction": "Richtung setzen[ auf {direction}]",
-      "oscillate": "Oszillation setzen[ auf {oscillate}]"
+      "set_speed": "Geschwindigkeit einstellen[ auf {speed}]",
+      "set_direction": "Richtung einstellen[ auf {direction}]",
+      "oscillate": "Schwingungsbreite einstellen[ auf {oscillate}]"
     },
     "humidifier": {
-      "set_humidity": "Luftfeuchtigkeit setzen[ auf {humidity}]",
-      "set_mode": "Modus setzen[ auf {mode}]"
+      "set_humidity": "Luftfeuchtigkeit einstellen[ auf {humidity}]",
+      "set_mode": "Modus einstellen[ auf {mode}]"
     },
     "input_number": {
-      "set_value": "Wert setzen[ auf {value}]"
+      "set_value": "Wert einstellen[ auf {value}]"
     },
     "input_select": {
       "select_option": "Option[ {option}] auswählen"
@@ -55,24 +55,24 @@
       "start_pause": "Start / Pause"
     },
     "water_heater": {
-      "set_operation_mode": "Modus setzen[ auf {operation_mode}]",
-      "set_away_mode": "Abwesenheitsmodus setzen"
+      "set_operation_mode": "Betriebsart einstellen[ auf {operation_mode}]",
+      "set_away_mode": "Abwesenheitsmodus aktivieren"
     }
   },
   "domains": {
     "alarm_control_panel": "Alarmzentrale",
-    "binary_sensor": "binary sensors",
+    "binary_sensor": "binärer Sensor",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
     "group": "Gruppen",
     "humidifier": "Befeuchter",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
+    "input_boolean": "boolescher Eingangswert",
+    "input_number": "Eingabe Zahl",
+    "input_select": "Eingabeauswahl",
+    "lawn_mower": "Rasenmäher",
     "light": "Licht",
-    "lock": "Schlösser",
+    "lock": "Schloss",
     "media_player": "Medienplayer",
     "notify": "notification",
     "switch": "Schalter",
@@ -84,13 +84,13 @@
       "date": {
         "day_types_short": {
           "daily": "täglich",
-          "workdays": "Werktags",
+          "workdays": "werktags",
           "weekend": "Wochenende"
         },
         "day_types_long": {
-          "daily": "Jeden Tag",
-          "workdays": "An Werktagen",
-          "weekend": "Am Wochenende"
+          "daily": "jeden Tag",
+          "workdays": "an Werktagen",
+          "weekend": "am Wochenende"
         },
         "days": "Tage",
         "tomorrow": "morgen",
@@ -109,22 +109,22 @@
     },
     "dialog": {
       "enable_schedule": {
-        "title": "Modifikationen beenden",
-        "description": "Der geänderte Zeitplan ist derzeit deaktiviert, sollte er aktiviert werden?"
+        "title": "Änderungen abschließen",
+        "description": "Der geänderte Zeitplan ist derzeit deaktiviert. Soll er jetzt aktiviert werden?"
       },
       "confirm_delete": {
         "title": "Entität entfernen?",
         "description": "Bist du dir sicher, dass du diese Entität löschen möchtest?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "wiederkehrende Tage für den Zeitplan",
+        "choose": "Wähle aus ..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Wähle die Entitäten aus"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Wähle die Aktion aus"
       }
     },
     "panel": {
@@ -135,49 +135,113 @@
       },
       "overview": {
         "no_entries": "Es gibt keine Einträge, die angezeigt werden können",
-        "backend_error": "Es konnte keine Verbindung mit der Schedulerkomponente hergestellt werden. Es muss als Integration installiert werden, bevor diese Karte verwendet werden kann.",
-        "excluded_items": "{number} {if number is 1} ausgeschlossener Eintrag {else} ausgeschlossene Einträge",
-        "hide_excluded": "Verstecke ausgeschlossene Einträge",
-        "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
+        "backend_error": "Es konnte keine Verbindung mit der Scheduler Backend Komponente hergestellt werden. Es muss zuerst die Scheduler Integration als Backend installiert worden sein, bevor diese Karte verwendet werden kann.",
+        "excluded_items": "{number} {if number is 1} ausgeschlossener Zeitplan {else} ausgeschlossene Zeitpläne",
+        "hide_excluded": "Blende ausgeschlossene Zeitpläne aus",
+       "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "wiederholte Tage",
+        "start_time": "Beginn",
+        "stop_time": "Ende",
+        "action": "Aktivität",
+        "add_action": "Füge eine Aktivität hinzu",
         "select_timeslot": "Wähle ein Zeitfenster aus",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "Der Zeitplan hat überlappende Zeitfenster",
+          "missing_target_entity": "Eine oder mehrere Aktivitäten haben noch keine Entität",
+          "missing_service_parameter": "Einer oder mehreren Aktionen fehlt eine erforderliche Einstellung",
+          "missing_action": "Zeitplan fehlt noch eine Aktion"
         }
       },
       "options": {
         "conditions": {
           "header": "Conditions",
-          "add_condition": "Add condition",
+          "add_condition": "Füge eine Bedingung hinzu",
           "types": {
             "equal_to": "{entity} ist {value}",
-            "unequal_to": "{entity} ist nicht {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "unequal_to": "{entity} ist ungleich {value}",
+            "above": "{entity} ist größer als {value}",
+            "below": "{entity} ist kleiner als {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
-            "track_changes": "Erneut prüfen wenn sich die Zustände ändern"
+            "logic_and": "Alle Bedingungen müssen erfüllt sein",
+            "logic_or": "Jede Bedingung müssen erfüllt sein",
+            "track_changes": "Erneut prüfen, sobald es Änderungen gibt"
           }
         },
         "period": {
           "header": "Zeitraum",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "von",
+          "end_date": "bis"
         },
         "repeat_type": "Verhalten nach Abschluß",
         "tags": "Tags"
+      },		
+      "card_editor": {
+        "tabs": {
+          "entities": "Entitäten",
+          "other": "Andere"
+        },
+        "fields": {
+          "title": {
+            "heading": "Kartentitel",
+            "options": {
+              "standard": "Standard",
+              "hidden": "verborgen",
+              "custom": "individuell"
+            },
+            "custom_title": "individueller Kartentitel"
+          },
+          "discover_existing": {
+            "heading": "Alle Zeitpläne anzeigen",
+            "description": "Dieses setzt den Parameter 'discover existing' (entdecke existierende Zeitpläne). Zuvor angelegte Zeitpläne werden automatisch mit in der Karte angezeigt. "
+          },
+          "time_step": {
+            "heading": "Schrittweite Zeit",
+            "description": "Zeitauflösung (in Minuten) beim Anlegen von Zeitplänen"
+          },
+          "sort_by": {
+            "heading": "Sortier Optionen",
+            "description": "Reihenfolge in welcher die Zeitpläne in der Karte erscheinen",
+            "options": {
+              "relative_time": "nach der Zeit bis zur nächsten Aktion",
+              "title": "nach dem Namen des Zeitplans",
+              "state": "aktive Zeitpläne oben anzeigen"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Primär angezeigte Infos",
+            "description": "Lege fest, welche Bezeichnungen in der Übersicht angezeigt werden",
+            "options": {
+              "default": "Zeitplan Name",
+              "entity_action": "Zusammenfassung der Aufgabe"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Sekundär angezeigte Infos",
+            "description": "Lege fest, welche weiteren Bezeichnungen in der Übersicht anzuzeigen sind",
+            "options": {
+              "relative_time": "verbleibende Zeit bis zur nächsten Aktion",
+              "time": "Nächster Auslösezeitpunkt",
+              "days": "Tage mit Wiederholungen",
+              "additional_tasks": "Anzahl weiterer Schritte"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Haupteinschalter einblenden",
+            "description": "Haupteinschalter oben in der Karte zum Ein- / Ausschalten aller Schritte anzeigen"
+          },
+          "tags": {
+            "heading": "Identifizierungskennzeichen",
+            "description": "Nutze Identifizierungskennzeichen zum Unterscheiden von Zeitplänen zwischen verschiedenen Karten"
+          },
+          "entities": {
+            "heading": "Nutzbare Entitäten auswählen",
+            "description": "Wählen die Entitäten aus, die im Zeitplan genutzt werden können. Klicke eine Gruppen an, um deren Mitglieder anzusehen. Beachte, das einige Entitäten (wie Sensoren) nur für Bedingungen und nicht für Aktionen genutzt werden können.",
+            "included_number": "{number}/{total} ausgewählt"
+          }
+        }
       }
     }
   }
-}
