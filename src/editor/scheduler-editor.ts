@@ -95,21 +95,21 @@ export class SchedulerEditorDialog extends LitElement {
           ></ha-icon-button>
           <span slot="title" @click=${this._enlarge}>
             ${this.editItem
-              ? this.schedule?.name
-                ? this.schedule?.name
-                : localize('ui.panel.common.default_name', getLocale(this.hass), '{id}', this.editItem)
-              : localize('ui.panel.common.new_schedule', getLocale(this.hass))}
+        ? this.schedule?.name
+          ? this.schedule?.name
+          : localize('ui.panel.common.default_name', getLocale(this.hass), '{id}', this.editItem)
+        : localize('ui.panel.common.new_schedule', getLocale(this.hass))}
           </span>
         </ha-dialog-header>
         <paper-tabs .selected=${this._tabs.indexOf(this._currTab)} @iron-activate=${this._handleTabChanged}>
           ${this._tabs.map(
-            tab => html`
+          tab => html`
               <paper-tab ?disabled=${tab != ETabOptions.Entity && !this.schedule}>${tabLabel(tab)}</paper-tab>
             `
-          )}
+        )}
         </paper-tabs>
         ${this._currTab == ETabOptions.Entity
-          ? html`
+        ? html`
               <scheduler-editor-entity
                 .hass=${this.hass}
                 .config=${this._params.config}
@@ -124,7 +124,7 @@ export class SchedulerEditorDialog extends LitElement {
               >
               </scheduler-editor-entity>
             `
-          : this._currTab == ETabOptions.Time
+        : this._currTab == ETabOptions.Time
           ? html`
               <scheduler-editor-time
                 .hass=${this.hass}
@@ -142,7 +142,7 @@ export class SchedulerEditorDialog extends LitElement {
               </scheduler-editor-time>
             `
           : this._currTab == ETabOptions.Options
-          ? html`
+            ? html`
               <scheduler-editor-options
                 .hass=${this.hass}
                 .config=${this._config}
@@ -154,7 +154,7 @@ export class SchedulerEditorDialog extends LitElement {
               >
               </scheduler-editor-options>
             `
-          : ''}
+            : ''}
       </ha-dialog>
     `;
   }
@@ -267,14 +267,15 @@ export class SchedulerEditorDialog extends LitElement {
   }
 
   private async _handleDeleteClick(ev: Event) {
+    console.log(this.hass.localize('ui.common.ok'));
     if (!this.editItem) return;
     const element = ev.target as HTMLElement;
     const result = await new Promise(resolve => {
       const params: DialogParams = {
         title: localize('ui.dialog.confirm_delete.title', getLocale(this.hass)),
         description: localize('ui.dialog.confirm_delete.description', getLocale(this.hass)),
-        primaryButtonLabel: this.hass.localize('ui.dialogs.generic.ok'),
-        secondaryButtonLabel: this.hass.localize('ui.dialogs.generic.cancel'),
+        primaryButtonLabel: this.hass.localize('ui.common.ok'),
+        secondaryButtonLabel: this.hass.localize('ui.common.cancel'),
         cancel: () => {
           resolve(false);
         },

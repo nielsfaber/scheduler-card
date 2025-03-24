@@ -583,7 +583,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
             'This schedule is defective and cannot be edited with the card. Consider to delete the item and recreate it. If the problem persists, please report the issue on GitHub.',
           primaryButtonLabel: this.hass!.localize('ui.common.delete'),
           primaryButtonCritical: true,
-          secondaryButtonLabel: this.hass!.localize('ui.dialogs.generic.cancel'),
+          secondaryButtonLabel: this.hass!.localize('ui.common.cancel'),
           cancel: () => {
             resolve(false);
           },
