@@ -1,6 +1,7 @@
 import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig, Schedule, Timeslot } from "../../types";
 import { actionConfig } from "../actions/action_config";
+import { isSupportedSelector } from "../selectors/is_supported_selector";
 import { computeTimestamp } from "../time/compute_timestamp";
 
 
@@ -27,16 +28,18 @@ const validateTimebar = (slots: Timeslot[], hass: HomeAssistant) => {
   return null;
 }
 
-const validateAction = (action: Action, customize?: CustomConfig) => {
+const validateAction = (action: Action, hass: HomeAssistant, customize?: CustomConfig) => {
   const config = actionConfig(action, customize);
   if (config?.target) {
     if (!action.target?.entity_id) return ValidationError.MissingTargetEntity;
   }
   if (config?.fields) {
-    if (!Object.entries(config.fields).every(([field, fieldConfig]) => {
-      if (!Object.keys(action.service_data).includes(field) && !fieldConfig.optional) return false;
-      return true;
-    })) return ValidationError.MissingServiceParameter;
+    if (!Object.entries(config.fields)
+      .filter(([field]) => isSupportedSelector(action, field, hass, customize))
+      .every(([field, fieldConfig]) => {
+        if (!Object.keys(action.service_data).includes(field) && !fieldConfig.optional) return false;
+        return true;
+      })) return ValidationError.MissingServiceParameter;
   }
   return null;
 }
@@ -47,7 +50,7 @@ export const validateSchedule = (schedule: Schedule, hass: HomeAssistant, custom
 
   let actions = schedule.entries.map(e => e.slots.map(f => f.actions)).flat().flat();
   if (!actions.length) errors = [...errors, ValidationError.MissingAction];
-  errors = [...errors, ...<ValidationError[]>actions.map(e => validateAction(e, customize)).filter(e => e !== null)];
+  errors = [...errors, ...<ValidationError[]>actions.map(e => validateAction(e, hass, customize)).filter(e => e !== null)];
 
   if (errors.length) return errors.shift()!;
   else return null;
