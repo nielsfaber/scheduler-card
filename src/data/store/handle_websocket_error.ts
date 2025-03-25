@@ -13,7 +13,7 @@ export const handleWebsocketError = (err: { body: { message: string }; error: st
     ${err.error}<br /><br />
     Please <a href="https://github.com/nielsfaber/scheduler-card/issues">report</a> the bug.
   `,
-    primaryButtonLabel: hass.localize('ui.dialogs.generic.ok'),
+    primaryButtonLabel: hass.localize('ui.common.ok'),
     confirm: () => { },
     cancel: () => { },
   };

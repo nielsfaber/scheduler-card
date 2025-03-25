@@ -69,7 +69,7 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
 
   return [...[config].flat()].map(e => {
     let result = computeDisplay(e);
-    if (!result) return;
+    if (!result) return '';
     return html`
     ${result}
           <br/>

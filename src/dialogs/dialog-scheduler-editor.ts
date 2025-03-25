@@ -205,8 +205,8 @@ export class DialogSchedulerEditor extends LitElement {
         confirm: () => resolve(true),
         title: localize('ui.dialog.confirm_delete.title', this.hass),
         description: localize('ui.dialog.confirm_delete.description', this.hass),
-        primaryButtonLabel: this.hass.localize('ui.dialogs.generic.ok'),
-        secondaryButtonLabel: this.hass.localize('ui.dialogs.generic.cancel'),
+        primaryButtonLabel: this.hass.localize('ui.common.ok'),
+        secondaryButtonLabel: this.hass.localize('ui.common.cancel'),
       };
 
       fireEvent(ev.target as HTMLElement, 'show-dialog', {
