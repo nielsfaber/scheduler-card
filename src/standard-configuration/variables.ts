@@ -1,7 +1,7 @@
 import { HomeAssistant } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { isDefined, omit, pick } from '../helpers';
-import { AtLeast, LevelVariable, ListVariable, TextVariable } from '../types';
+import { AtLeast, LevelVariable, ListVariable, TextVariable, TimeVariable } from '../types';
 import { listAttribute, numericAttribute, stringAttribute } from './attribute';
 
 type ListOption = { name: string; icon: string };
@@ -31,22 +31,28 @@ type TextVariableConfig = {
   multiline?: boolean;
 };
 
-export type VariableConfig = ListVariableType | LevelVariableType | TextVariableConfig;
+type TimeVariableConfig = {
+  enable_seconds?: boolean;
+};
+
+export type VariableConfig = ListVariableType | LevelVariableType | TextVariableConfig | TimeVariableConfig;
 
 export const parseVariable = (
   config: VariableConfig,
   stateObj: HassEntity | undefined,
   hass: HomeAssistant
-): Partial<LevelVariable> | AtLeast<ListVariable, 'options'> | Partial<TextVariable> => {
+): Partial<LevelVariable> | AtLeast<ListVariable, 'options'> | Partial<TextVariable> | TimeVariable => {
   const res =
     'template' in config && isDefined(config.template)
       ? { ...omit(config, 'template'), ...config.template(stateObj, hass) }
-      : ({ ...config } as ListVariableConfig | LevelVariableConfig | TextVariableConfig);
+      : ({ ...config } as ListVariableConfig | LevelVariableConfig | TextVariableConfig | TimeVariableConfig);
 
   if ('options' in res) {
     return parseListVariable(res, stateObj);
   } else if ('min' in res && 'max' in res) {
     return parseLevelVariable(res, stateObj);
+  } else if ('enable_seconds' in res) {
+    return { enable_seconds: res.enable_seconds ?? true } as TimeVariable;
   } else {
     return res as TextVariableConfig;
   }
