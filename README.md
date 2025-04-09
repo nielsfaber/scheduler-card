@@ -57,6 +57,8 @@ See it in action:
 
 HACS installation:
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=nielsfaber&repository=scheduler-card&category=dashboard)
+
 Note: Ensure you have a www folder created as in config/www or the installation will succeed but fails silently
 1. Open the [HACS](https://hacs.xyz/) panel in HA and go to the 'Frontend' section.
 2. Search for scheduler-card and click download.
