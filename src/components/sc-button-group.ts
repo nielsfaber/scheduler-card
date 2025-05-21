@@ -19,7 +19,7 @@ function value(item: ButtonItem, index: number) {
   return item.id || item.value || index;
 }
 
-@customElement('button-group')
+@customElement('sc-button-group')
 export class ButtonGroup extends LitElement {
   @property({ type: Array }) items: ButtonItem[] = [];
   @property() value: string | null | number | (string | number)[] = null;

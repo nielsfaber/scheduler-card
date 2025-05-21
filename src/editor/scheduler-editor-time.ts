@@ -213,19 +213,19 @@ export class SchedulerEditorTime extends LitElement {
 
     return html`
       <div class="header">${localize('ui.components.date.days', getLocale(this.hass))}</div>
-      <button-group .items=${DayTypeOptions} value=${weekdayType(this.schedule.weekdays)} @change=${this.selectDays}>
-      </button-group>
+      <sc-button-group .items=${DayTypeOptions} value=${weekdayType(this.schedule.weekdays)} @change=${this.selectDays}>
+      </sc-button-group>
       ${weekdayType(this.schedule.weekdays) == EDayType.Custom
         ? html`
             <div>
-              <button-group
+              <sc-button-group
                 .items=${DayOptions}
                 .value=${this.schedule.weekdays}
                 min="1"
                 multiple
                 @change=${this.selectDays}
               >
-              </button-group>
+              </sc-button-group>
             </div>
           `
         : ''}
@@ -242,7 +242,7 @@ export class SchedulerEditorTime extends LitElement {
 
     return html`
       <div class="header">${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}</div>
-      <button-group
+      <sc-button-group
         .items=${this.activeEntry !== null ? this.actions : []}
         .value=${selectedAction !== null
           ? this.actions?.findIndex(e => compareActions(e, selectedAction!, true))
@@ -251,7 +251,7 @@ export class SchedulerEditorTime extends LitElement {
         @change=${this.selectAction}
       >
         ${localize('ui.panel.time_picker.no_timeslot_selected', getLocale(this.hass))}
-      </button-group>
+      </sc-button-group>
     `;
   }
 
@@ -286,8 +286,8 @@ export class SchedulerEditorTime extends LitElement {
 
     return html`
       <div class="header">${localize('ui.panel.time_picker.time_input_mode', getLocale(this.hass))}</div>
-      <button-group .items=${markerOptions} .value=${res ? res.event : 'time'} @change=${this.updateMarkerSetting}>
-      </button-group>
+      <sc-button-group .items=${markerOptions} .value=${res ? res.event : 'time'} @change=${this.updateMarkerSetting}>
+      </sc-button-group>
     `;
   }
 

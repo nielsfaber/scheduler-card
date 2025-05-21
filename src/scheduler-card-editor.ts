@@ -84,7 +84,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
             `
         : html`
               <div class="header">${localize('ui.panel.card_editor.fields.title.heading', getLocale(this.hass))}</div>
-              <button-group
+              <sc-button-group
                 .items=${[
             {
               name: localize('ui.panel.card_editor.fields.title.options.standard', getLocale(this.hass)),
@@ -102,7 +102,7 @@ export class SchedulerCardEditor extends LitElement implements LovelaceCardEdito
                 value=${this.getTitleOption()}
                 @change=${(ev: Event) => this._setTitleFormatOption((ev.target as HTMLInputElement).value)}
               >
-              </button-group>
+              </sc-button-group>
               ${typeof this._config.title == 'string'
             ? html`
                     <ha-textfield

@@ -30,7 +30,7 @@ import { stringToTime, roundTime, timeToString } from '../data/date-time/time';
 import { formatTime } from '../data/date-time/format_time';
 import { ETabOptions } from '../const';
 
-import '../components/button-group';
+import '../components/sc-button-group';
 import '../components/generic-dialog';
 import { DialogParams } from '../components/generic-dialog';
 import { showDialog } from '../data/custom_dialog';
@@ -151,13 +151,13 @@ export class SchedulerEditorEntity extends LitElement {
     return html`
       <div class="content">
         <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
-        <button-group
+        <sc-button-group
           .items=${groups}
           .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
           @change=${(ev: CustomEvent) => this.selectGroup(ev.detail)}
         >
           ${localize('ui.panel.entity_picker.no_groups_defined', getLocale(this.hass))}
-        </button-group>
+        </sc-button-group>
 
         <div class="header">
           ${this.hass.localize('ui.components.entity.entity-picker.entity')}
@@ -176,7 +176,7 @@ export class SchedulerEditorEntity extends LitElement {
               `
             : ''}
         </div>
-        <button-group
+        <sc-button-group
           .items=${entities}
           .value=${this.entities}
           @change=${this.selectEntity}
@@ -187,12 +187,12 @@ export class SchedulerEditorEntity extends LitElement {
           ${!this.selectedGroup
             ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
             : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
-        </button-group>
+        </sc-button-group>
 
         <div class="header">
           ${this.hass.localize('ui.panel.config.automation.editor.actions.type.device_id.action')}
         </div>
-        <button-group
+        <sc-button-group
           .items=${actions}
           .value=${actions.findIndex(e => isEqual(e, this.selectedAction))}
           @change=${this.selectAction}
@@ -201,7 +201,7 @@ export class SchedulerEditorEntity extends LitElement {
           ${!this.entities.length
             ? localize('ui.panel.entity_picker.no_entity_selected', getLocale(this.hass))
             : localize('ui.panel.entity_picker.no_actions_for_entity', getLocale(this.hass))}
-        </button-group>
+        </sc-button-group>
         ${this.makeSchemeButton(actions)}
       </div>
       <div class="buttons ${!this.schedule || !this.editItem ? 'centered' : ''}">

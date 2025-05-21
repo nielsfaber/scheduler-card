@@ -43,7 +43,7 @@ import { loadHaForm } from '../load-ha-form';
 import { stringToDate } from '../data/date-time/string_to_date';
 import { formatDate } from '../data/date-time/format_date';
 
-import '../components/button-group';
+import '../components/sc-button-group';
 import '../components/variable-picker';
 import '../components/scheduler-selector';
 
@@ -314,12 +314,12 @@ export class SchedulerEditorOptions extends LitElement {
                     : ''}
 
                   <div class="header">${localize('ui.panel.options.repeat_type', getLocale(this.hass))}</div>
-                  <button-group
+                  <sc-button-group
                     .items=${repeatTypes}
                     value="${this.schedule.repeat_type}"
                     @change=${this.updateRepeatType}
                   >
-                  </button-group>
+                  </sc-button-group>
                 `
               : this.renderAddCondition()
           }
@@ -391,16 +391,16 @@ export class SchedulerEditorOptions extends LitElement {
       return html`
         <div class="header">${this.hass.localize('ui.panel.config.users.editor.group')}</div>
 
-        <button-group
+        <sc-button-group
           .items=${groups}
           .value=${groups.findIndex(e => isEqual(e, this.selectedGroup))}
           @change=${this.selectGroup}
         >
           ${localize('ui.panel.entity_picker.no_groups_defined', getLocale(this.hass))}
-        </button-group>
+        </sc-button-group>
 
         <div class="header">${this.hass.localize('ui.components.entity.entity-picker.entity')}</div>
-        <button-group
+        <sc-button-group
           .items=${entities}
           .value=${entities.findIndex(e => isEqual(e, this.selectedEntity))}
           @change=${this.selectEntity}
@@ -408,7 +408,7 @@ export class SchedulerEditorOptions extends LitElement {
           ${!this.selectedGroup
             ? localize('ui.panel.entity_picker.no_group_selected', getLocale(this.hass))
             : localize('ui.panel.entity_picker.no_entities_for_group', getLocale(this.hass))}
-        </button-group>
+        </sc-button-group>
       `;
     } else {
       const entity = this.selectedEntity;
@@ -455,13 +455,13 @@ export class SchedulerEditorOptions extends LitElement {
         <div class="header">
           ${this.hass.localize('ui.panel.config.automation.editor.conditions.type.device.condition')}
         </div>
-        <button-group
+        <sc-button-group
           .items=${Object.values(matchTypes)}
           value=${this.conditionMatchType}
           @change=${(ev: Event) =>
             (this.conditionMatchType = (ev.target as HTMLInputElement).value as EConditionMatchType)}
         >
-        </button-group>
+        </sc-button-group>
 
         <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
         <scheduler-variable-picker

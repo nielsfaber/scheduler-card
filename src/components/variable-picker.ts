@@ -3,7 +3,7 @@ import { property, customElement } from 'lit/decorators.js';
 import { Variable, LevelVariable, EVariableType, ListVariable, TextVariable } from '../types';
 
 import './variable-slider';
-import './button-group';
+import './sc-button-group';
 import { fireEvent } from 'custom-card-helpers';
 
 @customElement('scheduler-variable-picker')
@@ -70,7 +70,7 @@ export class SchedulerVariablePicker extends LitElement {
     if (options.length == 1 && value != options[0].value) this.listVariableUpdated(options[0].value);
 
     return html`
-      <button-group .items=${options} value=${value} @change=${this.listVariableUpdated}> </button-group>
+      <sc-button-group .items=${options} value=${value} @change=${this.listVariableUpdated}> </sc-button-group>
     `;
   }
 
