@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
 import { SubscribeMixin } from "./components/subscribe-mixin";
-import { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { CardConfig, Schedule, SchedulerEventData } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
@@ -90,7 +90,7 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
   }
 
   render() {
-    let items = { ...this.schedules };
+    let items: Record<string, Schedule & { entity_id: string }> = { ...this.schedules };
     let includedItems = Object.keys(this.schedules || {}).filter(e => isIncludedSchedule((items)[e], this._config));
 
     const headerToggleState = Object.entries(items)
@@ -251,8 +251,9 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   private _addClick(_ev: Event) {
     const defaultTags = [this._config.tags || []].flat().filter(e => !['none', 'disabled', 'enabled'].includes(e));
+    let clonedConfig: Schedule = JSON.parse(JSON.stringify(defaultScheduleConfig));
     const params: SchedulerDialogParams = {
-      schedule: { ...defaultScheduleConfig, tags: defaultTags.length == 1 ? defaultTags : [] },
+      schedule: { ...clonedConfig, tags: defaultTags.length == 1 ? defaultTags : [] },
       cardConfig: this._config
     };
 

@@ -18,9 +18,7 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
 
   if (input instanceof Date) {
 
-    console.log('------');
     let day = input.getDay();
-    console.log(day);
     weekday = TWeekday.Friday;
 
     if (supportLocaleString()) {

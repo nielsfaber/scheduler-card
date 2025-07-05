@@ -108,8 +108,8 @@ class CollapsibleSection extends LitElement {
         font-weight: 600;
         padding: 0px 8px;
       }
-      .header ::slotted(span) {
-        display: flex;
+      .header ::slotted(div) {
+        flex: 1;
         margin-right: 32px;
       }
       .header.focused {

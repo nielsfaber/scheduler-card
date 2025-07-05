@@ -1,7 +1,8 @@
 import { computeDomain } from "./entity";
 
-export function matchPattern(pattern: string, value: string) {
+export function matchPattern(pattern: string, value?: string) {
   let res = false;
+  if (!value) return false;
   if (pattern.match(/^[a-z0-9_\.]+$/)) {
     res = !pattern.includes('.') && value.includes('.') ? pattern == computeDomain(value) : pattern == value;
   } else {

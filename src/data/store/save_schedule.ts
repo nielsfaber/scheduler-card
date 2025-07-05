@@ -85,7 +85,14 @@ const parseTimeslot = (input: Timeslot): LegacyTimeslot => {
 
 
 const parseAction = (input: Action): ServiceCall | ServiceCall[] => {
-  if (!Array.isArray(input.target?.entity_id)) {
+  if (!input.target) {
+    let output: ServiceCall = {
+      service: input.service,
+      service_data: input.service_data
+    };
+    return output;
+  }
+  else if (!Array.isArray(input.target?.entity_id)) {
     let output: ServiceCall = {
       service: input.service,
       service_data: input.service_data,

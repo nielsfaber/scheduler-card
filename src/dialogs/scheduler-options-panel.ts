@@ -143,7 +143,7 @@ export class SchedulerOptionsPanel extends LitElement {
       <span class="header">${localize('ui.panel.options.period.header', this.hass)}:</span>
       <div class="period">
         <ha-checkbox
-          ?checked=${this.schedule.start_date !== undefined}
+          ?checked=${typeof this.schedule.start_date === 'string'}
           @change=${this.toggleEnableDateRange}
         >
         </ha-checkbox>
@@ -153,7 +153,7 @@ export class SchedulerOptionsPanel extends LitElement {
           value=${this.startDate}
           .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
           @value-changed=${this._setStartDate}
-          ?disabled=${this.schedule.start_date === undefined}
+          ?disabled=${!this.schedule.start_date}
         >
         </ha-date-input>
         <span>${localize('ui.panel.options.period.end_date', this.hass)}</span>
@@ -162,7 +162,7 @@ export class SchedulerOptionsPanel extends LitElement {
           value=${this.endDate}
           .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
           @value-changed=${this._setEndDate}
-          ?disabled=${this.schedule.end_date === undefined}
+          ?disabled=${!this.schedule.end_date}
         >
         </ha-date-input>
       </div>
@@ -237,12 +237,12 @@ export class SchedulerOptionsPanel extends LitElement {
 
       return html`
       <collapsible-section>
-        <span slot="header">
+        <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
           <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.hass)}"></ha-icon>
           ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
           ` : 'new condition'}
-        </span>
+        </div>
         <ha-button-menu
           slot="contextMenu" 
           @action=${(ev: CustomEvent) => this._conditionItemOptionsClick(ev, i)}

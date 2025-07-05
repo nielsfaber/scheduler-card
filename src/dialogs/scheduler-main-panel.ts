@@ -1,7 +1,7 @@
-import { mdiChevronLeft, mdiChevronRight, mdiClose, mdiDelete, mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
+import { mdiChevronLeft, mdiChevronRight, mdiDelete, mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, TimeMode, Timeslot } from "../types";
+import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
 import { actionConfig } from "../data/actions/action_config";
 import { formatWeekdayDisplay } from "../data/days";
 import { defaultSelectorValue } from "../data/selectors/default_selector_value";
@@ -11,7 +11,7 @@ import { NumberSelector, Selector } from "../lib/selector";
 import { DialogSelectActionParams } from "./dialog-select-action";
 import { DialogSelectWeekdayParams } from "./dialog-select-weekdays";
 
-import { computeDomain, computeEntity, friendlyName } from "../lib/entity";
+import { computeDomain, friendlyName } from "../lib/entity";
 import { timeToString } from "../data/time/time_to_string";
 import { parseTimeString } from "../data/time/parse_time_string";
 import { addTimeOffset } from "../data/time/add_time_offset";
@@ -25,6 +25,7 @@ import { formatActionDisplay } from "../data/format/format_action_display";
 import { computeActionIcon } from "../data/format/compute_action_icon";
 import { fireEvent } from "../lib/fire_event";
 import { useAmPm } from "../lib/use_am_pm";
+import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 
 import "../components/timeslot-editor";
 import "../components/time-picker";
@@ -34,7 +35,6 @@ import '../dialogs/dialog-select-action';
 import '../components/collapsible-section';
 import '../components/settings-row';
 import '../components/combo-selector';
-import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -185,6 +185,7 @@ export class SchedulerMainPanel extends LitElement {
 
     const domain = computeDomain(action.service);
     const config = actionConfig(action, this.config.customize);
+
     if (config === undefined) return html``;
 
     //if (!config || !config.fields) return html``;
@@ -205,10 +206,10 @@ export class SchedulerMainPanel extends LitElement {
         ?expanded=${true}
         ?disabled=${true}
       >
-        <span slot="header">
+        <div slot="header" class="header">
           <ha-icon slot="icon" icon="${computeActionIcon(action, this.config.customize)}"></ha-icon>
-          ${capitalizeFirstLetter(heading)}
-        </span>
+          <span>${capitalizeFirstLetter(heading)}</span>
+        </div>
         <ha-icon-button slot="contextMenu" .path=${mdiDelete} @click=${this._removeAction}></ha-icon-button>
         <div slot="content">
 
@@ -438,6 +439,13 @@ export class SchedulerMainPanel extends LitElement {
         [slotIdx - 1]: { ...slots[slotIdx - 1], stop: time }
       });
     }
+    if (slots[slotIdx].stop === undefined) {
+      const stopTime = addTimeOffset(value, { minutes: 1 });
+
+      slots = Object.assign(slots, {
+        [slotIdx + 1]: { ...slots[slotIdx + 1], start: timeToString(stopTime) }
+      });
+    }
     this._updateEntry({ slots: slots });
   }
 
@@ -526,6 +534,12 @@ export class SchedulerMainPanel extends LitElement {
   }
   div.slot-placeholder {
     padding: 20px 0px 0px 0px;
+  }
+  collapsible-section .header ha-icon {
+    margin-right: 6px;
+  }
+  collapsible-section .header span {
+    flex: 1;
   }
     `;
   }

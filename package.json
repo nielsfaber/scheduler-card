@@ -36,7 +36,8 @@
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-uglify": "^6.0.3",
-    "rollup-plugin-visualizer": "^4.2.0"
+    "rollup-plugin-visualizer": "^4.2.0",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@parcel/transformer-inline-string": "^2.8.3",

@@ -22,7 +22,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig) => {
 
   if (!customize) return config;
 
-  let entity = action.target?.entity_id;
+  let entity = action.target?.entity_id || domain;
   if (domain == 'script' || domain == 'notify') entity = entity || action.service;
 
   const actionConfig: CustomActionConfig[] = Object.entries(customize)
@@ -43,6 +43,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig) => {
         ...config,
         name: customConfig.name || config.name,
         icon: customConfig.icon || config.icon,
+        target: customConfig.target || config.target,
       };
     })
   }

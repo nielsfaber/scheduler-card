@@ -6,7 +6,7 @@ import { actionConfig } from "../actions/action_config";
 const FALLBACK_ICON = 'mdi:flash';
 
 const checkIconPrefix = (icon: string) => {
-  if (icon.match(/^[a-z]+\:[a-zA-Z]+$/)) return icon;
+  if (icon.match(/^[a-z]+\:[a-zA-Z\-]+$/)) return icon;
   return `mdi:${icon}`;
 }
 

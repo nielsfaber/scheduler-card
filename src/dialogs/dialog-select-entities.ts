@@ -1,6 +1,6 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { mdiChevronLeft, mdiClose } from '@mdi/js';
+import { mdiChevronDown, mdiChevronLeft, mdiClose } from '@mdi/js';
 import { computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
 import { styleMap } from 'lit/directives/style-map';
@@ -25,15 +25,18 @@ interface listItem {
   icon: string;
 }
 
+interface domainsList extends Array<listItem & { entities: listItem[] }> { }
+
 const computeDomains = (hass: HomeAssistant) => {
   let domains = computeActionDomains(hass, { include: ['*'] });
   let conditionDomains = computeConditionDomains(hass, { include: ['*'] });
   conditionDomains = conditionDomains.filter(e => !domains.map(f => f.key).includes(e.key));
-  return [...domains, ...conditionDomains];
+  domains = [...domains, ...conditionDomains];
+  domains.sort((a, b) => sortByName(a.name, b.name));
+  return domains;
 };
 
 const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
-
   if (['script', 'notify'].includes(domain)) {
     const entities = Object.keys(hass.services[domain]);
 
@@ -44,6 +47,7 @@ const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
       icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, hass) : domainIcon(domain)
     }));
 
+    entityList.sort((a, b) => sortByName(a.name, b.name));
     return entityList;
   }
   else {
@@ -56,10 +60,17 @@ const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
       icon: computeEntityIcon(e, hass)
     }));
 
+    entityList.sort((a, b) => sortByName(a.name, b.name));
     return entityList;
   }
-
 }
+
+const filteredResult = (obj: listItem, tokens: string[]) => {
+  return (
+    tokens.every(token => obj.name.toLowerCase().includes(token)) ||
+    tokens.every(token => obj.key.toLowerCase().includes(token))
+  );
+};
 
 @customElement('dialog-select-entities')
 export class DialogSelectEntities extends LitElement {
@@ -74,10 +85,13 @@ export class DialogSelectEntities extends LitElement {
   @state() private _width?: number;
   @state() private _height?: number;
 
-  @state() selectedDomain?: string;
+  @state() expandedGroups: string[] = [];
+
+  @state() options?: domainsList;
 
   public async showDialog(params: DialogSelectEntitiesParams): Promise<void> {
     this._params = params;
+    this.loadOptions();
     await this.updateComplete;
   }
 
@@ -89,8 +103,22 @@ export class DialogSelectEntities extends LitElement {
     this._width = undefined;
   }
 
+  loadOptions() {
+    let domains = computeDomains(this.hass);
+    this.options = domains.map(item => Object({
+      ...item,
+      entities: computeEntitiesForDomain(item.key, this.hass)
+    }));
+  }
+
+  shouldUpdate(changedProps: PropertyValues) {
+    if (changedProps.has('_params') || changedProps.has('expandedGroups') || changedProps.has('_filter')) return true;
+    return false;
+  }
+
   render() {
     if (!this._params) return html``;
+
     return html`
       <ha-dialog
         open
@@ -102,31 +130,14 @@ export class DialogSelectEntities extends LitElement {
       >
         <div slot="heading">
           <ha-dialog-header>
-            ${this.selectedDomain
-
-        ? html`
-            <ha-icon-button
-              slot="navigationIcon"
-              .label=${this.hass.localize('ui.common.back')}
-              .path=${mdiChevronLeft}
-              @click=${this._clearDomain}
-            ></ha-icon-button>
-            `
-        : html`
             <ha-icon-button
               slot="navigationIcon"
               dialogAction="cancel"
               .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
               .path=${mdiClose}
             ></ha-icon-button>
-            `}
             <span slot="title">
               ${localize('ui.dialog.entity_picker.title', this.hass)}
-              ${this.selectedDomain
-        ? html`
-                - 
-                ${computeDomains(this.hass).find(e => e.key == this.selectedDomain)!.name}
-              ` : ''}
             </span>
           </ha-dialog-header>
 
@@ -183,131 +194,175 @@ export class DialogSelectEntities extends LitElement {
     }, 100);
   }
 
-  _renderOptions() {
-    if (!this.selectedDomain) {
-      let domains = computeDomains(this.hass);
-      domains.sort((a, b) => sortByName(a.name, b.name));
-
-      if (this._filter) {
-        domains = domains.filter(e => {
-          const tokens = this._filter.toLowerCase().trim().split(" ");
-          return (
-            tokens.every(token => e.name.toLowerCase().includes(token)) ||
-            tokens.every(token => e.key.toLowerCase().includes(token))
-          )
-        })
-      }
-
-      return (Object.keys(domains)).map((key) => {
-        const domain = domains[key].key;
-        const entities = computeEntitiesForDomain(domain, this.hass);
-        const domainIncluded = this._params?.domains.includes(domain);
-        return html`
-      <mwc-list-item
-        graphic="icon"
-        hasMeta
-        @click=${() => this._handleDomainClick(domain)}
-        twoline
-      >
-        <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
-
-        <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
-        <span>${domains[key].name}</span>
-        <span slot="secondary">${domainIncluded ? entities.length : 0}/${entities.length} entities selected</span>
-        <mwc-button 
-          @click=${(ev: Event) => this._toggleIncludeDomain(ev, domain)}
-        >
-          ${this._params?.domains.includes(domain)
-            ? 'deselect all'
-            : 'select all'
-          }
-        </mwc-button>
-      </mwc-list-item>
-  `});
-
-    } else {
-      const domain = this.selectedDomain;
-
-      let entities = computeEntitiesForDomain(domain, this.hass);
-      entities.sort((a, b) => sortByName(a.name, b.name));
-
-      if (this._filter) {
-        entities = entities.filter(e => {
-          const tokens = this._filter.toLowerCase().trim().split(" ");
-          return (
-            tokens.every(token => e.name.toLowerCase().includes(token)) ||
-            tokens.every(token => e.key.toLowerCase().includes(token))
-          )
-        })
-      }
-
-      return (Object.keys(entities)).map((key) => {
-        const entity = entities[key].key;
-        const entityIncluded = this._params?.entities.includes(entity);
-        return html`
-        <mwc-list-item
-          graphic="icon"
-          hasMeta
-          twoline
-          @click=${() => this.toggleIncludeEntity(entity)}
-        >
-          <ha-icon slot="graphic" icon="${entities[key].icon}"></ha-icon>
-          <ha-switch
-            slot="meta"
-            ?checked=${entityIncluded}
-          ></ha-switch>
-          <span>${entities[key].name}</span>
-          <span slot="secondary">${entities[key].key}</span>
-        </mwc-list-item>
-    `});
-    }
-  }
-
-  toggleIncludeDomain(ev: Event, domain: string) {
-    ev.stopImmediatePropagation();
-
-    if (this._params?.domains.includes(domain)) {
-      this._params = { ...this._params, domains: this._params.domains.filter(e => e != domain) }
-    }
-    else {
-      this._params = { ...this._params!, domains: [...this._params!.domains, domain] };
-    }
-  }
-
-
-  toggleIncludeEntity(entity: string) {
-    if (this._params?.entities.includes(entity)) {
-      this._params = { ...this._params, entities: this._params.entities.filter(e => e != entity) }
-    }
-    else {
-      this._params = { ...this._params!, entities: [...this._params!.entities, entity] };
-    }
-  }
-
-  _toggleIncludeDomain(ev: Event, domain: string) {
-    ev.stopImmediatePropagation();
-
-    if (this._params?.domains.includes(domain)) {
-      this._params = { ...this._params, domains: this._params.domains.filter(e => e != domain) }
-    }
-    else {
-      this._params = { ...this._params!, domains: [...this._params!.domains, domain] };
-    }
-  }
-
-  _handleDomainClick(domain: string) {
-    this.selectedDomain = domain;
-    this._clearSearch();
-  }
-
-  _clearDomain() {
-    this.selectedDomain = undefined;
-    this._clearSearch();
-  }
-
   _clearSearch() {
     this._search = "";
     this._filter = "";
+  }
+
+  _toggleSelectEntity(ev: Event) {
+    let listItem = ev.target as HTMLElement;
+    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    const checkbox = listItem.querySelector("ha-checkbox") as HTMLInputElement;
+    const key = listItem.getAttribute("key") as string;
+    if (this._params!.entities.includes(key)) {
+      this._params = {
+        ...this._params!,
+        entities: this._params!.entities.filter(e => e != key)
+      };
+    }
+    else {
+      this._params = {
+        ...this._params!,
+        entities: [...this._params!.entities, key]
+      };
+    }
+  }
+
+  _toggleSelectDomain(ev: Event) {
+    let listItem = ev.target as HTMLElement;
+    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    const key = listItem.getAttribute("key") as string;
+    const entitiesInDomain = this.options?.find(e => e.key == key)!.entities.map(e => e.key);
+    if (this._params!.domains.includes(key)) {
+      this._params = {
+        ...this._params!,
+        domains: this._params!.domains.filter(e => e != key),
+        entities: this._params!.entities.filter(e => !entitiesInDomain?.includes(e))
+      };
+    }
+    else {
+      this._params = {
+        ...this._params!,
+        domains: [...this._params!.domains, key]
+      };
+    }
+    ev.stopPropagation();
+  }
+
+  closeGroupByKey(key: string) {
+    const menu = this.shadowRoot!.querySelector("mwc-list") as HTMLElement;
+    menu.childNodes.forEach(e => {
+      if (e.nodeType != Node.ELEMENT_NODE) return;
+      if ((e as HTMLElement).tagName != 'MWC-LIST-ITEM') return;
+      if ((e as HTMLElement).getAttribute("key") == key) {
+        const listItem = e as HTMLElement;
+        const container = listItem.nextElementSibling as HTMLElement;
+        const button = listItem.querySelector("ha-icon-button") as HTMLElement;
+        container.style.height = '0px';
+        listItem.removeAttribute('expanded');
+        button.classList.remove('expanded');
+      }
+    });
+  }
+
+  async _toggleExpandGroup(ev: Event) {
+    let listItem = ev.target as HTMLElement;
+    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    const button = listItem.querySelector("ha-icon-button") as HTMLElement;
+    const key = listItem.getAttribute("key") as string;
+    if (!this.expandedGroups.includes(key)) {
+      this.expandedGroups.forEach(e => this.closeGroupByKey(e));
+      this.expandedGroups = [key];
+      await this.requestUpdate();
+    }
+    const container = listItem.nextElementSibling as HTMLElement;
+    const scrollHeight = container.scrollHeight;
+
+
+    if (listItem.hasAttribute('expanded')) {
+      listItem.removeAttribute('expanded');
+      button.classList.remove('expanded');
+      container.style.height = '0px';
+      setTimeout(() => {
+        this.expandedGroups = this.expandedGroups.filter(e => e != key);
+      }, 300);
+    }
+    else {
+      listItem.setAttribute('expanded', 'true');
+      button.classList.add('expanded');
+      container.style.height = `${scrollHeight}px`;
+    }
+  }
+
+  _renderOptions() {
+    if (!this.options) return;
+    let filteredOptions = [...this.options]
+
+    const filterApplied = this._filter && this._filter.trim().length;
+
+    if (filterApplied) {
+      const tokens = this._filter.toLowerCase().trim().split(" ");
+      filteredOptions = filteredOptions.map(item => {
+        let res = filteredResult(item, tokens);
+        if (res) return item;
+        item = { ...item, entities: (item.entities || []).filter(subitem => filteredResult(subitem, tokens)) };
+        if (!item.entities.length) return;
+        return item;
+      })
+        .filter(e => e !== undefined)
+    }
+
+    if (!filteredOptions.length) {
+      return html`
+        <mwc-list-item disabled>
+          ${this.hass.localize('ui.components.entity.entity-picker.no_match')}
+        </mwc-list-item>
+      `;
+    }
+
+    return (Object.keys(filteredOptions)).map((key) => {
+      const domain = filteredOptions[key].key;
+      const entities = computeEntitiesForDomain(domain, this.hass);
+      const domainIncluded = this._params?.domains.includes(domain);
+
+      return html`
+        <mwc-list-item
+          graphic="icon"
+          twoline
+          hasMeta
+          @click=${this._toggleExpandGroup}
+          key="${domain}"
+        >
+          <ha-icon slot="graphic" icon="${filteredOptions[key].icon}"></ha-icon>
+          <div slot="meta" class="meta">
+            <ha-button @click=${this._toggleSelectDomain}>
+              ${this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key))
+          ? 'deselect all'
+          : 'select all'
+        }
+            </ha-button>
+            <ha-icon-button .path="${mdiChevronDown}" @click=${(ev: Event) => { (ev.target as HTMLElement).blur() }} class="chevron"></ha-icon-button>
+          </div>
+          <span>${filteredOptions[key].name}</span>
+          <span slot="secondary">${domainIncluded ? entities.length : filteredOptions[key].entities.filter(e => this._params?.entities.includes(e.key)).length}/${entities.length} entities selected</span>
+        </mwc-list-item>
+        ${this.expandedGroups.includes(domain) || filterApplied ? html`
+        <div class="group ${filterApplied ? 'open' : ''}">
+          <li role="divider"></li>
+        ${filteredOptions[key].entities.map(e => html`
+          <mwc-list-item
+            graphic="icon"
+            twoline
+            hasMeta
+            @click=${this._toggleSelectEntity}
+            class="nested"
+            key="${e.key}"
+          >
+            <ha-state-icon .stateObj=${this.hass.states[e.key]} .hass=${this.hass} slot="graphic"></ha-state-icon>
+            <ha-checkbox
+              slot="meta"
+              ?checked=${this._params?.entities.includes(e.key) || this._params?.domains.includes(domain)}
+            ></ha-checkbox>
+
+            <span>${e.name}</span>
+            <span slot="secondary">${e.key}</span>
+          </mwc-list-item>
+        `)}
+          <li role="divider"></li>
+        </div>
+      ` : ''}
+      `;
+    });
   }
 
   static get styles(): CSSResultGroup {
@@ -325,22 +380,51 @@ export class DialogSelectEntities extends LitElement {
         display: block;
         margin: 0 16px;
       }
-      mwc-list {
-        padding-right: 10px;
-      }
       mwc-list-item {
-        --mdc-ripple-color: #ffffff;
+        --mdc-ripple-hover-opacity: 0.04;
+        --mdc-ripple-focus-opacity: 0.04;
+        --mdc-ripple-press-opacity: 0.12;
+        --mdc-list-item-meta-size: 180px;
       }
-      mwc-list-item mwc-button {
-        display: none;
+      mwc-list-item.nested {
+        --mdc-list-item-meta-size: 48px;
+        --mdc-list-side-padding: 32px;
       }
-      @media all and (min-width: 550px) {
-        mwc-list-item mwc-button {
-          position: absolute;
-          display: block;
-          right: 60px;
-          top: 18px;
-        }
+      mwc-list-item.nested ha-icon {
+        display: flex;
+        justify-content: flex-end;
+      }
+      mwc-list-item ha-checkbox, mwc-list-item ha-icon-button, mwc-list-item ha-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      div.group {
+        height: 0px;
+        overflow: hidden;
+        transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        box-sizing: border-box;
+      }
+      div.group.open {
+        height: auto;
+      }
+      mwc-list-item .chevron {
+        transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      mwc-list-item .chevron.expanded {
+        transform: rotate(180deg);
+      }
+      div.group li {
+        width: 100%;
+        height: 1px;
+        display: block;
+        background: var(--divider-color);
+        margin: 0px 10px;
+      }
+      div.meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
       }
     `;
   }
