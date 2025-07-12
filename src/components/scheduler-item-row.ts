@@ -7,8 +7,8 @@ import { computeScheduleDisplay } from "../data/format/compute_schedule_display"
 
 import './scheduler-relative-time';
 
-@customElement("schedule-item-row")
-export class ScheduleItemRow extends LitElement {
+@customElement("scheduler-item-row")
+export class SchedulerItemRow extends LitElement {
 
   @property() hass!: HomeAssistant;
   @property() schedule_id!: string;

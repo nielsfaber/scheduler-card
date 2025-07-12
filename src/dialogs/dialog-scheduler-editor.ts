@@ -1,5 +1,5 @@
-import { mdiArrowLeft, mdiArrowRight, mdiClose, mdiCog, mdiDotsVertical, mdiTuneVariant, mdiWrench, mdiWrenchOutline } from "@mdi/js";
-import { LitElement, PropertyValueMap, html } from "lit";
+import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
+import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { CardConfig, Schedule } from "../types";
 import { EditorDialogStyles } from "../card.styles";
@@ -61,6 +61,8 @@ export class DialogSchedulerEditor extends LitElement {
     return html`
       <ha-dialog open @closed=${this.closeDialog} .heading=${true} hideActions scrimClickAction="">
         <ha-dialog-header slot="heading">
+          ${this._panel == "main"
+        ? html`
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
@@ -70,10 +72,19 @@ export class DialogSchedulerEditor extends LitElement {
           <ha-icon-button
             slot="actionItems"
             .label=""
-            .path=${this._panel == "main" ? mdiTuneVariant : mdiArrowLeft}
-            @click=${this._toggleOptionsPanel}
+            .path=${mdiCogOutline}
+            @click=${() => { this._panel = "options" }}
           ></ha-icon-button>
-
+          `
+        : html`
+          <ha-icon-button
+            slot="navigationIcon"
+            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .path=${mdiArrowLeft}
+            @click=${() => { this._panel = "main" }}
+          ></ha-icon-button>
+          `
+      }
           <span slot="title" @click=${() => this.large = !this.large}>
             ${this._params.editItem
         ? this.schedule.name
@@ -127,10 +138,6 @@ export class DialogSchedulerEditor extends LitElement {
     let schedule = ev.detail.schedule;
     if (!schedule) return;
     this.schedule = schedule;
-  }
-
-  private _toggleOptionsPanel() {
-    this._panel = this._panel == "main" ? "options" : "main";
   }
 
   private async _handleSaveClick(ev: Event) {

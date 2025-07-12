@@ -128,7 +128,7 @@ export class DialogSelectWeekdays extends LitElement {
           ?hasMeta=${key == WeekdayTypeCustom}
         >
           ${isSelectedOption(key)
-          ? html`<ha-icon slot="graphic" icon="mdi:arrow-right"></ha-icon>`
+          ? html`<ha-icon slot="graphic" icon="mdi:check"></ha-icon>`
           : ''
         }
           ${key == WeekdayTypeCustom
@@ -184,8 +184,15 @@ export class DialogSelectWeekdays extends LitElement {
 
   static get styles(): CSSResultGroup {
     return css`
+      ha-dialog {
+        --dialog-content-padding: 0px;
+      }
       div.wrapper {
         color: var(--primary-text-color);
+        padding: 0px 12px;
+      }
+      mwc-list {
+        --mdc-list-vertical-padding: 0px;
       }
 
       mwc-list-item[disabled] {

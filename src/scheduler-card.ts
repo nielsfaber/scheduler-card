@@ -3,8 +3,7 @@ import { loadHaForm } from './lib/load_ha_form';
 import { customElement, property, state } from "lit/decorators";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
-import { SubscribeMixin } from "./components/subscribe-mixin";
-import { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { CardConfig, Schedule, SchedulerEventData } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
@@ -18,10 +17,10 @@ import { fireEvent } from "./lib/fire_event";
 
 import './scheduler-card-editor';
 import "./dialogs/dialog-scheduler-editor";
-import "./components/item-row";
+import "./components/scheduler-item-row";
 
 @customElement('scheduler-card')
-export class SchedulerCard extends SubscribeMixin(LitElement) {
+export class SchedulerCard extends LitElement {
 
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -32,6 +31,8 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
   @state() showDiscovered: boolean = false;
 
   translationsLoaded = false;
+
+  private __unsubs?: Array<UnsubscribeFunc | Promise<UnsubscribeFunc>>;
 
   setConfig(userConfig: Partial<CardConfig>) {
     userConfig = validateConfig(userConfig);
@@ -49,6 +50,40 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
   protected willUpdate(): void {
     (this.hass as any).loadBackendTranslation("services");
+  }
+
+  private __checkSubscribed(): void {
+    if (this.__unsubs !== undefined || !((this as unknown) as Element).isConnected || this.hass === undefined) {
+      return;
+    }
+    this.__unsubs = this.hassSubscribe();
+  }
+
+  public connectedCallback() {
+    super.connectedCallback();
+    this.__checkSubscribed();
+  }
+
+  public disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.__unsubs) {
+      while (this.__unsubs.length) {
+        const unsub = this.__unsubs.pop()!;
+        if (unsub instanceof Promise) {
+          unsub.then(unsubFunc => unsubFunc());
+        } else {
+          unsub();
+        }
+      }
+      this.__unsubs = undefined;
+    }
+  }
+
+  protected updated(changedProps: PropertyValues) {
+    super.updated(changedProps);
+    if (changedProps.has('hass')) {
+      this.__checkSubscribed();
+    }
   }
 
   public hassSubscribe(): Promise<UnsubscribeFunc>[] {
@@ -121,15 +156,15 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
 
         <div class="card-content" id="states">
           ${includedItems.map(scheduleId => html`
-                <schedule-item-row
-                  .hass=${this.hass}
-                  .config=${this._config}
-                  .schedule_id=${scheduleId}
-                  .schedule=${this.schedules![scheduleId]}
-                  @editClick=${this._handleEditClick}
-                >
-                </schedule-item-row>
-              `
+            <scheduler-item-row
+              .hass=${this.hass}
+              .config=${this._config}
+              .schedule_id=${scheduleId}
+              .schedule=${this.schedules![scheduleId]}
+              @editClick=${this._handleEditClick}
+            >
+            </scheduler-item-row>
+          `
         )
       }
 
@@ -151,14 +186,14 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
           : html`
 
           ${Object.keys(items).filter(e => !includedItems.includes(e)).map(scheduleId => html`
-                <schedule-item-row
+                <scheduler-item-row
                   .hass=${this.hass}
                   .config=${this._config}
                   .schedule_id=${scheduleId}
                   .schedule=${this.schedules![scheduleId]}
                   @editClick=${this._handleEditClick}
                 >
-                </schedule-item-row>
+                </scheduler-item-row>
               `
           )
             }
@@ -195,7 +230,6 @@ export class SchedulerCard extends SubscribeMixin(LitElement) {
       .then(res => {
         this.schedules = sortSchedules(res, this._config, this.hass);
         Object.values(res).every(e => isIncludedSchedule(e, this._config));
-
       })
       .catch(_e => {
         this.schedules = {};

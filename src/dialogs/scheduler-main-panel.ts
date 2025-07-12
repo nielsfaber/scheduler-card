@@ -1,4 +1,4 @@
-import { mdiChevronLeft, mdiChevronRight, mdiDelete, mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
+import { mdiChevronLeft, mdiChevronRight, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
@@ -27,14 +27,14 @@ import { fireEvent } from "../lib/fire_event";
 import { useAmPm } from "../lib/use_am_pm";
 import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 
-import "../components/timeslot-editor";
-import "../components/time-picker";
-import "../components/entity-picker";
+import "../components/scheduler-timeslot-editor";
+import "../components/scheduler-time-picker";
+import "../components/scheduler-entity-picker";
 import '../dialogs/dialog-select-weekdays';
 import '../dialogs/dialog-select-action';
-import '../components/collapsible-section';
-import '../components/settings-row';
-import '../components/combo-selector';
+import '../components/scheduler-collapsible-section';
+import '../components/scheduler-settings-row';
+import '../components/scheduler-combo-selector';
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -106,9 +106,9 @@ export class SchedulerMainPanel extends LitElement {
         </ha-icon-button> 
         <ha-icon-button .path=${mdiChevronRight} @click=${() => { this.selectedSlot = this.selectedSlot! + 1 }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
         </ha-icon-button> 
-        <ha-icon-button .path=${mdiPlus} @click=${this._addTimeslot} ?disabled=${delta < 1800}>
+        <ha-icon-button .path=${mdiShapeRectanglePlus} @click=${this._addTimeslot} ?disabled=${delta < 1800}>
         </ha-icon-button>
-        <ha-icon-button .path=${mdiMinus} @click=${this._removeTimeslot} ?disabled=${this.schedule.entries[this.selectedEntry].slots.length <= 2}>
+        <ha-icon-button .path=${mdiTrashCanOutline} @click=${this._removeTimeslot} ?disabled=${this.schedule.entries[this.selectedEntry].slots.length <= 2}>
         </ha-icon-button> 
       </div>
     `;
@@ -202,7 +202,7 @@ export class SchedulerMainPanel extends LitElement {
     heading += formatActionDisplay(action, this.hass, this.config.customize);
 
     return html`
-      <collapsible-section
+      <scheduler-collapsible-section
         ?expanded=${true}
         ?disabled=${true}
       >
@@ -210,23 +210,22 @@ export class SchedulerMainPanel extends LitElement {
           <ha-icon slot="icon" icon="${computeActionIcon(action, this.config.customize)}"></ha-icon>
           <span>${capitalizeFirstLetter(heading)}</span>
         </div>
-        <ha-icon-button slot="contextMenu" .path=${mdiDelete} @click=${this._removeAction}></ha-icon-button>
+        <ha-icon-button slot="contextMenu" .path=${mdiTrashCanOutline} @click=${this._removeAction}></ha-icon-button>
         <div slot="content">
 
           ${config.target ? html`
-          <settings-row>
+          <scheduler-settings-row>
             <span slot="heading">${this.hass.localize("ui.components.entity.entity-picker.entity")}</span>
             <scheduler-entity-picker
               .hass=${this.hass}
               .config=${this.config}
               .domain=${domain}
               @value-changed=${this._selectEntity}
-              .value=${Array.isArray(action.target?.entity_id) ? undefined : action.target?.entity_id}
-              .valueMultiple=${Array.isArray(action.target?.entity_id) ? action.target?.entity_id : []}
-              ?allowMultiple=${true}
+              .value=${[action.target?.entity_id || []].flat()}
+              ?multiple=${true}
             >
             </scheduler-entity-picker>
-          </settings-row>
+          </scheduler-settings-row>
           `
         : ''}
 
@@ -236,7 +235,7 @@ export class SchedulerMainPanel extends LitElement {
           let optional: boolean | undefined = config.fields![field].optional || ((selector as NumberSelector).number || {}).optional;
           const checked = optional ? Object.keys(action.service_data).includes(field) : true;
           return html`
-            <settings-row ?showPrefix=${optional}>
+            <scheduler-settings-row ?showPrefix=${optional}>
               ${optional ? html`
                 <ha-checkbox
                   slot="prefix"
@@ -248,20 +247,20 @@ export class SchedulerMainPanel extends LitElement {
               <span slot="heading">
                 ${formatFieldDisplay(action, field, this.hass, this.config.customize)}
               </span>
-              <combo-selector
+              <scheduler-combo-selector
                 .hass=${this.hass}
                 .config=${selector}
                 ?disabled=${!checked}
                 .value=${Object.keys(action.service_data).includes(field) ? action.service_data[field] : undefined}
                 @value-changed=${(ev: CustomEvent) => this._selectField(field, ev)}
               >
-              </combo-selector>
-            </settings-row>
+              </scheduler-combo-selector>
+            </scheduler-settings-row>
           `
         })
       }
         </div>
-      </collapsible-section>
+      </scheduler-collapsible-section>
     `;
   }
 
@@ -535,10 +534,10 @@ export class SchedulerMainPanel extends LitElement {
   div.slot-placeholder {
     padding: 20px 0px 0px 0px;
   }
-  collapsible-section .header ha-icon {
+  scheduler-collapsible-section .header ha-icon {
     margin-right: 6px;
   }
-  collapsible-section .header span {
+  scheduler-collapsible-section .header span {
     flex: 1;
   }
     `;

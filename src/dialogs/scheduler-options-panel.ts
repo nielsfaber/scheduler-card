@@ -13,14 +13,15 @@ import { validateSelectorValue } from '../data/selectors/validate_selector_value
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { fireEvent } from '../lib/fire_event';
-
-import '../components/collapsible-section';
-import './dialog-select-condition';
-import '../components/settings-row';
-import '../components/combo-selector';
 import { fetchTags } from '../data/store/fetch_tags';
 import { SelectSelector } from '../lib/selector';
 import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
+
+import '../components/scheduler-collapsible-section';
+import './dialog-select-condition';
+import '../components/scheduler-settings-row';
+import '../components/scheduler-combo-selector';
+import { asArray } from '../lib/as_array';
 
 @customElement('scheduler-options-panel')
 export class SchedulerOptionsPanel extends LitElement {
@@ -122,13 +123,13 @@ export class SchedulerOptionsPanel extends LitElement {
         `
         : ''}
         </div>
-        <collapsible-group
+        <scheduler-collapsible-group
           ?disabled=${!this.conditionValid}
           @openclose-changed=${this._updateActiveCondition}
           .openedItem=${this.conditionIdx}
         >
         ${this.renderConditions()}
-        </collapsible-group>
+        </scheduler-collapsible-group>
 
       <div>
         <mwc-button
@@ -180,13 +181,13 @@ export class SchedulerOptionsPanel extends LitElement {
 
       <span class="header">${localize('ui.panel.options.tags', this.hass)}:</span>
       <div>
-        <combo-selector
+        <scheduler-combo-selector
           .hass=${this.hass}
           .config=${tagSelector}
           .value=${this.schedule.tags || []}
           @value-changed=${this.tagsUpdated}
         >
-        </combo-selector>
+        </scheduler-combo-selector>
       </div>
 
       <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>
@@ -236,11 +237,11 @@ export class SchedulerOptionsPanel extends LitElement {
       if (this.conditionIdx === i && !this.selectedMatchType) this.selectedMatchType = matchTypes[0];
 
       return html`
-      <collapsible-section>
+      <scheduler-collapsible-section>
         <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
           <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.hass)}"></ha-icon>
-          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
+          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['<span class="chip">{entity}</div>', '<div class="chip">{value}</div>'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
           ` : 'new condition'}
         </div>
         <ha-button-menu
@@ -269,7 +270,7 @@ export class SchedulerOptionsPanel extends LitElement {
 
         <div slot="content">
 
-        <settings-row>
+        <scheduler-settings-row>
           <span slot="heading">
             ${this.hass.localize('ui.components.selectors.selector.types.entity')}
           </span>
@@ -278,12 +279,13 @@ export class SchedulerOptionsPanel extends LitElement {
             .config=${this.config}
             .domain=${domain}
             @value-changed=${this._selectEntity}
-            .value=${this.conditionIdx == i ? this.selectedEntity : condition.entity_id}
+            .value=${this.conditionIdx == i ? asArray(this.selectedEntity) : asArray(condition.entity_id)}
+            ?multiple=${false}
           >
           </scheduler-entity-picker>
-        </settings-row>
+        </scheduler-settings-row>
 
-        <settings-row>
+        <scheduler-settings-row>
           <span slot="heading">
             ${capitalizeFirstLetter(localize(matchTypeValue[this.conditionIdx == i ? this.selectedMatchType! : condition.match_type!], this.hass, ['{entity}', '{value}'], ['', '']))}
             <ha-button-menu
@@ -301,16 +303,16 @@ export class SchedulerOptionsPanel extends LitElement {
               `)}
             </ha-button-menu>
           </span>
-          <combo-selector
+          <scheduler-combo-selector
             .hass=${this.hass}
             .config=${selector}
             .value=${this.conditionIdx == i ? this.conditionValue : condition.value}
             @value-changed=${this._conditionValueChanged}
           >
-          </combo-selector>
-        </settings-row>
+          </scheduler-combo-selector>
+        </scheduler-settings-row>
         </div>
-      </collapsible-section>
+      </scheduler-collapsible-section>
     `}
     );
   }
@@ -392,8 +394,8 @@ export class SchedulerOptionsPanel extends LitElement {
 
 
   _selectEntity(ev: CustomEvent) {
-    const entity = ev.detail.value as string | undefined;
-    this.selectedEntity = entity;
+    const entity = ev.detail.value as string[] | undefined;
+    this.selectedEntity = entity ? entity.pop() : undefined;
     this._validateCondition();
   }
 
@@ -569,6 +571,9 @@ export class SchedulerOptionsPanel extends LitElement {
       }
       .header ha-button-menu {
         margin-bottom: -10px;
+      }
+      .chip {
+        background: red;
       }
     `;
   }

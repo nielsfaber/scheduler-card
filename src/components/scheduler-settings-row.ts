@@ -2,8 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators';
 
 
-@customElement('settings-row')
-class SettingsRow extends LitElement {
+@customElement('scheduler-settings-row')
+class SchedulerSettingsRow extends LitElement {
 
   @property({ type: Boolean }) showPrefix = false;
 
@@ -59,9 +59,9 @@ class SettingsRow extends LitElement {
       flex: 1;
       padding: 8px 0;
     }
-    .content ::slotted(*) {
-      width: var(--settings-row-content-width);
-    }
+    // .content ::slotted(*) {
+    //   width: var(--settings-row-content-width);
+    // }
     .prefix-wrap {
       display: flex;
       flex-direction: row;
@@ -73,6 +73,7 @@ class SettingsRow extends LitElement {
     .heading, .heading ::slotted(*) {
       display: flex;
       align-items: center;
+      width: 150px;
     }
     @media all and (max-width: 450px) {
       :host {

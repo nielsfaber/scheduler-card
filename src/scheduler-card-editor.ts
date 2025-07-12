@@ -6,15 +6,15 @@ import { localize } from "./localize/localize";
 import { DefaultCardConfig } from "./const";
 import { CardConfig } from "./types";
 import { fireEvent } from "./lib/fire_event";
-
-import './dialogs/dialog-select-entities';
-import "./components/entity-picker";
-import "./components/collapsible-section";
-import './components/combo-selector';
 import { SelectSelector } from "./lib/selector";
 import { fetchTags } from "./data/store/fetch_tags";
 import { sortByName } from "./lib/sort";
+import { mdiArrowRight } from "@mdi/js";
 
+import './dialogs/dialog-select-entities';
+import "./components/scheduler-entity-picker";
+import "./components/scheduler-collapsible-section";
+import './components/scheduler-combo-selector';
 
 @customElement("scheduler-card-editor")
 export class SchedulerCardEditor extends LitElement {
@@ -55,11 +55,15 @@ export class SchedulerCardEditor extends LitElement {
     return html`
       <div class="card-config">
 
-        <mwc-button @click=${this._showIncludedEntitiesDialog}>
+        <ha-button @click=${this._showIncludedEntitiesDialog} outlined>
           Configure included entities
-        </mwc-button>
+          <ha-svg-icon
+            slot="trailingIcon"
+            .path=${mdiArrowRight}
+          ></ha-svg-icon>
+        </ha-button>
 
-        <settings-row ?showPrefix=${true}>
+        <scheduler-settings-row ?showPrefix=${true}>
           <ha-checkbox
             slot="prefix"
             ?checked=${this._config.title !== false}
@@ -75,7 +79,7 @@ export class SchedulerCardEditor extends LitElement {
             ?disabled=${this._config.title === false}
           ></ha-textfield>
 
-        </settings-row>
+        </scheduler-settings-row>
 
         <div class="two-columns" style="margin: 10px 0px 15px 0px">
         <div class="column">
@@ -207,17 +211,17 @@ export class SchedulerCardEditor extends LitElement {
 
         </div>
 
-        <settings-row>
+        <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
 
-          <combo-selector
+          <scheduler-combo-selector
             .hass=${this.hass}
             .config=${tagSelector}
             .value=${[this._config.tags || []].flat()}
             @value-changed=${(ev: CustomEvent) => { this._updateConfig({ tags: ev.detail.value }) }}
           >
           </combo-selector>
-        </settings-row>
+        </scheduler-settings-row>
 
       </div>
     `;
@@ -356,7 +360,7 @@ export class SchedulerCardEditor extends LitElement {
       display: flex; 
       flex-direction: column; 
     }
-    combo-selector {
+    scheduler-combo-selector {
       min-width: 240px;
     }
   `;

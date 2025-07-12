@@ -1,12 +1,13 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property } from "lit/decorators";
 import { NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
+import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
 
 
-@customElement("combo-selector")
-export class ComboSelector extends LitElement {
+@customElement("scheduler-combo-selector")
+export class SchedulerComboSelector extends LitElement {
 
   @property({ attribute: false }) hass!: HomeAssistant;
   @property({ attribute: false }) config!: Selector;
@@ -16,43 +17,81 @@ export class ComboSelector extends LitElement {
 
   protected render(): TemplateResult {
     if ((this.config as SelectSelector).select) {
-      const config = (this.config as SelectSelector).select!
+      const config = (this.config as SelectSelector).select!;
       const values = [...[this.value || []]].flat().map(String);
 
-      const removeItem = (value: string) => {
+      const removeClick = (ev: CustomEvent) => {
+        const value = ev.detail;
         this.value = values.filter(e => e != value);
         fireEvent(this, "value-changed", { value: this.value });
       }
 
       const renderChips = () => {
-        return values.map(e =>
-          html`
-            <div class="chip">
-              <span class="label">${e}</span>
-              <ha-icon icon="mdi:close" @click=${() => removeItem(e)}></ha-icon>
-            </div>
-          `)
+        let items = values.map(value => Object({
+          name: value,
+          value: value
+        }));
+
+        return html`
+        <scheduler-chip-set
+          .hass=${this.hass}
+          .items=${items}
+          removable
+          @value-changed=${removeClick}
+        >
+        </scheduler-chip-set>`;
       }
 
-      const filteredItems = (): SelectOption[] => {
-        let options: (string | SelectOption)[] = [...config?.options];
-        let selectedValue = [this.value || []].flat().map(String);
-        options = [...options, ...selectedValue.filter(e => !options.find(f => typeof f === 'object' ? f.value == e : f == e))];
+      const computeItemLabel = (value: string) => {
+        const translationKey = (this.config as SelectSelector).select?.translation_key;
+        let label = '';
+        if (translationKey) label = this.hass.localize(translationKey.replace('${value}', value));
+        if (!label) label = value;
+        return label;
+      }
+      const filteredItems = (): PickerComboBoxItem[] => {
 
-        if (Array.isArray(this.value)) options = options.filter(e => typeof e === 'object' ? !values.includes(e.value) : !values.includes(e));
-
-        const computeItemLabel = (value: string) => {
-          const translationKey = (this.config as SelectSelector).select?.translation_key;
-          let label = '';
-          if (translationKey) label = this.hass.localize(translationKey.replace('${value}', value));
-          if (!label) label = value;
-          return label;
+        const comboBoxOption = (option: string | SelectOption): PickerComboBoxItem => {
+          if (typeof option === 'object') {
+            return {
+              id: option.value,
+              primary: option.label
+            }
+          }
+          else {
+            return {
+              id: option,
+              primary: computeItemLabel(option)
+            }
+          }
         }
+        let options = [...config?.options].map(comboBoxOption);
 
-        return options.map(e => typeof e === 'object' ? e : Object({
-          value: e,
-          label: computeItemLabel(e)
-        }));
+        let selectedValue = [this.value || []].flat().map(String);
+        options = [...options, ...selectedValue.filter(e => !options.find(f => f.id == e)).map(comboBoxOption)];
+
+        if (Array.isArray(this.value)) options = options.filter(e => typeof e === 'object' ? !values.includes(e.id) : !values.includes(e));
+        return options;
+      }
+
+      const valueRenderer: PickerValueRenderer = (value: string) => {
+        let label = value;
+        let match = config.options.find(e => typeof e === 'object' ? e.value === value : e === value);
+        if (match && typeof match === 'object') label = match.label;
+        else label = computeItemLabel(value);
+
+        return html`
+          <span slot="headline">${label}</span>
+        `;
+      };
+
+      const rowRenderer = (item: PickerComboBoxItem) => {
+        //TODO: handle icons
+        return html`
+            <ha-combo-box-item type="button" compact>
+              <span slot="headline">${item.primary}</span>
+            </ha-combo-box-item>
+          `;
       }
 
       return html`
@@ -62,19 +101,17 @@ export class ComboSelector extends LitElement {
           ${renderChips()}
           </div>
         ` : ''}
-        <ha-combo-box
+        <scheduler-picker
           .hass=${this.hass}
-          label=""
-          item-value-path="value"
-          item-label-path="label"
-          .renderer=${this.rowRenderer}
-          .filteredItems=${filteredItems()}
+          ?allow-custom-value=${config.custom_value}
+          .notFoundLabel=${this.hass.localize("ui.components.service-picker.no_match")}
+          .getItems=${filteredItems}
+          .rowRenderer=${rowRenderer}
+          .valueRenderer=${valueRenderer}
           @value-changed=${this._valueChanged}
           .value=${!Array.isArray(this.value) ? this.value || "" : ""}
-          ?disabled=${this.disabled}
-          ?allow-custom-value=${config.custom_value}
         >
-        </ha-combo-box>
+        </scheduler-picker>
         </div>
       `;
     }
@@ -155,46 +192,7 @@ export class ComboSelector extends LitElement {
         flex-direction: column;
         width: 100%;
       }
-      div.chip {
-        height: 32px;
-        border-radius: 16px;
-        border: 2px solid rgba(var(--rgb-primary-color), 0.54);
-        line-height: 1.25rem;
-        font-size: 0.875rem;
-        font-weight: 400;
-        padding: 0px 12px;
-        display: inline-flex;
-        align-items: center;
-        box-sizing: border-box;
-        margin: 4px;
-      }
-      div.chip .label {
-          margin: 0px 4px;
-      }
-      div.chip ha-icon {
-          cursor: pointer;
-          background: var(--secondary-text-color);
-          border-radius: 50%;
-          --mdc-icon-size: 14px;
-          color: var(--card-background-color);
-          width: 16px;
-          height: 16px;
-          padding: 1px;
-          box-sizing: border-box;
-          display: inline-flex;
-          align-items: center;
-          margin-right: -6px !important;
-      }
   `;
-
-  rowRenderer = (item: SelectOption) => {
-    //TODO: handle icons
-    return html`
-      <mwc-list-item>
-        <span>${item.label}</span>
-      </mwc-list-item>
-    `;
-  }
 
   private _valueChanged(ev: Event | CustomEvent) {
     ev.stopPropagation();
@@ -203,7 +201,7 @@ export class ComboSelector extends LitElement {
       let value = (ev as CustomEvent).detail.value;
       if (!value) return;
       this.value = [...this.value, value];
-      (ev.target as any).setInputValue("");
+      (ev.target as any).value = "";
     }
     else if ((ev as CustomEvent).detail) {
       let value = (ev as CustomEvent).detail.value;
@@ -218,6 +216,6 @@ export class ComboSelector extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "combo-selector": ComboSelector;
+    "scheduler-combo-selector": SchedulerComboSelector;
   }
 }
