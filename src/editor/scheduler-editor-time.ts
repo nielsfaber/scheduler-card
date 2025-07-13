@@ -93,6 +93,12 @@ export class SchedulerEditorTime extends LitElement {
 
   render() {
     if (!this.hass || !this.config || !this.entities || !this.actions) return html``;
+    let timePickerHeader = '';
+    if (!this.timeslots) {
+      timePickerHeader = this.hass.localize('ui.dialogs.helper_settings.input_datetime.time');
+      if (this.entities?.[0].id.startsWith('time'))
+        timePickerHeader += ` (${localize('ui.panel.common.title', getLocale(this.hass))})`;
+    }
     return html`
       <div class="content">
         <div class="header">
@@ -102,7 +108,7 @@ export class SchedulerEditorTime extends LitElement {
         ${!this.timeslots
           ? html`
               ${this.getVariableEditor()} ${this.renderDays()}
-              <div class="header">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}</div>
+              <div class="header">${timePickerHeader}</div>
               <time-picker
                 .hass=${this.hass}
                 .value=${this.schedule.timeslots[0].start}
@@ -150,6 +156,10 @@ export class SchedulerEditorTime extends LitElement {
     `;
   }
 
+  getEntityName(entity: EntityElement) {
+    return entity.name || this.hass!.states[entity.id].attributes.friendly_name || computeEntity(entity.id);
+  }
+
   renderSummary() {
     if (!this.entities || !this.actions) return html``;
     return html`
@@ -159,11 +169,7 @@ export class SchedulerEditorTime extends LitElement {
             entity => html`
               <div>
                 <ha-icon icon="${PrettyPrintIcon(entity.icon)}"> </ha-icon>
-                ${capitalize(
-                  PrettyPrintName(
-                    entity.name || this.hass!.states[entity.id].attributes.friendly_name || computeEntity(entity.id)
-                  )
-                )}
+                ${capitalize(PrettyPrintName(this.getEntityName(entity)))}
               </div>
             `
           )}
@@ -395,11 +401,15 @@ export class SchedulerEditorTime extends LitElement {
     return actions.map(action => {
       return Object.entries(this.actions!.find(e => compareActions(e, action, true))!.variables!).map(
         ([field, variable]) => {
+          let header: string = variable.name || PrettyPrintName(field);
+          if (header.toLowerCase() === 'time') {
+            const entity = this.entities?.[0];
+            if (entity) header += ` (${PrettyPrintName(this.getEntityName(entity))})`;
+          }
           return html`
-            <div class="header">
-              ${variable.name || PrettyPrintName(field)}
-            </div>
+            <div class="header">${header}</div>
             <scheduler-variable-picker
+              .hass=${this.hass}
               .variable=${variable}
               .value=${action.service_data ? action.service_data[field] : null}
               @value-changed=${(ev: CustomEvent) =>

@@ -48,6 +48,7 @@ export function compareActions(actionA: Action, actionB: Action, allowVars = fal
     if (variable.type === EVariableType.List) {
       return (variable as ListVariable).options.some(e => e.value === value);
     } else if (variable.type === EVariableType.Level) return !isNaN(value);
+    else if (variable.type == EVariableType.Time) return true;
     else if (variable.type == EVariableType.Text) return true;
 
     return false;

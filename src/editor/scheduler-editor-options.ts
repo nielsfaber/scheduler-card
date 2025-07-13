@@ -465,6 +465,7 @@ export class SchedulerEditorOptions extends LitElement {
 
         <div class="header">${this.hass.localize('ui.panel.config.automation.editor.conditions.type.state.label')}</div>
         <scheduler-variable-picker
+          .hass=${this.hass}
           .variable=${states}
           .value=${this.conditionValue}
           @value-changed=${(ev: CustomEvent) => (this.conditionValue = ev.detail.value)}
