@@ -14,6 +14,7 @@ import { isIncludedSchedule } from "./data/schedule/is_included_schedule";
 import { sortSchedules } from "./data/schedule/sort_schedules";
 import { fetchScheduleItem } from "./data/store/fetch_item";
 import { fireEvent } from "./lib/fire_event";
+import { hassLocalize } from "./localize/hassLocalize";
 
 import './scheduler-card-editor';
 import "./dialogs/dialog-scheduler-editor";
@@ -107,8 +108,8 @@ export class SchedulerCard extends LitElement {
     }
 
     if (!this.translationsLoaded
-      && this.hass.localize(`component.input_boolean.services.turn_on.name`).length
-      && this.hass.localize('ui.panel.config.automation.editor.conditions.type.sun.sunrise').length
+      && hassLocalize(`component.input_boolean.services.turn_on.name`, this.hass, false).length
+      && hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.sunrise', this.hass, false).length
     ) {
       this.translationsLoaded = true;
       return true;
@@ -214,7 +215,7 @@ export class SchedulerCard extends LitElement {
 
         <div class="card-actions">
           <mwc-button @click=${this._addClick}
-            >${this.hass.localize('ui.common.add')}
+            >${hassLocalize('ui.common.add', this.hass)}
           </mwc-button>
 
           <span class="beta">

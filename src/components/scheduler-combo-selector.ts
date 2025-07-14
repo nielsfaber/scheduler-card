@@ -4,6 +4,7 @@ import { NumberSelector, SelectOption, Selector, SelectSelector, StringSelector 
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
+import { hassLocalize } from "../localize/hassLocalize";
 
 
 @customElement("scheduler-combo-selector")
@@ -45,7 +46,7 @@ export class SchedulerComboSelector extends LitElement {
       const computeItemLabel = (value: string) => {
         const translationKey = (this.config as SelectSelector).select?.translation_key;
         let label = '';
-        if (translationKey) label = this.hass.localize(translationKey.replace('${value}', value));
+        if (translationKey) label = hassLocalize(translationKey.replace('${value}', value), this.hass, false);
         if (!label) label = value;
         return label;
       }
@@ -104,7 +105,6 @@ export class SchedulerComboSelector extends LitElement {
         <scheduler-picker
           .hass=${this.hass}
           ?allow-custom-value=${config.custom_value}
-          .notFoundLabel=${this.hass.localize("ui.components.service-picker.no_match")}
           .getItems=${filteredItems}
           .rowRenderer=${rowRenderer}
           .valueRenderer=${valueRenderer}

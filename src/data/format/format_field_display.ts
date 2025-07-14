@@ -1,5 +1,6 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { HomeAssistant } from "../../lib/types";
+import { hassLocalize } from "../../localize/hassLocalize";
 import { Action, CustomConfig } from "../../types";
 import { compareActions } from "../actions/compare_actions";
 
@@ -10,7 +11,7 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
-  let name = hass.localize(`component.${domain}.services.${domainService}.fields.${field}.name`);
+  let name = hassLocalize(`component.${domain}.services.${domainService}.fields.${field}.name`, hass, false);
   if (!name &&
     hass.services[domain] &&
     hass.services[domain][action.service] &&

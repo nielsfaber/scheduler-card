@@ -3,6 +3,7 @@ import { computeDomain } from "../lib/entity";
 import { SUPPORTED_CONDITION_DOMAINS } from "./compute_states_for_entity";
 import { HomeAssistant } from "../lib/types";
 import { matchPattern } from "../lib/patterns";
+import { hassLocalize } from "../localize/hassLocalize";
 
 
 const isSupportedDomain = (domain: string) => {
@@ -36,7 +37,7 @@ export const computeConditionDomains = (hass: HomeAssistant, config: entityConfi
 
   let actionList: listItem[] = domains.map(e => Object({
     key: e,
-    name: hass.localize(`component.${e}.title`) || e.replace(/_/g, " "),
+    name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, " "),
     description: "",
     icon: domainIcon(e)
   }));

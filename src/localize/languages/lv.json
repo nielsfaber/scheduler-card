@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"
@@ -237,6 +239,7 @@
             "description": "Izmantojiet tagus, lai sadalītu grafikus starp vairākām kartēm"
           },
           "entities": {
+            "button_label": "Iekļauto elementu konfigurēšana",
             "heading": "Iekļautās vienības",
             "description": "Izvēlieties vienības, kuras vēlaties kontrolēt, izmantojot plānotāju. Jūs varat noklikšķināt uz grupas, lai to atvērtu. Ņemiet vērā, ka dažas vienības (piemēram, sensori) var tikt izmantotas tikai nosacījumiem, nevis darbībām.",
             "included_number": "{number}/{total} izvēlēts"

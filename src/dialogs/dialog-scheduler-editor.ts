@@ -11,14 +11,15 @@ import { saveSchedule } from "../data/store/save_schedule";
 import { handleWebsocketError } from "../data/store/handle_websocket_error";
 import { deleteSchedule } from "../data/store/delete_schedule";
 import { fireEvent } from "../lib/fire_event";
-
-import './scheduler-main-panel';
-import './scheduler-options-panel';
-import './generic-dialog';
 import { updateSchedule } from "../data/store/update_schedule";
 import { fetchScheduleItem } from "../data/store/fetch_item";
 import { deepCompare } from "../lib/deep_compare";
 import { parseTimeBar } from "../data/time/parse_time_bar";
+import { hassLocalize } from "../localize/hassLocalize";
+
+import './scheduler-main-panel';
+import './scheduler-options-panel';
+import './generic-dialog';
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
@@ -66,7 +67,7 @@ export class DialogSchedulerEditor extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
           <ha-icon-button
@@ -79,7 +80,7 @@ export class DialogSchedulerEditor extends LitElement {
         : html`
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiArrowLeft}
             @click=${() => { this._panel = "main" }}
           ></ha-icon-button>
@@ -124,10 +125,10 @@ export class DialogSchedulerEditor extends LitElement {
 
         <div class="buttons">
           <mwc-button @click=${this._handleSaveClick}>
-            ${this.hass.localize('ui.common.save')}
+            ${hassLocalize('ui.common.save', this.hass)}
           </mwc-button>
           <mwc-button @click=${this._handleDeleteClick} class="warning">
-            ${this.hass.localize('ui.common.delete')}
+            ${hassLocalize('ui.common.delete', this.hass)}
           </mwc-button>
         </div>
       </ha-dialog>
@@ -147,9 +148,9 @@ export class DialogSchedulerEditor extends LitElement {
         const params: GenericDialogParams = {
           cancel: () => resolve(false),
           confirm: () => resolve(true),
-          title: this.hass.localize('state_badge.default.error'),
+          title: hassLocalize('state_badge.default.error', this.hass),
           description: localize(`ui.panel.editor.validation_errors.${error}`, this.hass),
-          primaryButtonLabel: this.hass.localize('ui.common.ok')
+          primaryButtonLabel: hassLocalize('ui.common.ok', this.hass)
         };
 
         fireEvent(ev.target as HTMLElement, 'show-dialog', {
@@ -172,8 +173,8 @@ export class DialogSchedulerEditor extends LitElement {
           const params: GenericDialogParams = {
             title: localize('ui.dialog.enable_schedule.title', this.hass),
             description: localize('ui.dialog.enable_schedule.description', this.hass),
-            primaryButtonLabel: this.hass.localize('ui.common.yes'),
-            secondaryButtonLabel: this.hass.localize('ui.common.no'),
+            primaryButtonLabel: hassLocalize('ui.common.yes', this.hass),
+            secondaryButtonLabel: hassLocalize('ui.common.no', this.hass),
             cancel: () => {
               resolve(false);
             },
@@ -212,8 +213,8 @@ export class DialogSchedulerEditor extends LitElement {
         confirm: () => resolve(true),
         title: localize('ui.dialog.confirm_delete.title', this.hass),
         description: localize('ui.dialog.confirm_delete.description', this.hass),
-        primaryButtonLabel: this.hass.localize('ui.common.ok'),
-        secondaryButtonLabel: this.hass.localize('ui.common.cancel'),
+        primaryButtonLabel: hassLocalize('ui.common.ok', this.hass),
+        secondaryButtonLabel: hassLocalize('ui.common.cancel', this.hass),
       };
 
       fireEvent(ev.target as HTMLElement, 'show-dialog', {

@@ -121,7 +121,9 @@
         "choose": "Kies..."
       },
       "entity_picker": {
-        "title": "Kies entiteiten"
+        "title": "Kies entiteiten",
+        "choose": "Kies...",
+        "no_results": "Geen overeenkomstige items gevonden"
       },
       "action_picker": {
         "title": "Kies actie"
@@ -177,6 +179,72 @@
         },
         "repeat_type": "Gedrag na voltooiing",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entiteiten",
+          "other": "Overig"
+        },
+        "fields": {
+          "title": {
+            "heading": "Titel van de kaart",
+            "options": {
+              "standard": "standaard",
+              "hidden": "verborgen",
+              "custom": "anders"
+            },
+            "custom_title": "Eigen titel"
+          },
+          "discover_existing": {
+            "heading": "Alle schema's tonen",
+            "description": "Hiermee wordt de 'discover existing' instelling geactiveerd. Eerder aangemaakte schema's zullen automatisch worden weergegeven."
+          },
+          "time_step": {
+            "heading": "Stapgrootte voor tijd",
+            "description": "Resolutie (in minuten)"
+          },
+          "sort_by": {
+            "heading": "Sorteer-opties",
+            "description": "Volgorde waarin de schema's worden weergegeven in de kaart",
+            "options": {
+              "relative_time": "Resterende tijd tot volgende actie",
+              "title": "Weergegeven titel van de schema's",
+              "state": "Actieve schema's eerst"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Weergegeven primaire info",
+            "description": "Kies welk label wordt gebruikt in de weergave",
+            "options": {
+              "default": "Schema naam",
+              "entity_action": "Samenvatting van de actie"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Weergegeven secondaire info",
+            "description": "Kies welke aanvullende informatie zichtbaar is in de weergave",
+            "options": {
+              "relative_time": "Resterende tijd tot volgende actie",
+              "time": "Ingestelde tijd voor de volgende actie",
+              "days": "Herhaalde dagen van de week",
+              "additional_tasks": "Aantal resterende acties"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Hoofdschakelaar weergeven",
+            "description": "Schakelaar weergeven bovenin de kaart om alle schema's te (de)activeren"
+          },
+          "tags": {
+            "heading": "Tags",
+            "description": "Tags kunnen gebruikt worden om schema's te verdelen over meerdere kaarten"
+          },
+          "entities": {
+            "button_label": "Configureer zichtbare entiteiten",
+            "heading": "Zichtbare entiteiten",
+            "description": "Kies de entiteiten die je wilt bedienen vanuit schema's. Klik op een categorie om deze te openen. Merk op dat sommige entiteiten gebruikt worden om condities toe te wijzen.",
+            "included_number": "{number}/{total} geselecteerd"
+          }
+        }
       }
     }
   }

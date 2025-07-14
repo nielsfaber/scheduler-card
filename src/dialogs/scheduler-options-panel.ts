@@ -16,12 +16,13 @@ import { fireEvent } from '../lib/fire_event';
 import { fetchTags } from '../data/store/fetch_tags';
 import { SelectSelector } from '../lib/selector';
 import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
+import { asArray } from '../lib/as_array';
+import { hassLocalize } from '../localize/hassLocalize';
 
 import '../components/scheduler-collapsible-section';
 import './dialog-select-condition';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import { asArray } from '../lib/as_array';
 
 @customElement('scheduler-options-panel')
 export class SchedulerOptionsPanel extends LitElement {
@@ -152,7 +153,7 @@ export class SchedulerOptionsPanel extends LitElement {
         <ha-date-input
           .locale=${this.hass.locale}
           value=${this.startDate}
-          .label=${this.hass.localize('ui.components.date-range-picker.start_date')}
+          .label=${hassLocalize('ui.components.date-range-picker.start_date', this.hass)}
           @value-changed=${this._setStartDate}
           ?disabled=${!this.schedule.start_date}
         >
@@ -161,20 +162,20 @@ export class SchedulerOptionsPanel extends LitElement {
         <ha-date-input
           .locale=${this.hass.locale}
           value=${this.endDate}
-          .label=${this.hass.localize('ui.components.date-range-picker.end_date')}
+          .label=${hassLocalize('ui.components.date-range-picker.end_date', this.hass)}
           @value-changed=${this._setEndDate}
           ?disabled=${!this.schedule.end_date}
         >
         </ha-date-input>
       </div>
 
-      <span class="header">${this.hass.localize('ui.components.area-picker.add_dialog.name')}:</span>
+      <span class="header">${hassLocalize('ui.components.area-picker.add_dialog.name', this.hass)}:</span>
       <div class="period">
         <ha-textfield
           value=${this.schedule.name || ''}
           placeholder=${this.schedule.name
         ? ''
-        : this.hass.localize('ui.components.area-picker.add_dialog.name')}
+        : hassLocalize('ui.components.area-picker.add_dialog.name', this.hass)}
           @input=${this.updateName}
         ></ha-textfield>
       </div>
@@ -193,15 +194,15 @@ export class SchedulerOptionsPanel extends LitElement {
       <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>
       <mwc-button @click=${this.setRepeatType} value="${TRepeatType.Repeat}" ?active=${this.schedule.repeat_type == TRepeatType.Repeat}>
         <ha-icon icon="mdi:refresh"></ha-icon>
-        ${this.hass.localize('ui.components.calendar.event.repeat.label')}
+        ${hassLocalize('ui.components.calendar.event.repeat.label', this.hass)}
       </mwc-button>
       <mwc-button @click=${this.setRepeatType} value="${TRepeatType.Pause}" ?active=${this.schedule.repeat_type == TRepeatType.Pause}>
         <ha-icon icon="mdi:stop"></ha-icon>
-        ${this.hass.localize('ui.dialogs.more_info_control.vacuum.stop')}
+        ${hassLocalize('ui.dialogs.more_info_control.vacuum.stop', this.hass)}
       </mwc-button>
       <mwc-button @click=${this.setRepeatType}  value="${TRepeatType.Single}" ?active=${this.schedule.repeat_type == TRepeatType.Single}>
         <ha-icon icon="mdi:trash-can-outline"></ha-icon>
-        ${this.hass.localize('ui.common.delete')}
+        ${hassLocalize('ui.common.delete', this.hass)}
       </mwc-button>
     `;
   }
@@ -259,11 +260,11 @@ export class SchedulerOptionsPanel extends LitElement {
           >
           </ha-icon-button>
           <mwc-list-item graphic="icon">
-            ${this.hass.localize('ui.panel.lovelace.editor.card.conditional.change_type')}
+            ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
             <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
           </mwc-list-item>
           <mwc-list-item graphic="icon" class="warning">
-            ${this.hass.localize('ui.common.delete')}
+            ${hassLocalize('ui.common.delete', this.hass)}
             <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
           </mwc-list-item>
         </ha-button-menu>
@@ -272,7 +273,7 @@ export class SchedulerOptionsPanel extends LitElement {
 
         <scheduler-settings-row>
           <span slot="heading">
-            ${this.hass.localize('ui.components.selectors.selector.types.entity')}
+            ${hassLocalize('ui.components.selectors.selector.types.entity', this.hass)}
           </span>
           <scheduler-entity-picker
             .hass=${this.hass}

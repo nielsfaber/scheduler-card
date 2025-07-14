@@ -1,6 +1,7 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from '../lib/types';
+import { hassLocalize } from '../localize/hassLocalize';
 
 
 @customElement('scheduler-chip')
@@ -87,7 +88,7 @@ export class SchedulerChip extends LitElement {
     }
     return html`
         <div class="trailing-icon" @click=${this._iconClick}>
-          <ha-tooltip content="${this.hass.localize('ui.common.remove')}">
+          <ha-tooltip content="${hassLocalize('ui.common.remove', this.hass)}">
             <ha-icon icon="mdi:close"
             ></ha-icon>
           </ha-tooltip>

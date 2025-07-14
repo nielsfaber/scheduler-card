@@ -121,7 +121,9 @@
         "choose": "Elegir..."
       },
       "entity_picker": {
-        "title": "Elegir entidades"
+        "title": "Elegir entidades",
+        "choose": "Elegir...",
+        "no_results": "No se encontraron artículos coincidentes"
       },
       "action_picker": {
         "title": "Elige Acción"

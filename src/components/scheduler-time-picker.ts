@@ -8,6 +8,7 @@ import { addTimeOffset } from "../data/time/add_time_offset";
 import { HomeAssistant } from "../lib/types";
 import { AmPmFormat, convertTo12Hour, convertTo24Hour, useAmPm } from "../lib/use_am_pm";
 import { fireEvent } from "../lib/fire_event";
+import { hassLocalize } from "../localize/hassLocalize";
 
 @customElement("scheduler-time-picker")
 export class SchedulerTimePicker extends LitElement {
@@ -146,11 +147,10 @@ export class SchedulerTimePicker extends LitElement {
     ];
 
     const modeOptionLabels = {
-      [TimeMode.Fixed]: 'Time',
-      [TimeMode.Sunrise]: 'Sunrise',
-      [TimeMode.Sunset]: 'Sunset'
+      [TimeMode.Fixed]: hassLocalize('ui.components.selectors.selector.types.time', this.hass),
+      [TimeMode.Sunrise]: hassLocalize('ui.panel.config.automation.editor.triggers.type.sun.sunrise', this.hass),
+      [TimeMode.Sunset]: hassLocalize('ui.panel.config.automation.editor.triggers.type.sun.sunset', this.hass),
     };
-    //this.hass.localize('ui.panel.config.automation.editor.triggers.type.sun.sunrise')}
 
     const modeOptionIcons = {
       [TimeMode.Fixed]: 'mdi:clock-outline',

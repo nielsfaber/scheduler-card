@@ -7,6 +7,7 @@ import { localize } from '../localize/localize';
 import { computeDayDisplay } from '../data/format/compute_days_display';
 import { computeStartOfWeek } from '../data/days';
 import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
+import { hassLocalize } from '../localize/hassLocalize';
 
 export type DialogSelectWeekdayParams = {
   weekdays: TWeekday[];
@@ -48,7 +49,7 @@ export class DialogSelectWeekdays extends LitElement {
         ? html`
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiChevronLeft}
             @click=${this.backClick}
           ></ha-icon-button>
@@ -57,7 +58,7 @@ export class DialogSelectWeekdays extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
           `};
@@ -72,7 +73,7 @@ export class DialogSelectWeekdays extends LitElement {
         </div>
 
         <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-          ${this.hass.localize('ui.common.cancel')}
+          ${hassLocalize('ui.common.cancel', this.hass)}
         </mwc-button>
         <mwc-button
           slot="secondaryAction"
@@ -80,7 +81,7 @@ export class DialogSelectWeekdays extends LitElement {
           dialogAction="close"
           ?disabled=${!this._params.weekdays.length}
         >
-          ${this.hass.localize('ui.common.ok')}
+          ${hassLocalize('ui.common.ok', this.hass)}
         </mwc-button>
       </ha-dialog>
     `;

@@ -4,6 +4,7 @@ import { localize } from "../../localize/localize";
 import { actionConfig } from "../actions/action_config";
 import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
+import { hassLocalize } from "../../localize/hassLocalize";
 
 
 const translationKeyOverlap = (key: string, action: Action): number => {
@@ -63,7 +64,7 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
   else {
     const domain = computeDomain(action.service);
     const service = computeEntity(action.service);
-    if (!actionDisplay) actionDisplay = hass.localize(`component.${domain}.services.${service}.name`);
+    if (!actionDisplay) actionDisplay = hassLocalize(`component.${domain}.services.${service}.name`, hass, false);
     if (!actionDisplay && Object.keys(hass.services[domain] || {}).includes(service)) actionDisplay = hass.services[domain][service].name || '';
     if (!actionDisplay) actionDisplay = service.replace(/_/g, ' ');
   }

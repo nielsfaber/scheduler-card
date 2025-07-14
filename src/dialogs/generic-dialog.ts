@@ -2,6 +2,7 @@ import { LitElement, html, css, CSSResultGroup, TemplateResult } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { mdiClose } from '@mdi/js';
 import { HomeAssistant } from '../lib/types';
+import { hassLocalize } from '../localize/hassLocalize';
 
 export type GenericDialogParams = {
   title: string;
@@ -37,7 +38,7 @@ export class GenericDialog extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">

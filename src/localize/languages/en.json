@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"
@@ -237,6 +239,7 @@
             "description": "Use tags to divide schedules between multiple cards"
           },
           "entities": {
+            "button_label": "Configure included entities",
             "heading": "Included entities",
             "description": "Select the entities that you want to control using the scheduler. You can click on a group to open it. Note that some entities (such as sensors) can only be used for conditions, not for actions.",
             "included_number": "{number}/{total} selected"

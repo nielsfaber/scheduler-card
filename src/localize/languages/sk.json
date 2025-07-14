@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"
@@ -237,6 +239,7 @@
             "description": "Použite štítky na rozdelenie plánov medzi viacero kariet"
           },
           "entities": {
+            "button_label": "Konfigurácia zahrnutých entít",
             "heading": "Zahrnuté entity",
             "description": "Vyberte entity, ktoré chcete ovládať pomocou plánovača. Kliknutím na skupinu ju otvoríte. Upozorňujeme, že niektoré entity (napríklad senzory) možno použiť iba na podmienky, nie na akcie.",
             "included_number": "{number}/{total} vybraný"

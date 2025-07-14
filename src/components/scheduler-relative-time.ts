@@ -7,6 +7,7 @@ import { formatDate } from '../data/time/format_date';
 import { selectUnit } from '@formatjs/intl-utils';
 import { computeDayDisplay } from '../data/format/compute_days_display';
 import { convertTo12Hour, useAmPm } from '../lib/use_am_pm';
+import { hassLocalize } from '../localize/hassLocalize';
 
 const secondsPerMinute = 60;
 const secondsPerHour = 3600;
@@ -104,7 +105,7 @@ export class SchedulerRelativeTime extends LitElement {
       } else if (Math.round(delta / secondsPerMinute) > 60 && Math.round(delta / secondsPerMinute) < 120) {
         // in 1 hour and 52 minutes
         const mins = Math.round(delta / secondsPerMinute - 60);
-        const join = this._hass.localize('ui.common.and');
+        const join = hassLocalize('ui.common.and', this._hass);
 
         const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(
           1,
@@ -120,7 +121,7 @@ export class SchedulerRelativeTime extends LitElement {
       } else if (Math.round(delta) > 60 && Math.round(delta) < 120) {
         // in 1 minute and 52 seconds
         const seconds = Math.round(delta - 60);
-        const join = this._hass.localize('ui.common.and');
+        const join = hassLocalize('ui.common.and', this._hass);
 
         const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(
           1,

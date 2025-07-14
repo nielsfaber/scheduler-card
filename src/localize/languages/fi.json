@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"
@@ -237,6 +239,7 @@
             "description": "Käytä tunnisteita ajastusten jakamiseen korttien välillä"
           },
           "entities": {
+            "button_label": "Sisällytettyjen entiteettien määrittäminen",
             "heading": "Ajastettavat kohteet",
             "description": "Valitse kohteet, joille haluat luoda ajastuksia. Voit klikata ryhmään laajentaaksesi sen. Huom: joitain kohteita voi käyttää vain ehtoina (esim. sensorit), ei toimintoihin",
             "included_number": "{number} / {total} valittu"

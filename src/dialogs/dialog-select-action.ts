@@ -8,6 +8,7 @@ import { styleMap } from 'lit/directives/style-map';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { Action, CardConfig } from '../types';
+import { hassLocalize } from '../localize/hassLocalize';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -67,7 +68,7 @@ export class DialogSelectWeekdays extends LitElement {
         ? html`
             <ha-icon-button
               slot="navigationIcon"
-              .label=${this.hass.localize('ui.common.back')}
+              .label=${hassLocalize('ui.common.back', this.hass)}
               .path=${mdiChevronLeft}
               @click=${this._clearDomain}
             ></ha-icon-button>
@@ -76,7 +77,7 @@ export class DialogSelectWeekdays extends LitElement {
             <ha-icon-button
               slot="navigationIcon"
               dialogAction="cancel"
-              .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+              .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
             `}
@@ -87,8 +88,8 @@ export class DialogSelectWeekdays extends LitElement {
 
           <ha-textfield
             dialogInitialFocus
-            .placeholder=${this.hass.localize("ui.common.search")}
-            aria-label=${this.hass.localize("ui.common.search")}
+            .placeholder=${hassLocalize("ui.common.search", this.hass)}
+            aria-label=${hassLocalize("ui.common.search", this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
@@ -99,7 +100,7 @@ export class DialogSelectWeekdays extends LitElement {
       html`
                 <ha-icon-button
                   @click=${this._clearSearch}
-                  .label=${this.hass.localize("ui.common.clear")}
+                  .label=${hassLocalize("ui.common.clear", this.hass)}
                   .path=${mdiClose}
                   class="clear-button"
                 ></ha-icon-button>

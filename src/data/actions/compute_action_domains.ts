@@ -4,6 +4,7 @@ import { HomeAssistant } from "../../lib/types";
 import { matchPattern } from "../../lib/patterns";
 import { computeDomain } from "../../lib/entity";
 import { CustomConfig } from "../../types";
+import { hassLocalize } from "../../localize/hassLocalize";
 
 
 const isSupportedDomain = (domain: string, customConfig?: CustomConfig) => {
@@ -43,7 +44,7 @@ export const computeActionDomains = (hass: HomeAssistant, config: entityConfig) 
 
   let actionList: actionItem[] = domains.map(e => Object({
     key: e,
-    name: hass.localize(`component.${e}.title`) || e.replace(/_/g, " "),
+    name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, " "),
     description: "",
     icon: domainIcon(e)
   }));

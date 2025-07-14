@@ -56,7 +56,7 @@ export class SchedulerCardEditor extends LitElement {
       <div class="card-config">
 
         <ha-button @click=${this._showIncludedEntitiesDialog} outlined>
-          Configure included entities
+          ${localize('ui.panel.card_editor.fields.entities.button_label', this.hass)}
           <ha-svg-icon
             slot="trailingIcon"
             .path=${mdiArrowRight}

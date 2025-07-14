@@ -1,4 +1,5 @@
 import { HomeAssistant } from "../lib/types";
+import { hassLocalize } from "../localize/hassLocalize";
 import { localize } from "../localize/localize";
 import { TWeekday } from "../types";
 import { computeDayDisplay } from "./format/compute_days_display";
@@ -109,7 +110,7 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
 
     const daysString =
       dayNames.length > 1
-        ? `${dayNames.slice(0, -1).join(', ')} ${hass.localize('ui.common.and')} ${dayNames.pop()}`
+        ? `${dayNames.slice(0, -1).join(', ')} ${hassLocalize('ui.common.and', hass)} ${dayNames.pop()}`
         : `${dayNames.pop()}`;
 
     return weekdayNums.length >= 3 && longestSequence >= 3

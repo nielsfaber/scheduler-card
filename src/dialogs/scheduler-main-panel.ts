@@ -26,6 +26,7 @@ import { computeActionIcon } from "../data/format/compute_action_icon";
 import { fireEvent } from "../lib/fire_event";
 import { useAmPm } from "../lib/use_am_pm";
 import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
+import { hassLocalize } from "../localize/hassLocalize";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -215,7 +216,7 @@ export class SchedulerMainPanel extends LitElement {
 
           ${config.target ? html`
           <scheduler-settings-row>
-            <span slot="heading">${this.hass.localize("ui.components.entity.entity-picker.entity")}</span>
+            <span slot="heading">${hassLocalize("ui.components.entity.entity-picker.entity", this.hass)}</span>
             <scheduler-entity-picker
               .hass=${this.hass}
               .config=${this.config}

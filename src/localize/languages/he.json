@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"

@@ -121,7 +121,9 @@
         "choose": "Wybierz..."
       },
       "entity_picker": {
-        "title": "Wybierz encje"
+        "title": "Wybierz encje",
+        "choose": "Wybierz...",
+        "no_results": "Nie znaleziono pasujących elementów"
       },
       "action_picker": {
         "title": "Wybierz akcje"

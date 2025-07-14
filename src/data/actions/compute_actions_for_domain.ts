@@ -3,6 +3,7 @@ import { domainIcon } from "./domain_icon";
 import { HomeAssistant } from "../../lib/types";
 import { computeDomain } from "../../lib/entity";
 import { Action, CustomConfig } from "../../types";
+import { hassLocalize } from "../../localize/hassLocalize";
 
 export interface actionItem {
   key: string,
@@ -37,13 +38,13 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
     ? Object.keys(hass.services[domain]).filter(isSupportedAction)
     : [];
 
-  const domainName = (domain: string) => hass.localize(`component.${domain}.title`) || domain.replace(/_/g, " ");
+  const domainName = (domain: string) => hassLocalize(`component.${domain}.title`, hass, false) || domain.replace(/_/g, " ");
 
-  const serviceName = (service: string) => hass.localize(`component.${domain}.services.${service}.name`) ||
+  const serviceName = (service: string) => hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
     hass.services[domain][service].name ||
     service.replace(/_/g, ' ');
 
-  const serviceDescription = (service: string) => hass.localize(`component.${domain}.services.${service}.description`) || hass.services[domain][service].description;
+  const serviceDescription = (service: string) => hassLocalize(`component.${domain}.services.${service}.description`, hass, false) || hass.services[domain][service].description;
 
   let actionList: actionItem[] = services.map(e => Object(<actionItem>{
     key: e,

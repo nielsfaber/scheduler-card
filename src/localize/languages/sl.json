@@ -121,7 +121,9 @@
         "choose": "Choose..."
       },
       "entity_picker": {
-        "title": "Choose entities"
+        "title": "Choose entities",
+        "choose": "Choose...",
+        "no_results": "No matching items found"
       },
       "action_picker": {
         "title": "Choose action"
@@ -237,6 +239,7 @@
             "description": "Uporabite tag-e za ločevanje urnikov med več karticami"
           },
           "entities": {
+            "button_label": "Konfiguriraj vključene entitete",
             "heading": "Vključene entitete",
             "description": "Izberite entitete, katere želike krmiliti s tem urnikom. Lahko kliknete na skupino, da jo odprete. Vedite, da lahko nekatere entitete (npr. senzorje) uporabite samo v pogojih, ne pa za akcije.",
             "included_number": "{number}/{total} izbranih"

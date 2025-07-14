@@ -2,6 +2,7 @@ import { Action, CustomConfig } from "../../types";
 import { selectorConfig } from "./selector_config";
 import { NumberSelector, SelectSelector } from "../../lib/selector";
 import { HomeAssistant } from "../../lib/types";
+import { hassLocalize } from "../../localize/hassLocalize";
 
 export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig) => {
   return Object.fromEntries(
@@ -11,7 +12,7 @@ export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, custo
 
       if (Object.keys(selector).includes('select') && (selector as SelectSelector).select) {
         const config = (selector as SelectSelector).select;
-        if (config?.translation_key) value = hass.localize(config.translation_key.replace('${value}', value)) || value;
+        if (config?.translation_key) value = hassLocalize(config.translation_key.replace('${value}', value), hass, false) || value;
       }
 
       if (Object.keys(selector).includes('number') && (selector as NumberSelector).number) {

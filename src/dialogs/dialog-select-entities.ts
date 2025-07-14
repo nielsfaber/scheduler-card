@@ -10,6 +10,7 @@ import { computeConditionDomains } from '../data/compute_condition_domains';
 import { computeDomain, friendlyName } from '../lib/entity';
 import { computeEntityIcon } from '../data/format/compute_entity_icon';
 import { domainIcon } from '../data/actions/domain_icon';
+import { hassLocalize } from '../localize/hassLocalize';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
@@ -133,7 +134,7 @@ export class DialogSelectEntities extends LitElement {
             <ha-icon-button
               slot="navigationIcon"
               dialogAction="cancel"
-              .label=${this.hass.localize('ui.dialogs.more_info_control.dismiss')}
+              .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
             <span slot="title">
@@ -143,8 +144,8 @@ export class DialogSelectEntities extends LitElement {
 
           <ha-textfield
             dialogInitialFocus
-            .placeholder=${this.hass.localize("ui.common.search")}
-            aria-label=${this.hass.localize("ui.common.search")}
+            .placeholder=${hassLocalize("ui.common.search", this.hass)}
+            aria-label=${hassLocalize("ui.common.search", this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
@@ -155,7 +156,7 @@ export class DialogSelectEntities extends LitElement {
       html`
                 <ha-icon-button
                   @click=${this._clearSearch}
-                  .label=${this.hass.localize("ui.common.clear")}
+                  .label=${hassLocalize("ui.common.clear", this.hass)}
                   .path=${mdiClose}
                   class="clear-button"
                 ></ha-icon-button>
@@ -305,7 +306,7 @@ export class DialogSelectEntities extends LitElement {
     if (!filteredOptions.length) {
       return html`
         <mwc-list-item disabled>
-          ${this.hass.localize('ui.components.entity.entity-picker.no_match')}
+          ${hassLocalize('ui.components.entity.entity-picker.no_match', this.hass)}
         </mwc-list-item>
       `;
     }
@@ -314,6 +315,8 @@ export class DialogSelectEntities extends LitElement {
       const domain = filteredOptions[key].key;
       const entities = computeEntitiesForDomain(domain, this.hass);
       const domainIncluded = this._params?.domains.includes(domain);
+
+      const numIncludedEntities = domainIncluded ? entities.length : filteredOptions[key].entities.filter(e => this._params?.entities.includes(e.key)).length
 
       return html`
         <mwc-list-item
@@ -327,14 +330,14 @@ export class DialogSelectEntities extends LitElement {
           <div slot="meta" class="meta">
             <ha-button @click=${this._toggleSelectDomain}>
               ${this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key))
-          ? 'deselect all'
-          : 'select all'
+          ? hassLocalize('ui.components.media-browser.file_management.deselect_all', this.hass)
+          : hassLocalize('ui.components.subpage-data-table.select_all', this.hass)
         }
             </ha-button>
             <ha-icon-button .path="${mdiChevronDown}" @click=${(ev: Event) => { (ev.target as HTMLElement).blur() }} class="chevron"></ha-icon-button>
           </div>
           <span>${filteredOptions[key].name}</span>
-          <span slot="secondary">${domainIncluded ? entities.length : filteredOptions[key].entities.filter(e => this._params?.entities.includes(e.key)).length}/${entities.length} entities selected</span>
+          <span slot="secondary">${localize('ui.panel.card_editor.fields.entities.included_number', this.hass, ['{number}', '{total}'], [numIncludedEntities, entities.length])}</span>
         </mwc-list-item>
         ${this.expandedGroups.includes(domain) || filterApplied ? html`
         <div class="group ${filterApplied ? 'open' : ''}">

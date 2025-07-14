@@ -5,6 +5,7 @@ import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { sortByName } from "../lib/sort";
 import { mdiClose, mdiMenuDown } from "@mdi/js";
+import { localize } from "../localize/localize";
 
 type ComboBox = HTMLElement & { renderer: Function; requestContentUpdate: Function };
 type ComboBoxItemModel<T> = { item: T };
@@ -39,7 +40,7 @@ export class SchedulerPicker extends LitElement {
 
   @property() public helper?: string;
 
-  @property() public placeholder = "Choose";
+  @property() public placeholder?;
 
   @property({ type: String, attribute: "search-label" })
   public searchLabel?: string;
@@ -71,26 +72,17 @@ export class SchedulerPicker extends LitElement {
 
   private _items: PickerComboBoxItem[] = [];
 
-  private _defaultNotFoundItem =
-    (
-      _label: this["notFoundLabel"],
-      _localize: any
-    ): PickerComboBoxItem => ({
-      id: NO_MATCHING_ITEMS_FOUND_ID,
-      primary: "No items found",
-      icon: 'mdi:cancel',
-    })
-
-
   private _getItems = (): PickerComboBoxItem[] => {
     const items = this.getItems ? this.getItems() : [];
 
     const sortedItems = items.sort((a, b) => sortByName(a.primary, b.primary));
 
     if (!sortedItems.length) {
-      sortedItems.push(
-        this._defaultNotFoundItem(this.notFoundLabel, this.hass.localize)
-      );
+      sortedItems.push({
+        id: NO_MATCHING_ITEMS_FOUND_ID,
+        primary: localize('ui.dialog.entity_picker.no_results', this.hass),
+        icon: 'mdi:cancel',
+      });
     }
     return sortedItems;
   };
@@ -139,7 +131,7 @@ export class SchedulerPicker extends LitElement {
               : html`<span slot="headline">${this.value}</span>`
             : html`
               <span slot="headline" class="placeholder">
-                ${this.placeholder}
+                ${this.placeholder || localize('ui.dialog.entity_picker.choose', this.hass)}
               </span>
             `}
             ${showClearIcon
