@@ -30,8 +30,8 @@ export const computeConditionDomains = (hass: HomeAssistant, config: entityConfi
     .filter(isSupportedDomain);
 
   domains = domains.filter(domain => {
-    return ((config.include || []).some(e => matchPattern(e, domain)) ||
-      Object.keys(config.customize || {}).some(e => matchPattern(e, domain))) &&
+    return ((config.include || []).some(e => matchPattern(computeDomain(e), domain)) ||
+      Object.keys(config.customize || {}).some(e => matchPattern(computeDomain(e), domain))) &&
       !(config.exclude || []).some(e => matchPattern(e, domain))
   });
 

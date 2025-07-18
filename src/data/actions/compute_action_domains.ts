@@ -37,8 +37,8 @@ export const computeActionDomains = (hass: HomeAssistant, config: entityConfig) 
   let domains = Object.keys(hass.services).filter(e => isSupportedDomain(e, config.customize));
 
   domains = domains.filter(domain => {
-    return ((config.include || []).map(computeDomain).some(e => matchPattern(e, domain)) ||
-      Object.keys(config.customize || {}).map(computeDomain).some(e => matchPattern(e, domain))) &&
+    return ((config.include || []).map(computeDomain).some(e => matchPattern(computeDomain(e), domain)) ||
+      Object.keys(config.customize || {}).map(computeDomain).some(e => matchPattern(computeDomain(e), domain))) &&
       !(config.exclude || []).some(e => matchPattern(e, domain))
   });
 

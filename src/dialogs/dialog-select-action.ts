@@ -14,6 +14,7 @@ export type DialogSelectActionParams = {
   cancel: () => void;
   confirm: (res: Action) => void;
   domainFilter?: string[];
+  entityFilter?: string[];
   cardConfig: CardConfig
 };
 
@@ -183,6 +184,9 @@ export class DialogSelectWeekdays extends LitElement {
     }
     else {
       let result = this._params.domainFilter.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig.customize)).flat();
+      if (this._params.entityFilter?.length) {
+        result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
+      }
       return (Object.keys(result)).map((key) => html`
         <mwc-list-item
           graphic="icon"

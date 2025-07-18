@@ -160,6 +160,7 @@
         "conditions": {
           "header": "Warunki",
           "add_condition": "Dodaj warunek",
+          "new_condition": "Nowy stan",
           "types": {
             "equal_to": "{entity} is equal to {value}",
             "unequal_to": "{entity} is unequal to {value}",

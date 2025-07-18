@@ -33,6 +33,9 @@ export class SchedulerChipSet extends LitElement {
   @property({ type: Boolean })
   removable?: boolean;
 
+  @property({ type: Boolean })
+  disabled?: boolean;
+
   protected render(): TemplateResult {
     if (!this.items) return html``;
 
@@ -56,6 +59,7 @@ export class SchedulerChipSet extends LitElement {
         ?removable=${this.removable}
         @click=${this._handleClick}
         @icon-clicked=${this._handleClick}
+        ?disabled=${this.disabled}
         style="${isInvalidEntity ? 'text-decoration: line-through' : ''}"
       >
         ${item.name}
@@ -64,6 +68,7 @@ export class SchedulerChipSet extends LitElement {
   }
 
   private _handleClick(ev: CustomEvent) {
+    if (this.disabled) return;
     if (this.toggleable) {
       const value = ev.detail.value;
       const active = ev.detail.active;

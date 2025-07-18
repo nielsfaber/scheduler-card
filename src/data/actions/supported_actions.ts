@@ -8,7 +8,9 @@ export type ActionConfig = {
       optional?: boolean
     }
   },
-  target?: object,
+  target?: {
+    entity_id?: string[] | string
+  },
   name?: string,
   icon?: string
 }

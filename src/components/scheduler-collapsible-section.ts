@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators';
 
 
@@ -7,6 +7,8 @@ class SchedulerCollapsibleSection extends LitElement {
 
   @property({ type: Boolean, reflect: true }) expanded = false;
   @property({ type: Boolean, reflect: true }) disabled = false;
+
+  @property({ attribute: true }) idx = -1;
 
   @property({ type: CustomEvent })
   openClose = new CustomEvent('open-close', {
@@ -185,19 +187,18 @@ class SchedulerCollapsibleGroup extends LitElement {
     if (this.disabled) return;
     const el = ev.target as HTMLElement;
 
-    const sections = this.querySelectorAll('scheduler-collapsible-section');
-    let idx = -1;
-    sections.forEach(function (item, i) {
-      if (item === el && !item.getAttribute('expanded')) idx = i;
-    });
-    this.updateOpenedItem(idx);
+    const itemIdx = Number(el.getAttribute('idx'));
+    const expanded = el.getAttribute("expanded") === "true";
+    if (!expanded) this.updateOpenedItem(itemIdx);
+    else this.updateOpenedItem(-1);
   }
 
   updateOpenedItem(idx: number) {
     const sections = this.querySelectorAll('scheduler-collapsible-section');
-    sections.forEach(function (item, i) {
-      if (i != idx && item.getAttribute('expanded')) item.removeAttribute('expanded');
-      else if (i == idx && !item.getAttribute('expanded')) item.setAttribute('expanded', 'true');
+    sections.forEach(function (item) {
+      const itemIdx = Number(item.getAttribute('idx'));
+      if (itemIdx !== idx && item.getAttribute('expanded')) item.removeAttribute('expanded');
+      else if (itemIdx === idx && !item.getAttribute('expanded')) item.setAttribute('expanded', 'true');
     });
     this._openedItem = idx;
     const myEvent = new CustomEvent('openclose-changed', { detail: { item: idx } });

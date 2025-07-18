@@ -24,6 +24,9 @@ export class SchedulerEntityPicker extends LitElement {
   @property({ type: Boolean })
   multiple = false;
 
+  @property({ type: Boolean })
+  disabled = false;
+
   private _valueRenderer: PickerValueRenderer = (value) => {
     const entityId = value || "";
 
@@ -68,6 +71,7 @@ export class SchedulerEntityPicker extends LitElement {
         .rowRenderer=${this.rowRenderer}
         .valueRenderer=${this._valueRenderer}
         @value-changed=${this._valueChanged}
+        ?disabled=${this.disabled}
       >
       </scheduler-picker>
     `;
@@ -88,6 +92,7 @@ export class SchedulerEntityPicker extends LitElement {
         .items=${items}
         removable
         @value-changed=${this._removeClick}
+        ?disabled=${this.disabled}
       >
       </scheduler-chip-set>`;
   }

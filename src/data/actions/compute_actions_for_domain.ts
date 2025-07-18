@@ -4,6 +4,7 @@ import { HomeAssistant } from "../../lib/types";
 import { computeDomain } from "../../lib/entity";
 import { Action, CustomConfig } from "../../types";
 import { hassLocalize } from "../../localize/hassLocalize";
+import { parseCustomActions } from "./parse_custom_actions";
 
 export interface actionItem {
   key: string,
@@ -58,7 +59,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
     }
   }));
 
-  let customActions = Object.keys(customize || {}).filter(e => computeDomain(e) == domain).map(e => (customize || {})[e].actions || []).flat();
+  let customActions = parseCustomActions(customize || {}, domain);
   customActions.forEach(action => {
     let key = action.service;
     while (actionList.find(e => e.key == key)) key += '_2';
@@ -71,7 +72,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
       action: <Action>{
         service: action.service.includes('.') ? action.service : `${domain}.${action.service}`,
         service_data: action.service_data || {},
-        target: action.target ? {} : undefined,
+        target: action.target ? action.target : undefined,
         name: action.name,
         icon: action.icon
       }

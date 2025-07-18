@@ -36,6 +36,7 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
+import { isDefined } from "../lib/is_defined";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -187,6 +188,8 @@ export class SchedulerMainPanel extends LitElement {
     const domain = computeDomain(action.service);
     const config = actionConfig(action, this.config.customize);
 
+    const hasFixedEntity = isDefined(config?.target?.entity_id) || this.schedule.entries[this.selectedEntry!].slots.some(e => e.actions.length && isDefined(actionConfig(e.actions[0], this.config.customize)?.target?.entity_id));
+
     if (config === undefined) return html``;
 
     //if (!config || !config.fields) return html``;
@@ -224,6 +227,7 @@ export class SchedulerMainPanel extends LitElement {
               @value-changed=${this._selectEntity}
               .value=${[action.target?.entity_id || []].flat()}
               ?multiple=${true}
+              ?disabled=${hasFixedEntity}
             >
             </scheduler-entity-picker>
           </scheduler-settings-row>
@@ -369,23 +373,25 @@ export class SchedulerMainPanel extends LitElement {
 
   async _showActionDialog(ev: Event) {
     let filteredDomains: string[] = [];
+    let filteredEntities: string[] = [];
 
     this.schedule.entries.forEach(entry => {
       entry.slots.forEach(slot => {
         slot.actions.forEach(action => {
-          let domains = [computeDomain(action.service), ...[action.target?.entity_id || []].flat()].map(computeDomain);
-          domains = domains.filter(e => !filteredDomains.includes(e));
-          if (domains.length) filteredDomains = [...filteredDomains, ...domains];
+          filteredEntities = [...filteredEntities, ...[action.target?.entity_id || []].flat()];
+          filteredDomains = [...filteredDomains, ...[computeDomain(action.service), ...[action.target?.entity_id || []].flat()].map(computeDomain)];
         });
       });
     });
     filteredDomains = [...new Set(filteredDomains)];
+    filteredEntities = [...new Set(filteredEntities)];
 
     await new Promise<Action | null>(resolve => {
       const params: DialogSelectActionParams = {
         cancel: () => resolve(null),
         confirm: (out: Action) => resolve(out),
         domainFilter: filteredDomains.length ? filteredDomains : undefined,
+        entityFilter: filteredEntities.length ? filteredEntities : undefined,
         cardConfig: this.config
       };
 

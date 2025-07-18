@@ -1,11 +1,11 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
-import { matchPattern } from "../../lib/patterns";
-import { Action, CustomActionConfig, CustomConfig } from "../../types";
+import { Action, CustomConfig } from "../../types";
 import { ActionConfig, supportedActions } from "../actions/supported_actions";
 import { compareActions } from "./compare_actions";
+import { parseCustomActions } from "./parse_custom_actions";
 
 
-export const actionConfig = (action: Action, customize?: CustomConfig) => {
+export const actionConfig = (action: Action, customize?: CustomConfig): ActionConfig => {
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
@@ -25,17 +25,13 @@ export const actionConfig = (action: Action, customize?: CustomConfig) => {
   let entity = action.target?.entity_id || domain;
   if (domain == 'script' || domain == 'notify') entity = entity || action.service;
 
-  const actionConfig: CustomActionConfig[] = Object.entries(customize)
-    .filter(([a]) => matchPattern(a, [entity].flat().pop()!))
-    .sort((a, b) => b[0].length - a[0].length)
-    .map(([, b]) => b.actions || [])
-    .filter(e => e !== undefined)
-    .flat();
+  const actionConfig = parseCustomActions(customize, [entity].flat().pop());
 
   if (actionConfig.length) {
     actionConfig.forEach(customConfig => {
       const match = compareActions(customConfig, action);
       if (!match) return;
+      config = {}; //start with empty config
       Object.keys(customConfig.variables || {}).forEach(key => {
         config = { ...config, fields: { ...config.fields || {}, [key]: {} } };
       });

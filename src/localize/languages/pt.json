@@ -160,6 +160,7 @@
         "conditions": {
           "header": "Conditions",
           "add_condition": "Add condition",
+          "new_condition": "New condition",
           "types": {
             "equal_to": "{entity} is equal to {value}",
             "unequal_to": "{entity} is unequal to {value}",

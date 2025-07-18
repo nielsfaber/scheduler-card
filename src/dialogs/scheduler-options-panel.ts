@@ -30,7 +30,7 @@ export class SchedulerOptionsPanel extends LitElement {
   @property({ attribute: false }) public config!: CardConfig;
 
   @state() schedule!: Schedule;
-  @state() conditionIdx?: number;
+  @state() conditionIdx: number = -1;
   @state() selectedDomain?: string;
   @state() selectedEntity?: string;
   @state() selectedMatchType?: TConditionMatchType;
@@ -169,13 +169,13 @@ export class SchedulerOptionsPanel extends LitElement {
         </ha-date-input>
       </div>
 
-      <span class="header">${hassLocalize('ui.components.area-picker.add_dialog.name', this.hass)}:</span>
+      <span class="header">${hassLocalize('ui.common.name', this.hass)}:</span>
       <div class="period">
         <ha-textfield
           value=${this.schedule.name || ''}
           placeholder=${this.schedule.name
         ? ''
-        : hassLocalize('ui.components.area-picker.add_dialog.name', this.hass)}
+        : hassLocalize('ui.common.name', this.hass)}
           @input=${this.updateName}
         ></ha-textfield>
       </div>
@@ -238,12 +238,12 @@ export class SchedulerOptionsPanel extends LitElement {
       if (this.conditionIdx === i && !this.selectedMatchType) this.selectedMatchType = matchTypes[0];
 
       return html`
-      <scheduler-collapsible-section>
+      <scheduler-collapsible-section idx="${i}">
         <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
           <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.hass)}"></ha-icon>
-          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['<span class="chip">{entity}</div>', '<div class="chip">{value}</div>'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
-          ` : 'new condition'}
+          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
+          ` : localize('ui.panel.options.conditions.add_condition', this.hass)}
         </div>
         <ha-button-menu
           slot="contextMenu" 
@@ -251,12 +251,12 @@ export class SchedulerOptionsPanel extends LitElement {
           @closed=${(ev: Event) => { ev.stopPropagation() }}
           @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
           fixed
-          ?disabled=${!this.conditionValid && this.conditionIdx !== i}
+          ?disabled=${!this.conditionValid && this.conditionIdx !== i && this.conditionIdx != -1}
         >
           <ha-icon-button
             slot="trigger"
             .path=${mdiDotsVertical}
-            ?disabled=${!this.conditionValid && this.conditionIdx !== i}
+            ?disabled=${!this.conditionValid && this.conditionIdx !== i && this.conditionIdx != -1}
           >
           </ha-icon-button>
           <mwc-list-item graphic="icon">
@@ -321,7 +321,7 @@ export class SchedulerOptionsPanel extends LitElement {
   _updateActiveCondition(ev: CustomEvent) {
     const idx = ev.detail.item;
     if (idx < 0) {
-      this.conditionIdx = undefined;
+      this.conditionIdx = -1;
       return;
     }
     if (idx === this.conditionIdx) return;
@@ -352,8 +352,9 @@ export class SchedulerOptionsPanel extends LitElement {
         const updateSlots = (e: Timeslot) => Object.assign(e, { conditions: { ...e.conditions, items: conditions } });
         const updateEntries = (e: ScheduleEntry) => Object.assign(e, { slots: e.slots.map(updateSlots) });
         this.schedule = { ...this.schedule, entries: this.schedule.entries.map(updateEntries) };
-        if (idx === this.conditionIdx) this.conditionIdx = undefined;
+        if (idx === this.conditionIdx) this.conditionIdx = -1;
         else if (this.conditionIdx !== undefined && idx < this.conditionIdx) this.conditionIdx = this.conditionIdx - 1;
+        this.conditionValid = true;
         break;
     }
   }
@@ -572,9 +573,6 @@ export class SchedulerOptionsPanel extends LitElement {
       }
       .header ha-button-menu {
         margin-bottom: -10px;
-      }
-      .chip {
-        background: red;
       }
     `;
   }

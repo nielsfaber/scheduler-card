@@ -34,6 +34,9 @@ export class SchedulerChip extends LitElement {
   @property({ type: String })
   value?: string;
 
+  @property({ type: Boolean })
+  disabled?: boolean;
+
   protected render(): TemplateResult {
     return html`
       <div class="chip ${this.active ? 'active' : ''}" @click=${this._handleClick}>
@@ -88,15 +91,21 @@ export class SchedulerChip extends LitElement {
     }
     return html`
         <div class="trailing-icon" @click=${this._iconClick}>
+          ${!this.disabled ? html`
           <ha-tooltip content="${hassLocalize('ui.common.remove', this.hass)}">
             <ha-icon icon="mdi:close"
             ></ha-icon>
           </ha-tooltip>
+          ` : html`
+            <ha-icon icon="mdi:close"
+            ></ha-icon>
+          `}
         </div>
       `;
   }
 
   private _handleClick(ev: Event) {
+    if (this.disabled) return;
     if (this.toggleable) {
       this.active = !this.active;
       const myEvent = new CustomEvent('click', {
@@ -119,13 +128,14 @@ export class SchedulerChip extends LitElement {
   }
 
   private _iconClick(ev: Event) {
+    ev.stopPropagation();
+    if (this.disabled) return;
     const myEvent = new CustomEvent('icon-clicked', {
       detail: {
         value: this.value,
       }
     });
     this.dispatchEvent(myEvent);
-    ev.stopPropagation();
   }
 
   static get styles(): CSSResultGroup {
@@ -225,6 +235,12 @@ export class SchedulerChip extends LitElement {
       }
       .trailing-icon:active:before {
         opacity: 0.3;
+      }
+      :host([disabled]) .trailing-icon:hover:before, :host([disabled]) .trailing-icon:active:before {
+        opacity: 0;
+      }
+      :host([disabled]) .trailing-icon {
+        cursor: default;
       }
       :host([selectable]) .chip, :host([toggleable]) .chip {
         cursor: pointer;

@@ -1,4 +1,4 @@
-import { Action, CustomConfig } from "../../types";
+import { Action, CustomConfig, VariableConfig } from "../../types";
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { localize } from "../../localize/localize";
 import { actionConfig } from "../actions/action_config";
@@ -45,10 +45,10 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     if (formatShort) {
       if (Object.keys(attributes).length > 1) {
         const sortAttributes = (fieldA: string, fieldB: string) => {
-          const configA = config.fields![fieldA];
-          const configB = config.fields![fieldB];
-          if (configA.optional && !configB.optional) return 1;
-          if (configB.optional && !configA.optional) return -1;
+          const configA = config.fields![fieldA] || {};
+          const configB = config.fields![fieldB] || {};
+          if (configA?.optional && !configB.optional) return 1;
+          if (configB?.optional && !configA.optional) return -1;
           return fieldA < fieldB ? -1 : fieldA > fieldB ? 1 : 0;
         }
         attributes = Object.fromEntries(
