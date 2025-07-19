@@ -27,6 +27,7 @@ export interface BooleanSelector {
 export interface SelectOption {
   value: string;
   label: string;
+  icon?: string;
   disabled?: boolean;
 }
 

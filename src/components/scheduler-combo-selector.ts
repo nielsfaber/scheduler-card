@@ -56,7 +56,8 @@ export class SchedulerComboSelector extends LitElement {
           if (typeof option === 'object') {
             return {
               id: option.value,
-              primary: option.label
+              primary: option.label,
+              icon: option.icon
             }
           }
           else {
@@ -77,22 +78,52 @@ export class SchedulerComboSelector extends LitElement {
 
       const valueRenderer: PickerValueRenderer = (value: string) => {
         let label = value;
+        let icon = '';
         let match = config.options.find(e => typeof e === 'object' ? e.value === value : e === value);
-        if (match && typeof match === 'object') label = match.label;
+        if (match && typeof match === 'object') {
+          label = match.label;
+          icon = match.icon || icon;
+        }
         else label = computeItemLabel(value);
 
-        return html`
-          <span slot="headline">${label}</span>
-        `;
+        if (icon) {
+          return html`
+            <ha-icon
+              slot="start"
+              .icon=${icon}
+              style="margin: 0 4px"
+            >
+            </ha-icon>
+            <span slot="headline">${label}</span>
+          `;
+        }
+        else {
+          return html`
+            <span slot="headline">${label}</span>
+          `;
+        }
       };
 
       const rowRenderer = (item: PickerComboBoxItem) => {
-        //TODO: handle icons
-        return html`
+        if (item.icon) {
+          return html`
+            <ha-combo-box-item type="button" compact>
+              <ha-icon
+                slot="start"
+                .icon=${item.icon}
+              >
+              </ha-icon>
+              <span slot="headline">${item.primary}</span>
+            </ha-combo-box-item>
+          `;
+        }
+        else {
+          return html`
             <ha-combo-box-item type="button" compact>
               <span slot="headline">${item.primary}</span>
             </ha-combo-box-item>
           `;
+        }
       }
 
       return html`

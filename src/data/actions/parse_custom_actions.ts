@@ -22,7 +22,8 @@ export const parseCustomActions = (customize: CustomConfig, entityOrDomainFilter
           service_data: config.service_data || {},
           target: config.target ? config.target : {},
           name: config.name || "",
-          icon: config.icon || ""
+          icon: config.icon || "",
+          variables: config.variables
         });
       });
     });

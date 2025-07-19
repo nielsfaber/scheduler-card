@@ -1,10 +1,11 @@
-import { BooleanSelector, NumberSelector, SelectSelector, Selector, StringSelector } from "../../lib/selector";
-import { listSelector } from "./list_selector";
+import { BooleanSelector, NumberSelector, SelectOption, SelectSelector, Selector, StringSelector } from "../../lib/selector";
+import { listSelector, parseListSelectorOption } from "./list_selector";
 import { numericSelector } from "./numeric_selector";
 import { HomeAssistant } from "../../lib/types";
 import { computeDomain } from "../../lib/entity";
-import { CustomActionConfig, CustomConfig } from "../../types";
-import { matchPattern } from "../../lib/patterns";
+import { CustomConfig } from "../../types";
+import { parseCustomActions } from "../actions/parse_custom_actions";
+import { isDefined } from "../../lib/is_defined";
 
 export const selectorConfig = (service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
   const domain = computeDomain(service);
@@ -75,20 +76,15 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
 }
 
 const selectorConfigFromCustomConfig = (service: string, entityId: string, field: string, customize?: CustomConfig) => {
-  const actionConfig: CustomActionConfig[] = Object.entries(customize || {})
-    .filter(([a]) => matchPattern(a, [entityId].flat().pop()!))
-    .sort((a, b) => b[0].length - a[0].length)
-    .map(([, b]) => b.actions || [])
-    .filter(e => e !== undefined)
-    .flat();
+
+  const actionConfig = parseCustomActions(customize || {}, entityId);
 
   if (actionConfig.length) {
     let res = (actionConfig.map(customConfig => {
       if (customConfig.service != service || !Object.keys(customConfig.variables).includes(field)) return {};
       let variableConfig = customConfig.variables[field];
       if (Object.keys(variableConfig).includes('options')) {
-        return listSelector({ options: (variableConfig as any).options.map(e => e.value) });
-        //TODO: handle custom name+icon
+        return listSelector({ options: (variableConfig as any).options });
       } else if (Object.keys(variableConfig).includes('min') && Object.keys(variableConfig).includes('max')) {
         return numericSelector(variableConfig as any);
       } else {
@@ -108,8 +104,18 @@ const mergeSelectors = (input: (Selector | null)[]) => {
   if (input.some(e => e === null) || !input.length) return null;
 
   if (input.every(e => e!.hasOwnProperty('select'))) {
-    const optionsLists = (input as SelectSelector[]).map(e => e.select!.options).filter(e => e !== undefined) as string[][];
-    const commonOptions = optionsLists.length ? optionsLists.reduce((a, b) => a.filter(c => b.includes(c))) : [];
+
+    const optionsLists = (input as SelectSelector[]).map(e => e.select!.options).filter(e => e !== undefined);
+    let commonOptions: string[] | SelectOption[] = [];
+
+    if (optionsLists.every(e => e.every(f => typeof f === 'string'))) {
+      commonOptions = optionsLists.length ? (optionsLists as string[][]).reduce((a, b) => a.filter(c => b.includes(c))) : [];
+    }
+    else {
+      let convertedOptionsLists = optionsLists.map(list => list.map(e => parseListSelectorOption(typeof e === 'object' ? e : { value: e })).filter(isDefined));
+      commonOptions = convertedOptionsLists.length ? convertedOptionsLists.reduce((a, b) => a.filter(c => b.find(el => el.value === c.value))) : [];
+    }
+
     const translationKeyLists = (input as SelectSelector[]).map(e => e.select!.translation_key).filter(e => e !== undefined) as string[];
 
     return <SelectSelector>{
