@@ -247,14 +247,15 @@ export class SchedulerPicker extends LitElement {
     this._comboBox?.focus();
     (this._comboBox as any).open();
     (this._comboBox as any).value = "";
-    this._isOpening = false;
   }
 
   private async _openedChanged(ev: CustomEvent) {
-    ev.stopPropagation();
-    if (this._isOpening) return;
     const opened = ev.detail.value;
-    if (this._opened && !opened) {
+    ev.stopPropagation();
+    if (this._isOpening) {
+      this._isOpening = false;
+    }
+    else if (this._opened && !opened) {
       this._opened = false;
       await this.updateComplete;
       this._field?.focus();
