@@ -70,7 +70,7 @@
     "input_boolean": "entrée booléenne",
     "input_number": "entrée numérique",
     "input_select": "entrée de sélection",
-    "lawn_mower": "lawn mower",
+    "lawn_mower": "tondeuse",
     "light": "lumière",
     "lock": "serrure",
     "media_player": "lecteur multimédia",
@@ -109,7 +109,7 @@
     },
     "dialog": {
       "enable_schedule": {
-        "title": "Compléter les modifs",
+        "title": "Compléter les modifications",
         "description": "Le planning qui a été modifié est actuellement désactivé, doit-il être activé ?"
       },
       "confirm_delete": {
@@ -117,16 +117,16 @@
         "description": "Voulez-vous vraiment supprimer cette entité ?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "Jours de répétition",
+        "choose": "Choisir les jours..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "Choisir les entités",
+        "choose": "Choisir...",
+        "no_results": "Aucune entité trouvée"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Choisir une action"
       }
     },
     "panel": {
@@ -143,42 +143,42 @@
         "additional_tasks": "{number} {if number is 1}tâche à venir{else}tâches à venir"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
+        "repeated_days": "Jours de répétition",
+        "start_time": "Heure de début",
+        "stop_time": "Heure de in",
         "action": "Action",
-        "add_action": "Add action",
+        "add_action": "Ajouter une action",
         "select_timeslot": "Choisir d'abord une plage horaire",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "Certaines plages horaires se chevauchent",
+          "missing_target_entity": "Certaines actions n'ont pas d'entité sélectionnée",
+          "missing_service_parameter": "Certaines actions ne sont pas totalement configurées",
+          "missing_action": "Le planning n'a aucune action définie"
         }
       },
       "options": {
         "conditions": {
           "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "add_condition": "Ajouter une condition",
+          "new_condition": "Nouvelle condition",
           "types": {
-            "equal_to": "{entity} is equal to {value}",
-            "unequal_to": "{entity} is unequal to {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "equal_to": "{entity} est égal à {value}",
+            "unequal_to": "{entity} n'est pas égal à {value}",
+            "above": "{entity} est supérieur à {value}",
+            "below": "{entity} est inférieur à {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
+            "logic_and": "Toutes les conditions doivent être valides",
+            "logic_or": "Au moins une condition doit être valide",
             "track_changes": "Ré-évaluer lorsque la condition change"
           }
         },
         "period": {
           "header": "Période",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "Du",
+          "end_date": "Au"
         },
-        "repeat_type": "comportement après l'achèvement",
+        "repeat_type": "Comportement après l'achèvement",
         "tags": "Tags"
       }
     }
