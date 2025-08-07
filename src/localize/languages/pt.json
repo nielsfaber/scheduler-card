@@ -13,13 +13,13 @@
       "set_temperature_hvac_mode_auto": "auto[ para {temperature}]",
       "set_hvac_mode": "definir modo[ para {hvac_mode}]",
       "set_preset_mode": "definir predefinição[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "definir modo ventoinha[ para {fan_mode}]"
     },
     "cover": {
       "close_cover": "fechar",
       "open_cover": "abrir",
       "set_cover_position": "definir posição[ para {position}]",
-      "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
+      "set_cover_tilt_position": "definir inclinação[ como {tilt_position}]"
     },
     "fan": {
       "set_speed": "definir velocidade[ para {speed}]",
@@ -46,7 +46,7 @@
       "select_source": "selecionar origem[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "notify": "enviar notificação"
     },
     "script": {
       "script": "executar"
@@ -61,7 +61,7 @@
   },
   "domains": {
     "alarm_control_panel": "painel de controlo de alarme",
-    "binary_sensor": "binary sensors",
+    "binary_sensor": "sensores binários",
     "climate": "ambiente",
     "cover": "estores",
     "fan": "ventiladores",
@@ -70,11 +70,11 @@
     "input_boolean": "campo booleano",
     "input_number": "campo numérico",
     "input_select": "campo de opção",
-    "lawn_mower": "lawn mower",
+    "lawn_mower": "cortador de relva",
     "light": "iluminação",
     "lock": "fechaduras",
     "media_player": "reprodutores de mídia",
-    "notify": "notification",
+    "notify": "notificação",
     "switch": "interruptores",
     "vacuum": "aspiradores",
     "water_heater": "aquecedores hidráulicos"
@@ -117,16 +117,16 @@
         "description": "Tem a certeza que deseja remover esta entidade?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "Repetições semanais",
+        "choose": "Escolha..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "Escolha entidades",
+        "choose": "Escolha...",
+        "no_results": "Sem resultados"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Escolha a acção"
       }
     },
     "panel": {
@@ -143,44 +143,45 @@
         "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "Repetições semanais",
+        "start_time": "Hora início",
+        "stop_time": "Hora fim",
+        "action": "Acção",
+        "add_action": "Acrescentar acção",
         "select_timeslot": "Selecionar um período horário",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "O Horário tem sobreposições",
+          "missing_target_entity": "Uma ou mais acções sem entidade definida",
+          "missing_service_parameter": "Unma ou mais acções sem uma definição obrigatória",
+          "missing_action": "O Horário não tem acções"
         }
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "header": "Condições",
+          "add_condition": "Acrescentar condição",
+          "new_condition": "Nova condição",
           "types": {
-            "equal_to": "{entity} is equal to {value}",
-            "unequal_to": "{entity} is unequal to {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "equal_to": "{entity} igual a {value}",
+            "unequal_to": "{entity} diferente de {value}",
+            "above": "{entity} acima de {value}",
+            "below": "{entity} abaixo de {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
-            "track_changes": "Revaliar em caso de alterações"
+            "logic_and": "Todas as condições têm de ser verdadeiras",
+            "logic_or": "Uma das condições tem de ser verdadeira",
+            "track_changes": "Reavaliar em caso de alterações"
           }
         },
         "period": {
           "header": "Período",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "Desde",
+          "end_date": "Até"
         },
-        "repeat_type": "comportamento após a conclusão",
-        "tags": "Tags"
+        "repeat_type": "Comportamento após a conclusão",
+        "tags": "Etiquetas"
       }
     }
   }
+
 }
