@@ -44,7 +44,7 @@ export class SchedulerComboSelector extends LitElement {
       }
 
       const computeItemLabel = (value: string) => {
-        const translationKey = (this.config as SelectSelector).select?.translation_key;
+        let translationKey = (this.config as SelectSelector).select?.translation_key;
         let label = '';
         if (translationKey) label = hassLocalize(translationKey.replace('${value}', value), this.hass, false);
         if (!label) label = value;
@@ -56,7 +56,7 @@ export class SchedulerComboSelector extends LitElement {
           if (typeof option === 'object') {
             return {
               id: option.value,
-              primary: option.label,
+              primary: computeItemLabel(option.label),
               icon: option.icon
             }
           }
@@ -81,7 +81,7 @@ export class SchedulerComboSelector extends LitElement {
         let icon = '';
         let match = config.options.find(e => typeof e === 'object' ? e.value === value : e === value);
         if (match && typeof match === 'object') {
-          label = match.label;
+          label = computeItemLabel(match.label);
           icon = match.icon || icon;
         }
         else label = computeItemLabel(value);

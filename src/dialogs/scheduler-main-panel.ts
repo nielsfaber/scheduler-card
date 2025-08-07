@@ -27,6 +27,7 @@ import { fireEvent } from "../lib/fire_event";
 import { useAmPm } from "../lib/use_am_pm";
 import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 import { hassLocalize } from "../localize/hassLocalize";
+import { isDefined } from "../lib/is_defined";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -36,7 +37,6 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import { isDefined } from "../lib/is_defined";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {

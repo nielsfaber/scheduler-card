@@ -9,7 +9,6 @@ import { mdiShape } from "@mdi/js";
 
 import './scheduler-chip-set';
 import './scheduler-picker';
-import { hassLocalize } from "../localize/hassLocalize";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -72,6 +71,7 @@ export class SchedulerEntityPicker extends LitElement {
         .valueRenderer=${this._valueRenderer}
         @value-changed=${this._valueChanged}
         ?disabled=${this.disabled}
+        .value=${this.multiple ? "" : this.value}
       >
       </scheduler-picker>
     `;
