@@ -72,17 +72,18 @@ export class DialogSelectWeekdays extends LitElement {
           </mwc-list>
         </div>
 
-        <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
+        <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
           ${hassLocalize('ui.common.cancel', this.hass)}
-        </mwc-button>
-        <mwc-button
-          slot="secondaryAction"
+        </ha-button>
+        <ha-button
+          appearance="accent"
+          slot="primaryAction"
           @click=${this.confirmClick}
           dialogAction="close"
           ?disabled=${!this._params.weekdays.length}
         >
           ${hassLocalize('ui.common.ok', this.hass)}
-        </mwc-button>
+        </ha-button>
       </ha-dialog>
     `;
   }

@@ -133,12 +133,12 @@ export class SchedulerOptionsPanel extends LitElement {
         </scheduler-collapsible-group>
 
       <div>
-        <mwc-button
+        <ha-button appearance="plain"
           @click=${this._conditionAddClick}
         >
-          <ha-icon icon="mdi:plus"></ha-icon>
+          <ha-icon slot="start" icon="mdi:plus"></ha-icon>
           ${localize('ui.panel.options.conditions.add_condition', this.hass)}
-        </mwc-button>
+        </ha-button>
       </div>
 
 
@@ -192,18 +192,33 @@ export class SchedulerOptionsPanel extends LitElement {
       </div>
 
       <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>
-      <mwc-button @click=${this.setRepeatType} value="${TRepeatType.Repeat}" ?active=${this.schedule.repeat_type == TRepeatType.Repeat}>
-        <ha-icon icon="mdi:refresh"></ha-icon>
+      <ha-button
+        appearance="${this.schedule.repeat_type == TRepeatType.Repeat ? 'filled' : 'plain'}"
+        variant="${this.schedule.repeat_type == TRepeatType.Repeat ? 'brand' : 'neutral'}"
+        @click=${this.setRepeatType}
+        value="${TRepeatType.Repeat}"
+      >
+        <ha-icon slot="start" icon="mdi:refresh"></ha-icon>
         ${hassLocalize('ui.components.calendar.event.repeat.label', this.hass)}
-      </mwc-button>
-      <mwc-button @click=${this.setRepeatType} value="${TRepeatType.Pause}" ?active=${this.schedule.repeat_type == TRepeatType.Pause}>
-        <ha-icon icon="mdi:stop"></ha-icon>
+      </ha-button>
+      <ha-button
+        appearance="${this.schedule.repeat_type == TRepeatType.Pause ? 'filled' : 'plain'}"
+        variant="${this.schedule.repeat_type == TRepeatType.Pause ? 'brand' : 'neutral'}"
+        @click=${this.setRepeatType}
+        value="${TRepeatType.Pause}"
+      >
+        <ha-icon slot="start" icon="mdi:stop"></ha-icon>
         ${hassLocalize('ui.dialogs.more_info_control.vacuum.stop', this.hass)}
-      </mwc-button>
-      <mwc-button @click=${this.setRepeatType}  value="${TRepeatType.Single}" ?active=${this.schedule.repeat_type == TRepeatType.Single}>
-        <ha-icon icon="mdi:trash-can-outline"></ha-icon>
+      </ha-button>
+      <ha-button
+        appearance="${this.schedule.repeat_type == TRepeatType.Single ? 'filled' : 'plain'}"
+        variant="${this.schedule.repeat_type == TRepeatType.Single ? 'brand' : 'neutral'}"
+        @click=${this.setRepeatType}
+        value="${TRepeatType.Single}"
+      >
+        <ha-icon slot="start" icon="mdi:trash-can-outline"></ha-icon>
         ${hassLocalize('ui.common.delete', this.hass)}
-      </mwc-button>
+      </ha-button>
     `;
   }
 
@@ -547,14 +562,6 @@ export class SchedulerOptionsPanel extends LitElement {
       }
       ha-textfield {
         width: 100%;
-      }
-      mwc-button ha-icon {
-        margin-right: 11px;
-      }
-      mwc-button[active] {
-        background: var(--primary-color);
-        --mdc-theme-primary: var(--text-primary-color);
-        border-radius: 4px;
       }
       .header {
         display: flex;

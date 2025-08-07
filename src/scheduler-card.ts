@@ -173,15 +173,15 @@ export class SchedulerCard extends LitElement {
         ? !this.showDiscovered
           ? html`
               <div>
-                <button
-                  class="show-more"
+                <ha-button
+                  appearance="plain"
                   @click=${() => {
               this.showDiscovered = true;
             }}
                 >
                   +
                   ${localize('ui.panel.overview.excluded_items', this.hass, '{number}', Object.keys(items).length - includedItems.length)}
-                </button>
+                </ha-button>
               </div>
             `
           : html`
@@ -200,23 +200,23 @@ export class SchedulerCard extends LitElement {
             }
 
               <div>
-                <button
-                  class="show-more"
+                <ha-button
+                  appearance="plain"
                   @click=${() => {
               this.showDiscovered = false;
             }}
                 >
                   ${localize('ui.panel.overview.hide_excluded', this.hass)}
-                </button>
+                </ha-button>
               </div>
             `
         : ''}
         </div>
 
         <div class="card-actions">
-          <mwc-button @click=${this._addClick}
+          <ha-button appearance="plain" @click=${this._addClick}
             >${hassLocalize('ui.common.add', this.hass)}
-          </mwc-button>
+          </ha-button>
 
           <span class="beta">
             ${CARD_VERSION}

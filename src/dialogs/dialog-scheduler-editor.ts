@@ -124,12 +124,12 @@ export class DialogSchedulerEditor extends LitElement {
 
 
         <div class="buttons">
-          <mwc-button @click=${this._handleSaveClick}>
-            ${hassLocalize('ui.common.save', this.hass)}
-          </mwc-button>
-          <mwc-button @click=${this._handleDeleteClick} class="warning">
+          <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger">
             ${hassLocalize('ui.common.delete', this.hass)}
-          </mwc-button>
+          </ha-button>
+          <ha-button appearance="plain" @click=${this._handleSaveClick}>
+            ${hassLocalize('ui.common.save', this.hass)}
+          </ha-button>
         </div>
       </ha-dialog>
     `;

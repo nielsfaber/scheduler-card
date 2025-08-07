@@ -176,12 +176,12 @@ export class SchedulerMainPanel extends LitElement {
     const action = slot.actions.length ? slot.actions[0] : undefined;
     if (!action) return html`
       <div>
-        <mwc-button
+        <ha-button appearance="plain"
           @click=${this._showActionDialog}
         >
-          <ha-icon icon="mdi:plus"></ha-icon>
+          <ha-icon slot="start" icon="mdi:plus"></ha-icon>
           ${localize('ui.panel.editor.add_action', this.hass)}
-        </mwc-button>
+        </ha-button>
       </div>
     `;
 

@@ -9,7 +9,6 @@ export type GenericDialogParams = {
   description: string | TemplateResult;
   primaryButtonLabel: string;
   secondaryButtonLabel?: string;
-  primaryButtonCritical?: boolean;
   cancel: () => void;
   confirm: () => void;
 };
@@ -51,19 +50,19 @@ export class GenericDialog extends LitElement {
 
         ${this._params.secondaryButtonLabel
         ? html`
-              <mwc-button slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-                ${this._params.secondaryButtonLabel}
-              </mwc-button>
+          <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
+            ${this._params.secondaryButtonLabel}
+          </ha-button>
             `
         : ''}
-        <mwc-button
-          slot="secondaryAction"
-          style="${this._params.primaryButtonCritical ? '--mdc-theme-primary: var(--error-color)' : ''}"
+        <ha-button
+          appearance="accent"
+          slot="primaryAction"
           @click=${this.confirmClick}
           dialogAction="close"
         >
           ${this._params.primaryButtonLabel}
-        </mwc-button>
+        </ha-button>
       </ha-dialog>
     `;
   }

@@ -59,9 +59,6 @@ export const EditorDialogStyles = css`
       position: sticky;
       bottom: 0px;
     }
-    mwc-button.warning {
-      --mdc-theme-primary: var(--error-color);
-    }
   .content {
     padding: 0px 24px 16px 24px;
   }

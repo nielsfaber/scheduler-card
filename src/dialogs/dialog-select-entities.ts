@@ -328,7 +328,11 @@ export class DialogSelectEntities extends LitElement {
         >
           <ha-icon slot="graphic" icon="${filteredOptions[key].icon}"></ha-icon>
           <div slot="meta" class="meta">
-            <ha-button @click=${this._toggleSelectDomain}>
+            <ha-button
+              appearance="plain"
+              @click=${this._toggleSelectDomain}
+              size="small"
+            >
               ${this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key))
           ? hassLocalize('ui.components.media-browser.file_management.deselect_all', this.hass)
           : hassLocalize('ui.components.subpage-data-table.select_all', this.hass)
