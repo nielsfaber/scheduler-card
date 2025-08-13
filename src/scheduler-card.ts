@@ -169,7 +169,7 @@ export class SchedulerCard extends LitElement {
         )
       }
 
-      ${Object.keys(items).length > includedItems.length
+      ${Object.keys(items).length > includedItems.length && this._config.discover_existing !== false
         ? !this.showDiscovered
           ? html`
               <div>
