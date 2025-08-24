@@ -1,10 +1,12 @@
 import { supportedActions } from "./supported_actions";
 import { domainIcon } from "./domain_icon";
 import { HomeAssistant } from "../../lib/types";
-import { computeDomain } from "../../lib/entity";
+import { computeDomain, computeEntity } from "../../lib/entity";
 import { Action, CustomConfig } from "../../types";
 import { hassLocalize } from "../../localize/hassLocalize";
-import { parseCustomActions } from "./parse_custom_actions";
+import { parseCustomActions, parseExcludedActions } from "./parse_custom_actions";
+import { formatActionDisplay } from "../format/format_action_display";
+import { caseInsensitiveStringCompare } from "../../lib/string_compare";
 
 export interface actionItem {
   key: string,
@@ -58,6 +60,15 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
       target: hass.services[domain][e].target ? {} : undefined
     }
   }));
+
+  //get excluded actions for entity
+  let excludedActions = parseExcludedActions(customize || {}, domain);
+  if (excludedActions.length) {
+    actionList = actionList.filter(e => !excludedActions.some(a => {
+      return caseInsensitiveStringCompare(computeEntity(e.action.service), a) > 0
+        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, customize), a) > 0
+    }));
+  }
 
   let customActions = parseCustomActions(customize || {}, domain);
   customActions.forEach(action => {

@@ -187,6 +187,13 @@ export class DialogSelectWeekdays extends LitElement {
       if (this._params.entityFilter?.length) {
         result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
       }
+      if (!Object.keys(result).length) {
+        return html`
+          <mwc-list-item disabled>
+            ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
+          </mwc-list-item>
+        `;
+      }
       return (Object.keys(result)).map((key) => html`
         <mwc-list-item
           graphic="icon"

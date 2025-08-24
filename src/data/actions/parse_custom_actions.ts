@@ -1,4 +1,5 @@
 import { computeDomain } from "../../lib/entity";
+import { isDefined } from "../../lib/is_defined";
 import { matchPattern } from "../../lib/patterns";
 import { CustomActionConfig, CustomConfig } from "../../types";
 
@@ -29,4 +30,17 @@ export const parseCustomActions = (customize: CustomConfig, entityOrDomainFilter
     });
 
   return actionConfig;
+}
+
+export const parseExcludedActions = (customize: CustomConfig, entityOrDomainFilter?: string) => {
+
+  return Object.keys(customize)
+    .filter(key => customize[key].exclude_actions?.length)
+    .filter(key => !entityOrDomainFilter
+      || (!entityOrDomainFilter.includes('.') && matchPattern(computeDomain(key), entityOrDomainFilter))
+      || matchPattern(key, entityOrDomainFilter)
+    )
+    .map(e => customize[e].exclude_actions)
+    .flat()
+    .filter(isDefined)
 }

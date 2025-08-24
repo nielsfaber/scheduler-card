@@ -21,6 +21,7 @@ import { convertSchemeToSingle } from "../data/schedule/convert_scheme_to_single
 import './scheduler-main-panel';
 import './scheduler-options-panel';
 import './generic-dialog';
+import { CARD_VERSION } from "../const";
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
