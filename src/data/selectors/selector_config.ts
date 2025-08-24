@@ -81,8 +81,9 @@ const selectorConfigFromCustomConfig = (service: string, entityId: string, field
 
   if (actionConfig.length) {
     let res = (actionConfig.map(customConfig => {
-      if (customConfig.service != service || !Object.keys(customConfig.variables).includes(field)) return {};
-      let variableConfig = customConfig.variables[field];
+
+      if (customConfig.service != service || !Object.keys(customConfig.variables || {}).includes(field)) return {};
+      let variableConfig = (customConfig.variables || {})[field];
       if (Object.keys(variableConfig).includes('options')) {
         return listSelector({ options: (variableConfig as any).options });
       } else if (Object.keys(variableConfig).includes('min') && Object.keys(variableConfig).includes('max')) {

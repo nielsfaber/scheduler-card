@@ -19,7 +19,7 @@ export const computeTimeOffset = (time: { hours: number, minutes: number }, refe
 
   if (sign < 0) {
     if (hours > 0) hours = -hours;
-    else minutes = -minutes;
+    minutes = -minutes;
   }
 
   return roundTime({ hours: hours, minutes: minutes });

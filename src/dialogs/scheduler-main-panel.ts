@@ -1,7 +1,7 @@
 import { mdiChevronLeft, mdiChevronRight, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import { Action, CardConfig, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
+import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
 import { actionConfig } from "../data/actions/action_config";
 import { formatWeekdayDisplay } from "../data/days";
 import { defaultSelectorValue } from "../data/selectors/default_selector_value";
@@ -37,15 +37,17 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
+import '../components/scheduler-legacy-time-picker';
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @property({ attribute: false }) public config!: CardConfig;
+  @property({ attribute: false }) public viewMode!: EditorMode;
+  @property({ attribute: false }) public selectedSlot: number | null = null;
 
   @state() schedule!: Schedule;
   @state() selectedEntry: number | null = 0;
-  @state() selectedSlot: number | null = null;
 
   @property({ type: Boolean })
   large = false;
@@ -56,26 +58,42 @@ export class SchedulerMainPanel extends LitElement {
         new CustomEvent('change', { detail: { schedule: this.schedule } })
       );
     }
+    if (changedProps.get('viewMode') && this.viewMode == EditorMode.Single) {
+      this.selectedSlot = 1;
+    }
     return true;
   }
 
   render() {
     return html`
     ${this.schedule.entries.map((entry, num) => html`
-
+      
       <div class="editor-header">
-      <div class="weekdays">
-        <span>
-          ${localize('ui.panel.editor.repeated_days', this.hass)}:
-          ${formatWeekdayDisplay(entry.weekdays, 'short', this.hass)}
-        </span>
-        <ha-icon-button .path=${mdiPencil} @click=${(ev: Event) => this._showWeekdayDialog(ev, num)}></ha-icon-button>
+        <div class="weekdays">
+          <span>
+            ${localize('ui.panel.editor.repeated_days', this.hass)}:
+            ${formatWeekdayDisplay(entry.weekdays, 'short', this.hass)}
+          </span>
+          <ha-icon-button .path=${mdiPencil} @click=${(ev: Event) => this._showWeekdayDialog(ev, num)}></ha-icon-button>
+        </div>
+        <div class="weekdays-actions">
+        <ha-button appearance="plain" size="small" @click=${this.toggleViewMode}>
+          ${this.viewMode == EditorMode.Scheme
+        ? localize('ui.panel.editor.toggle_single_mode', this.hass)
+        : localize('ui.panel.editor.toggle_scheme_mode', this.hass)
+      }
+          <ha-icon slot="end" icon="mdi:swap-horizontal"></ha-icon>
+        </ha-button>
+        </div>
       </div>
 
-      ${this.renderActionButtons()}
-
+      ${this.viewMode == EditorMode.Scheme ? html`
+      <div class="editor-header">
+        <div class="weekdays">
+          ${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:
+        </div>
+        ${this.renderActionButtons()}
       </div>
-
       <scheduler-timeslot-editor
         .hass=${this.hass}
         .config=${this.config}
@@ -85,10 +103,30 @@ export class SchedulerMainPanel extends LitElement {
         .large=${this.large}
       >
       </scheduler-timeslot-editor>
+      ` :
+        html`
+          ${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:
+          <scheduler-time-picker
+            .hass=${this.hass}
+            .time=${this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot!].start}
+            @value-changed=${this._startTimeChanged}
+            ?useAmPm=${useAmPm(this.hass.locale)}
+            .stepSize=${this.config.time_step}
+            large
+          >
+          </scheduler-time-picker>
+      `}
     `)}
 
     ${this.renderSlot()}
     `;
+  }
+
+  toggleViewMode() {
+    const newViewMode: EditorMode = this.viewMode == EditorMode.Scheme ? EditorMode.Single : EditorMode.Scheme;
+    this.dispatchEvent(
+      new CustomEvent('setViewMode', { detail: newViewMode })
+    );
   }
 
   renderActionButtons() {
@@ -131,7 +169,7 @@ export class SchedulerMainPanel extends LitElement {
     if (!endTime) endTime = slot.start;
 
     return html`
-
+      ${this.viewMode == EditorMode.Scheme ? html`
       <div class="two-column">
         <div class="column">
           <scheduler-time-picker
@@ -164,7 +202,8 @@ export class SchedulerMainPanel extends LitElement {
           </scheduler-time-picker>
           </div>
         </div>
-      </div>
+      </div>`
+        : ''}
 
       ${localize('ui.panel.editor.action', this.hass)}:
       ${this._renderActionConfig()}
@@ -520,19 +559,27 @@ export class SchedulerMainPanel extends LitElement {
   div.editor-header {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
   }
   .weekdays {
     display: flex;
     flex: 1;
     align-items: center;
+    white-space: nowrap;
+  }
+  .weekdays-actions {
+    display: flex;
+    align-items: center;
   }
   div.actions {
     display: flex;
     align-items: end;
+    margin: -4px 0px 0px 0px;
   }
-  @media all and (max-width: 450px) {
+  @media all and (max-width: 150px) {
     div.editor-header {
       flex-direction: column;
+      margin-top: 0px;
     }
     div.actions {
       align-self: flex-end;
@@ -546,6 +593,15 @@ export class SchedulerMainPanel extends LitElement {
   }
   scheduler-collapsible-section .header span {
     flex: 1;
+  }
+  ha-button ha-icon[slot='start'] {
+    margin: 0px 4px 0px -8px;
+  }
+  ha-button ha-icon[slot='end'] {
+    margin: 0px -8px 0px 4px;
+  }
+  mwc-checkbox {
+    align-self: center;
   }
     `;
   }

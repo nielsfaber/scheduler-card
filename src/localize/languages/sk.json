@@ -116,6 +116,10 @@
         "title": "Odstrániť entitu?",
         "description": "Naozaj chcete odstrániť túto entitu?"
       },
+      "confirm_migrate": {
+        "title": "Upravte plán",
+        "description": "Touto akciou sa stratia niektoré nastavenia. Chcete pokračovať?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Najprv vyberte časový úsek",
+        "toggle_single_mode": "Do režimu jedného",
+        "toggle_scheme_mode": "Do režimu schémy",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
@@ -202,7 +208,15 @@
           },
           "time_step": {
             "heading": "Časový krok",
-            "description": "Rozlíšenie (v minútach) pre vytváranie plánov"
+            "description": "Rozlíšenie (v minútach) pre vytváranie plánov",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Default time editor",
+            "options": {
+              "single": "Single schedule mode",
+              "scheme": "Time scheme mode"
+            }
           },
           "sort_by": {
             "heading": "Možnosti triedenia",

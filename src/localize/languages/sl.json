@@ -116,6 +116,10 @@
         "title": "Ali želite odstraniti entiteto?",
         "description": "Ali ste prepričani, da želite odstraniti to entiteto?"
       },
+      "confirm_migrate": {
+        "title": "Spremenite urnik",
+        "description": "Nekatere nastavitve bodo s tem dejanjem izgubljene. Želite nadaljevati?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Najprej izberi časovni okvir",
+        "toggle_single_mode": "To single mode",
+        "toggle_scheme_mode": "To scheme mode",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
@@ -202,7 +208,15 @@
           },
           "time_step": {
             "heading": "Časovni korak",
-            "description": "Ločljivost (v minutah) za kreiranje urnikov"
+            "description": "Ločljivost (v minutah) za kreiranje urnikov",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Default time editor",
+            "options": {
+              "single": "V enojni način",
+              "scheme": "V shematski način"
+            }
           },
           "sort_by": {
             "heading": "Možnosti sortiranja",

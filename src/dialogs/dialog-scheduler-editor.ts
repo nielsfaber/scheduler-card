@@ -1,7 +1,7 @@
 import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import { CardConfig, Schedule } from "../types";
+import { CardConfig, EditorMode, Schedule } from "../types";
 import { EditorDialogStyles } from "../card.styles";
 import { localize } from "../localize/localize";
 import { HomeAssistant } from "../lib/types";
@@ -16,6 +16,7 @@ import { fetchScheduleItem } from "../data/store/fetch_item";
 import { deepCompare } from "../lib/deep_compare";
 import { parseTimeBar } from "../data/time/parse_time_bar";
 import { hassLocalize } from "../localize/hassLocalize";
+import { convertSchemeToSingle } from "../data/schedule/convert_scheme_to_single";
 
 import './scheduler-main-panel';
 import './scheduler-options-panel';
@@ -40,6 +41,15 @@ export class DialogSchedulerEditor extends LitElement {
   @state() selectedSlot: number | null = 0;
 
   @state() _panel: "main" | "options" = "main";
+
+  @state() _viewMode: EditorMode = EditorMode.Single;
+
+  firstUpdated() {
+    const isTimeSchemeType = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.stop !== undefined).length
+      || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1;
+    if (isTimeSchemeType) this._viewMode = EditorMode.Scheme;
+    else this._viewMode = this._params?.cardConfig.default_editor || EditorMode.Single;
+  }
 
   public async showDialog(params: any): Promise<void> {
     this._params = params;
@@ -107,6 +117,9 @@ export class DialogSchedulerEditor extends LitElement {
             .schedule=${this.schedule}
             .large=${this.large}
             @change=${this._updateSchedule}
+            @setViewMode=${this._setViewMode}
+            .viewMode=${this._viewMode}
+            .selectedSlot=${this.selectedSlot}
           >
           </scheduler-main-panel>
             `
@@ -124,7 +137,7 @@ export class DialogSchedulerEditor extends LitElement {
 
 
         <div class="buttons">
-          <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger">
+          <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger" ?disabled=${!this.schedule.entity_id}>
             ${hassLocalize('ui.common.delete', this.hass)}
           </ha-button>
           <ha-button appearance="plain" @click=${this._handleSaveClick}>
@@ -230,6 +243,49 @@ export class DialogSchedulerEditor extends LitElement {
           .then(() => {
             this.closeDialog();
           });
+      })
+  }
+
+  _setViewMode(ev: CustomEvent) {
+    let viewMode: EditorMode = ev.detail;
+    const multipleActionsDefined = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1;
+
+    if (viewMode == EditorMode.Scheme) {
+      this._viewMode = viewMode;
+      return;
+    }
+    else if (viewMode == EditorMode.Single && !multipleActionsDefined) {
+      this.schedule = convertSchemeToSingle(this.schedule);
+      this.selectedSlot = 1;
+      this._viewMode = viewMode;
+      return;
+    }
+
+    new Promise<boolean>(resolve => {
+      const params: GenericDialogParams = {
+        title: localize('ui.dialog.confirm_migrate.title', this.hass),
+        description: localize('ui.dialog.confirm_migrate.description', this.hass),
+        primaryButtonLabel: this.hass.localize('ui.common.yes'),
+        secondaryButtonLabel: this.hass.localize('ui.common.no'),
+        cancel: () => {
+          resolve(false);
+        },
+        confirm: () => {
+          resolve(true);
+        },
+      };
+
+      fireEvent(ev.target as HTMLElement, 'show-dialog', {
+        dialogTag: 'scheduler-generic-dialog',
+        dialogImport: () => import('./generic-dialog'),
+        dialogParams: params,
+      });
+    })
+      .then((res: boolean) => {
+        if (!res) return;
+        this.schedule = convertSchemeToSingle(this.schedule);
+        this.selectedSlot = 1;
+        this._viewMode = viewMode;
       })
   }
 

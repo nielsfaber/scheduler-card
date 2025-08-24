@@ -178,7 +178,7 @@ export class SchedulerComboSelector extends LitElement {
           @change=${valueChanged}
           ?disabled=${this.disabled}
         ></ha-slider>
-        <span class="value">${value}${config.unit_of_measurement || ''}</span>
+        <span class="value">${value} ${config.unit_of_measurement || ''}</span>
         </div>
       `
     }

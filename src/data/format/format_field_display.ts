@@ -23,9 +23,9 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
     .filter(([key]) => key == domain || key == action.service)
     .map(([_key, e]) => (e.actions || []).filter(a => compareActions(a, action)))
     .flat()
-    .find(e => Object.keys(e.variables).includes(field));
+    .find(e => Object.keys(e.variables || {}).includes(field));
 
-  if (match) name = match.variables[field].name || '';
+  if (match) name = match.variables![field].name || '';
 
   if (!name) name = field.replace(/_/g, ' ');
 

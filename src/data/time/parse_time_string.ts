@@ -23,7 +23,7 @@ export const parseTimeString = (string: string): Time => {
     let minutes = time.minutes;
     if (match[2] == '-') {
       if (hours > 0) hours = -hours;
-      else minutes = -minutes;
+      minutes = -minutes;
     }
     return {
       mode: match[1] == 'sunrise' ? TimeMode.Sunrise : TimeMode.Sunset,

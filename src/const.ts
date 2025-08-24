@@ -1,4 +1,4 @@
-import { CardConfig, Schedule, TConditionLogicType, TRepeatType, TWeekday } from "./types";
+import { CardConfig, EditorMode, Schedule, TConditionLogicType, TRepeatType, TWeekday } from "./types";
 
 export const CARD_VERSION = 'v4.0.0.b5';
 
@@ -8,6 +8,8 @@ export const DefaultCardConfig: CardConfig = {
   discover_existing: true,
   title: true,
   show_header_toggle: false,
+  time_step: 15,
+  default_editor: EditorMode.Single,
   display_options: {
     primary_info: 'default',
     secondary_info: ['relative-time', 'additional-tasks'],

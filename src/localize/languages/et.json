@@ -116,6 +116,10 @@
         "title": "Kas eemaldan olemi?",
         "description": "Oled kindel, et soovid selle olemi eemaldada?"
       },
+      "confirm_migrate": {
+        "title": "Muutke ajakava",
+        "description": "Selle muudatusega lähevad mõned seaded kaotsi. Kas soovite jätkata?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Alustuseks vali ajavahemik",
+        "toggle_single_mode": "Üksikrežiimile",
+        "toggle_scheme_mode": "Skeemirežiimile",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

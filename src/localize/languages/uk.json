@@ -116,6 +116,10 @@
         "title": "Видалити сутність?",
         "description": "Ви дійсно бажаєте видалити цю сутність?"
       },
+      "confirm_migrate": {
+        "title": "Змінити розклад",
+        "description": "У результаті цієї дії деякі налаштування буде втрачено. Ви бажаєте продовжити?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Спершу виберіть часовий проміжок",
+        "toggle_single_mode": "До одиночного режиму",
+        "toggle_scheme_mode": "До схемного режиму",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

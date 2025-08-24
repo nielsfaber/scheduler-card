@@ -116,6 +116,10 @@
         "title": "Remover entidade?",
         "description": "Tem certeza de que deseja remover esta entidade?"
       },
+      "confirm_migrate": {
+        "title": "Modificar horário",
+        "description": "Algumas configurações serão perdidas por esta ação. Você quer prosseguir?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Selecionar um período horário",
+        "toggle_single_mode": "Para modo simples",
+        "toggle_scheme_mode": "Para modo esquema",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

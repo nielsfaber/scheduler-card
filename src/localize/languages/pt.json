@@ -116,6 +116,10 @@
         "title": "Remover a entidade?",
         "description": "Tem a certeza que deseja remover esta entidade?"
       },
+      "confirm_migrate": {
+        "title": "Modificar horário",
+        "description": "Algumas configurações serão perdidas por esta ação. Você quer prosseguir?"
+      },
       "weekday_picker": {
         "title": "Repetições semanais",
         "choose": "Escolha..."
@@ -149,6 +153,8 @@
         "action": "Acção",
         "add_action": "Acrescentar acção",
         "select_timeslot": "Selecionar um período horário",
+        "toggle_single_mode": "Para modo simples",
+        "toggle_scheme_mode": "Para modo esquema",
         "validation_errors": {
           "overlapping_time": "O Horário tem sobreposições",
           "missing_target_entity": "Uma ou mais acções sem entidade definida",
@@ -183,5 +189,4 @@
       }
     }
   }
-
 }

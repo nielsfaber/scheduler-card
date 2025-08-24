@@ -6,6 +6,8 @@ export interface CardConfig {
   discover_existing: boolean;
   title: boolean | string;
   show_header_toggle: boolean;
+  default_editor: EditorMode;
+  time_step: number;
   display_options: {
     primary_info: (DisplayItem | string)[] | DisplayItem | string;
     secondary_info: (DisplayItem | string)[] | DisplayItem | string;
@@ -16,6 +18,10 @@ export interface CardConfig {
   exclude_tags: string[] | string;
 }
 
+export enum EditorMode {
+  Single = 'single',
+  Scheme = 'scheme',
+}
 export interface ConditionConfig {
   type: TConditionLogicType,
   items: Condition[],
@@ -193,5 +199,5 @@ export interface CustomActionConfig extends Action {
   icon?: string;
   service: string;
   service_data: Record<string, any>;
-  variables: Record<string, VariableConfig>
+  variables?: Record<string, VariableConfig>
 }

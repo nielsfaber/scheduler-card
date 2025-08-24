@@ -116,6 +116,10 @@
         "title": "Supprimer l'entité ?",
         "description": "Voulez-vous vraiment supprimer cette entité ?"
       },
+      "confirm_migrate": {
+        "title": "Modifier l'horaire",
+        "description": "Certains paramètres seront perdus par ce changement. Voulez-vous poursuivre?"
+      },
       "weekday_picker": {
         "title": "Jours de répétition",
         "choose": "Choisir les jours..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Ajouter une action",
         "select_timeslot": "Choisir d'abord une plage horaire",
+        "toggle_single_mode": "Vers mode simple",
+        "toggle_scheme_mode": "Vers mode schéma",
         "validation_errors": {
           "overlapping_time": "Certaines plages horaires se chevauchent",
           "missing_target_entity": "Certaines actions n'ont pas d'entité sélectionnée",

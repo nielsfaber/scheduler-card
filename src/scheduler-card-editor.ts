@@ -4,9 +4,9 @@ import { DialogSelectEntitiesParams } from "./dialogs/dialog-select-entities";
 import { HomeAssistant } from "./lib/types";
 import { localize } from "./localize/localize";
 import { DefaultCardConfig } from "./const";
-import { CardConfig } from "./types";
+import { CardConfig, EditorMode } from "./types";
 import { fireEvent } from "./lib/fire_event";
-import { SelectSelector } from "./lib/selector";
+import { NumberSelector, SelectSelector } from "./lib/selector";
 import { fetchTags } from "./data/store/fetch_tags";
 import { sortByName } from "./lib/sort";
 import { mdiArrowRight } from "@mdi/js";
@@ -44,6 +44,15 @@ export class SchedulerCardEditor extends LitElement {
   }
 
   render() {
+    const timeStepSelector = <NumberSelector>{
+      number: {
+        min: 0,
+        max: 30,
+        step: 1,
+        unit_of_measurement: localize('ui.panel.card_editor.fields.time_step.unit_minutes', this.hass)
+      }
+    }
+
     const tagSelector = <SelectSelector>{
       select: {
         options: this.tagOptions,
@@ -102,6 +111,44 @@ export class SchedulerCardEditor extends LitElement {
             ></ha-switch>
           </ha-formfield>
         </div>
+        </div>
+
+        <scheduler-settings-row>
+          <span slot="heading">${localize('ui.panel.card_editor.fields.time_step.heading', this.hass)}</span>
+
+          <scheduler-combo-selector
+            .hass=${this.hass}
+            .config=${timeStepSelector}
+            .value=${this._config.time_step || DefaultCardConfig.time_step}
+            @value-changed=${(ev: CustomEvent) => { this._updateConfig({ time_step: ev.detail.value }) }}
+          >
+          </scheduler-combo-selector>
+        </scheduler-settings-row>
+
+        <span>${localize('ui.panel.card_editor.fields.default_editor.heading', this.hass)}</span>
+        <div class="two-columns">
+          <div class="column">
+            <ha-formfield label="${localize('ui.panel.card_editor.fields.default_editor.options.single', this.hass)}">
+              <ha-radio
+                name="default_editor"
+                value="${EditorMode.Single}"
+                @change=${() => { this._updateConfig({ default_editor: EditorMode.Single }) }}
+                ?checked=${this._config.default_editor == EditorMode.Single}
+              >
+              </ha-radio>
+            </ha-formfield>
+          </div>
+          <div class="column">
+            <ha-formfield label="${localize('ui.panel.card_editor.fields.default_editor.options.scheme', this.hass)}">
+              <ha-radio
+                name="default_editor"
+                value="${EditorMode.Scheme}"
+                @change=${() => { this._updateConfig({ default_editor: EditorMode.Scheme }) }}
+                ?checked=${this._config.default_editor == EditorMode.Scheme}
+              >
+              </ha-radio>
+            </ha-formfield>
+          </div>
         </div>
 
           <span slot="heading">${localize('ui.panel.card_editor.fields.sort_by.heading', this.hass)}</span>
@@ -220,7 +267,7 @@ export class SchedulerCardEditor extends LitElement {
             .value=${[this._config.tags || []].flat()}
             @value-changed=${(ev: CustomEvent) => { this._updateConfig({ tags: ev.detail.value }) }}
           >
-          </combo-selector>
+          </scheduler-combo-selector>
         </scheduler-settings-row>
 
       </div>

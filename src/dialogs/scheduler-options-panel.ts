@@ -581,6 +581,12 @@ export class SchedulerOptionsPanel extends LitElement {
       .header ha-button-menu {
         margin-bottom: -10px;
       }
+      ha-button ha-icon[slot='start'] {
+        margin: 0px 4px 0px -8px;
+      }
+      ha-button ha-icon[slot='end'] {
+        margin: 0px -8px 0px 4px;
+      }
     `;
   }
 }

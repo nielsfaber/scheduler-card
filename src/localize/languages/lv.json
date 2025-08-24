@@ -116,6 +116,10 @@
         "title": "Vai dzēst vienību?",
         "description": "Vai tiešām vēlaties dzēst šo vienību?"
       },
+      "confirm_migrate": {
+        "title": "Atjaunināt grafiku",
+        "description": "Šīs izmaiņas rezultātā daži iestatījumi tiks zaudēti. Vai vēlaties turpināt?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Vispirms izvēlieties laika slotu",
+        "toggle_single_mode": "Uz vienkāršo režīmu",
+        "toggle_scheme_mode": "Uz shēmas režīmu",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
@@ -202,7 +208,15 @@
           },
           "time_step": {
             "heading": "Laika solis",
-            "description": "Izšķirtspēja (minūtēs) grafiku izveidei"
+            "description": "Izšķirtspēja (minūtēs) grafiku izveidei",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Default time editor",
+            "options": {
+              "single": "Single schedule mode",
+              "scheme": "Time scheme mode"
+            }
           },
           "sort_by": {
             "heading": "Kārtošanas opcijas",

@@ -116,6 +116,10 @@
         "title": "Удалить объект?",
         "description": "Вы уверены, что хотите удалить этот объект?"
       },
+      "confirm_migrate": {
+        "title": "Изменить расписание",
+        "description": "При этом некоторые настройки будут потеряны. Вы хотите продолжить?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "Выберите временной слот",
+        "toggle_single_mode": "В простой режим",
+        "toggle_scheme_mode": "В режим схемы",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

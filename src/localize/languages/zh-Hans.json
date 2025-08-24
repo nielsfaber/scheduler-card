@@ -116,6 +116,10 @@
         "title": "是否删除实体？",
         "description": "您确定要删除此实体吗？"
       },
+      "confirm_migrate": {
+        "title": "修改时间表",
+        "description": "此操作将丢失某些设置。 你想继续吗？"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "请选择时间段",
+        "toggle_single_mode": "转为单一模式",
+        "toggle_scheme_mode": "转为方案模式",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

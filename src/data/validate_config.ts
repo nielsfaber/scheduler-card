@@ -1,6 +1,7 @@
 
 const hasKey = (obj: Record<string, any>, key: string) => Object.keys(obj).includes(key);
 const isTypeBoolean = (obj: any) => typeof obj == 'boolean';
+const isTypeNumber = (obj: any) => typeof obj == 'number';
 const isTypeString = (obj: any) => typeof obj == 'string';
 const isTypeObject = (obj: any) => typeof obj == 'object' && !Array.isArray(obj);
 const isTypeListOfStrings = (obj: any) => Array.isArray(obj) && obj.every(e => typeof e == 'string');
@@ -24,6 +25,10 @@ export const validateConfig = (config: any) => {
 
   if (hasKey(config, 'title') && !isTypeBoolean(config.title) && !isTypeString(config.title)) {
     errors.push(`'title' must be a boolean or string`);
+  }
+
+  if (hasKey(config, 'time_step') && (!isTypeNumber(config.time_step) || Number(config.time_step) < 1 || Number(config.time_step) > 30)) {
+    errors.push(`'time_step' must be a number between 1 and 30`);
   }
 
   if (hasKey(config, 'show_header_toggle') && !isTypeBoolean(config.show_header_toggle)) {

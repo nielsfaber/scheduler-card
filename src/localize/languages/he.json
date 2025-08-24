@@ -116,6 +116,10 @@
         "title": "להסיר את הישות?",
         "description": "האם בוודאות ברצונך להסיר ישות זו?"
       },
+      "confirm_migrate": {
+        "title": "שנה את לוח הזמנים",
+        "description": "חלק מההגדרות יאבדו על ידי פעולה זו. האם אתה רוצה להמשיך?"
+      },
       "weekday_picker": {
         "title": "Repeated days for schedule",
         "choose": "Choose..."
@@ -149,6 +153,8 @@
         "action": "Action",
         "add_action": "Add action",
         "select_timeslot": "בחר משבצת זמן קודם",
+        "toggle_single_mode": "למצב פשוט",
+        "toggle_scheme_mode": "למצב דיאגרמה",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",

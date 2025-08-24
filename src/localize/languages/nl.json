@@ -116,6 +116,10 @@
         "title": "Entiteit verwijderen?",
         "description": "Weet je zeker dat je dit item wilt verwijderen?"
       },
+      "confirm_migrate": {
+        "title": "Schema bijwerken",
+        "description": "Door deze actie gaan vorige instellingen verloren. Wil je doorgaan?"
+      },
       "weekday_picker": {
         "title": "Herhaalde dagen voor tijdschema",
         "choose": "Kies..."
@@ -149,6 +153,8 @@
         "action": "Actie",
         "add_action": "Actie toevoegen",
         "select_timeslot": "Selecteer een tijdslot...",
+        "toggle_single_mode": "Naar enkele modus",
+        "toggle_scheme_mode": "Naar schema modus",
         "validation_errors": {
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
@@ -202,7 +208,15 @@
           },
           "time_step": {
             "heading": "Stapgrootte voor tijd",
-            "description": "Resolutie (in minuten)"
+            "description": "Resolutie (in minuten)",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Standaardmodus voor tijdsinvoer",
+            "options": {
+              "single": "Enkele modus",
+              "scheme": "Tijdschema-modus"
+            }
           },
           "sort_by": {
             "heading": "Sorteer-opties",

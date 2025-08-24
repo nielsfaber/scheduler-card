@@ -21,6 +21,11 @@ export const EditorDialogStyles = css`
       --ha-dialog-border-radius: 0px;
     }
   }
+  @media (min-width: 450px) and (min-height: 500px) {
+    .header-bar {
+        padding: 16px 16px 8px 16px;
+    }
+}
   ha-dialog {
     --dialog-surface-position: static;
     --dialog-content-position: static;
@@ -48,7 +53,6 @@ export const EditorDialogStyles = css`
     position: absolute;
     right: 0px;
   }
-
   .buttons {
       box-sizing: border-box;
       display: flex;
