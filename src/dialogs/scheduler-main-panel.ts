@@ -37,7 +37,8 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import '../components/scheduler-legacy-time-picker';
+import { parseTimeBar } from "../data/time/parse_time_bar";
+import { moveTimeslot } from "../data/schedule/move_timeslot";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -455,43 +456,17 @@ export class SchedulerMainPanel extends LitElement {
   }
 
   _stopTimeChanged(ev: CustomEvent) {
-    const value = ev.detail.value as Time;
-    const time = timeToString(value);
-    const slotIdx = Number(this.selectedSlot);
-    let slots = [... this.schedule.entries[this.selectedEntry!].slots];
-    slots = Object.assign(slots, {
-      [slotIdx]: { ...slots[slotIdx], stop: time }
-    });
-    if (slotIdx < (slots.length - 1)) {
-      slots = Object.assign(slots, {
-        [slotIdx + 1]: { ...slots[slotIdx + 1], start: time }
-      });
-    }
+    let value = ev.detail.value as Time;
+    let [slots, slotIdxOut] = moveTimeslot([...this.schedule.entries[this.selectedEntry!].slots], Number(this.selectedSlot), { stop: value }, this.hass);
     this._updateEntry({ slots: slots });
+    if (slotIdxOut != this.selectedSlot) this.selectedSlot = slotIdxOut;
   }
 
   _startTimeChanged(ev: CustomEvent) {
-    const value = ev.detail.value as Time;
-    const time = timeToString(value);
-    const slotIdx = Number(this.selectedSlot);
-    let slots = [... this.schedule.entries[this.selectedEntry!].slots];
-
-    slots = Object.assign(slots, {
-      [slotIdx]: { ...slots[slotIdx], start: time }
-    });
-    if (slotIdx > 0) {
-      slots = Object.assign(slots, {
-        [slotIdx - 1]: { ...slots[slotIdx - 1], stop: time }
-      });
-    }
-    if (slots[slotIdx].stop === undefined) {
-      const stopTime = addTimeOffset(value, { minutes: 1 });
-
-      slots = Object.assign(slots, {
-        [slotIdx + 1]: { ...slots[slotIdx + 1], start: timeToString(stopTime) }
-      });
-    }
+    let value = ev.detail.value as Time;
+    let [slots, slotIdxOut] = moveTimeslot([...this.schedule.entries[this.selectedEntry!].slots], Number(this.selectedSlot), { start: value }, this.hass);
     this._updateEntry({ slots: slots });
+    if (slotIdxOut != this.selectedSlot) this.selectedSlot = slotIdxOut;
   }
 
   _toggleStopTime(ev: Event) {
@@ -500,7 +475,7 @@ export class SchedulerMainPanel extends LitElement {
     let slots = [... this.schedule.entries[this.selectedEntry!].slots];
     if (checked) {
       let nextSlot = slotIdx + 1;
-      let stopTime = slots[slotIdx].start;
+      let stopTime = slots[nextSlot].start;
       if (!slots[slotIdx + 1].actions.length) {
         stopTime = slots[slotIdx + 1].stop!;
         nextSlot = slotIdx + 2;
@@ -512,18 +487,19 @@ export class SchedulerMainPanel extends LitElement {
       ];
     } else {
       const stopTime = addTimeOffset(parseTimeString(slots[slotIdx].start), { minutes: 1 });
-
-      slots = [
-        ...slots.slice(0, slotIdx),
-        { ...slots[slotIdx], stop: undefined },
-        {
-          start: timeToString(stopTime),
-          stop: slots[slotIdx].stop,
-          actions: [],
-          conditions: slots[slotIdx].conditions
-        },
-        ...slots.slice(slotIdx + 1)
-      ];
+      if ((computeTimestamp(slots[slotIdx].stop!, this.hass) - computeTimestamp(stopTime, this.hass)) != 0) {
+        slots = [ //insert empty slot after current slot to fill gap
+          ...slots.slice(0, slotIdx + 1),
+          {
+            start: timeToString(stopTime),
+            stop: slots[slotIdx].stop,
+            actions: [],
+            conditions: slots[slotIdx].conditions
+          },
+          ...slots.slice(slotIdx + 1)
+        ];
+      }
+      Object.assign(slots, { [slotIdx]: <Timeslot>{ ...slots[slotIdx], stop: undefined } });
     }
     this._updateEntry({ slots: slots });
   }
