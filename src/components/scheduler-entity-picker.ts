@@ -1,11 +1,11 @@
 import { css, html, LitElement, nothing, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import { computeDomain, friendlyName } from "../lib/entity";
 import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
-import { mdiShape } from "@mdi/js";
+import { mdiChevronDown, mdiChevronUp, mdiMinus, mdiPlus, mdiShape } from "@mdi/js";
 
 import './scheduler-chip-set';
 import './scheduler-picker';
@@ -25,6 +25,8 @@ export class SchedulerEntityPicker extends LitElement {
 
   @property({ type: Boolean })
   disabled = false;
+
+  @state() multipleMode = false;
 
   private _valueRenderer: PickerValueRenderer = (value) => {
     const entityId = value || "";
@@ -63,6 +65,8 @@ export class SchedulerEntityPicker extends LitElement {
     return html`
       ${this.renderChips()}
 
+      ${!this.value?.length || this.multipleMode || !this.multiple ?
+        html`
       <scheduler-picker
         .hass=${this.hass}
         allow-custom-value
@@ -74,6 +78,7 @@ export class SchedulerEntityPicker extends LitElement {
         .value=${this.multiple ? "" : this.value}
       >
       </scheduler-picker>
+      ` : nothing}
     `;
   }
 
@@ -87,6 +92,7 @@ export class SchedulerEntityPicker extends LitElement {
     }));
 
     return html`
+      <div class="wrapper">
       <scheduler-chip-set
         .hass=${this.hass}
         .items=${items}
@@ -94,7 +100,18 @@ export class SchedulerEntityPicker extends LitElement {
         @value-changed=${this._removeClick}
         ?disabled=${this.disabled}
       >
-      </scheduler-chip-set>`;
+      </scheduler-chip-set>
+      <div class="column-right">
+      ${items.length ? html`
+      <ha-icon-button
+        @click=${(ev: InputEvent) => { this.multipleMode = !this.multipleMode; (ev.target as HTMLElement).blur() }}
+        .path=${this.multipleMode ? mdiChevronUp : mdiChevronDown}
+        slot="end"
+      ></ha-icon-button>
+      ` : nothing}
+      </div>
+      </div>
+      `;
   }
 
   rowRenderer = (item: PickerComboBoxItem) => {
@@ -177,6 +194,19 @@ export class SchedulerEntityPicker extends LitElement {
     :host > * {
       display: block;
       width: 100%;
+    }
+    div.wrapper {
+      display: flex;
+    }
+    scheduler-chip-set {
+      display: flex;
+    }
+    div.column-right {
+      display: flex;
+    }
+    div.column-right ha-icon-button {
+      display: flex;
+      align-self: flex-end;
     }
   `;
 }
