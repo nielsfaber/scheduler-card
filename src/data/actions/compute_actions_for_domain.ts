@@ -7,6 +7,7 @@ import { hassLocalize } from "../../localize/hassLocalize";
 import { parseCustomActions, parseExcludedActions } from "./parse_custom_actions";
 import { formatActionDisplay } from "../format/format_action_display";
 import { caseInsensitiveStringCompare } from "../../lib/string_compare";
+import { serviceIcons } from "../format/service_icons";
 
 export interface actionItem {
   key: string,
@@ -53,7 +54,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
     key: e,
     name: `${domainName(domain)}: ${serviceName(e)}`,
     description: serviceDescription(e),
-    icon: domainIcon(domain),
+    icon: Object.keys(serviceIcons).includes(domain) && Object.keys(serviceIcons[domain].services).includes(e) ? serviceIcons[domain].services[e] : domainIcon(domain),
     action: <Action>{
       service: e.includes('.') ? e : `${domain}.${e}`,
       service_data: {},
