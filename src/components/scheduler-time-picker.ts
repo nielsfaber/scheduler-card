@@ -49,7 +49,6 @@ export class SchedulerTimePicker extends LitElement {
   @property({ attribute: false }) stepSize = 10;
 
   protected render(): TemplateResult {
-
     const _validateHourInput = (value: any, _nativeValidity: any) => {
       let valid = value.match(/^[1|2]?[0-9]$/) !== null;
 
@@ -369,7 +368,6 @@ export class SchedulerTimePicker extends LitElement {
   }
 
   private _hoursChanged(ev: InputEvent) {
-    console.log('hoursChanged');
     let value = Number((ev.target as HTMLInputElement).value);
     if (this.useAmPm) {
       const amPm = convertTo12Hour(this.hours).am_pm;
@@ -380,7 +378,6 @@ export class SchedulerTimePicker extends LitElement {
   }
 
   private _minutesChanged(ev: InputEvent) {
-    console.log('hoursChanged');
     const value = Number((ev.target as HTMLInputElement).value);
     this.minutes = value;
     this._valueChanged();

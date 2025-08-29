@@ -21,7 +21,7 @@ import { convertSchemeToSingle } from "../data/schedule/convert_scheme_to_single
 import './scheduler-main-panel';
 import './scheduler-options-panel';
 import './generic-dialog';
-import { CARD_VERSION } from "../const";
+import { isDefined } from "../lib/is_defined";
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
@@ -256,8 +256,17 @@ export class DialogSchedulerEditor extends LitElement {
       return;
     }
     else if (viewMode == EditorMode.Single && !multipleActionsDefined) {
-      this.schedule = convertSchemeToSingle(this.schedule);
-      this.selectedSlot = 1;
+      let schedule = {
+        ...this.schedule,
+        entries: this.schedule.entries.map(e => {
+          let idx = e.slots.findIndex(e => e.actions.length)
+          if (idx < 0) idx = Math.floor(e.slots.length / 2);
+          return Object({ ...e, slots: e.slots.map((e, i) => i == idx ? { ...e, stop: undefined } : null).filter(isDefined) });
+        })
+      }
+      this.schedule = parseTimeBar(schedule, this.hass);
+      this.selectedSlot = schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
+      if (this.selectedSlot! < 0) this.selectedSlot = 1;
       this._viewMode = viewMode;
       return;
     }
