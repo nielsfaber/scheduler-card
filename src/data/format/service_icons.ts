@@ -199,6 +199,13 @@ export const serviceIcons: Record<string, DomainEntry> = {
       turn_on: 'mdi:play'
     }
   },
+  valve: {
+    services: {
+      open_valve: 'mdi:valve-open',
+      close_valve: 'mdi:valve-closed',
+      set_valve_position: 'mdi:valve'
+    }
+  },
   water_heater: {
     services: {
       set_away_mode: 'mdi:account-arrow-right',

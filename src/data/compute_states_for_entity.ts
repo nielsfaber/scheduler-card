@@ -27,6 +27,7 @@ export const SUPPORTED_CONDITION_DOMAINS = [
   'sun',
   'switch',
   'timer',
+  'valve',
   'water_heater'
 ]
 
@@ -88,6 +89,8 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
       return listSelector({ options: computeStateIcons(['above_horizon', 'below_horizon']), translation_key: 'component.sun.entity_component._.state.${value}' });
     case 'timer':
       return listSelector({ options: computeStateIcons(['active', 'paused', 'idle']), translation_key: 'component.timer.entity_component._.state.${value}' });
+    case 'valve':
+      return listSelector({ options: computeStateIcons(['open', 'closed']), translation_key: 'component.valve.entity_component._.state.${value}' });
     case 'water_heater':
     case 'climate':
       return listSelector({ options: computeStateIcons(attr.operation_list), translation_key: 'component.climate.entity_component._.state.${value}' });

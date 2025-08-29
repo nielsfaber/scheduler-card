@@ -198,6 +198,10 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
     paused: 'mdi:pause',
     idle: 'mdi:sleep',
   },
+  valve: {
+    open: 'mdi:valve-open',
+    closed: 'mdi:valve-closed'
+  },
   water_heater: {
     off: 'mdi:power-off',
     eco: 'mdi:leaf',

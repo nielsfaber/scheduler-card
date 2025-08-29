@@ -61,6 +61,7 @@ const domainIcons: Record<string, string> = {
   todo: 'mdi:clipboard-list',
   tts: 'mdi:speaker-message',
   vacuum: 'mdi:robot-vacuum',
+  valve: 'mdi:valve-closed',
   wake_word: 'mdi:chat-sleep',
   water_heater: 'mdi:water-boiler',
   weather: 'mdi:weather-partly-cloudy',

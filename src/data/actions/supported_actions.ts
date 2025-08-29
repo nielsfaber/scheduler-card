@@ -317,6 +317,22 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {}
     },
   },
+  valve: {
+    open_valve: {
+      target: {}
+    },
+    close_valve: {
+      target: {}
+    },
+    set_valve_position: {
+      translation_key: 'services.cover.set_cover_position',
+      target: {},
+      fields: {
+        position: {
+        }
+      }
+    },
+  },
   water_heater: {
     set_temperature: {
       translation_key: 'services.climate.set_temperature',
