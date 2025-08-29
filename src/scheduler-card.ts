@@ -217,10 +217,6 @@ export class SchedulerCard extends LitElement {
           <ha-button appearance="plain" @click=${this._addClick}
             >${hassLocalize('ui.common.add', this.hass)}
           </ha-button>
-
-          <span class="beta">
-            ${CARD_VERSION}
-          </span>
         </div>
       </ha-card>
     `;
@@ -359,13 +355,6 @@ export class SchedulerCard extends LitElement {
     }
     .card-actions, .card-actions > * { 
       display: flex;
-    }
-    .beta {
-      flex: 1 0 auto;
-      align-self: center;
-      justify-content: flex-end;
-      font-style: italic;
-      color: var(--error-color);
     }
   `;
 }
