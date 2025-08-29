@@ -28,9 +28,11 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   switch (searchKey) {
     case 'climate.temperature':
     case 'climate.target_temp_low':
-    case 'climate.target_temp_high':
+    case 'climate.target_temp_high': {
       const isOptional = searchKey == 'climate.temperature' ? ((attr.supported_features || 0) & 2) == 1 : ((attr.supported_features || 0) & 1) == 1;
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
+      const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
+    }
     case 'climate.hvac_mode':
       return listSelector({ options: attr.hvac_modes, translation_key: 'component.climate.entity_component._.state.${value}' });
     case 'climate.preset_mode':
@@ -40,6 +42,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'cover.position':
     case 'cover.tilt_position':
     case 'fan.percentage':
+    case 'valve.position':
       return numericSelector({ min: 0, max: 100, step: 1, unit_of_measurement: '%' });
     case 'fan.oscillating':
       return <BooleanSelector>{ boolean: {} };
@@ -64,8 +67,10 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return <StringSelector>{ text: {} };
     case 'notify.message':
       return <StringSelector>{ text: {} };
-    case 'water_heater.temperature':
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: 0.1, unit_of_measurement: '${hass.config.unit_system.temperature}' });
+    case 'water_heater.temperature': {
+      const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: '${hass.config.unit_system.temperature}' });
+    }
     case 'water_heater.operation_mode':
       return listSelector({ options: attr.operation_list });
     case 'water_heater.away_mode':
