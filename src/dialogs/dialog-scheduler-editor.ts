@@ -46,10 +46,15 @@ export class DialogSchedulerEditor extends LitElement {
   @state() _viewMode: EditorMode = EditorMode.Single;
 
   firstUpdated() {
-    const isTimeSchemeType = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.stop !== undefined).length
-      || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1;
+    const isTimeSchemeType = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length && isDefined(e.stop)).length > 0
+      || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1
+      || this.schedule.entries[this.selectedEntry!].slots.length > 3;
     if (isTimeSchemeType) this._viewMode = EditorMode.Scheme;
-    else this._viewMode = this._params?.cardConfig.default_editor || EditorMode.Single;
+    else {
+      this._viewMode = this._params?.cardConfig.default_editor || EditorMode.Single;
+      this.selectedSlot = this.schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
+      if (this.selectedSlot! < 0) this.selectedSlot = 1;
+    }
   }
 
   shouldUpdate(changedProps: PropertyValues) {
