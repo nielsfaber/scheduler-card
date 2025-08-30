@@ -1,5 +1,5 @@
 import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
-import { LitElement, html } from "lit";
+import { LitElement, PropertyValues, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { CardConfig, EditorMode, Schedule } from "../types";
 import { EditorDialogStyles } from "../card.styles";
@@ -17,11 +17,11 @@ import { deepCompare } from "../lib/deep_compare";
 import { parseTimeBar } from "../data/time/parse_time_bar";
 import { hassLocalize } from "../localize/hassLocalize";
 import { convertSchemeToSingle } from "../data/schedule/convert_scheme_to_single";
+import { isDefined } from "../lib/is_defined";
 
 import './scheduler-main-panel';
 import './scheduler-options-panel';
 import './generic-dialog';
-import { isDefined } from "../lib/is_defined";
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
@@ -50,6 +50,11 @@ export class DialogSchedulerEditor extends LitElement {
       || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1;
     if (isTimeSchemeType) this._viewMode = EditorMode.Scheme;
     else this._viewMode = this._params?.cardConfig.default_editor || EditorMode.Single;
+  }
+
+  shouldUpdate(changedProps: PropertyValues) {
+    if (changedProps.size == 1 && changedProps.has('hass') && isDefined(this.hass)) return false;
+    return true;
   }
 
   public async showDialog(params: any): Promise<void> {
