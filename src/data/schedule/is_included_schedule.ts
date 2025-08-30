@@ -22,7 +22,7 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
   )) return false;
 
   //filter items by tags
-  const filterTags = [...config.tags].flat();
+  const filterTags = [config.tags].flat();
   if (filterTags.length) {
     res = false;
     if ((schedule.tags || []).some(e => filterTags.includes(e))) res = true;
@@ -32,7 +32,7 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
   }
 
   //filter items by exclude_tags
-  const excludeFilters = [...config.exclude_tags].flat();
+  const excludeFilters = [config.exclude_tags].flat();
   if (excludeFilters.length && res) {
     if ((schedule.tags || []).some(e => excludeFilters.includes(e))) res = false;
     else if (excludeFilters.includes('none') && !schedule.tags?.length) res = false;
