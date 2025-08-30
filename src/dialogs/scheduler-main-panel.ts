@@ -28,6 +28,7 @@ import { useAmPm } from "../lib/use_am_pm";
 import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 import { hassLocalize } from "../localize/hassLocalize";
 import { isDefined } from "../lib/is_defined";
+import { moveTimeslot } from "../data/schedule/move_timeslot";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -37,8 +38,6 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import { parseTimeBar } from "../data/time/parse_time_bar";
-import { moveTimeslot } from "../data/schedule/move_timeslot";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -143,9 +142,9 @@ export class SchedulerMainPanel extends LitElement {
 
     return html`
       <div class="actions">
-        <ha-icon-button .path=${mdiChevronLeft} @click=${() => { this.selectedSlot = this.selectedSlot! - 1 }} ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}>
+        <ha-icon-button .path=${mdiChevronLeft} @click=${(ev: Event) => { this.selectedSlot = this.selectedSlot! - 1; (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}>
         </ha-icon-button> 
-        <ha-icon-button .path=${mdiChevronRight} @click=${() => { this.selectedSlot = this.selectedSlot! + 1 }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
+        <ha-icon-button .path=${mdiChevronRight} @click=${(ev: Event) => { this.selectedSlot = this.selectedSlot! + 1; (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
         </ha-icon-button> 
         <ha-icon-button .path=${mdiShapeRectanglePlus} @click=${this._addTimeslot} ?disabled=${delta < 1800}>
         </ha-icon-button>
@@ -504,15 +503,17 @@ export class SchedulerMainPanel extends LitElement {
     this._updateEntry({ slots: slots });
   }
 
-  _addTimeslot() {
+  _addTimeslot(ev: Event) {
     if (this.selectedEntry === null || this.selectedSlot === null) return;
     this.schedule = insertTimeslot(this.schedule, this.selectedEntry, this.selectedSlot, this.hass);
+    (ev.target as HTMLElement).blur();
   }
 
-  _removeTimeslot() {
+  _removeTimeslot(ev: Event) {
     if (this.selectedEntry === null || this.selectedSlot === null) return;
     this.schedule = removeTimeslot(this.schedule, this.selectedEntry, this.selectedSlot);
     if (this.selectedSlot == this.schedule.entries[this.selectedEntry].slots.length) this.selectedSlot--;
+    (ev.target as HTMLElement).blur();
   }
 
   static get styles(): CSSResultGroup {
