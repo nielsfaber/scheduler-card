@@ -16,11 +16,11 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
     switch (item) {
       case DisplayItem.Action:
         const action = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
-        return formatActionDisplay(action, hass, customize);
+        return capitalizeFirstLetter(formatActionDisplay(action, hass, customize));
       case DisplayItem.Days:
-        return schedule.entries[0].weekdays.map(e => computeDayDisplay(e, 'long', hass)).join(', ');
+        return capitalizeFirstLetter(schedule.entries[0].weekdays.map(e => computeDayDisplay(e, 'long', hass)).join(', '));
       case DisplayItem.Name:
-        return schedule.name || '';
+        return capitalizeFirstLetter(schedule.name || '');
       case DisplayItem.AdditionalTasks:
         return schedule.entries[0].slots.length > 1
           ? '+' +
@@ -30,7 +30,7 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
         const nextAction = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
         const entityIds = [nextAction.target?.entity_id || []].flat();
         const entityDisplay = entityIds.map(e => friendlyName(e, hass.states[e]?.attributes)).join(", ");
-        return entityDisplay;
+        return capitalizeFirstLetter(entityDisplay);
 
       case DisplayItem.RelativeTime:
         const ts = schedule.timestamps![schedule.next_entries[0] || 0];
@@ -47,12 +47,12 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
           </div>`;
       case DisplayItem.Time:
         const slot = schedule.entries[0].slots[schedule.next_entries[0] || 0];
-        return computeTimeDisplay(slot.start, slot.stop, hass);
+        return capitalizeFirstLetter(computeTimeDisplay(slot.start, slot.stop, hass));
       case DisplayItem.Default:
-        const nameDisplay = computeDisplay(DisplayItem.Name) || computeDisplay(DisplayItem.Entity);
+        const nameDisplay = computeDisplay(DisplayItem.Name);
         return nameDisplay
-          ? `${capitalizeFirstLetter(nameDisplay)}: ${computeDisplay(DisplayItem.Action)}`
-          : `${capitalizeFirstLetter(computeDisplay(DisplayItem.Action))}`;
+          ? nameDisplay
+          : `${computeDisplay(DisplayItem.Entity)}: ${computeDisplay(DisplayItem.Action)}`;
       default:
         const regex = /(\{[a-z\-]+\})/g;
         if (item.match(regex)) {
