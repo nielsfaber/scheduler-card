@@ -46,10 +46,10 @@
       "select_source": "valitse lähteeksi[ {source}]"
     },
     "notify": {
-      "notify": "lähetä ilmoitus"
+      "send_message": "lähetä ilmoitus"
     },
     "script": {
-      "script": "suorita"
+      "execute": "suorita"
     },
     "vacuum": {
       "start_pause": "aloita / keskeytä"

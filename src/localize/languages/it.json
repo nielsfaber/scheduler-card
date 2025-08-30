@@ -46,10 +46,10 @@
       "select_source": "seleziona sorgente[ {source}]"
     },
     "notify": {
-      "notify": "invia notifica"
+      "send_message": "invia notifica"
     },
     "script": {
-      "script": "esegui"
+      "execute": "esegui"
     },
     "vacuum": {
       "start_pause": "avvia / pausa"

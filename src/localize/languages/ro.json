@@ -46,10 +46,10 @@
       "select_source": "selectare sursă[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "send_message": "send notification"
     },
     "script": {
-      "script": "executare"
+      "execute": "executare"
     },
     "vacuum": {
       "start_pause": "start / pauză"

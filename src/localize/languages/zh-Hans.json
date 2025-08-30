@@ -46,10 +46,10 @@
       "select_source": "选择播放源[ {source}]"
     },
     "notify": {
-      "notify": "发送通知"
+      "send_message": "发送通知"
     },
     "script": {
-      "script": "执行"
+      "execute": "执行"
     },
     "vacuum": {
       "start_pause": "开始 / 暂停"

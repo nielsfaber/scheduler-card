@@ -46,10 +46,10 @@
       "select_source": "kies ingang[ {source}]"
     },
     "notify": {
-      "notify": "notificatie sturen"
+      "send_message": "notificatie sturen"
     },
     "script": {
-      "script": "uitvoeren"
+      "execute": "uitvoeren"
     },
     "vacuum": {
       "start_pause": "start / pauzeer"

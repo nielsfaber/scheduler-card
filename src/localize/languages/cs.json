@@ -46,10 +46,10 @@
       "select_source": "vybrat zdroj[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "send_message": "send notification"
     },
     "script": {
-      "script": "spustit"
+      "execute": "spustit"
     },
     "vacuum": {
       "start_pause": "start / pauza"

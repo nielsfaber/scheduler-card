@@ -46,10 +46,10 @@
       "select_source": "izvēlēties avotu[ {source}]"
     },
     "notify": {
-      "notify": "nosūtīt paziņojumu"
+      "send_message": "nosūtīt paziņojumu"
     },
     "script": {
-      "script": "izpildīt"
+      "execute": "izpildīt"
     },
     "vacuum": {
       "start_pause": "sākt / pauze"

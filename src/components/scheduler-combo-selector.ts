@@ -185,12 +185,14 @@ export class SchedulerComboSelector extends LitElement {
     else if ((this.config as StringSelector).text) {
       const config = (this.config as StringSelector).text!;
       return html`
+        <div class="textfield-wrapper">
           <ha-textfield
             .value=${this.value || ""}
-            @value-changed=${this._valueChanged}
+            @input=${this._valueChanged}
             .placeholder=""
             ?disabled=${this.disabled}
-          ></ha-textfield>      
+          ></ha-textfield> 
+        </div>     
       `
     }
     return html``;
@@ -221,6 +223,14 @@ export class SchedulerComboSelector extends LitElement {
       div.select-wrapper {
         display: flex;
         flex-direction: column;
+        width: 100%;
+      }
+      div.textfield-wrapper {
+        display: flex;
+        width: 100%;
+      }
+      div.textfield-wrapper ha-textfield {
+        display: flex;
         width: 100%;
       }
   `;

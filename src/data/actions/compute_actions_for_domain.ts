@@ -48,7 +48,12 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
     hass.services[domain][service].name ||
     service.replace(/_/g, ' ');
 
-  const serviceDescription = (service: string) => hassLocalize(`component.${domain}.services.${service}.description`, hass, false) || hass.services[domain][service].description;
+  const serviceDescription = (service: string) => {
+    let description = hassLocalize(`component.${domain}.services.${service}.description`, hass, false);
+    if (!description) description = hass.services[domain][service].description;
+    if (!description && domain == 'script') description = hassLocalize(`component.${domain}.services.turn_on.description`, hass, false);
+    return description;
+  }
 
   let actionList: actionItem[] = services.map(e => Object(<actionItem>{
     key: e,

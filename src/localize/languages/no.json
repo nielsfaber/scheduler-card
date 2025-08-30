@@ -46,10 +46,10 @@
       "select_source": "velg kilde[ {source}]"
     },
     "notify": {
-      "notify": "send notifikasjon"
+      "send_message": "send notifikasjon"
     },
     "script": {
-      "script": "utfør"
+      "execute": "utfør"
     },
     "vacuum": {
       "start_pause": "start / pause"

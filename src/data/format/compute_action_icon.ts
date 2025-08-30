@@ -15,17 +15,23 @@ export const computeActionIcon = (action: Action, customize?: CustomConfig): str
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
-  if (config.icon) return checkIconPrefix(config.icon);
-
-  if (!Object.keys(serviceIcons).includes(domain) || !Object.keys(serviceIcons[domain].services).includes(domainService)) return FALLBACK_ICON;
-
-  if (serviceIcons[domain].attributes !== undefined) {
-    let config = serviceIcons[domain].attributes!;
-    const key = Object.keys(config).find(e => Object.keys(action.service_data).includes(e));
-    if (key && Object.keys(config[key]).includes(action.service_data[key])) {
-      return config[key][action.service_data[key]];
-    }
+  if (config.icon) {
+    return checkIconPrefix(config.icon);
   }
-
-  return serviceIcons[domain].services[domainService];
+  else if (Object.keys(serviceIcons).includes(domain) && Object.keys(serviceIcons[domain].services).includes(domainService)) {
+    if (serviceIcons[domain].attributes !== undefined) {
+      let config = serviceIcons[domain].attributes!;
+      const key = Object.keys(config).find(e => Object.keys(action.service_data).includes(e));
+      if (key && Object.keys(config[key]).includes(action.service_data[key])) {
+        return config[key][action.service_data[key]];
+      }
+    }
+    return serviceIcons[domain].services[domainService];
+  }
+  else if (Object.keys(serviceIcons).includes(domain) && Object.keys(serviceIcons[domain].services).includes('{entity_id}')) {
+    return serviceIcons[domain].services['{entity_id}'];
+  }
+  else {
+    return FALLBACK_ICON;
+  }
 };

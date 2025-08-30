@@ -263,6 +263,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   notify: {
     '{entity_id}': {
+      translation_key: 'services.notify.send_message',
       fields: {
         title: {
           optional: true
@@ -286,7 +287,9 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
   },
   script: {
-    '{entity_id}': {},
+    '{entity_id}': {
+      translation_key: 'services.script.execute',
+    },
   },
   select: {
     select_option: {

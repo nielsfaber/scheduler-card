@@ -9,7 +9,7 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
   schedule.entries.forEach(entry => {
     entry.slots.forEach(slot => {
       slot.actions.forEach(action => {
-        let entities = action.target?.entity_id ? [action.target.entity_id].flat() : action.service;
+        let entities = action.target?.entity_id ? [action.target.entity_id].flat() : [action.service];
         entityList = [...entityList, ...entities];
       })
     })

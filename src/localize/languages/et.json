@@ -46,10 +46,10 @@
       "select_source": "vali sisend[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "send_message": "send notification"
     },
     "script": {
-      "script": "käivita"
+      "execute": "käivita"
     },
     "vacuum": {
       "start_pause": "alusta/ootele"

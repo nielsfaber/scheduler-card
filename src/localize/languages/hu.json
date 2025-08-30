@@ -46,10 +46,10 @@
       "select_source": "forrás kiválasztása[ {source}]"
     },
     "notify": {
-      "notify": "send notification"
+      "send_message": "send notification"
     },
     "script": {
-      "script": "kezdés"
+      "execute": "kezdés"
     },
     "vacuum": {
       "start_pause": "start / pause"

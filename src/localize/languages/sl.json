@@ -46,10 +46,10 @@
       "select_source": "Izberi vir[ {source}]"
     },
     "notify": {
-      "notify": "pošlji sporočilo"
+      "send_message": "pošlji sporočilo"
     },
     "script": {
-      "script": "izvedi"
+      "execute": "izvedi"
     },
     "vacuum": {
       "start_pause": "zaženi / ustavi"

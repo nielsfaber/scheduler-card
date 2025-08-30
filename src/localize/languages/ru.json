@@ -46,10 +46,10 @@
       "select_source": "выбрать источник[ {source}]"
     },
     "notify": {
-      "notify": "послать сообщение"
+      "send_message": "послать сообщение"
     },
     "script": {
-      "script": "запустить"
+      "execute": "запустить"
     },
     "vacuum": {
       "start_pause": "старт / пауза"
