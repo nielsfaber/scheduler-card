@@ -7,6 +7,7 @@ import { computeScheduleDisplay } from "../data/format/compute_schedule_display"
 
 import './scheduler-relative-time';
 import { computeEntityIcon } from "../data/format/compute_entity_icon";
+import { computeDomain } from "../lib/entity";
 
 @customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
@@ -24,8 +25,9 @@ export class SchedulerItemRow extends LitElement {
 
     let icon = computeActionIcon(nextAction, this.config.customize);
     if (this.config.display_options.icon == 'entity') {
-      const entityId = [nextAction.target?.entity_id || []].flat().shift();
-      if (entityId) icon = computeEntityIcon(entityId, this.hass);
+      let entityId = [nextAction.target?.entity_id || []].flat().shift();
+      if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
+      if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
     }
 
     return html`

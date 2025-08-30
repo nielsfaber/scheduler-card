@@ -75,6 +75,7 @@ export const validateConfig = (config: any) => {
   if (hasKey(config, 'customize') && !isTypeObject(config.customize)) {
     errors.push(`'customize' must be a struct`);
   }
+  //TBD: add validation for customize input
 
   if (hasKey(config, 'tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
     errors.push(`'tags' must be a string or list of strings`);

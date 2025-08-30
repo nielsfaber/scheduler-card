@@ -256,7 +256,7 @@ export class SchedulerOptionsPanel extends LitElement {
       <scheduler-collapsible-section idx="${i}">
         <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
-          <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.hass)}"></ha-icon>
+          <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.config.customize, this.hass)}"></ha-icon>
           ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
           ` : localize('ui.panel.options.conditions.add_condition', this.hass)}
         </div>

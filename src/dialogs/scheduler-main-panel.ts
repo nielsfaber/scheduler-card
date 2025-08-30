@@ -237,6 +237,7 @@ export class SchedulerMainPanel extends LitElement {
     let heading = '';
 
     let entityIds = [action.target?.entity_id || []].flat();
+    if (!entityIds.length && ['notify', 'script'].includes(domain)) entityIds = [action.service];
 
     if (entityIds.length) {
       heading += entityIds.map(e => friendlyName(e, this.hass.states[e]?.attributes)).join(", ");
@@ -512,7 +513,7 @@ export class SchedulerMainPanel extends LitElement {
   _removeTimeslot(ev: Event) {
     if (this.selectedEntry === null || this.selectedSlot === null) return;
     this.schedule = removeTimeslot(this.schedule, this.selectedEntry, this.selectedSlot);
-    if (this.selectedSlot == this.schedule.entries[this.selectedEntry].slots.length) this.selectedSlot--;
+    if (this.selectedSlot >= this.schedule.entries[this.selectedEntry].slots.length) this.selectedSlot = this.schedule.entries[this.selectedEntry].slots.length - 1;
     (ev.target as HTMLElement).blur();
   }
 

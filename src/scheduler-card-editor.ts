@@ -339,7 +339,8 @@ export class SchedulerCardEditor extends LitElement {
         cancel: () => resolve(null),
         confirm: (out: { domains: string[], entities: string[] }) => resolve(out),
         domains: domains,
-        entities: entities
+        entities: entities,
+        cardConfig: this._config
       };
 
       fireEvent(ev.target as HTMLElement, 'show-dialog', {

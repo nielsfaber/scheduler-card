@@ -1,6 +1,6 @@
 import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { mdiChevronDown, mdiChevronLeft, mdiClose } from '@mdi/js';
+import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
 import { styleMap } from 'lit/directives/style-map';
@@ -11,12 +11,14 @@ import { computeDomain, friendlyName } from '../lib/entity';
 import { computeEntityIcon } from '../data/format/compute_entity_icon';
 import { domainIcon } from '../data/actions/domain_icon';
 import { hassLocalize } from '../localize/hassLocalize';
+import { CardConfig, CustomConfig } from '../types';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
   confirm: (res: { domains: string[], entities: string[] }) => void;
   domains: string[];
   entities: string[];
+  cardConfig: CardConfig;
 };
 
 interface listItem {
@@ -37,7 +39,7 @@ const computeDomains = (hass: HomeAssistant) => {
   return domains;
 };
 
-const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
+const computeEntitiesForDomain = (domain: string, customize: CustomConfig, hass: HomeAssistant) => {
   if (['script', 'notify'].includes(domain)) {
     const entities = Object.keys(hass.services[domain]);
 
@@ -45,7 +47,7 @@ const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
       key: `${domain}.${e}`,
       name: hass.states[`${domain}.${e}`] ? friendlyName(`${domain}.${e}`, hass.states[`${domain}.${e}`]?.attributes) : hass.services[domain][e].name,
       description: "",
-      icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, hass) : domainIcon(domain)
+      icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, customize, hass) : domainIcon(domain)
     }));
 
     entityList.sort((a, b) => sortByName(a.name, b.name));
@@ -58,7 +60,7 @@ const computeEntitiesForDomain = (domain: string, hass: HomeAssistant) => {
       key: e,
       name: friendlyName(e, hass.states[e]?.attributes),
       description: "",
-      icon: computeEntityIcon(e, hass)
+      icon: computeEntityIcon(e, customize, hass)
     }));
 
     entityList.sort((a, b) => sortByName(a.name, b.name));
@@ -108,7 +110,7 @@ export class DialogSelectEntities extends LitElement {
     let domains = computeDomains(this.hass);
     this.options = domains.map(item => Object({
       ...item,
-      entities: computeEntitiesForDomain(item.key, this.hass)
+      entities: computeEntitiesForDomain(item.key, this._params!.cardConfig.customize, this.hass)
     }));
   }
 
@@ -313,7 +315,7 @@ export class DialogSelectEntities extends LitElement {
 
     return (Object.keys(filteredOptions)).map((key) => {
       const domain = filteredOptions[key].key;
-      const entities = computeEntitiesForDomain(domain, this.hass);
+      const entities = computeEntitiesForDomain(domain, this._params!.cardConfig.customize, this.hass);
       const domainIncluded = this._params?.domains.includes(domain);
 
       const numIncludedEntities = domainIncluded ? entities.length : filteredOptions[key].entities.filter(e => this._params?.entities.includes(e.key)).length

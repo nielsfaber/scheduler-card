@@ -173,6 +173,7 @@ export type Time = {
 export type CustomConfig = Record<string, CustomEntityConfig>;
 
 export interface CustomEntityConfig {
+  icon?: string;
   actions?: CustomActionConfig[],
   exclude_actions?: string[]
 }
