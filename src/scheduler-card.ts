@@ -212,12 +212,12 @@ export class SchedulerCard extends LitElement {
             `
         : ''}
         </div>
-
+        ${this._config.show_add_button !== false ? html`
         <div class="card-actions">
           <ha-button appearance="plain" @click=${this._addClick}
             >${hassLocalize('ui.common.add', this.hass)}
           </ha-button>
-        </div>
+        </div>` : ''}
       </ha-card>
     `;
   }

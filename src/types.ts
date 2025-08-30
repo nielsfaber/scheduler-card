@@ -16,6 +16,7 @@ export interface CardConfig {
   customize: CustomConfig;
   tags: string[] | string;
   exclude_tags: string[] | string;
+  show_add_button?: boolean;
 }
 
 export enum EditorMode {
