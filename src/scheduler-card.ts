@@ -32,6 +32,7 @@ export class SchedulerCard extends LitElement {
   @state() showDiscovered: boolean = false;
 
   translationsLoaded = false;
+  connectionError = false;
 
   private __unsubs?: Array<UnsubscribeFunc | Promise<UnsubscribeFunc>>;
 
@@ -156,7 +157,24 @@ export class SchedulerCard extends LitElement {
         </div>
 
         <div class="card-content" id="states">
-          ${includedItems.map(scheduleId => html`
+
+    ${this.connectionError
+        ? html`
+        <div>
+          <hui-warning .hass=${this.hass}>
+            <span style="white-space: normal">
+              ${localize('ui.panel.overview.backend_error', this.hass)}
+            </span>
+          </hui-warning>
+        </div>
+      `
+        : !Object.keys(items).length
+          ? html`
+        <div>
+          ${localize('ui.panel.overview.no_entries', this.hass)}
+        </div>
+        `
+          : includedItems.map(scheduleId => html`
             <scheduler-item-row
               .hass=${this.hass}
               .config=${this._config}
@@ -166,7 +184,7 @@ export class SchedulerCard extends LitElement {
             >
             </scheduler-item-row>
           `
-        )
+          )
       }
 
       ${Object.keys(items).length > includedItems.length && this._config.discover_existing !== false
@@ -214,9 +232,17 @@ export class SchedulerCard extends LitElement {
         </div>
         ${this._config.show_add_button !== false ? html`
         <div class="card-actions">
+          ${this.connectionError
+          ? html`
+          <ha-button appearance="plain" variant="warning" @click=${this._retryConnection}
+            >${hassLocalize('ui.common.refresh', this.hass)}
+          </ha-button>
+            `
+          : html`
           <ha-button appearance="plain" @click=${this._addClick}
             >${hassLocalize('ui.common.add', this.hass)}
           </ha-button>
+          `}
         </div>` : ''}
       </ha-card>
     `;
@@ -230,9 +256,36 @@ export class SchedulerCard extends LitElement {
       })
       .catch(_e => {
         this.schedules = {};
+        this.connectionError = true;
       })
   }
 
+  public async getCardSize() {
+    return new Promise(res => {
+      let retries = 0;
+      const wait = setInterval(() => {
+        retries++;
+        if (!this._config || (!this.schedules && !this.connectionError && retries < 50)) return;
+        let cardSize = this._config!.title || this._config!.show_header_toggle ? 3 : 1;
+        if (this._config.show_add_button) cardSize += 1;
+        const rowSize = (([this._config.display_options.secondary_info || []].flat().length || 2) + 1) / 2;
+        if (this.schedules)
+          cardSize += this.showDiscovered
+            ? Object.keys(this.schedules).length * rowSize
+            : Object.values(this.schedules).filter(e => isIncludedSchedule(e, this._config)).length * rowSize;
+        clearInterval(wait);
+        res(Math.round(cardSize));
+      }, 50);
+    });
+  }
+
+  _retryConnection() {
+    setTimeout(async () => {
+      await this.loadSchedules();
+    }, 100);
+    this.connectionError = false;
+    this.requestUpdate();
+  }
 
   private async handleScheduleItemUpdated(ev: SchedulerEventData): Promise<void> {
     //only update single schedule
