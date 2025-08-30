@@ -6,6 +6,7 @@ import { HomeAssistant } from "../lib/types";
 import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
 
 import './scheduler-relative-time';
+import { computeEntityIcon } from "../data/format/compute_entity_icon";
 
 @customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
@@ -21,11 +22,18 @@ export class SchedulerItemRow extends LitElement {
     const disabled = stateObj.state == 'off';
     const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
+    let icon = computeActionIcon(nextAction, this.config.customize);
+    if (this.config.display_options.icon == 'entity') {
+      const entityId = [nextAction.target?.entity_id || []].flat().shift();
+      if (entityId) icon = computeEntityIcon(entityId, this.hass);
+    }
+
     return html`
       <ha-icon
-        icon="${computeActionIcon(nextAction, this.config.customize)}"
-      >
-      </ha-icon>
+        icon="${icon}"
+        @click=${this._handleIconClick}
+        class="${disabled ? 'disabled' : ''}"
+      ></ha-icon>
 
       <div
         class="info ${disabled ? 'disabled' : ''}"
@@ -47,6 +55,11 @@ export class SchedulerItemRow extends LitElement {
   }
 
   private _handleItemClick(_ev: Event) {
+    const myEvent = new CustomEvent('editClick', { detail: { schedule_id: this.schedule_id } });
+    this.dispatchEvent(myEvent);
+  }
+
+  private _handleIconClick(_ev: Event) {
     const myEvent = new CustomEvent('editClick', { detail: { schedule_id: this.schedule_id } });
     this.dispatchEvent(myEvent);
   }
@@ -90,9 +103,6 @@ export class SchedulerItemRow extends LitElement {
         color: var(--secondary-text-color);
         transition: color 0.2s ease-in-out;
       }
-      state-badge {
-        flex: 0 0 40px;
-      }
       .state {
         text-align: var(--float-end);
       }
@@ -108,7 +118,10 @@ export class SchedulerItemRow extends LitElement {
         align-items: center;
         justify-content: center;
       }
-      .disabled {
+      ha-icon.disabled {
+        color: var(--disabled-text-color);
+      }
+      div.disabled {
         --primary-text-color: var(--disabled-text-color);
         --secondary-text-color: var(--disabled-text-color);
         --state-icon-color: var(--disabled-text-color);

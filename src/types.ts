@@ -11,6 +11,7 @@ export interface CardConfig {
   display_options: {
     primary_info: (DisplayItem | string)[] | DisplayItem | string;
     secondary_info: (DisplayItem | string)[] | DisplayItem | string;
+    icon?: string;
   };
   sort_by: string[] | string;
   customize: CustomConfig;

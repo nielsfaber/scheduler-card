@@ -13,6 +13,7 @@ export const DefaultCardConfig: CardConfig = {
   display_options: {
     primary_info: 'default',
     secondary_info: ['relative-time', 'additional-tasks'],
+    icon: 'action'
   },
   sort_by: ['relative-time', 'state'],
   customize: {},

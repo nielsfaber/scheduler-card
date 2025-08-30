@@ -59,8 +59,8 @@ export const validateConfig = (config: any) => {
         errors.push(`in 'display_options': 'secondary_info' must be a string or list of strings`);
       }
 
-      if (hasKey(config.display_options, 'icon') && !isTypeString(config.display_options.icon)) {
-        errors.push(`in 'display_options': 'icon' must be a string `);
+      if (hasKey(config.display_options, 'icon') && (!isTypeString(config.display_options.icon) || !['action', 'entity'].includes(config.display_options.icon))) {
+        errors.push(`in 'display_options': 'icon' must be a set to either 'action' or 'entity' `);
       }
     }
   }
