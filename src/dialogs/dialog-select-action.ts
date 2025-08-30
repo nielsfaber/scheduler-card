@@ -19,7 +19,7 @@ export type DialogSelectActionParams = {
 };
 
 @customElement('dialog-select-action')
-export class DialogSelectWeekdays extends LitElement {
+export class DialogSelectAction extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @state() private _params?: DialogSelectActionParams;

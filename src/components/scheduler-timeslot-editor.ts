@@ -19,7 +19,7 @@ const SEC_PER_DAY = 24 * 3600;
 
 @customElement('scheduler-timeslot-editor')
 export class SchedulerTimeslotEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  public hass!: HomeAssistant;
   @property({ attribute: false }) public config!: CardConfig;
 
   @state() schedule?: ScheduleEntry;
