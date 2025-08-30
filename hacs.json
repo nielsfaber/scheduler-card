@@ -1,5 +1,6 @@
 {
   "name": "Scheduler Card",
   "render_readme": true,
-  "filename": "scheduler-card.js"
+  "filename": "scheduler-card.js",,
+  "homeassistant": "2025.8.0"
 }
