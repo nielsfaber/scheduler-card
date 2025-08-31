@@ -1,6 +1,6 @@
 import { Action, CustomConfig } from "../../types";
 import { selectorConfig } from "./selector_config";
-import { NumberSelector, SelectSelector } from "../../lib/selector";
+import { BooleanSelector, NumberSelector, SelectSelector } from "../../lib/selector";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 
@@ -21,6 +21,10 @@ export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, custo
         if (typeof config?.scale_factor === 'number') value = value / config.scale_factor;
         if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
         if (config?.unit_of_measurement) return [field, `${value}${config.unit_of_measurement}`];
+      }
+
+      if (Object.keys(selector).includes('boolean') && (selector as BooleanSelector).boolean) {
+        value = Boolean(value) ? 'True' : 'False';
       }
       return [field, value];
     })

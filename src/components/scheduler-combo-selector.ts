@@ -1,6 +1,6 @@
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
-import { NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
+import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
@@ -194,6 +194,40 @@ export class SchedulerComboSelector extends LitElement {
           ></ha-textfield> 
         </div>     
       `
+    }
+    else if ((this.config as BooleanSelector).boolean) {
+      let selector = <SelectSelector>{
+        select: {
+          options: [
+            {
+              value: 'true',
+              label: 'True',
+              icon: 'mdi:check'
+            },
+            {
+              value: 'false',
+              label: 'False',
+              icon: 'mdi:close'
+            }
+          ]
+        }
+      };
+
+      const valueChanged = (ev: CustomEvent) => {
+        let value = ev.detail.value === 'true';
+        ev.stopPropagation();
+        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+      }
+
+      return html`
+        <scheduler-combo-selector
+          .hass=${this.hass}
+          .config=${selector}
+          .value=${Boolean(this.value) ? 'true' : 'false'}
+          @value-changed=${valueChanged}
+        >
+        </scheduler-combo-selector>
+      `;
     }
     return html``;
   }
