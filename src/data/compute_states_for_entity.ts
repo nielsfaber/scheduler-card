@@ -17,6 +17,7 @@ export const SUPPORTED_CONDITION_DOMAINS = [
   'input_boolean',
   'input_number',
   'input_select',
+  'lawn_mower',
   'light',
   'lock',
   'number',
@@ -74,6 +75,8 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
     case 'input_select':
     case 'select':
       return listSelector({ options: attr.options });
+    case 'lawn_mower':
+      return listSelector({ options: computeStateIcons(['mowing', 'paused', 'docked']), translation_key: 'component.lawn_mower.entity_component._.state.${value}' });
     case 'lock':
       return listSelector({ options: computeStateIcons(['locked', 'unlocked']), translation_key: 'component.lock.entity_component._.state.${value}' });
     case 'person':

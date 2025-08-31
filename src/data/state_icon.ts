@@ -177,6 +177,11 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
     on: 'mdi:lightbulb',
     off: 'mdi:lightbulb-off',
   },
+  lawn_mower: {
+    mowing: 'mdi:play',
+    paused: 'mdi:pause',
+    docked: 'mdi:home-import-outline'
+  },
   lock: {
     unlocked: 'mdi:lock-open-variant-outline',
     locked: 'mdi:lock-outline',

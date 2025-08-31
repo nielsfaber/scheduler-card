@@ -138,7 +138,8 @@ export const serviceIcons: Record<string, DomainEntry> = {
   lawn_mower: {
     services: {
       dock: 'mdi:home-import-outline',
-      start_mowing: 'mdi:play'
+      start_mowing: 'mdi:play',
+      pause: 'mdi:pause'
     }
   },
   light: {

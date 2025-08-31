@@ -223,6 +223,20 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
   },
+  lawn_mower: {
+    start_mowing: {
+      target: {},
+      supported_features: 1
+    },
+    pause: {
+      target: {},
+      supported_features: 2
+    },
+    dock: {
+      target: {},
+      supported_features: 4
+    }
+  },
   light: {
     turn_on: {
       translation_key: 'services.light.turn_on',
