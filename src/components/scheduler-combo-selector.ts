@@ -141,6 +141,7 @@ export class SchedulerComboSelector extends LitElement {
           .valueRenderer=${valueRenderer}
           @value-changed=${this._valueChanged}
           .value=${!Array.isArray(this.value) ? this.value || "" : ""}
+          ?disabled=${this.disabled}
         >
         </scheduler-picker>
         </div>
@@ -225,6 +226,7 @@ export class SchedulerComboSelector extends LitElement {
           .config=${selector}
           .value=${Boolean(this.value) ? 'true' : 'false'}
           @value-changed=${valueChanged}
+          ?disabled=${this.disabled}
         >
         </scheduler-combo-selector>
       `;
@@ -280,7 +282,7 @@ export class SchedulerComboSelector extends LitElement {
     }
     else if ((ev as CustomEvent).detail) {
       let value = (ev as CustomEvent).detail.value;
-      if (value === undefined) return;
+      if (value === undefined) value = null;
       this.value = value;
     } else {
       this.value = (ev.target as HTMLInputElement).value;

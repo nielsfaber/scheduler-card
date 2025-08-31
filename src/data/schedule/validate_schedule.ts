@@ -1,3 +1,4 @@
+import { isDefined } from "../../lib/is_defined";
 import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig, Schedule, Timeslot } from "../../types";
 import { actionConfig } from "../actions/action_config";
@@ -38,6 +39,7 @@ const validateAction = (action: Action, hass: HomeAssistant, customize?: CustomC
       .filter(([field]) => isSupportedSelector(action, field, hass, customize))
       .every(([field, fieldConfig]) => {
         if (!Object.keys(action.service_data).includes(field) && !fieldConfig.optional) return false;
+        else if (!isDefined(action.service_data[field]) && !fieldConfig.optional) return false;
         return true;
       })) return ValidationError.MissingServiceParameter;
   }

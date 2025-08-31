@@ -45,12 +45,10 @@ export class SchedulerMainPanel extends LitElement {
   @property({ attribute: false }) public config!: CardConfig;
   @property({ attribute: false }) public viewMode!: EditorMode;
   @property({ attribute: false }) public selectedSlot: number | null = null;
+  @property({ type: Boolean }) large = false;
 
   @state() schedule!: Schedule;
   @state() selectedEntry: number | null = 0;
-
-  @property({ type: Boolean })
-  large = false;
 
   shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.get('schedule')) {
@@ -329,7 +327,12 @@ export class SchedulerMainPanel extends LitElement {
   _toggleOptionalField(ev: Event, field: string, selector: Selector) {
     const checked = (ev.target as HTMLInputElement).checked;
     const value = checked ? defaultSelectorValue(selector) : undefined;
-    this._selectField(field, new CustomEvent('value-changed', { detail: { value: value } }));
+    if (checked) {
+      this._selectField(field, new CustomEvent('value-changed', { detail: { value: isDefined(value) ? value : null } }));
+    }
+    else {
+      this._selectField(field, new CustomEvent('value-changed', { detail: { value: undefined } }));
+    }
   }
 
   _selectEntity(ev: CustomEvent) {

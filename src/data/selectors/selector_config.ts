@@ -3,7 +3,7 @@ import { listSelector, parseListSelectorOption } from "./list_selector";
 import { numericSelector } from "./numeric_selector";
 import { HomeAssistant } from "../../lib/types";
 import { computeDomain } from "../../lib/entity";
-import { CustomConfig } from "../../types";
+import { CustomConfig, VariableConfig } from "../../types";
 import { parseCustomActions } from "../actions/parse_custom_actions";
 import { isDefined } from "../../lib/is_defined";
 
@@ -85,24 +85,26 @@ const selectorConfigFromCustomConfig = (service: string, entityId: string, field
   const actionConfig = parseCustomActions(customize || {}, entityId);
 
   if (actionConfig.length) {
-    let res = (actionConfig.map(customConfig => {
-
-      if (customConfig.service != service || !Object.keys(customConfig.variables || {}).includes(field)) return {};
+    let res = actionConfig.map(customConfig => {
+      if (customConfig.service != service || !Object.keys(customConfig.variables || {}).includes(field)) return null;
       let variableConfig = (customConfig.variables || {})[field];
-      if (Object.keys(variableConfig).includes('options')) {
-        return listSelector({ options: (variableConfig as any).options });
-      } else if (Object.keys(variableConfig).includes('min') && Object.keys(variableConfig).includes('max')) {
-        return numericSelector(variableConfig as any);
-      } else {
-        return <StringSelector>{ text: {} };
-      }
-    }) as Selector[])
+      return parseCustomVariable(variableConfig);
+    })
       .filter(e => e !== undefined);
     return mergeSelectors(res);
   }
   return null;
 }
 
+export const parseCustomVariable = (config: VariableConfig): Selector => {
+  if (Object.keys(config).includes('options')) {
+    return listSelector({ options: (config as any).options });
+  } else if (Object.keys(config).includes('min') && Object.keys(config).includes('max')) {
+    return numericSelector(config as any);
+  } else {
+    return <StringSelector>{ text: {} };
+  }
+}
 
 const mergeSelectors = (input: (Selector | null)[]) => {
   const isUnique = (input: any[]) => new Set(input).size == 1;

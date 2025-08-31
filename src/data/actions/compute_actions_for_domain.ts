@@ -8,6 +8,9 @@ import { parseCustomActions, parseExcludedActions } from "./parse_custom_actions
 import { formatActionDisplay } from "../format/format_action_display";
 import { caseInsensitiveStringCompare } from "../../lib/string_compare";
 import { serviceIcons } from "../format/service_icons";
+import { parseCustomVariable } from "../selectors/selector_config";
+import { defaultSelectorValue } from "../selectors/default_selector_value";
+import { isDefined } from "../../lib/is_defined";
 
 export interface actionItem {
   key: string,
@@ -80,6 +83,14 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
   customActions.forEach(action => {
     let key = action.service;
     while (actionList.find(e => e.key == key)) key += '_2';
+
+    if (action.variables) {
+      Object.entries(action.variables).forEach(([field, config]) => {
+        let selector = parseCustomVariable(config);
+        let defaultValue = defaultSelectorValue(selector);
+        if (!isDefined(action.service_data[field]) && isDefined(defaultValue)) action = { ...action, service_data: { ...action.service_data, [field]: defaultValue } };
+      });
+    }
 
     actionList.push({
       key: key,
