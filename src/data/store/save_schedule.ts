@@ -1,3 +1,4 @@
+import { isDefined } from "../../lib/is_defined";
 import { HomeAssistant } from "../../lib/types";
 import { Action, Schedule, ScheduleEntry, TConditionLogicType, TRepeatType, TWeekday, Timeslot } from "../../types";
 import { LegacyScheduleConfig, LegacyTimeslot, ServiceCall, WeekdayType } from "./convert_legacy_schedule";
@@ -85,17 +86,23 @@ const parseTimeslot = (input: Timeslot): LegacyTimeslot => {
 
 
 const parseAction = (input: Action): ServiceCall | ServiceCall[] => {
+  const parseServiceData = (service_data: Record<string, any>) => {
+    return Object.keys(service_data)
+      .filter((key => isDefined(service_data[key])))
+      .reduce((res, key) => (res[key] = service_data[key], res), {});
+  }
+
   if (!input.target) {
     let output: ServiceCall = {
       service: input.service,
-      service_data: input.service_data
+      service_data: parseServiceData(input.service_data)
     };
     return output;
   }
   else if (!Array.isArray(input.target?.entity_id)) {
     let output: ServiceCall = {
       service: input.service,
-      service_data: input.service_data,
+      service_data: parseServiceData(input.service_data),
       entity_id: input.target?.entity_id
     };
     return output;
@@ -103,7 +110,7 @@ const parseAction = (input: Action): ServiceCall | ServiceCall[] => {
   else {
     let output: ServiceCall[] = input?.target.entity_id.map(e => Object({
       service: input.service,
-      service_data: input.service_data,
+      service_data: parseServiceData(input.service_data),
       entity_id: e
     }));
     return output;
