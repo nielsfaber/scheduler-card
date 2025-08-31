@@ -39,21 +39,17 @@ export class DialogSchedulerEditor extends LitElement {
 
   @state() schedule!: Schedule;
   @state() selectedEntry: number | null = 0;
-  @state() selectedSlot: number | null = 0;
+  @state() selectedSlot: number | null = null;
 
   @state() _panel: "main" | "options" = "main";
 
   @state() _viewMode: EditorMode = EditorMode.Single;
+  set viewMode(mode: EditorMode) {
+    this._viewMode = mode;
 
-  firstUpdated() {
-    const isTimeSchemeType = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length && isDefined(e.stop)).length > 0
-      || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1
-      || this.schedule.entries[this.selectedEntry!].slots.length > 3;
-    if (isTimeSchemeType) this._viewMode = EditorMode.Scheme;
-    else {
-      this._viewMode = this._params?.cardConfig.default_editor || EditorMode.Single;
-      this.selectedSlot = this.schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
-      if (this.selectedSlot! < 0) this.selectedSlot = 1;
+    if (mode == EditorMode.Single) {
+      let slotIdx = this.schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
+      this.selectedSlot = slotIdx >= 0 ? slotIdx : 1;
     }
   }
 
@@ -67,6 +63,18 @@ export class DialogSchedulerEditor extends LitElement {
     this.schedule = params.schedule;
     this._panel = "main";
     this.large = false;
+
+    const isTimeSchemeType = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length && isDefined(e.stop)).length > 0
+      || this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1
+      || this.schedule.entries[this.selectedEntry!].slots.length > 3;
+
+    let slotIdx = this.schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
+    this.selectedSlot = slotIdx >= 0 ? slotIdx : null;
+
+    this.viewMode = isTimeSchemeType
+      ? EditorMode.Scheme
+      : this._params?.cardConfig.default_editor || EditorMode.Single;
+
     await this.updateComplete;
   }
 
@@ -160,9 +168,14 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   _updateSchedule(ev: CustomEvent) {
-    let schedule = ev.detail.schedule;
-    if (!schedule) return;
-    this.schedule = schedule;
+    let changedProps = Object.keys(ev.detail);
+    if (changedProps.includes('schedule')) {
+      let schedule = ev.detail.schedule;
+      this.schedule = schedule;
+    }
+    if (changedProps.includes('selectedSlot')) {
+      this.selectedSlot = ev.detail.selectedSlot;
+    }
   }
 
   private async _handleSaveClick(ev: Event) {
@@ -262,7 +275,7 @@ export class DialogSchedulerEditor extends LitElement {
     const multipleActionsDefined = this.schedule.entries[this.selectedEntry!].slots.filter(e => e.actions.length).length > 1;
 
     if (viewMode == EditorMode.Scheme) {
-      this._viewMode = viewMode;
+      this.viewMode = viewMode;
       return;
     }
     else if (viewMode == EditorMode.Single && !multipleActionsDefined) {
@@ -275,9 +288,7 @@ export class DialogSchedulerEditor extends LitElement {
         })
       }
       this.schedule = parseTimeBar(schedule, this.hass);
-      this.selectedSlot = schedule.entries[this.selectedEntry!].slots.findIndex(e => e.actions.length);
-      if (this.selectedSlot! < 0) this.selectedSlot = 1;
-      this._viewMode = viewMode;
+      this.viewMode = viewMode;
       return;
     }
 
@@ -304,8 +315,7 @@ export class DialogSchedulerEditor extends LitElement {
       .then((res: boolean) => {
         if (!res) return;
         this.schedule = convertSchemeToSingle(this.schedule);
-        this.selectedSlot = 1;
-        this._viewMode = viewMode;
+        this.viewMode = viewMode;
       })
   }
 

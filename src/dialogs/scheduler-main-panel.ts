@@ -58,9 +58,6 @@ export class SchedulerMainPanel extends LitElement {
         new CustomEvent('change', { detail: { schedule: this.schedule } })
       );
     }
-    if (changedProps.get('viewMode') && this.viewMode == EditorMode.Single) {
-      this.selectedSlot = 1;
-    }
     return true;
   }
 
@@ -142,9 +139,9 @@ export class SchedulerMainPanel extends LitElement {
 
     return html`
       <div class="actions">
-        <ha-icon-button .path=${mdiChevronLeft} @click=${(ev: Event) => { this.selectedSlot = this.selectedSlot! - 1; (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}>
+        <ha-icon-button .path=${mdiChevronLeft} @click=${(ev: Event) => { this._updateSelectedSlot(this.selectedSlot! - 1); (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}>
         </ha-icon-button> 
-        <ha-icon-button .path=${mdiChevronRight} @click=${(ev: Event) => { this.selectedSlot = this.selectedSlot! + 1; (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
+        <ha-icon-button .path=${mdiChevronRight} @click=${(ev: Event) => { this._updateSelectedSlot(this.selectedSlot! + 1); (ev.target as HTMLElement).blur() }} ?disabled=${this.selectedSlot === null || this.selectedSlot > (this.schedule.entries[this.selectedEntry].slots.length - 2)}>
         </ha-icon-button> 
         <ha-icon-button .path=${mdiShapeRectanglePlus} @click=${this._addTimeslot} ?disabled=${delta < 1800}>
         </ha-icon-button>
@@ -353,12 +350,19 @@ export class SchedulerMainPanel extends LitElement {
   _handleUpdate(ev: CustomEvent, entry: number) {
     this.selectedEntry = entry;
     if (ev.detail.hasOwnProperty('selectedSlot')) {
+      this._updateSelectedSlot(ev.detail.selectedSlot);
       this.selectedSlot = ev.detail.selectedSlot;
     }
     else if (ev.detail.hasOwnProperty('slots')) {
       this._updateEntry({ slots: ev.detail.slots });
 
     }
+  }
+
+  _updateSelectedSlot(slot: number | null) {
+    this.dispatchEvent(
+      new CustomEvent('change', { detail: { selectedSlot: slot } })
+    );
   }
 
   _updateEntry(update: Partial<ScheduleEntry>) {
