@@ -29,10 +29,10 @@ export const convertTo12Hour = (hours: number) => {
 }
 
 export const convertTo24Hour = (hours12: number, amPm: AmPmFormat) => {
-  if(amPm == AmPmFormat.AM) {
+  if (amPm == AmPmFormat.AM) {
     return hours12 == 12 ? 0 : hours12;
   }
   else {
-    return hours12 == 12 ? 0 : (hours12 + 12);
+    return hours12 == 12 ? 12 : (hours12 + 12);
   }
 }
