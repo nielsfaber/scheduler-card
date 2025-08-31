@@ -4,10 +4,10 @@ import { customElement, property, state } from "lit/decorators";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { CardConfig, Schedule, SchedulerEventData } from "./types";
+import { CardConfig, EditorMode, Schedule, SchedulerEventData } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
-import { CARD_VERSION, DefaultCardConfig, defaultScheduleConfig } from "./const";
+import { CARD_VERSION, DefaultCardConfig, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
 import { validateConfig } from "./data/validate_config";
 import { localize } from "./localize/localize";
 import { isIncludedSchedule } from "./data/schedule/is_included_schedule";
@@ -335,7 +335,9 @@ export class SchedulerCard extends LitElement {
 
   private _addClick(_ev: Event) {
     const defaultTags = [this._config.tags || []].flat().filter(e => !['none', 'disabled', 'enabled'].includes(e));
-    let clonedConfig: Schedule = JSON.parse(JSON.stringify(defaultScheduleConfig));
+    let clonedConfig: Schedule = this._config.default_editor == EditorMode.Scheme
+      ? JSON.parse(JSON.stringify(defaultTimeSchemeConfig))
+      : JSON.parse(JSON.stringify(defaultSingleTimerConfig));
     const params: SchedulerDialogParams = {
       schedule: { ...clonedConfig, tags: defaultTags.length == 1 ? defaultTags : [] },
       cardConfig: this._config

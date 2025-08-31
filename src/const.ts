@@ -30,7 +30,7 @@ const defaultSlotConfig = {
   }
 }
 
-export const defaultScheduleConfig: Schedule = {
+export const defaultTimeSchemeConfig: Schedule = {
   entries: [
     {
       weekdays: [TWeekday.Daily],
@@ -57,4 +57,29 @@ export const defaultScheduleConfig: Schedule = {
   next_entries: [],
   timestamps: [],
   enabled: true
+};
+
+export const defaultSingleTimerConfig: Schedule = {
+  ...defaultTimeSchemeConfig,
+  entries: [
+    {
+      weekdays: [TWeekday.Daily],
+      slots: [
+        {
+          ...defaultSlotConfig,
+          start: '00:00:00',
+          stop: '12:00:00',
+        },
+        {
+          ...defaultSlotConfig,
+          start: '12:00:00',
+        },
+        {
+          ...defaultSlotConfig,
+          start: '12:01:00',
+          stop: '00:00:00',
+        }
+      ]
+    }
+  ]
 };
