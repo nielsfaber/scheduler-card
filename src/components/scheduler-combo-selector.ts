@@ -5,6 +5,7 @@ import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
 import { hassLocalize } from "../localize/hassLocalize";
+import { roundFloat } from "../lib/round_float";
 
 
 @customElement("scheduler-combo-selector")
@@ -153,8 +154,9 @@ export class SchedulerComboSelector extends LitElement {
       let max = config.max || 255;
       let value = typeof this.value == 'number' ? this.value : min;
 
-      if (typeof config.scale_factor == 'number') value = parseFloat((value / config.scale_factor).toPrecision(12));
+      if (typeof config.scale_factor == 'number') value = (value / config.scale_factor);
       if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
+      value = roundFloat(value);
 
       const valueChanged = (ev: Event) => {
         let value = Number((ev.target as HTMLInputElement).value);
@@ -163,7 +165,7 @@ export class SchedulerComboSelector extends LitElement {
           value = value * config.scale_factor;
 
         if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
-        value = parseFloat(value.toFixed(2));
+        value = roundFloat(value);
 
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
       }
