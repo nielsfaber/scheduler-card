@@ -4,10 +4,11 @@ import { CardConfig, Schedule } from "../types";
 import { computeActionIcon } from "../data/format/compute_action_icon";
 import { HomeAssistant } from "../lib/types";
 import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
-
-import './scheduler-relative-time';
+import { unsafeHTML } from 'lit/directives/unsafe-html';
 import { computeEntityIcon } from "../data/format/compute_entity_icon";
 import { computeDomain } from "../lib/entity";
+
+import './scheduler-relative-time';
 
 @customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
@@ -41,9 +42,9 @@ export class SchedulerItemRow extends LitElement {
         class="info ${disabled ? 'disabled' : ''}"
         @click=${this._handleItemClick}
       >
-        ${computeScheduleDisplay(this.schedule, this.config.display_options.primary_info, this.hass, this.config.customize)}
+        ${this.renderDisplayItem(this.config.display_options.primary_info)}
         <div class="secondary">
-        ${computeScheduleDisplay(this.schedule, this.config.display_options.secondary_info, this.hass, this.config.customize)}
+        ${this.renderDisplayItem(this.config.display_options.secondary_info)}
         </div>
       </div>
       <div class="state">
@@ -54,6 +55,44 @@ export class SchedulerItemRow extends LitElement {
       </div>
 
     `;
+  }
+
+  private renderDisplayItem(displayItem: string | string[]) {
+    const replacePreservedTags = (input: string | string[]) => {
+      if (typeof input === 'object') {
+        console.log(input);
+        return '';
+
+      }
+      const parts = input.split('<relative-time></relative-time>');
+      if (parts.length > 1) {
+        const ts = this.schedule.timestamps![this.schedule.next_entries[0] || 0];
+        return html`
+          ${parts[0] ? unsafeHTML(parts[0]) : ''}
+          <scheduler-relative-time
+            .hass=${this.hass}
+            .datetime=${new Date(ts)}
+          >
+          </scheduler-relative-time>
+          ${parts[1] ? unsafeHTML(parts[1]) : ''}
+        `;
+      }
+      const res = input.match(/^(<tag>[^<]*<\/tag>)+$/);
+      if (res !== null) {
+        let tags = input.split(/<tag>([^<]*)<\/tag>/).filter(e => e);
+        return html`
+          <div class="tags">
+            ${tags?.map(e => html`<span class="tag">${e}</span>`)}
+          </div>`;
+      }
+      return unsafeHTML(input);
+    };
+
+    return computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
+      .filter(e => e.length)
+      .map(e =>
+        html`${replacePreservedTags(e)}<br/>`
+      );
   }
 
   private _handleItemClick(_ev: Event) {
