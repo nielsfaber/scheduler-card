@@ -1,6 +1,6 @@
 import { CardConfig, EditorMode, Schedule, TConditionLogicType, TRepeatType, TWeekday } from "./types";
 
-export const CARD_VERSION = 'v4.0.2';
+export const CARD_VERSION = 'v4.0.3';
 
 export const DefaultCardConfig: CardConfig = {
   include: [],
