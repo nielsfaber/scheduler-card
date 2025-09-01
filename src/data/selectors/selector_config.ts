@@ -6,6 +6,7 @@ import { computeDomain } from "../../lib/entity";
 import { CustomConfig, VariableConfig } from "../../types";
 import { parseCustomActions } from "../actions/parse_custom_actions";
 import { isDefined } from "../../lib/is_defined";
+import { serviceIcons } from "../format/service_icons";
 
 export const selectorConfig = (service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
   const domain = computeDomain(service);
@@ -25,6 +26,12 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   const domain = computeDomain(entityId);
   const searchKey = `${domain}.${field}`;
 
+  const computeOptionIcons = (options: string[]) => {
+    const iconConfig = ((serviceIcons[domain] || {}).attributes || {})[field];
+    if (!options.every(e => Object.keys(iconConfig).includes(e))) return options;
+    return options.map(e => <SelectOption>{ value: e, label: e, icon: iconConfig[e] });
+  };
+
   switch (searchKey) {
     case 'climate.temperature':
     case 'climate.target_temp_low':
@@ -34,11 +41,11 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
     }
     case 'climate.hvac_mode':
-      return listSelector({ options: attr.hvac_modes, translation_key: 'component.climate.entity_component._.state.${value}' });
+      return listSelector({ options: computeOptionIcons(attr.hvac_modes), translation_key: 'component.climate.entity_component._.state.${value}' });
     case 'climate.preset_mode':
-      return listSelector({ options: attr.preset_modes, translation_key: 'state_attributes.climate.preset_mode.${value}' });
+      return listSelector({ options: computeOptionIcons(attr.preset_modes), translation_key: 'state_attributes.climate.preset_mode.${value}' });
     case 'climate.fan_mode':
-      return listSelector({ options: attr.fan_modes });
+      return listSelector({ options: computeOptionIcons(attr.fan_modes) });
     case 'cover.position':
     case 'cover.tilt_position':
     case 'fan.percentage':
@@ -47,19 +54,19 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'fan.oscillating':
       return <BooleanSelector>{ boolean: {} };
     case 'fan.direction':
-      return listSelector({ options: ['forward', 'reverse'], translation_key: 'ui.card.fan.${value}' })
+      return listSelector({ options: computeOptionIcons(['forward', 'reverse']), translation_key: 'ui.card.fan.${value}' })
     case 'fan.preset_mode':
-      return listSelector({ options: attr.preset_modes });
-    case 'humdifier.humidity':
+      return listSelector({ options: computeOptionIcons(attr.preset_modes) });
+    case 'humidifier.humidity':
       return numericSelector({ min: attr.min_humidity, max: attr.max_humidity, step: 1, unit_of_measurement: '%' });
-    case 'humidity.mode':
-      return listSelector({ options: attr.available_modes });
+    case 'humidifier.mode':
+      return listSelector({ options: computeOptionIcons(attr.available_modes), translation_key: 'component.humidifier.entity_component._.state_attributes.mode.state.${value}' });
     case 'input_number.value':
     case 'number.value':
       return numericSelector({ min: attr.min, max: attr.max, step: attr.step, mode: attr.mode, unit_of_measurement: attr.unit_of_measurement });
     case 'input_select.option':
     case 'select.option':
-      return listSelector({ options: attr.options });
+      return listSelector({ options: computeOptionIcons(attr.options) });
     case 'light.brightness':
       return numericSelector({ min: 0, max: 100, step: 1, unit_of_measurement: '%', scale_factor: 2.55 });
     case 'media_player.source':
@@ -72,7 +79,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: '${hass.config.unit_system.temperature}' });
     }
     case 'water_heater.operation_mode':
-      return listSelector({ options: attr.operation_list });
+      return listSelector({ options: computeOptionIcons(attr.operation_list) });
     case 'water_heater.away_mode':
       return <BooleanSelector>{ boolean: {} };
   }

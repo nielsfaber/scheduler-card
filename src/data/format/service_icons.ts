@@ -39,6 +39,7 @@ export const serviceIcons: Record<string, DomainEntry> = {
     },
     attributes: {
       hvac_mode: {
+        auto: 'mdi:autorenew',
         cool: 'mdi:snowflake',
         dry: 'mdi:water-percent',
         fan_only: 'mdi:fan',
