@@ -36,7 +36,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'climate.temperature':
     case 'climate.target_temp_low':
     case 'climate.target_temp_high': {
-      const isOptional = searchKey == 'climate.temperature' ? ((attr.supported_features || 0) & 2) == 1 : ((attr.supported_features || 0) & 1) == 1;
+      const isOptional = searchKey == 'climate.temperature' ? ((attr.supported_features || 0) & 2) > 0 : ((attr.supported_features || 0) & 1) > 0;
       const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
       return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
     }

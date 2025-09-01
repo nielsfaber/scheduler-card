@@ -24,9 +24,8 @@ export const isSupportedSelector = (action: Action, field: string, hass: HomeAss
     if (!entityIds.every(e => {
       if (!Object.keys(hass.states).includes(e)) return false;
       const stateObj = hass.states[e];
-      return ((stateObj.attributes.supported_features || 0) & fieldConfig.supported_features!) == 1;
+      return ((stateObj.attributes.supported_features || 0) & fieldConfig.supported_features!) > 0;
     })) return false;
   }
-
   return true;
 };
