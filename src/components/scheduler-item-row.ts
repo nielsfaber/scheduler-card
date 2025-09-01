@@ -58,12 +58,7 @@ export class SchedulerItemRow extends LitElement {
   }
 
   private renderDisplayItem(displayItem: string | string[]) {
-    const replacePreservedTags = (input: string | string[]) => {
-      if (typeof input === 'object') {
-        console.log(input);
-        return '';
-
-      }
+    const replacePreservedTags = (input: string) => {
       const parts = input.split('<relative-time></relative-time>');
       if (parts.length > 1) {
         const ts = this.schedule.timestamps![this.schedule.next_entries[0] || 0];
