@@ -6,18 +6,18 @@
     },
     "climate": {
       "set_temperature": "Temperatur einstellen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat": "heizen[ auf {temperature}]",
-      "set_temperature_hvac_mode_cool": "kühlen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat_cool": "heizen/kühlen[ auf {temperature}]",
-      "set_temperature_hvac_mode_heat_cool_range": "heizen/kühlen[ auf {target_temp_low} - {target_temp_high}]",
-      "set_temperature_hvac_mode_auto": "automatisch[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat": "Heizen[ auf {temperature}]",
+      "set_temperature_hvac_mode_cool": "Kühlen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "Heizen/Kühlen[ auf {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "Heizen / Kühlen[ auf {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "Automatisch[ auf {temperature}]",
       "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
       "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "Lüftermodus einstellen[ auf {fan_mode}]"
     },
     "cover": {
-      "close_cover": "schließen",
-      "open_cover": "öffnen",
+      "close_cover": "Schließen",
+      "open_cover": "Öffnen",
       "set_cover_position": "Position setzen[ auf {position}]",
       "set_cover_tilt_position": "Tilt Position setzen[ auf {tilt_position}]"
     },
@@ -40,7 +40,7 @@
       "select_option": "Option[ {option}] auswählen"
     },
     "light": {
-      "turn_on": "anschalten[ mit {brightness} Helligkeit]"
+      "turn_on": "Anschalten[ mit {brightness} Helligkeit]"
     },
     "media_player": {
       "select_source": "Quelle[ {source}] auswählen"
@@ -49,7 +49,7 @@
       "send_message": "Nachricht senden"
     },
     "script": {
-      "execute": "ausführen"
+      "execute": "Ausführen"
     },
     "vacuum": {
       "start_pause": "Start / Pause"
@@ -61,20 +61,20 @@
   },
   "domains": {
     "alarm_control_panel": "Alarmzentrale",
-    "binary_sensor": "binary sensors",
+    "binary_sensor": "Binärsensoren",
     "climate": "Heizung",
     "cover": "Beschattung",
     "fan": "Lüfter",
     "group": "Gruppen",
     "humidifier": "Befeuchter",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
+    "input_boolean": "Eingabe Boolean",
+    "input_number": "Eingabe Nummer",
+    "input_select": "Eingabe Auswahl",
+    "lawn_mower": "Rasenmäher",
     "light": "Licht",
     "lock": "Schlösser",
     "media_player": "Medienplayer",
-    "notify": "notification",
+    "notify": "Benachrichtigung",
     "switch": "Schalter",
     "vacuum": "Staubsauger",
     "water_heater": "Boiler"
@@ -83,7 +83,7 @@
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "täglich",
+          "daily": "Täglich",
           "workdays": "Werktags",
           "weekend": "Wochenende"
         },
@@ -93,9 +93,9 @@
           "weekend": "Am Wochenende"
         },
         "days": "Tage",
-        "tomorrow": "morgen",
-        "repeated_days": "jeden {days}",
-        "repeated_days_except": "täglich außer {excludedDays}",
+        "tomorrow": "Morgen",
+        "repeated_days": "Jeden {days}",
+        "repeated_days_except": "Täglich außer {excludedDays}",
         "days_range": "von {startDay} bis {endDay}",
         "next_week_day": "nächsten {weekday}"
       },
@@ -121,16 +121,16 @@
         "description": "Einige Einstellungen gehen durch diese Änderung verloren. Möchten Sie fortfahren?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "Wiederholte Tage für den Zeitplan",
+        "choose": "Auswahl..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "Entitäten auswählen",
+        "choose": "Auswahl...",
+        "no_results": "Keine passenden Elemente gefunden"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Aktion auswählen"
       }
     },
     "panel": {
@@ -147,42 +147,42 @@
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "Wiederholte Tage",
+        "start_time": "Startzeit",
+        "stop_time": "Endzeit",
+        "action": "Aktion",
+        "add_action": "Aktion hinzufügen",
         "select_timeslot": "Wähle ein Zeitfenster aus",
         "toggle_single_mode": "Zum Einzelmodus",
         "toggle_scheme_mode": "Zum Schemamodus",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "Der Zeitplan weist Überschneidungen auf.",
+          "missing_target_entity": "Bei einer oder mehreren Aktionen fehlt eine Zielentität.",
+          "missing_service_parameter": "Bei einer oder mehreren Aktionen fehlt eine erforderliche Einstellung.",
+          "missing_action": "Zeitplan enthält keine Aktionen"
         }
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "header": "Bedingungen",
+          "add_condition": "Bedingung hinzufügen",
+          "new_condition": "Neuer Zustand",
           "types": {
             "equal_to": "{entity} ist {value}",
             "unequal_to": "{entity} ist nicht {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "above": "{entity} ist über {value}",
+            "below": "{entity} ist unter {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
+            "logic_and": "Alle Bedingungen müssen zutreffen.",
+            "logic_or": "Jede Bedingung muss wahr sein.",
             "track_changes": "Erneut prüfen wenn sich die Zustände ändern"
           }
         },
         "period": {
           "header": "Zeitraum",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "Von",
+          "end_date": "Bis"
         },
         "repeat_type": "Verhalten nach Abschluß",
         "tags": "Tags"
@@ -190,3 +190,4 @@
     }
   }
 }
+
