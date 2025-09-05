@@ -27,9 +27,14 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   const searchKey = `${domain}.${field}`;
 
   const computeOptionIcons = (options: string[]) => {
-    const iconConfig = ((serviceIcons[domain] || {}).attributes || {})[field];
-    if (!options.every(e => Object.keys(iconConfig).includes(e))) return options;
-    return options.map(e => <SelectOption>{ value: e, label: e, icon: iconConfig[e] });
+    const iconConfig = serviceIcons[domain]?.attributes?.[field];
+    const useIcons = !!iconConfig && options.every(e => e in iconConfig);
+
+    return options.map(e => ({
+      value: e,
+      label: e,
+      icon: useIcons ? iconConfig[e] : undefined,
+    }));
   };
 
   switch (searchKey) {
