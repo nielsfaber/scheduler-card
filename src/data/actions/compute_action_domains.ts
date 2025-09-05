@@ -19,7 +19,7 @@ const isSupportedDomain = (domain: string, customConfig?: CustomConfig) => {
   return res;
 };
 
-interface actionItem {
+export interface actionItem {
   key: string,
   name: string,
   description: string,
