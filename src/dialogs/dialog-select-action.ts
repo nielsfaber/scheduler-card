@@ -142,12 +142,17 @@ export class DialogSelectAction extends LitElement {
 
   _renderOptions() {
     if (!this._params?.domainFilter) {
-      let domains = computeActionDomains(this.hass, this._params!.cardConfig);
-      return this._renderDomainList(domains);
+      const domains = computeActionDomains(this.hass, this._params!.cardConfig);
+
+      if (domains.length > 1) {
+        return this._renderDomainList(domains);
+      }
+
+      // force single domain into domainFilter to render actions directly
+      this._params = { ...this._params!, domainFilter: [domains[0].key] };
     }
-    else {
-      return this._renderDomainActions();
-    }
+
+    return this._renderDomainActions();
   }
 
   _renderDomainList(domains: domainsActionItem[]) {
