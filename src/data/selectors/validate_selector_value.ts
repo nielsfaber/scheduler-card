@@ -15,7 +15,7 @@ const validateNumberSelectorValue = (value: number, selector: NumberSelector) =>
   if (isNaN(value)) return false;
   if (selector.number?.min !== undefined && value < selector.number.min) return false;
   if (selector.number?.max !== undefined && value > selector.number.max) return false;
-  return false;
+  return true;
 }
 
 export const validateSelectorValue = (value: any, selector: Selector) => {
