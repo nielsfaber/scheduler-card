@@ -56,7 +56,7 @@
     },
     "water_heater": {
       "set_operation_mode": "nastaviť režim[ na {operation_mode}]",
-      "set_away_mode": "nastaviť mód neprítomný"
+      "set_away_mode": "nastaviť režim neprítomnosti"
     }
   },
   "domains": {
@@ -70,11 +70,11 @@
     "input_boolean": "vstup boolean",
     "input_number": "vstup číslo",
     "input_select": "vstup voľba",
-    "lawn_mower": "lawn mower",
+    "lawn_mower": "kosačka",
     "light": "svetlá",
     "lock": "zámky",
     "media_player": "mediálne prehrávače",
-    "notify": "notification",
+    "notify": "upozornenie",
     "switch": "vypínače",
     "vacuum": "vysávače",
     "water_heater": "ohrievače vody"
@@ -85,7 +85,7 @@
         "day_types_short": {
           "daily": "denne",
           "workdays": "pracovné dni",
-          "weekend": "víkend"
+          "weekend": "víkendy"
         },
         "day_types_long": {
           "daily": "každý deň",
@@ -110,27 +110,27 @@
     "dialog": {
       "enable_schedule": {
         "title": "Dokončite úpravy",
-        "description": "Plán, ktorý sa zmenil, je momentálne zakázaný, mal by byť povolený?"
+        "description": "Plán, ktorý sa zmenil, je momentálne zakázaný, chcete ho povoliť?"
       },
       "confirm_delete": {
         "title": "Odstrániť entitu?",
         "description": "Naozaj chcete odstrániť túto entitu?"
       },
       "confirm_migrate": {
-        "title": "Upravte plán",
+        "title": "Aktualizovať plán",
         "description": "Touto akciou sa stratia niektoré nastavenia. Chcete pokračovať?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "Dni opakovania pre plán",
+        "choose": "Vyberte..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "Vyberte entity",
+        "choose": "Vyberte...",
+        "no_results": "Žiadne vyhovujúce položky neboli nájdené"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Vyberte akciu"
       }
     },
     "panel": {
@@ -140,52 +140,52 @@
         "default_name": "Plán #{id}"
       },
       "overview": {
-        "no_entries": "Žiadne položky k zobrazeniu",
-        "backend_error": "Nepodarilo sa pripojiť k Scheduler Component. Musí byť nainštalovaný ako integrácia pred použitím tejto karty.",
+        "no_entries": "Žiadne položky na zobrazenie",
+        "backend_error": "Nepodarilo sa pripojiť ku komponentu Scheduler. Pred tým, ako použijete túto kartu ho musíte nainštalovať ako integráciu.",
         "excluded_items": "Vylúčené položky: {number}",
         "hide_excluded": "skryť vylúčené položky",
         "additional_tasks": "Ďalšie úlohy: {number}"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "Dni opakovania",
+        "start_time": "Čas začiatku",
+        "stop_time": "Čas konca",
+        "action": "Akcia",
+        "add_action": "Pridať akciu",
         "select_timeslot": "Najprv vyberte časový úsek",
         "toggle_single_mode": "Do režimu jedného",
         "toggle_scheme_mode": "Do režimu schémy",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "Plán obsahuje prekrývajúce sa časové intervaly",
+          "missing_target_entity": "Pre aspoň jednu akciu nie je zadaná cieľová entita",
+          "missing_service_parameter": "Pre aspoň jednu akciu nie je zadané vyžadované nastavenie",
+          "missing_action": "Plán neobsahuje žiadne akcie"
         }
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "header": "Podmienky",
+          "add_condition": "Pridať podmienku",
+          "new_condition": "Nová podmienka",
           "types": {
-            "equal_to": "{entity} is equal to {value}",
-            "unequal_to": "{entity} is unequal to {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "equal_to": "{entity} sa rovná {value}",
+            "unequal_to": "{entity} sa nerovná {value}",
+            "above": "{entity} je nad {value}",
+            "below": "{entity} je pod {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
+            "logic_and": "Všetky podmienky musia platiť",
+            "logic_or": "Akákoľvek podmienka musí platiť",
             "track_changes": "Prehodnoťte, keď sa zmenia podmienky"
           }
         },
         "period": {
           "header": "Obdobie",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "Od",
+          "end_date": "Do"
         },
         "repeat_type": "správanie sa po spustení",
-        "tags": "Tags"
+        "tags": "Štítky"
       },
       "card_editor": {
         "tabs": {
@@ -212,10 +212,10 @@
             "unit_minutes": "min"
           },
           "default_editor": {
-            "heading": "Default time editor",
+            "heading": "Predvolený editor času",
             "options": {
-              "single": "Single schedule mode",
-              "scheme": "Time scheme mode"
+              "single": "Režim jedného plánu",
+              "scheme": "Režim schémy"
             }
           },
           "sort_by": {
@@ -250,7 +250,7 @@
             "description": "Zobraziť prepínač v hornej časti karty na povolenie/zakázanie všetkých entít"
           },
           "tags": {
-            "heading": "Tagy",
+            "heading": "Štítky",
             "description": "Použite štítky na rozdelenie plánov medzi viacero kariet"
           },
           "entities": {
