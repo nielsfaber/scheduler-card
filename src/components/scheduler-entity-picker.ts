@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing, TemplateResult } from "lit";
+import { css, html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain, friendlyName } from "../lib/entity";
 import { matchPattern } from "../lib/patterns";
@@ -9,6 +9,7 @@ import { mdiChevronDown, mdiChevronUp, mdiMinus, mdiPlus, mdiShape } from "@mdi/
 
 import './scheduler-chip-set';
 import './scheduler-picker';
+import { fetchItems } from "../data/store/fetch_items";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -27,6 +28,12 @@ export class SchedulerEntityPicker extends LitElement {
   disabled = false;
 
   @state() multipleMode = false;
+
+  @state() scheduleEntities: string[] = [];
+
+  protected async firstUpdated() {
+    this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(([, val]) => val.entity_id);
+  }
 
   private _valueRenderer: PickerValueRenderer = (value) => {
     const entityId = value || "";
@@ -176,6 +183,7 @@ export class SchedulerEntityPicker extends LitElement {
           !(this.config!.exclude || []).some(e => matchPattern(e, entityId))
       });
     }
+    entityIds = entityIds.filter(e => !this.scheduleEntities.includes(e));
 
     // if (this.initialValue && !entityIds.includes(this.initialValue) && !this.valueMultiple.includes(this.initialValue)) {
     //   entityIds = [...entityIds, this.initialValue];

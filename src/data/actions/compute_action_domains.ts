@@ -27,7 +27,7 @@ interface actionItem {
 }
 
 
-interface entityConfig {
+export interface entityConfig {
   include?: string[],
   exclude?: string[]
   customize?: CustomConfig
