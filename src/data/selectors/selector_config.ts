@@ -81,7 +81,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return <StringSelector>{ text: {} };
     case 'water_heater.temperature': {
       const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: '${hass.config.unit_system.temperature}' });
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}` });
     }
     case 'water_heater.operation_mode':
       return listSelector({ options: computeOptionIcons(attr.operation_list) });
