@@ -45,8 +45,8 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     if (formatShort) {
       if (Object.keys(attributes).length > 1) {
         const sortAttributes = (fieldA: string, fieldB: string) => {
-          const configA = config.fields![fieldA] || {};
-          const configB = config.fields![fieldB] || {};
+          const configA = !!config.fields && config.fields[fieldA] || {};
+          const configB = !!config.fields && config.fields[fieldB] || {};
           if (configA?.optional && !configB.optional) return 1;
           if (configB?.optional && !configA.optional) return -1;
           return fieldA < fieldB ? -1 : fieldA > fieldB ? 1 : 0;

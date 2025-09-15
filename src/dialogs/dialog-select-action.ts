@@ -205,7 +205,7 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderDomainActions() {
-      let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig.customize)).flat();
+      let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
       if (this._params!.entityFilter?.length) {
         result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
       }

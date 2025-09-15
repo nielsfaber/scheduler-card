@@ -27,9 +27,14 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   const searchKey = `${domain}.${field}`;
 
   const computeOptionIcons = (options: string[]) => {
-    const iconConfig = ((serviceIcons[domain] || {}).attributes || {})[field];
-    if (!options.every(e => Object.keys(iconConfig).includes(e))) return options;
-    return options.map(e => <SelectOption>{ value: e, label: e, icon: iconConfig[e] });
+    const iconConfig = serviceIcons[domain]?.attributes?.[field];
+    const useIcons = !!iconConfig && options.every(e => e in iconConfig);
+
+    return options.map(e => ({
+      value: e,
+      label: e,
+      icon: useIcons ? iconConfig[e] : undefined,
+    }));
   };
 
   switch (searchKey) {
@@ -76,7 +81,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return <StringSelector>{ text: {} };
     case 'water_heater.temperature': {
       const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: '${hass.config.unit_system.temperature}' });
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}` });
     }
     case 'water_heater.operation_mode':
       return listSelector({ options: computeOptionIcons(attr.operation_list) });

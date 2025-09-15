@@ -24,10 +24,14 @@ const sortByRelativeTime = (scheduleA: Schedule & { entity_id: string }, schedul
 
 
 const sortByTitle = (scheduleA: Schedule, scheduleB: Schedule, displayFormat: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant, customize?: CustomConfig) => {
-  //if (!displayInfo[.schedule_id!]) return displayInfo[b.schedule_id!] ? 1 : -1;
-  const titleA = computeScheduleDisplay(scheduleA, displayFormat, hass, customize).join();
-  const titleB = computeScheduleDisplay(scheduleB, displayFormat, hass, customize).join();
-  return sortByName(titleA, titleB);
+  try {
+    const titleA = computeScheduleDisplay(scheduleA, displayFormat, hass, customize).join();
+    const titleB = computeScheduleDisplay(scheduleB, displayFormat, hass, customize).join();
+    return sortByName(titleA, titleB);
+  }
+  catch (e) {
+    return 0;
+  }
 };
 
 

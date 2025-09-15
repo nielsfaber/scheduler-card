@@ -19,19 +19,20 @@ export class SchedulerItemRow extends LitElement {
   @property() config!: CardConfig;
 
   render() {
-    const stateObj = this.hass.states[this.schedule.entity_id!];
-    if (!stateObj) return html``;
-    const disabled = stateObj.state == 'off';
-    const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
+    try {
+      const stateObj = this.hass.states[this.schedule.entity_id!];
+      if (!stateObj) return html``;
+      const disabled = stateObj.state == 'off';
+      const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
-    let icon = computeActionIcon(nextAction, this.config.customize);
-    if (this.config.display_options.icon == 'entity') {
-      let entityId = [nextAction.target?.entity_id || []].flat().shift();
-      if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
-      if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
-    }
+      let icon = computeActionIcon(nextAction, this.config.customize);
+      if (this.config.display_options.icon == 'entity') {
+        let entityId = [nextAction.target?.entity_id || []].flat().shift();
+        if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
+        if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
+      }
 
-    return html`
+      return html`
       <ha-icon
         icon="${icon}"
         @click=${this._handleIconClick}
@@ -55,6 +56,16 @@ export class SchedulerItemRow extends LitElement {
       </div>
 
     `;
+    } catch (e) {
+      return html`
+        <hui-warning .hass=${this.hass} @click=${this._handleItemClick}>
+          <span style="white-space: normal">
+            Failed to display schedule ${this.schedule.entity_id}.
+            Reason: ${e}
+          </span>
+        </hui-warning>
+      `;
+    }
   }
 
   private renderDisplayItem(displayItem: string | string[]) {

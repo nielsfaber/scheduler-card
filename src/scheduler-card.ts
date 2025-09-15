@@ -252,7 +252,6 @@ export class SchedulerCard extends LitElement {
     fetchItems(this.hass!)
       .then(res => {
         this.schedules = sortSchedules(res, this._config, this.hass);
-        Object.values(res).every(e => isIncludedSchedule(e, this._config));
       })
       .catch(_e => {
         this.schedules = {};

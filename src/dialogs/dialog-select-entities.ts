@@ -12,6 +12,7 @@ import { computeEntityIcon } from '../data/format/compute_entity_icon';
 import { domainIcon } from '../data/actions/domain_icon';
 import { hassLocalize } from '../localize/hassLocalize';
 import { CardConfig, CustomConfig } from '../types';
+import { fetchItems } from '../data/store/fetch_items';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
@@ -41,7 +42,8 @@ const computeDomains = (hass: HomeAssistant) => {
 
 const computeEntitiesForDomain = (domain: string, customize: CustomConfig, hass: HomeAssistant) => {
   if (['script', 'notify'].includes(domain)) {
-    const entities = Object.keys(hass.services[domain]);
+    let entities = Object.keys(hass.services[domain]);
+    if (domain == 'script') entities = entities.filter(e => !['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(e));
 
     let entityList: listItem[] = entities.map(e => Object({
       key: `${domain}.${e}`,
@@ -92,6 +94,8 @@ export class DialogSelectEntities extends LitElement {
 
   @state() options?: domainsList;
 
+  @state() scheduleEntities: string[] = [];
+
   public async showDialog(params: DialogSelectEntitiesParams): Promise<void> {
     this._params = params;
     this.loadOptions();
@@ -115,8 +119,17 @@ export class DialogSelectEntities extends LitElement {
   }
 
   shouldUpdate(changedProps: PropertyValues) {
-    if (changedProps.has('_params') || changedProps.has('expandedGroups') || changedProps.has('_filter')) return true;
+    if (
+      changedProps.has('_params')
+      || changedProps.has('expandedGroups')
+      || changedProps.has('_filter')
+      || changedProps.has('scheduleEntities')
+    ) return true;
     return false;
+  }
+
+  async firstUpdated() {
+    this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(([, val]) => val.entity_id);
   }
 
   render() {
@@ -315,10 +328,13 @@ export class DialogSelectEntities extends LitElement {
 
     return (Object.keys(filteredOptions)).map((key) => {
       const domain = filteredOptions[key].key;
-      const entities = computeEntitiesForDomain(domain, this._params!.cardConfig.customize, this.hass);
       const domainIncluded = this._params?.domains.includes(domain);
+      let entities = [...filteredOptions[key].entities];
+      if (domain == 'switch') entities = entities.filter(e => !this.scheduleEntities.includes(e.key));
 
-      const numIncludedEntities = domainIncluded ? entities.length : filteredOptions[key].entities.filter(e => this._params?.entities.includes(e.key)).length
+      const numIncludedEntities = domainIncluded
+        ? entities.length
+        : entities.filter((e: listItem) => this._params?.entities.includes(e.key)).length;
 
       return html`
         <mwc-list-item
@@ -348,7 +364,7 @@ export class DialogSelectEntities extends LitElement {
         ${this.expandedGroups.includes(domain) || filterApplied ? html`
         <div class="group ${filterApplied ? 'open' : ''}">
           <li role="divider"></li>
-        ${filteredOptions[key].entities.map(e => html`
+        ${entities.map(e => html`
           <mwc-list-item
             graphic="icon"
             twoline
