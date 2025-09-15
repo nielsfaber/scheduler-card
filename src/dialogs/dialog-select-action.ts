@@ -141,18 +141,19 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderOptions() {
-    if (!this._params?.domainFilter) {
-      const domains = computeActionDomains(this.hass, this._params!.cardConfig);
-
-      if (domains.length > 1) {
-        return this._renderDomainList(domains);
-      }
-
-      // force single domain into domainFilter to render actions directly
-      this._params = { ...this._params!, domainFilter: [domains[0].key] };
+    if (this._params?.domainFilter) {
+      return this._renderDomainActions();
     }
 
-    return this._renderDomainActions();
+    const domains = computeActionDomains(this.hass, this._params!.cardConfig);
+
+    if (domains.length === 1) {
+      // force single domain into domainFilter to render actions directly
+      this._params = { ...this._params!, domainFilter: [domains[0].key] };
+      return this._renderDomainActions();
+    }
+
+    return this._renderDomainList(domains);
   }
 
   _renderDomainList(domains: domainsActionItem[]) {
@@ -173,6 +174,13 @@ export class DialogSelectAction extends LitElement {
         fillers.push(0);
       }
 
+      if (!Object.keys(domains).length) {
+        return html`
+          <mwc-list-item disabled>
+            ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
+          </mwc-list-item>
+        `;
+      }
       return html`
       ${(Object.keys(domains)).map((key) => html`
         <mwc-list-item
@@ -197,10 +205,8 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderDomainActions() {
-      if (!this._params?.domainFilter) throw new Error("Params with domainFilter needs to be set");
-
-      let result = this._params.domainFilter.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig.customize)).flat();
-      if (this._params.entityFilter?.length) {
+      let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig.customize)).flat();
+      if (this._params!.entityFilter?.length) {
         result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
       }
       if (!Object.keys(result).length) {
