@@ -1,8 +1,8 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { mdiChevronLeft, mdiClose } from '@mdi/js';
-import { computeActionDomains } from '../data/actions/compute_action_domains';
 import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
+import { actionItem as domainsActionItem, computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
 import { styleMap } from 'lit/directives/style-map';
 import { localize } from '../localize/localize';
@@ -141,8 +141,22 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderOptions() {
-    if (!this._params?.domainFilter) {
-      let domains = computeActionDomains(this.hass, this._params!.cardConfig);
+    if (this._params?.domainFilter) {
+      return this._renderDomainActions();
+    }
+
+    const domains = computeActionDomains(this.hass, this._params!.cardConfig);
+
+    if (domains.length === 1) {
+      // force single domain into domainFilter to render actions directly
+      this._params = { ...this._params!, domainFilter: [domains[0].key] };
+      return this._renderDomainActions();
+    }
+
+    return this._renderDomainList(domains);
+  }
+
+  _renderDomainList(domains: domainsActionItem[]) {
       domains.sort((a, b) => sortByName(a.name, b.name));
 
       if (this._filter) {
@@ -160,6 +174,13 @@ export class DialogSelectAction extends LitElement {
         fillers.push(0);
       }
 
+      if (!Object.keys(domains).length) {
+        return html`
+          <mwc-list-item disabled>
+            ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
+          </mwc-list-item>
+        `;
+      }
       return html`
       ${(Object.keys(domains)).map((key) => html`
         <mwc-list-item
@@ -181,10 +202,11 @@ export class DialogSelectAction extends LitElement {
         </mwc-list-item>
         `)}
       `;
-    }
-    else {
-      let result = this._params.domainFilter.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
-      if (this._params.entityFilter?.length) {
+  }
+
+  _renderDomainActions() {
+      let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
+      if (this._params!.entityFilter?.length) {
         result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
       }
       if (!Object.keys(result).length) {
@@ -205,7 +227,6 @@ export class DialogSelectAction extends LitElement {
           <span slot="secondary">${result[key].description}</span>
         </mwc-list-item>
     `);
-    }
   }
 
   _handleDomainClick(key: string) {
