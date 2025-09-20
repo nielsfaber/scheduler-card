@@ -238,7 +238,7 @@ export class SchedulerMainPanel extends LitElement {
       heading += entityIds.map(e => friendlyName(e, this.hass.states[e]?.attributes)).join(", ");
       heading += ': ';
     }
-    heading += formatActionDisplay(action, this.hass, this.config.customize);
+    heading += formatActionDisplay(action, this.hass, this.config.customize, false, true);
 
     return html`
       <scheduler-collapsible-section
@@ -466,14 +466,14 @@ export class SchedulerMainPanel extends LitElement {
     let value = ev.detail.value as Time;
     let [slots, slotIdxOut] = moveTimeslot([...this.schedule.entries[this.selectedEntry!].slots], Number(this.selectedSlot), { stop: value }, this.hass);
     this._updateEntry({ slots: slots });
-    if (slotIdxOut != this.selectedSlot) this.selectedSlot = slotIdxOut;
+    if (slotIdxOut != this.selectedSlot) this._updateSelectedSlot(slotIdxOut);
   }
 
   _startTimeChanged(ev: CustomEvent) {
     let value = ev.detail.value as Time;
     let [slots, slotIdxOut] = moveTimeslot([...this.schedule.entries[this.selectedEntry!].slots], Number(this.selectedSlot), { start: value }, this.hass);
     this._updateEntry({ slots: slots });
-    if (slotIdxOut != this.selectedSlot) this.selectedSlot = slotIdxOut;
+    if (slotIdxOut != this.selectedSlot) this._updateSelectedSlot(slotIdxOut);
   }
 
   _toggleStopTime(ev: Event) {
