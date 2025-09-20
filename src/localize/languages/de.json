@@ -121,7 +121,7 @@
         "description": "Einige Einstellungen gehen durch diese Änderung verloren. Möchten Sie fortfahren?"
       },
       "weekday_picker": {
-        "title": "Wiederholte Tage für den Zeitplan",
+        "title": "Wiederholungen für den Zeitplan",
         "choose": "Auswahl..."
       },
       "entity_picker": {
@@ -147,7 +147,7 @@
         "additional_tasks": "{number} weitere {if number is 1} Aufgabe {else} Aufgaben"
       },
       "editor": {
-        "repeated_days": "Wiederholte Tage",
+        "repeated_days": "Wiederholen",
         "start_time": "Startzeit",
         "stop_time": "Endzeit",
         "action": "Aktion",
@@ -190,4 +190,3 @@
     }
   }
 }
-
