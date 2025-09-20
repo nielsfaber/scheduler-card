@@ -25,7 +25,7 @@ export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, custo
           if (typeof config?.scale_factor === 'number') value = value / config.scale_factor;
           if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
           value = roundFloat(value);
-          if (config?.unit_of_measurement) return [field, `${value}${config.unit_of_measurement}`];
+          if (config?.unit) return [field, `${value}${config.unit}`];
         }
 
         if (Object.keys(selector).includes('boolean') && (selector as BooleanSelector).boolean) {

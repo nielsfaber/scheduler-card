@@ -61,7 +61,7 @@ export interface NumberSelector {
     max?: number;
     step?: number | "any";
     mode?: "box" | "slider";
-    unit_of_measurement?: string;
+    unit?: string;
     optional?: boolean;
     scale_factor?: number;
   } | null;

@@ -6,6 +6,7 @@ import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
 import { hassLocalize } from "../localize/hassLocalize";
 import { roundFloat } from "../lib/round_float";
+import { isDefined } from "../lib/is_defined";
 
 
 @customElement("scheduler-combo-selector")
@@ -181,7 +182,7 @@ export class SchedulerComboSelector extends LitElement {
           @change=${valueChanged}
           ?disabled=${this.disabled}
         ></ha-slider>
-        <span class="value">${value} ${config.unit_of_measurement || ''}</span>
+        <span class="value">${value} ${config.unit || ''}</span>
         </div>
       `
     }
@@ -217,7 +218,7 @@ export class SchedulerComboSelector extends LitElement {
       };
 
       const valueChanged = (ev: CustomEvent) => {
-        let value = ev.detail.value === 'true';
+        let value = isDefined(ev.detail.value) ? ev.detail.value === 'true' : undefined;
         ev.stopPropagation();
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
       }
@@ -226,7 +227,7 @@ export class SchedulerComboSelector extends LitElement {
         <scheduler-combo-selector
           .hass=${this.hass}
           .config=${selector}
-          .value=${Boolean(this.value) ? 'true' : 'false'}
+          .value=${typeof this.value == 'boolean' ? this.value ? 'true' : 'false' : undefined}
           @value-changed=${valueChanged}
           ?disabled=${this.disabled}
         >

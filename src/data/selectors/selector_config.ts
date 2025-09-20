@@ -43,7 +43,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'climate.target_temp_high': {
       const isOptional = searchKey == 'climate.temperature' ? ((attr.supported_features || 0) & 2) > 0 : ((attr.supported_features || 0) & 1) > 0;
       const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}`, optional: isOptional });
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit: `${hass.config.unit_system.temperature}`, optional: isOptional });
     }
     case 'climate.hvac_mode':
       return listSelector({ options: computeOptionIcons(attr.hvac_modes), translation_key: 'component.climate.entity_component._.state.${value}' });
@@ -55,7 +55,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'cover.tilt_position':
     case 'fan.percentage':
     case 'valve.position':
-      return numericSelector({ min: 0, max: 100, step: 1, unit_of_measurement: '%' });
+      return numericSelector({ min: 0, max: 100, step: 1, unit: '%' });
     case 'fan.oscillating':
       return <BooleanSelector>{ boolean: {} };
     case 'fan.direction':
@@ -63,17 +63,17 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
     case 'fan.preset_mode':
       return listSelector({ options: computeOptionIcons(attr.preset_modes) });
     case 'humidifier.humidity':
-      return numericSelector({ min: attr.min_humidity, max: attr.max_humidity, step: 1, unit_of_measurement: '%' });
+      return numericSelector({ min: attr.min_humidity, max: attr.max_humidity, step: 1, unit: '%' });
     case 'humidifier.mode':
       return listSelector({ options: computeOptionIcons(attr.available_modes), translation_key: 'component.humidifier.entity_component._.state_attributes.mode.state.${value}' });
     case 'input_number.value':
     case 'number.value':
-      return numericSelector({ min: attr.min, max: attr.max, step: attr.step, mode: attr.mode, unit_of_measurement: attr.unit_of_measurement });
+      return numericSelector({ min: attr.min, max: attr.max, step: attr.step, mode: attr.mode, unit: attr.unit_of_measurement });
     case 'input_select.option':
     case 'select.option':
       return listSelector({ options: computeOptionIcons(attr.options) });
     case 'light.brightness':
-      return numericSelector({ min: 0, max: 100, step: 1, unit_of_measurement: '%', scale_factor: 2.55 });
+      return numericSelector({ min: 0, max: 100, step: 1, unit: '%', scale_factor: 2.55 });
     case 'media_player.source':
     case 'notify.title':
       return <StringSelector>{ text: {} };
@@ -81,7 +81,7 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return <StringSelector>{ text: {} };
     case 'water_heater.temperature': {
       const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
-      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit_of_measurement: `${hass.config.unit_system.temperature}` });
+      return numericSelector({ min: attr.min_temp, max: attr.max_temp, step: attr.target_temp_step || fallbackStep, unit: `${hass.config.unit_system.temperature}` });
     }
     case 'water_heater.operation_mode':
       return listSelector({ options: computeOptionIcons(attr.operation_list) });
@@ -151,7 +151,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
     const maxList = (input as NumberSelector[]).map(e => e.number!.max).filter(e => e !== undefined) as number[];
     const stepList = (input as NumberSelector[]).map(e => e.number!.step).filter(e => e !== undefined) as number[];
     const modeList = (input as NumberSelector[]).map(e => e.number!.mode).filter(e => e !== undefined) as string[];
-    const uomList = (input as NumberSelector[]).map(e => e.number!.unit_of_measurement).filter(e => e !== undefined) as string[];
+    const unitList = (input as NumberSelector[]).map(e => e.number!.unit).filter(e => e !== undefined) as string[];
     const optionalList = (input as NumberSelector[]).map(e => e.number!.optional);
     const scaleFactorList = (input as NumberSelector[]).map(e => e.number!.scale_factor).filter(e => e !== undefined) as number[];
 
@@ -161,7 +161,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
         max: maxList.length ? Math.min(...maxList) : undefined,
         step: stepList.length ? Math.max(...stepList) : undefined,
         mode: modeList.length && isUnique(modeList) ? modeList[0] : undefined,
-        unit_of_measurement: uomList.length && isUnique(uomList) ? uomList[0] : undefined,
+        unit: unitList.length && isUnique(unitList) ? unitList[0] : undefined,
         optional: optionalList.every(e => e),
         scale_factor: scaleFactorList.length && isUnique(scaleFactorList) ? scaleFactorList[0] : undefined
       }
