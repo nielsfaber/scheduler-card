@@ -1,4 +1,4 @@
-import { Action, CustomConfig, VariableConfig } from "../../types";
+import { Action, CustomConfig } from "../../types";
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { localize } from "../../localize/localize";
 import { actionConfig } from "../actions/action_config";
@@ -6,6 +6,9 @@ import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 
+const subStringPattern = /\[([^\]]+)\]/;
+const wildCardPattern = /\{([^\}]+)\}/;
+const MAX_RECURSION_DEPTH = 100;
 
 const translationKeyOverlap = (key: string, action: Action): number => {
 
@@ -20,11 +23,11 @@ const translationKeyOverlap = (key: string, action: Action): number => {
   }, 0);
 };
 
-export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false) => {
+export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false, eraseHtmlTags = false) => {
   const config = actionConfig(action, customize);
 
   let actionDisplay = config.name || '';
-
+  let attributes = formatSelectorDisplay(action, hass, customize);
 
   if (config?.translation_key && !actionDisplay) {
     let translationKey: string = "";
@@ -39,7 +42,6 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
       translationKey = translations[0];
     } else translationKey = config.translation_key;
 
-    let attributes = formatSelectorDisplay(action, hass);
     actionDisplay = localize(translationKey, hass, Object.keys(attributes).map(e => `{${e}}`), Object.values(attributes));
 
     if (formatShort) {
@@ -69,5 +71,34 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     if (!actionDisplay) actionDisplay = service.replace(/_/g, ' ');
   }
 
+  let matchedSubString: RegExpExecArray | null;
+  let it = 0;
+  while ((matchedSubString = subStringPattern.exec(actionDisplay)) && it < MAX_RECURSION_DEPTH) {
+    it++;
+    let matchedWildCard = matchedSubString[1].match(wildCardPattern);
+    if (matchedWildCard && Object.keys(action.service_data || {}).includes(matchedWildCard[1]) && Object.keys(attributes).includes(matchedWildCard[1])) {
+      actionDisplay = actionDisplay.replace(matchedSubString[0], matchedSubString[1].replace(matchedWildCard[0], attributes[matchedWildCard[1]]));
+    }
+    else {
+      actionDisplay = actionDisplay.replace(matchedSubString[0], '');
+    }
+  }
+
+  let matchedWildCard: RegExpExecArray | null;
+  it = 0;
+  while ((matchedWildCard = wildCardPattern.exec(actionDisplay)) && it < MAX_RECURSION_DEPTH) {
+    it++;
+    if (Object.keys(attributes).includes(matchedWildCard[1])) {
+      actionDisplay = actionDisplay.replace(matchedWildCard[0], attributes[matchedWildCard[1]]);
+    }
+    else {
+      actionDisplay = actionDisplay.replace(matchedWildCard[0], '');
+    }
+  }
+
+  if (eraseHtmlTags && /<.+?>/g.exec(actionDisplay) !== null) {
+    let htmlContent = new DOMParser().parseFromString(actionDisplay, 'text/html');
+    actionDisplay = htmlContent.body.textContent || '';
+  }
   return actionDisplay;
 }

@@ -42,7 +42,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
   const domainName = (domain: string) => hassLocalize(`component.${domain}.title`, hass, false) || domain.replace(/_/g, " ");
 
   const serviceName = (service: string) => hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
-    hass.services[domain][service].name ||
+    !!hass.services[domain] && !!hass.services[domain][service] && hass.services[domain][service].name ||
     service.replace(/_/g, ' ');
 
   const serviceDescription = (service: string) => {
@@ -88,8 +88,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
 
     actionList.push({
       key: key,
-      name: action.name || "",
-      description: action.name || "",
+      name: `${domainName(domain)}: ${sanitizeTagsAndWildcards(action.name || serviceName(computeEntity(action.service)))}`,
+      description: sanitizeTagsAndWildcards(action.name || ""),
       icon: action.icon || domainIcon(domain),
       action: <Action>{
         service: action.service.includes('.') ? action.service : `${domain}.${action.service}`,
@@ -103,3 +103,14 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
 
   return actionList;
 };
+
+const sanitizeTagsAndWildcards = (input: string) => {
+  if (/<.+?>/g.exec(input) !== null) {
+    let htmlContent = new DOMParser().parseFromString(input, 'text/html');
+    input = htmlContent.body.textContent || '';
+  }
+  let res: RegExpExecArray | null;
+  while (res = /\[([^\]]+)\]/.exec(input)) input = input.replace(res[0], '');
+  while (res = /\{([^\}]+)\}/.exec(input)) input = input.replace(res[0], '');
+  return input;
+}
