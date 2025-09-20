@@ -157,31 +157,31 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderDomainList(domains: domainsActionItem[]) {
-      domains.sort((a, b) => sortByName(a.name, b.name));
+    domains.sort((a, b) => sortByName(a.name, b.name));
 
-      if (this._filter) {
-        domains = domains.filter(e => {
-          const tokens = this._filter.toLowerCase().trim().split(" ");
-          return (
-            tokens.every(token => e.name.toLowerCase().includes(token)) ||
-            tokens.every(token => e.key.toLowerCase().includes(token))
-          )
-        })
-      }
+    if (this._filter) {
+      domains = domains.filter(e => {
+        const tokens = this._filter.toLowerCase().trim().split(" ");
+        return (
+          tokens.every(token => e.name.toLowerCase().includes(token)) ||
+          tokens.every(token => e.key.toLowerCase().includes(token))
+        )
+      })
+    }
 
-      let fillers: number[] = [];
-      for (var i = domains.length; i < 7; i++) {
-        fillers.push(0);
-      }
+    let fillers: number[] = [];
+    for (var i = domains.length; i < 7; i++) {
+      fillers.push(0);
+    }
 
-      if (!Object.keys(domains).length) {
-        return html`
+    if (!Object.keys(domains).length) {
+      return html`
           <mwc-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
           </mwc-list-item>
         `;
-      }
-      return html`
+    }
+    return html`
       ${(Object.keys(domains)).map((key) => html`
         <mwc-list-item
           graphic="icon"
@@ -192,7 +192,7 @@ export class DialogSelectAction extends LitElement {
           <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
           <span>${domains[key].name}</span>
         </mwc-list-item>`)
-        }
+      }
         ${fillers.map(_e => html`
         <mwc-list-item
           graphic="icon"
@@ -205,18 +205,28 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderDomainActions() {
-      let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
-      if (this._params!.entityFilter?.length) {
-        result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
-      }
-      if (!Object.keys(result).length) {
-        return html`
+    let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
+    if (this._params!.entityFilter?.length) {
+      result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
+    }
+    if (this._filter) {
+      result = result.filter(e => {
+        const tokens = this._filter.toLowerCase().trim().split(" ");
+        return (
+          tokens.every(token => e.name.toLowerCase().includes(token)) ||
+          tokens.every(token => e.key.toLowerCase().includes(token))
+        )
+      })
+    }
+
+    if (!Object.keys(result).length) {
+      return html`
           <mwc-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
           </mwc-list-item>
         `;
-      }
-      return (Object.keys(result)).map((key) => html`
+    }
+    return (Object.keys(result)).map((key) => html`
         <mwc-list-item
           graphic="icon"
           @click=${() => this._handleActionClick(result[key])}
