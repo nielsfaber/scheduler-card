@@ -240,7 +240,7 @@ export class SchedulerChip extends LitElement {
         opacity: 0;
       }
       :host([disabled]) .trailing-icon {
-        cursor: default;
+        cursor: not-allowed;
       }
       :host([selectable]) .chip, :host([toggleable]) .chip {
         cursor: pointer;
