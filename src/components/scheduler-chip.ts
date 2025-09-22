@@ -213,7 +213,7 @@ export class SchedulerChip extends LitElement {
         justify-content: center;
         --mdc-icon-size: 16px;
         margin: 0px 3px 0px -8px;
-        color: var(--icon-color, rgba(0, 0, 0, 0.54));
+        color: var(--secondary-text-color);
         cursor: pointer;
       }
       .trailing-icon:before {
