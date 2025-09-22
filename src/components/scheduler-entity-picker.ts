@@ -32,7 +32,29 @@ export class SchedulerEntityPicker extends LitElement {
   @state() scheduleEntities: string[] = [];
 
   protected async firstUpdated() {
-    this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(([, val]) => val.entity_id);
+    this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(
+      ([, val]) => val.entity_id
+    );
+    this._autoSelectIfSingleEntity();
+  }
+
+  protected updated(changedProps: PropertyValues) {
+    super.updated(changedProps);
+
+    // Relevant for type change in conditions
+    if (changedProps.has("domain")) { 
+      this._autoSelectIfSingleEntity();
+    }
+  }
+
+  private _autoSelectIfSingleEntity() {
+    if (this.value && this.value.length > 0) return;
+
+    const items = this._filteredItems();
+    if (items.length === 1) {
+      this.value = [items[0].id];
+      fireEvent(this, "value-changed", { value: this.value });
+    }
   }
 
   private _valueRenderer: PickerValueRenderer = (value) => {
