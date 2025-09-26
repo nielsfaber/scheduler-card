@@ -1,45 +1,45 @@
 # scheduler-card <!-- omit in TOC -->
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)  
 
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Updating](#updating)
-- [Usage](#usage)
-  - [Creating a schedule](#creating-a-schedule)
-    - [Choosing an entity and action](#choosing-an-entity-and-action)
-    - [Choosing the days](#choosing-the-days)
-    - [Choosing the time](#choosing-the-time)
-  - [Creating a time scheme](#creating-a-time-scheme)
-    - [Timeslots](#timeslots)
-    - [Time scheme editor](#time-scheme-editor)
-  - [Options panel](#options-panel)
-    - [Condition editor](#condition-editor)
-    - [Period](#period)
-    - [Behaviour after completion](#behaviour-after-completion)
-    - [Name](#name)
-- [Configuration](#configuration)
-  - [Options](#options)
-  - [Standard configuration](#standard-configuration)
-  - [Adding entities](#adding-entities)
-    - [Include](#include)
-    - [Exclude](#exclude)
-  - [Groups](#groups)
-  - [Schedule discovery](#schedule-discovery)
-  - [Customize](#customize)
-    - [Options](#options-1)
-    - [Actions](#actions)
-    - [Numeric action variable](#numeric-action-variable)
-    - [List action variable](#list-action-variable)
-    - [Conditions](#conditions)
-  - [Display options](#display-options)
-  - [Tags](#tags)
-- [Translations](#translations)
-- [Tips & Tricks](#tips--tricks)
-  - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
-  - [Customizing built-in actions](#customizing-built-in-actions)
-- [Troubleshooting](#troubleshooting)
-  - [Checking card version](#checking-card-version)
-- [Say thank you](#say-thank-you)
+- [scheduler-card ](#scheduler-card-)
+  - [Introduction](#introduction)
+  - [Installation](#installation)
+  - [Updating](#updating)
+  - [Usage](#usage)
+    - [Creating a schedule](#creating-a-schedule)
+      - [Choosing an entity and action](#choosing-an-entity-and-action)
+      - [Choosing the days](#choosing-the-days)
+      - [Choosing the time](#choosing-the-time)
+    - [Creating a time scheme](#creating-a-time-scheme)
+      - [Timeslots](#timeslots)
+      - [Time scheme editor](#time-scheme-editor)
+    - [Options panel](#options-panel)
+      - [Condition editor](#condition-editor)
+      - [Period](#period)
+      - [Behaviour after completion](#behaviour-after-completion)
+      - [Name](#name)
+  - [Configuration](#configuration)
+    - [Options](#options)
+    - [Standard configuration](#standard-configuration)
+    - [Adding entities](#adding-entities)
+      - [Include](#include)
+      - [Exclude](#exclude)
+    - [Schedule discovery](#schedule-discovery)
+    - [Customize](#customize)
+      - [Options](#options-1)
+      - [Actions](#actions)
+      - [Numeric action variable](#numeric-action-variable)
+      - [List action variable](#list-action-variable)
+      - [Conditions](#conditions)
+    - [Display options](#display-options)
+    - [Tags](#tags)
+  - [Translations](#translations)
+  - [Tips \& Tricks](#tips--tricks)
+    - [Triggering multiple actions on a schedule](#triggering-multiple-actions-on-a-schedule)
+    - [Customizing built-in actions](#customizing-built-in-actions)
+  - [Troubleshooting](#troubleshooting)
+    - [Checking card version](#checking-card-version)
+  - [Say thank you](#say-thank-you)
 
 ## Introduction
 This is a Lovelace card for Home Assistant that can be used to create a time schedule for your smart devices.
@@ -77,8 +77,6 @@ Manual installation:
    ...
  entities:
    ...
- groups:
-   ...
   ```
 
 </details>
@@ -109,14 +107,6 @@ Click the button 'add item' in the bottom of the card, to start creating a sched
 
 #### Choosing an entity and action
 The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view.
-
-__Groups__
-Since HA may contain many entities, the card divides the entities into different groups.
-Clicking a group automatically will show the entities contained in the group.
-
-The groups that are displayed are depending on your HA configuration.
-Typically the groups are based on the _domain_ of your entities.
-If you want to make changes to the groups, you can do this by defining [groups](#groups) configuration.
 
 __Entities__
 The entities that you can to control with the scheduler show up here.
@@ -304,7 +294,6 @@ Configuration is not *necessary*, except for defining a set of entities which yo
 | `discover_existing`      | boolean        | *true*                      | Show previously created schedules in the card, also if the related entities are not included in the configuration.<br>Set to `false` if you have multiple scheduler-cards.<br>See [schedule discovery](#schedule-discovery) for more info.                                                                    |
 | `include`                | list           | none                        | List of filters to determine which HA entities are available for creating schedules.<br> See [include](#include) for more info.                                                                                                                                                                               |
 | `exclude`                | list           | none                        | List of filters to determine which HA entities are **not** available for creating schedules.<br> See [exclude](#exclude) for more info.                                                                                                                                                                       |
-| `groups`                 | list           | none                        | Organize the entities menu. <br>See [groups](#groups) for more info.                                                                                                                                                                                                                                          |
 | `customize`              | dictionary     | none                        | Customize the available actions or visualization of entities.   <br>See [customize](#customize) for more info.                                                                                                                                                                                                |
 | `title`                  | boolean/string | *true*                      | Provide a text to replace the title of the card.<br> Set to `false` to hide the title.                                                                                                                                                                                                                        |
 | `time_step`              | number         | 10                          | Set the time step (in minutes) for the time picker                                                                                                                                                                                                                                                            |
@@ -321,7 +310,7 @@ It is intended to make setting up the card easy.
 The standard configuration consists of the following features:
 * Discovery of devices (entities) of various types in your HA config and making them available for creating schedules
 * Defining actions per entity based on their capabilities
-* Icons for groups, entities and actions
+* Icons for entities and actions
 
 When including an entity, the standard configuration will automatically detect which actions are supported by it, and will make these available.
 Also it has icons for most entity types and actions.
@@ -363,35 +352,6 @@ include:
 exclude:
   - light.my_light_that_i_never_use # exclude
 ```
-
-
-### Groups
-The `groups` configuration provides the capability of organizing the entities.
-To be clear, they have nothing to do with the [group](https://www.home-assistant.io/integrations/group/) integration in Home Assistant.
-
-By default, entities will be grouped based on their type (domain). 
-Entities that are assigned to your own defined group will not be grouped by type.
-
-| Name    | Type   | Default            | Description                                                                                                                                                                                 |
-| ------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name    | string | (same as group_id) | Displayed name for group                                                                                                                                                                    |
-| icon    | string | none               | Displayed icon for group                                                                                                                                                                    |
-| include | list   | none               | List of filters to determine which of the entities belong in this group.<br>This has the same functionality as the [include](#include) filter for defining the entities in the card.        |
-| exclude | list   | none               | List of filters to determine which of the entities do not belong in this group.<br>This has the same functionality as the [exclude](#exclude) filter for defining the entities in the card. |  |
-
-<u>Example:</u>
-
-*Place all `light` entities in group labelled "lighting"*
-```yaml
-groups:
-  - name: "Lighting"
-    icon: "hass:ceiling-light"
-    include:
-      - light
-```
-Result:
-
-![groups example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/groups_example.png?raw=true)
 
 ### Schedule discovery
 
@@ -732,9 +692,9 @@ Currently the following languages are supported:
 | Português   | pt, pt-br  |                   |
 | Русский     | ru         |                   |
 | Română      | ro         |                   |
-| Slovenščina  | sl         |                   |
-| Slovenský  | sk         |                   |
-| Suomalainen  | fi        |                   |
+| Slovenščina | sl         |                   |
+| Slovenský   | sk         |                   |
+| Suomalainen | fi         |                   |
 | Nederlands  | nl         |                   |
 | Norsk       | no, nb, nn |                   |
 | 简体中文    | zh-Hans    |                   |

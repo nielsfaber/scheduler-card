@@ -385,6 +385,8 @@ export class SchedulerTimePicker extends LitElement {
 
   private _amPmChanged(ev: InputEvent) {
     const value = (ev.target as HTMLInputElement).value;
+    const oldValue = convertTo12Hour(this.hours).am_pm;
+    if (oldValue == value) return;
     const hours12 = convertTo12Hour(this.hours).hours;
     this.hours = convertTo24Hour(hours12, value == 'AM' ? AmPmFormat.AM : AmPmFormat.PM);
     this._valueChanged();

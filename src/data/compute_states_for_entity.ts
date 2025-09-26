@@ -71,7 +71,7 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
       return listSelector({ options: computeStateIcons(['home', 'not_home']), translation_key: 'component.device_tracker.entity_component._.state.${value}' });
     case 'input_number':
     case 'number':
-      return numericSelector({ min: attr.min, max: attr.max, step: attr.step, mode: attr.mode, unit_of_measurement: attr.unit_of_measurement });
+      return numericSelector({ min: attr.min, max: attr.max, step: attr.step, mode: attr.mode, unit: attr.unit_of_measurement });
     case 'input_select':
     case 'select':
       return listSelector({ options: attr.options });
@@ -83,10 +83,10 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
       const zones = Object.keys(hass.states).filter(e => computeDomain(e) == 'zone').map(computeEntity);
       return listSelector({ options: [...new Set(['home', 'not_home', ...zones])] });
     case 'proximity':
-      return numericSelector({ mode: 'box', unit_of_measurement: attr.unit_of_measurement });
+      return numericSelector({ mode: 'box', unit: attr.unit_of_measurement });
     case 'sensor':
       return !isNaN(Number(stateObj?.state))
-        ? numericSelector({ mode: 'box', unit_of_measurement: attr.unit_of_measurement })
+        ? numericSelector({ mode: 'box', unit: attr.unit_of_measurement })
         : <StringSelector>{ text: {} }
     case 'sun':
       return listSelector({ options: computeStateIcons(['above_horizon', 'below_horizon']), translation_key: 'component.sun.entity_component._.state.${value}' });

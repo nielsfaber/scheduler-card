@@ -32,7 +32,8 @@ export const compareActions = (actionA: CustomActionConfig, actionB: Action) => 
         //allow no value set for option (user needs to pick it )
       }
       else if (Object.keys(variableConfig).includes('min') && Object.keys(variableConfig).includes('max')) {
-        return typeof value == 'number';
+        if (!isDefined(value) && Object.keys(variableConfig).includes('optional') && (variableConfig as any).optional) return true;
+        else return typeof value == 'number';
       }
       else {
         return true;
@@ -41,7 +42,6 @@ export const compareActions = (actionA: CustomActionConfig, actionB: Action) => 
     return false;
   })) return false;
 
-  //TBD: handle optional variables
   return true;
 
 };

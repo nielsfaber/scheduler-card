@@ -188,7 +188,7 @@ export type VariableConfig = {
   }[]
 } | {
   name?: string;
-  unit: string;
+  unit?: string;
   min: number;
   max: number;
   step: number;

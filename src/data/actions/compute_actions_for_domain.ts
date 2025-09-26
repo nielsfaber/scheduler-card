@@ -1,8 +1,8 @@
 import { supportedActions } from "./supported_actions";
 import { domainIcon } from "./domain_icon";
 import { HomeAssistant } from "../../lib/types";
-import { computeDomain, computeEntity } from "../../lib/entity";
-import { Action, CustomConfig } from "../../types";
+import { computeEntity } from "../../lib/entity";
+import { Action } from "../../types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { parseCustomActions, parseExcludedActions } from "./parse_custom_actions";
 import { formatActionDisplay } from "../format/format_action_display";
@@ -11,6 +11,8 @@ import { serviceIcons } from "../format/service_icons";
 import { parseCustomVariable } from "../selectors/selector_config";
 import { defaultSelectorValue } from "../selectors/default_selector_value";
 import { isDefined } from "../../lib/is_defined";
+import { entityConfig } from "./compute_action_domains";
+import { matchPattern } from "../../lib/patterns";
 
 export interface actionItem {
   key: string,
@@ -20,23 +22,15 @@ export interface actionItem {
   action: Action;
 }
 
-// const serviceByEntityId = (hass: HomeAssistant, domain: string, action: string) => {
-//   return (
-//     Object.keys(hass.services).includes(domain) &&
-//     Object.keys(hass.services[domain]).includes(action) &&
-//     Object.keys(hass.states).includes(`${domain}.${action}`)
-//   );
-// }
-
-export const computeActionsForDomain = (hass: HomeAssistant, domain: string, customize?: CustomConfig) => {
+export const computeActionsForDomain = (hass: HomeAssistant, domain: string, config: entityConfig) => {
 
   const isSupportedAction = (action: string) => {
     if (!Object.keys(supportedActions).includes(domain)) return false;
     let res = Object.keys(supportedActions[domain]).includes(action);
     if (!res && Object.keys(supportedActions[domain]).includes('{entity_id}')) {
-      // allow script/notify services by entity_id
-      if (['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(action)) res = false; //hidden actions for script entities 
-      else res = true;
+      res = ((config.include || []).some(e => matchPattern(e, `${domain}.${action}`)) ||
+        Object.keys(config.customize || {}).some(e => matchPattern(e, `${domain}.${action}`))) &&
+        !(config.exclude || []).some(e => matchPattern(e, `${domain}.${action}`));
     }
     return res;
   };
@@ -48,7 +42,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
   const domainName = (domain: string) => hassLocalize(`component.${domain}.title`, hass, false) || domain.replace(/_/g, " ");
 
   const serviceName = (service: string) => hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
-    hass.services[domain][service].name ||
+    !!hass.services[domain] && !!hass.services[domain][service] && hass.services[domain][service].name ||
     service.replace(/_/g, ' ');
 
   const serviceDescription = (service: string) => {
@@ -71,15 +65,15 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
   }));
 
   //get excluded actions for entity
-  let excludedActions = parseExcludedActions(customize || {}, domain);
+  let excludedActions = parseExcludedActions(config.customize || {}, domain);
   if (excludedActions.length) {
     actionList = actionList.filter(e => !excludedActions.some(a => {
       return caseInsensitiveStringCompare(computeEntity(e.action.service), a) > 0
-        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, customize), a) > 0
+        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) > 0
     }));
   }
 
-  let customActions = parseCustomActions(customize || {}, domain);
+  let customActions = parseCustomActions(config.customize || {}, domain);
   customActions.forEach(action => {
     let key = action.service;
     while (actionList.find(e => e.key == key)) key += '_2';
@@ -94,8 +88,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
 
     actionList.push({
       key: key,
-      name: action.name || "",
-      description: action.name || "",
+      name: `${domainName(domain)}: ${sanitizeTagsAndWildcards(action.name || serviceName(computeEntity(action.service)))}`,
+      description: sanitizeTagsAndWildcards(action.name || ""),
       icon: action.icon || domainIcon(domain),
       action: <Action>{
         service: action.service.includes('.') ? action.service : `${domain}.${action.service}`,
@@ -109,3 +103,14 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, cus
 
   return actionList;
 };
+
+const sanitizeTagsAndWildcards = (input: string) => {
+  if (/<.+?>/g.exec(input) !== null) {
+    let htmlContent = new DOMParser().parseFromString(input, 'text/html');
+    input = htmlContent.body.textContent || '';
+  }
+  let res: RegExpExecArray | null;
+  while (res = /\[([^\]]+)\]/.exec(input)) input = input.replace(res[0], '');
+  while (res = /\{([^\}]+)\}/.exec(input)) input = input.replace(res[0], '');
+  return input;
+}

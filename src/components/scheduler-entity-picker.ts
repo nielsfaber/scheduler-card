@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing, TemplateResult } from "lit";
+import { css, html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain, friendlyName } from "../lib/entity";
 import { matchPattern } from "../lib/patterns";
@@ -9,6 +9,7 @@ import { mdiChevronDown, mdiChevronUp, mdiMinus, mdiPlus, mdiShape } from "@mdi/
 
 import './scheduler-chip-set';
 import './scheduler-picker';
+import { fetchItems } from "../data/store/fetch_items";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -27,6 +28,34 @@ export class SchedulerEntityPicker extends LitElement {
   disabled = false;
 
   @state() multipleMode = false;
+
+  @state() scheduleEntities: string[] = [];
+
+  protected async firstUpdated() {
+    this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(
+      ([, val]) => val.entity_id
+    );
+    this._autoSelectIfSingleEntity();
+  }
+
+  protected updated(changedProps: PropertyValues) {
+    super.updated(changedProps);
+
+    // Relevant for type change in conditions
+    if (changedProps.has("domain")) { 
+      this._autoSelectIfSingleEntity();
+    }
+  }
+
+  private _autoSelectIfSingleEntity() {
+    if (this.value && this.value.length > 0) return;
+
+    const items = this._filteredItems();
+    if (items.length === 1) {
+      this.value = [items[0].id];
+      fireEvent(this, "value-changed", { value: this.value });
+    }
+  }
 
   private _valueRenderer: PickerValueRenderer = (value) => {
     const entityId = value || "";
@@ -176,6 +205,7 @@ export class SchedulerEntityPicker extends LitElement {
           !(this.config!.exclude || []).some(e => matchPattern(e, entityId))
       });
     }
+    entityIds = entityIds.filter(e => !this.scheduleEntities.includes(e));
 
     // if (this.initialValue && !entityIds.includes(this.initialValue) && !this.valueMultiple.includes(this.initialValue)) {
     //   entityIds = [...entityIds, this.initialValue];
