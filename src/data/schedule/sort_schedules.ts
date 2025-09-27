@@ -1,6 +1,6 @@
 import { sortByName } from "../../lib/sort";
 import { HomeAssistant } from "../../lib/types";
-import { CardConfig, CustomConfig, DisplayItem, Schedule } from "../../types";
+import { CardConfig, CustomConfig, DisplayItem, Schedule, ScheduleStorageEntry } from "../../types";
 import { computeScheduleDisplay } from "../format/compute_schedule_display";
 
 const sortByRelativeTime = (scheduleA: Schedule & { entity_id: string }, scheduleB: Schedule & { entity_id: string }) => {
@@ -54,26 +54,20 @@ const sortByState = (scheduleA: Schedule & { entity_id: string }, scheduleB: Sch
   return 0;
 };
 
-export const sortSchedules = (schedules: Record<string, Schedule & { entity_id: string }>, config: CardConfig, hass: HomeAssistant) => {
+export const sortSchedules = (schedules: ScheduleStorageEntry[], config: CardConfig, hass: HomeAssistant) => {
 
   const sortingOptions = [config.sort_by].flat();
 
   if (sortingOptions.includes('relative-time')) {
-    schedules = Object.entries(schedules)
-      .sort(([, a], [, b]) => sortByRelativeTime(a, b))
-      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+    schedules = schedules.sort(sortByRelativeTime)
   }
 
   if (sortingOptions.includes('title')) {
-    schedules = Object.entries(schedules)
-      .sort(([, a], [, b]) => sortByTitle(a, b, config.display_options.primary_info, hass, config.customize))
-      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+    schedules = schedules.sort((a, b) => sortByTitle(a, b, config.display_options.primary_info, hass, config.customize))
   }
 
   if (sortingOptions.includes('state')) {
-    schedules = Object.entries(schedules)
-      .sort(([, a], [, b]) => sortByState(a, b, hass, sortingOptions.includes('relative-time')))
-      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+    schedules = schedules.sort((a, b) => sortByState(a, b, hass, sortingOptions.includes('relative-time')))
   }
 
   return schedules;

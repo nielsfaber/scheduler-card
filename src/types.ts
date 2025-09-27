@@ -51,6 +51,7 @@ export interface Schedule {
   tags?: string[];
   enabled: boolean;
 }
+export type ScheduleStorageEntry = Schedule & { entity_id: string, schedule_id: string };
 
 export interface ScheduleEntry {
   slots: Timeslot[];

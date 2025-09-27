@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { CardConfig, EditorMode, Schedule, SchedulerEventData } from "./types";
+import { CardConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
 import { CARD_VERSION, DefaultCardConfig, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
@@ -27,7 +27,7 @@ export class SchedulerCard extends LitElement {
 
   @property() _config: CardConfig = DefaultCardConfig;
 
-  @state() public schedules?: Record<string, Schedule & { entity_id: string }>;
+  @state() public schedules?: ScheduleStorageEntry[];
 
   @state() showDiscovered: boolean = false;
 
@@ -127,12 +127,13 @@ export class SchedulerCard extends LitElement {
   }
 
   render() {
-    let items: Record<string, Schedule & { entity_id: string }> = { ...this.schedules };
-    let includedItems = Object.keys(this.schedules || {}).filter(e => isIncludedSchedule((items)[e], this._config));
+    let items: ScheduleStorageEntry[] = [...this.schedules || []];
+    let includedItems = items.filter(e => isIncludedSchedule(e, this._config));
+    let excludedItems = items.filter(e => !isIncludedSchedule(e, this._config));
 
-    const headerToggleState = Object.entries(items)
-      .filter(([key]) => this.showDiscovered ? true : includedItems.includes(key))
-      .some(([, el]) => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''));
+    const headerToggleState = this.showDiscovered
+      ? items.some(el => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''))
+      : includedItems.some(el => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''));
 
     return html`
       <ha-card>
@@ -174,12 +175,12 @@ export class SchedulerCard extends LitElement {
           ${localize('ui.panel.overview.no_entries', this.hass)}
         </div>
         `
-          : includedItems.map(scheduleId => html`
+          : includedItems.map(scheduleItem => html`
             <scheduler-item-row
               .hass=${this.hass}
               .config=${this._config}
-              .schedule_id=${scheduleId}
-              .schedule=${this.schedules![scheduleId]}
+              .schedule_id=${scheduleItem.schedule_id}
+              .schedule=${scheduleItem}
               @editClick=${this._handleEditClick}
             >
             </scheduler-item-row>
@@ -204,12 +205,12 @@ export class SchedulerCard extends LitElement {
             `
           : html`
 
-          ${Object.keys(items).filter(e => !includedItems.includes(e)).map(scheduleId => html`
+          ${excludedItems.map(e => html`
                 <scheduler-item-row
                   .hass=${this.hass}
                   .config=${this._config}
-                  .schedule_id=${scheduleId}
-                  .schedule=${this.schedules![scheduleId]}
+                  .schedule_id=${e.schedule_id}
+                  .schedule=${e}
                   @editClick=${this._handleEditClick}
                 >
                 </scheduler-item-row>
@@ -254,7 +255,7 @@ export class SchedulerCard extends LitElement {
         this.schedules = sortSchedules(res, this._config, this.hass);
       })
       .catch(_e => {
-        this.schedules = {};
+        this.schedules = [];
         this.connectionError = true;
       })
   }
@@ -289,21 +290,21 @@ export class SchedulerCard extends LitElement {
   private async handleScheduleItemUpdated(ev: SchedulerEventData): Promise<void> {
     //only update single schedule
     if (ev.event == 'scheduler_item_removed') {
-      this.schedules = Object.fromEntries(Object.entries(this.schedules || {}).filter(([k,]) => k !== ev.schedule_id));
+      this.schedules = (this.schedules || []).filter(e => e.schedule_id !== ev.schedule_id);
       return;
     }
     fetchScheduleItem(this.hass!, ev.schedule_id).then(schedule => {
       const oldSchedule = this.schedules![ev.schedule_id];
-      let schedules = { ...this.schedules };
+      let schedules = [...(this.schedules || [])];
 
       if (!schedule || (!this._config.discover_existing && !isIncludedSchedule(schedule, this._config!))) {
         //schedule is not in the list, remove if it was in the list
         if (oldSchedule) {
-          schedules = Object.fromEntries(Object.entries(schedules).filter(([k,]) => k != ev.schedule_id));
+          schedules = schedules.filter(e => e.schedule_id !== ev.schedule_id);
         }
       } else if (!oldSchedule) {
         //add a new schedule and sort the list
-        schedules = sortSchedules({ ...schedules, [ev.schedule_id]: schedule }, this._config, this.hass);
+        schedules = sortSchedules([...schedules, schedule], this._config, this.hass);
       } else if (oldSchedule.timestamps[oldSchedule.next_entries[0] || 0] == schedule.timestamps[schedule.next_entries[0] || 0]) {
         //only overwrite the existing schedule
         schedules = { ...schedules, [ev.schedule_id]: schedule };
@@ -311,7 +312,7 @@ export class SchedulerCard extends LitElement {
         //overwrite the existing schedule and sort
         schedules = sortSchedules({ ...schedules, [ev.schedule_id]: schedule }, this._config, this.hass);
       }
-      this.schedules = { ...schedules };
+      this.schedules = [...schedules];
     });
   }
 

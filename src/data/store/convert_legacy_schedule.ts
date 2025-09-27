@@ -1,6 +1,6 @@
 import { deepCompare } from "../../lib/deep_compare";
 import { computeDomain } from "../../lib/entity";
-import { Action, ConditionConfig, Schedule, TConditionLogicType, TConditionMatchType, TRepeatType, TWeekday, Timeslot } from "../../types";
+import { Action, ConditionConfig, Schedule, ScheduleStorageEntry, TConditionLogicType, TConditionMatchType, TRepeatType, TWeekday, Timeslot } from "../../types";
 
 
 interface Dictionary<TValue> {
@@ -108,8 +108,8 @@ const parseWeekdays = (input: WeekdayType): TWeekday => {
 }
 
 
-export const convertLegacySchedule = (input: LegacySchedule): Schedule & { entity_id: string } => {
-  return <Schedule & { entity_id: string }>{
+export const convertLegacySchedule = (input: LegacySchedule): ScheduleStorageEntry => {
+  return <ScheduleStorageEntry>{
     ...Object.fromEntries(Object.entries(input).filter(([key]) => !['slots', 'weekdays', ''].includes(key))),
     entries: [
       {

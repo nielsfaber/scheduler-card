@@ -1,13 +1,11 @@
 import { HomeAssistant } from "../../lib/types";
-import { Schedule } from "../../types";
+import { Schedule, ScheduleStorageEntry } from "../../types";
 import { LegacySchedule, convertLegacySchedule } from "./convert_legacy_schedule";
 
-export const fetchItems = (hass: HomeAssistant): Promise<Record<string, Schedule & { entity_id: string }>> =>
+export const fetchItems = (hass: HomeAssistant): Promise<ScheduleStorageEntry[]> =>
   hass.callWS({
     type: 'scheduler',
   })
     .then(res => {
-      return Object.fromEntries(
-        (res as LegacySchedule[]).map(el => [el.schedule_id!, convertLegacySchedule(el)])
-      )
+      return (res as LegacySchedule[]).map(convertLegacySchedule)
     })
