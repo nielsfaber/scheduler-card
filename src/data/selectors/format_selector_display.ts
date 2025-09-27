@@ -1,6 +1,6 @@
 import { Action, CustomConfig } from "../../types";
 import { selectorConfig } from "./selector_config";
-import { BooleanSelector, NumberSelector, SelectSelector } from "../../lib/selector";
+import { BooleanSelector, NumberSelector, SelectOption, SelectSelector } from "../../lib/selector";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { roundFloat } from "../../lib/round_float";
@@ -15,8 +15,11 @@ export const formatSelectorDisplay = (action: Action, hass: HomeAssistant, custo
         if (!selector) return [field, value];
 
         if (Object.keys(selector).includes('select') && (selector as SelectSelector).select) {
-          const config = (selector as SelectSelector).select;
-          if (config?.translation_key) value = hassLocalize(config.translation_key.replace('${value}', value), hass, false) || value;
+          const config = (selector as SelectSelector).select!;
+          let options: SelectOption[] = config.options.map(e => typeof e == 'string' ? Object(<SelectOption>{ value: e, label: e }) : e);
+          let match = options?.find(e => e.value == value);
+          if (config.translation_key) value = hassLocalize(config.translation_key.replace('${value}', value), hass, false) || match ? match?.label : value;
+          else if (match) value = match.label;
         }
 
         if (Object.keys(selector).includes('number') && (selector as NumberSelector).number) {

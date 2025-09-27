@@ -29,6 +29,26 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
   let actionDisplay = config.name || '';
   let attributes = formatSelectorDisplay(action, hass, customize);
 
+  if (formatShort) {
+    // only for timeslot editor
+    if (Object.keys(attributes).length > 1) {
+      const sortAttributes = (fieldA: string, fieldB: string) => {
+        const configA = !!config.fields && config.fields[fieldA] || {};
+        const configB = !!config.fields && config.fields[fieldB] || {};
+        if (configA?.optional && !configB.optional) return 1;
+        if (configB?.optional && !configA.optional) return -1;
+        return fieldA < fieldB ? -1 : fieldA > fieldB ? 1 : 0;
+      }
+      attributes = Object.fromEntries(
+        Object.entries(attributes).sort(([a,], [b,]) => sortAttributes(a, b))
+      )
+      return Object.values(attributes).join(', ');
+    }
+    else if (Object.keys(attributes).length) {
+      return Object.values(attributes)[0];
+    }
+  }
+
   if (config?.translation_key && !actionDisplay) {
     let translationKey: string = "";
     if (Array.isArray(config.translation_key)) {
@@ -43,25 +63,6 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     } else translationKey = config.translation_key;
 
     actionDisplay = localize(translationKey, hass, Object.keys(attributes).map(e => `{${e}}`), Object.values(attributes));
-
-    if (formatShort) {
-      if (Object.keys(attributes).length > 1) {
-        const sortAttributes = (fieldA: string, fieldB: string) => {
-          const configA = !!config.fields && config.fields[fieldA] || {};
-          const configB = !!config.fields && config.fields[fieldB] || {};
-          if (configA?.optional && !configB.optional) return 1;
-          if (configB?.optional && !configA.optional) return -1;
-          return fieldA < fieldB ? -1 : fieldA > fieldB ? 1 : 0;
-        }
-        attributes = Object.fromEntries(
-          Object.entries(attributes).sort(([a,], [b,]) => sortAttributes(a, b))
-        )
-        return Object.values(attributes).shift();
-      }
-      else if (Object.keys(attributes).length) {
-        return Object.values(attributes)[0];
-      }
-    }
   }
   else {
     const domain = computeDomain(action.service);

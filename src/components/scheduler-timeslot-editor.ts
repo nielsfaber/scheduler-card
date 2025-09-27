@@ -101,7 +101,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       if (!ts_stop && ts_start) ts_stop = SEC_PER_DAY;
 
       const width = (ts_stop - ts_start) / SEC_PER_DAY * 100;
-      const actionText = slot.actions.length ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true) : '';
+      const actionText = slot.actions.length ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true) : '';
 
       const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
       const textWidth = actionText.length * 5 + 10;
