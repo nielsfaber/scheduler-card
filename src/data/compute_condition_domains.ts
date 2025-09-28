@@ -4,11 +4,16 @@ import { SUPPORTED_CONDITION_DOMAINS } from "./compute_states_for_entity";
 import { HomeAssistant } from "../lib/types";
 import { matchPattern } from "../lib/patterns";
 import { hassLocalize } from "../localize/hassLocalize";
+import { CustomConfig } from "../types";
 
 
-const isSupportedDomain = (domain: string) => {
-  return SUPPORTED_CONDITION_DOMAINS.includes(domain);
-};
+const isSupportedDomain = (domain: string, customConfig: CustomConfig) => {
+  let res = SUPPORTED_CONDITION_DOMAINS.includes(domain);
+  if (!res && customConfig) {
+    return Object.keys(customConfig).map(computeDomain).includes(domain);
+  }
+  return res;
+}
 
 interface listItem {
   key: string,
@@ -27,7 +32,7 @@ export const computeConditionDomains = (hass: HomeAssistant, config: entityConfi
   let domains = Object.keys(hass.states)
     .map(e => computeDomain(e))
     .reduce((acc, cur) => acc.includes(cur) ? acc : [...acc, cur], <string[]>[])
-    .filter(isSupportedDomain);
+    .filter(e => isSupportedDomain(e, config.customize || {}));
 
   domains = domains.filter(domain => {
     return ((config.include || []).some(e => matchPattern(computeDomain(e), domain)) ||

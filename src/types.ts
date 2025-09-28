@@ -177,6 +177,7 @@ export interface CustomEntityConfig {
   icon?: string;
   actions?: CustomActionConfig[],
   exclude_actions?: string[]
+  states?: string[] | { min: number, max: number, unit?: string, step?: number };
 }
 
 

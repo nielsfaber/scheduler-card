@@ -23,6 +23,8 @@ import '../components/scheduler-collapsible-section';
 import './dialog-select-condition';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
+import { formatSelectorDisplay } from '../data/selectors/format_selector_display';
+import { isDefined } from '../lib/is_defined';
 
 @customElement('scheduler-options-panel')
 export class SchedulerOptionsPanel extends LitElement {
@@ -229,7 +231,7 @@ export class SchedulerOptionsPanel extends LitElement {
     return conditions.map((condition, i) => {
 
       const domain = this.selectedDomain || computeDomain(condition.entity_id || "");
-      const selector = computeStatesForEntity(this.selectedEntity || domain!, this.hass);
+      const selector = computeStatesForEntity(this.selectedEntity || domain!, this.hass, this.config.customize);
 
       const matchTypes =
         selector && selector.hasOwnProperty('number')
@@ -257,7 +259,7 @@ export class SchedulerOptionsPanel extends LitElement {
         <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
           <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.config.customize, this.hass)}"></ha-icon>
-          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', condition.value || '']))}
+          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', formatSelectorDisplay(condition.value, selector, this.hass) || '']))}
           ` : localize('ui.panel.options.conditions.add_condition', this.hass)}
         </div>
         <ha-button-menu
@@ -413,13 +415,21 @@ export class SchedulerOptionsPanel extends LitElement {
   _selectEntity(ev: CustomEvent) {
     const entity = ev.detail.value as string[] | undefined;
     this.selectedEntity = entity ? entity.pop() : undefined;
+    if (this.selectedEntity) {
+      const selector = computeStatesForEntity(this.selectedEntity, this.hass, this.config.customize);
+      const matchTypes =
+        selector && selector.hasOwnProperty('number')
+          ? [TConditionMatchType.Above, TConditionMatchType.Below]
+          : [TConditionMatchType.Equal, TConditionMatchType.Unequal];
+      if (!this.selectedMatchType || !matchTypes.includes(this.selectedMatchType)) this.selectedMatchType = matchTypes[0];
+    }
     this._validateCondition();
   }
 
   _validateCondition() {
     this.conditionValid = false;
-    if (!this.selectedEntity || !this.conditionValue || !this.selectedMatchType || this.conditionIdx === undefined) return;
-    const selector = computeStatesForEntity(this.selectedEntity, this.hass);
+    if (!this.selectedEntity || !isDefined(this.conditionValue) || !this.selectedMatchType || this.conditionIdx === undefined) return;
+    const selector = computeStatesForEntity(this.selectedEntity, this.hass, this.config.customize);
     if (!validateSelectorValue(this.conditionValue, selector)) return;
     this.conditionValid = true;
     const condition: Condition = {

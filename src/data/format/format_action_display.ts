@@ -5,6 +5,8 @@ import { actionConfig } from "../actions/action_config";
 import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
+import { isDefined } from "../../lib/is_defined";
+import { selectorConfig } from "../selectors/selector_config";
 
 const subStringPattern = /\[([^\]]+)\]/;
 const wildCardPattern = /\{([^\}]+)\}/;
@@ -27,7 +29,14 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
   const config = actionConfig(action, customize);
 
   let actionDisplay = config.name || '';
-  let attributes = formatSelectorDisplay(action, hass, customize);
+  let attributes = Object.fromEntries(
+    Object.entries(action.service_data)
+      .filter(([_, value]) => isDefined(value))
+      .map(([field, value]) => {
+        const selector = selectorConfig(action.service, action.target?.entity_id, field, hass, customize);
+        return [field, formatSelectorDisplay(value, selector, hass)];
+      })
+  );
 
   if (formatShort) {
     // only for timeslot editor

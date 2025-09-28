@@ -1,3 +1,4 @@
+import { isDefined } from "../lib/is_defined";
 
 const hasKey = (obj: Record<string, any>, key: string) => Object.keys(obj).includes(key);
 const isTypeBoolean = (obj: any) => typeof obj == 'boolean';
@@ -75,8 +76,10 @@ export const validateConfig = (config: any) => {
   if (hasKey(config, 'customize') && !isTypeObject(config.customize)) {
     errors.push(`'customize' must be a struct`);
   }
-  //TBD: add validation for customize input
-
+  else if (hasKey(config, 'customize')) {
+    let customizeErrors = Object.entries(config.customize).map(([key, val]) => validateCustomConfig(key, val)).filter(isDefined);
+    if (customizeErrors.length) errors.push(...customizeErrors);
+  }
   if (hasKey(config, 'tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
     errors.push(`'tags' must be a string or list of strings`);
   }
@@ -84,7 +87,6 @@ export const validateConfig = (config: any) => {
   if (hasKey(config, 'exclude_tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
     errors.push(`'exclude_tags' must be a string or list of strings`);
   }
-
   if (errors.length) {
     throw new Error(
       `Invalid configuration provided (${errors.length} error${errors.length > 1 ? 's' : ''}): ${errors.join(', ')}.`
@@ -92,3 +94,26 @@ export const validateConfig = (config: any) => {
   }
   return config;
 }
+
+const validateCustomConfig = (key: string, val: any) => {
+  //TBD: complete validation for customize input
+  if (!isTypeObject(val)) {
+    return `'In customize, ${key}' must be a struct`;
+  }
+  if (hasKey(val, 'states')) {
+    if (
+      !isTypeListOfStrings(val.states) &&
+      (
+        !isTypeObject(val.states) ||
+        !(
+          hasKey(val.states, 'min') &&
+          isTypeNumber(val.states.min) &&
+          hasKey(val.states, 'max') &&
+          isTypeNumber(val.states.max)
+        ))
+    ) {
+      return `In 'customize' [${key}].states' must be a list of strings or a range of numbers`;
+    }
+  }
+  return;
+};

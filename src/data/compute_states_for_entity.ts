@@ -4,6 +4,8 @@ import { computeDomain, computeEntity } from "../lib/entity";
 import { Selector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { stateIcon } from "./state_icon";
+import { CustomConfig } from "../types";
+import { matchPattern } from "../lib/patterns";
 
 export const SUPPORTED_CONDITION_DOMAINS = [
   'alarm_control_panel',
@@ -32,8 +34,7 @@ export const SUPPORTED_CONDITION_DOMAINS = [
   'water_heater'
 ]
 
-
-export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): Selector => {
+const standardStatesForEntity = (entityId: string, hass: HomeAssistant) => {
   const stateObj = Object.keys(hass.states).includes(entityId) ? hass.states[entityId] : undefined;
   const domain = computeDomain(entityId);
   const attr = stateObj?.attributes || {};
@@ -86,8 +87,13 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
       return numericSelector({ mode: 'box', unit: attr.unit_of_measurement });
     case 'sensor':
       return !isNaN(Number(stateObj?.state))
-        ? numericSelector({ mode: 'box', unit: attr.unit_of_measurement })
-        : <StringSelector>{ text: {} }
+        ? numericSelector({
+          mode: 'box',
+          unit: attr.unit_of_measurement,
+          min: attr.unit_of_measurement == '%' ? 0 : undefined,
+          max: attr.unit_of_measurement == '%' ? 100 : undefined
+        })
+        : <StringSelector>{ text: {} };
     case 'sun':
       return listSelector({ options: computeStateIcons(['above_horizon', 'below_horizon']), translation_key: 'component.sun.entity_component._.state.${value}' });
     case 'timer':
@@ -100,4 +106,25 @@ export const computeStatesForEntity = (entityId: string, hass: HomeAssistant): S
     default:
       return <StringSelector>{ text: {} };
   }
+}
+
+export const computeStatesForEntity = (entityId: string, hass: HomeAssistant, customize: CustomConfig): Selector => {
+  let stateConfig = standardStatesForEntity(entityId, hass);
+
+  let customStateConfig = Object.keys(customize)
+    .filter(key => matchPattern(key, computeDomain(entityId)) || matchPattern(key, entityId))
+    .filter(e => Object.keys(customize[e]).includes('states'))
+    .sort((a, b) => a.length - b.length)
+    .map(e => customize[e].states)
+    .shift();
+
+  if (customStateConfig) {
+    if (Array.isArray(customStateConfig)) {
+      stateConfig = listSelector({ options: customStateConfig });
+    }
+    else if (typeof customStateConfig == 'object' && 'min' in customStateConfig && 'max' in customStateConfig) {
+      stateConfig = numericSelector(customStateConfig);
+    }
+  }
+  return stateConfig;
 }
