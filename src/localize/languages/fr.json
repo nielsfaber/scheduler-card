@@ -149,7 +149,7 @@
       "editor": {
         "repeated_days": "Jours de répétition",
         "start_time": "Heure de début",
-        "stop_time": "Heure de in",
+        "stop_time": "Heure de fin",
         "action": "Action",
         "add_action": "Ajouter une action",
         "select_timeslot": "Choisir d'abord une plage horaire",
@@ -189,4 +189,5 @@
       }
     }
   }
+
 }
