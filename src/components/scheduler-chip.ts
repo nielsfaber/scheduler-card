@@ -81,6 +81,7 @@ export class SchedulerChip extends LitElement {
   }
 
   private renderTrailingIcon() {
+    const uniqueId = Math.random().toString(36).substring(2, 9)
     if (!this.removable && !this.badge) return nothing;
     if (this.badge) {
       return html`
@@ -91,15 +92,11 @@ export class SchedulerChip extends LitElement {
     }
     return html`
         <div class="trailing-icon" @click=${this._iconClick}>
-          ${!this.disabled ? html`
-          <ha-tooltip content="${hassLocalize('ui.common.remove', this.hass)}">
-            <ha-icon icon="mdi:close"
-            ></ha-icon>
-          </ha-tooltip>
-          ` : html`
-            <ha-icon icon="mdi:close"
-            ></ha-icon>
-          `}
+          <ha-icon icon="mdi:close" id="${uniqueId}"></ha-icon>
+          ${!this.disabled
+        ? html`<ha-tooltip for="${uniqueId}">${hassLocalize('ui.common.remove', this.hass)}</ha-tooltip>`
+        : nothing
+      }
         </div>
       `;
   }
