@@ -181,7 +181,7 @@ export class SchedulerCard extends LitElement {
               .config=${this._config}
               .schedule_id=${scheduleItem.schedule_id}
               .schedule=${scheduleItem}
-              @editClick=${this._handleEditClick}
+              @editClick=${(ev: Event) => { this._handleEditClick(ev, scheduleItem) }}
             >
             </scheduler-item-row>
           `
@@ -205,13 +205,13 @@ export class SchedulerCard extends LitElement {
             `
           : html`
 
-          ${excludedItems.map(e => html`
+          ${excludedItems.map(scheduleItem => html`
                 <scheduler-item-row
                   .hass=${this.hass}
                   .config=${this._config}
-                  .schedule_id=${e.schedule_id}
-                  .schedule=${e}
-                  @editClick=${this._handleEditClick}
+                  .schedule_id=${scheduleItem.schedule_id}
+                  .schedule=${scheduleItem}
+              @editClick=${(ev: Event) => { this._handleEditClick(ev, scheduleItem) }}
                 >
                 </scheduler-item-row>
               `
@@ -316,14 +316,13 @@ export class SchedulerCard extends LitElement {
     });
   }
 
-  private _handleEditClick(ev: CustomEvent) {
+  private _handleEditClick(ev: Event, item: Schedule) {
     if (!this.schedules) return;
-    const scheduleId = ev.detail.schedule_id;
 
     const params: SchedulerDialogParams = {
-      schedule: parseTimeBar(this.schedules[scheduleId], this.hass),
+      schedule: parseTimeBar(item, this.hass),
       cardConfig: this._config,
-      editItem: scheduleId
+      editItem: item.schedule_id!
     };
 
     fireEvent(ev.target as HTMLElement, 'show-dialog', {

@@ -29,6 +29,7 @@ import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
 import { hassLocalize } from "../localize/hassLocalize";
 import { isDefined } from "../lib/is_defined";
 import { moveTimeslot } from "../data/schedule/move_timeslot";
+import { computeEntityDisplay } from "../data/format/compute_entity_display";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -235,7 +236,7 @@ export class SchedulerMainPanel extends LitElement {
     if (!entityIds.length && ['notify', 'script'].includes(domain)) entityIds = [action.service];
 
     if (entityIds.length) {
-      heading += entityIds.map(e => friendlyName(e, this.hass.states[e]?.attributes)).join(", ");
+      heading += entityIds.map(e => computeEntityDisplay(e, this.hass, this.config.customize)).join(", ");
       heading += ': ';
     }
     heading += formatActionDisplay(action, this.hass, this.config.customize, false, true);

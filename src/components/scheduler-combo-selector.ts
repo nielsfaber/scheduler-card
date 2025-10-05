@@ -174,7 +174,6 @@ export class SchedulerComboSelector extends LitElement {
       return html`
         <div class="slider-wrapper">
         <ha-slider
-          labeled
           .min=${min}
           .max=${max}
           .step=${config.step || 1}
@@ -246,6 +245,7 @@ export class SchedulerComboSelector extends LitElement {
         display: flex;
         flex-direction: row;
         width: 100%;
+        align-items: center;
       }
       div.slider-wrapper > * {
         display: flex;

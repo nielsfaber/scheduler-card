@@ -259,7 +259,7 @@ export class SchedulerOptionsPanel extends LitElement {
         <div slot="header">
           ${condition.entity_id && condition.value !== undefined ? html`
           <ha-icon slot="icon" icon="${computeEntityIcon(condition.entity_id, this.config.customize, this.hass)}"></ha-icon>
-          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass) || '', formatSelectorDisplay(condition.value, selector, this.hass) || '']))}
+          ${capitalizeFirstLetter(localize(matchTypeValue[condition.match_type!], this.hass, ['{entity}', '{value}'], [computeEntityDisplay(condition.entity_id, this.hass, this.config.customize) || '', formatSelectorDisplay(condition.value, selector, this.hass) || '']))}
           ` : localize('ui.panel.options.conditions.add_condition', this.hass)}
         </div>
         <ha-button-menu

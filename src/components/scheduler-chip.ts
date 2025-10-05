@@ -81,7 +81,7 @@ export class SchedulerChip extends LitElement {
   }
 
   private renderTrailingIcon() {
-    const uniqueId = Math.random().toString(36).substring(2, 9)
+    const uniqueId = `icn_${Math.random().toString(36).substring(2, 9)}`;
     if (!this.removable && !this.badge) return nothing;
     if (this.badge) {
       return html`

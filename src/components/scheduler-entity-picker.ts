@@ -5,18 +5,19 @@ import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
 import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
-import { mdiChevronDown, mdiChevronUp, mdiMinus, mdiPlus, mdiShape } from "@mdi/js";
+import { mdiChevronDown, mdiChevronUp, mdiShape } from "@mdi/js";
+import { fetchItems } from "../data/store/fetch_items";
+import { CustomConfig } from "../types";
 
 import './scheduler-chip-set';
 import './scheduler-picker';
-import { fetchItems } from "../data/store/fetch_items";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
 
   @property({ attribute: false }) hass!: HomeAssistant;
   @property() domain?: string;
-  @property() config?: { include: string[], exclude: string[], customize: Record<string, any> };
+  @property() config?: { include?: string[], exclude?: string[], customize?: CustomConfig };
 
   @property({ type: Array })
   value?: string[] = [];
@@ -42,7 +43,7 @@ export class SchedulerEntityPicker extends LitElement {
     super.updated(changedProps);
 
     // Relevant for type change in conditions
-    if (changedProps.has("domain")) { 
+    if (changedProps.has("domain")) {
       this._autoSelectIfSingleEntity();
     }
   }
@@ -72,21 +73,25 @@ export class SchedulerEntityPicker extends LitElement {
         <span slot="headline">${entityId}</span>
       `;
     }
-
-    const entityName = friendlyName(entityId, stateObj.attributes);
-
-    const primary = entityName || entityId;
-    const secondary = entityId;
-
+    const item = this._parseEntityItem(entityId);
     return html`
+      ${item.icon
+        ? html`
+        <ha-icon
+          slot="start"
+          icon="${item.icon}"
+        ></ha-icon>
+       `
+        : html`
       <state-badge
         .hass=${this.hass}
         .stateObj=${stateObj}
         slot="start"
         color="var(--icon-primary-color)"
       ></state-badge>
-      <span slot="headline">${primary}</span>
-      <span slot="supporting-text">${secondary}</span>
+      `}
+      <span slot="headline">${item.primary}</span>
+      <span slot="supporting-text">${item.secondary}</span>
     `;
   };
 
@@ -114,11 +119,15 @@ export class SchedulerEntityPicker extends LitElement {
   private renderChips() {
     if (!this.multiple) return nothing;
 
-    let items = (this.value || []).map(entityId => Object({
-      name: friendlyName(entityId, this.hass.states[entityId]?.attributes),
-      value: entityId,
-      useStateIcon: true
-    }));
+    let items = (this.value || []).map(entityId => {
+      const item = this._parseEntityItem(entityId);
+      return {
+        name: item.primary,
+        value: entityId,
+        useStateIcon: item.icon ? false : true,
+        icon: item.icon
+      }
+    });
 
     return html`
       <div class="wrapper">
@@ -149,7 +158,12 @@ export class SchedulerEntityPicker extends LitElement {
 
     return html`
       <ha-combo-box-item type="button" compact>
-        ${stateObj
+        ${item.icon ? html`
+          <ha-icon
+            slot="start"
+            icon="${item.icon}"
+          ></ha-icon>
+        ` : stateObj
         ? html`
           <state-badge
             .hass=${this.hass}
@@ -189,6 +203,19 @@ export class SchedulerEntityPicker extends LitElement {
     fireEvent(this, 'value-changed', { value: this.value });
   }
 
+  private _parseEntityItem(entityId: string) {
+    const customConfig = Object.entries(this.config?.customize || {}).filter(([k, _v]) => matchPattern(k, entityId)).map(([_k, v]) => v);
+    const customEntityName = customConfig.find(e => 'name' in e)?.name;
+    const customEntityIcon = customConfig.find(e => 'icon' in e)?.icon;
+
+    return <PickerComboBoxItem>{
+      id: entityId,
+      primary: customEntityName || friendlyName(entityId, this.hass.states[entityId]?.attributes),
+      secondary: entityId,
+      icon: customEntityIcon
+    };
+  }
+
   private _filteredItems = () => {
     let entityIds = Object.keys(this.hass.states);
     if (this.domain) {
@@ -210,8 +237,7 @@ export class SchedulerEntityPicker extends LitElement {
     // if (this.initialValue && !entityIds.includes(this.initialValue) && !this.valueMultiple.includes(this.initialValue)) {
     //   entityIds = [...entityIds, this.initialValue];
     // }
-
-    let entities: PickerComboBoxItem[] = entityIds.map(e => Object({ id: e, primary: friendlyName(e, this.hass.states[e]?.attributes), secondary: e, state: this.hass.states[e] }));
+    let entities = entityIds.map(e => this._parseEntityItem(e));
     return entities;
   }
 

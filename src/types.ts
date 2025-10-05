@@ -175,6 +175,7 @@ export type CustomConfig = Record<string, CustomEntityConfig>;
 
 export interface CustomEntityConfig {
   icon?: string;
+  name?: string;
   actions?: CustomActionConfig[],
   exclude_actions?: string[]
   states?: string[] | { min: number, max: number, unit?: string, step?: number };
