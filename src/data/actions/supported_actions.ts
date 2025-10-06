@@ -9,7 +9,8 @@ export type ActionConfig = {
     }
   },
   target?: {
-    entity_id?: string[] | string
+    entity_id?: string[] | string,
+    domain?: string,
   },
   name?: string,
   icon?: string

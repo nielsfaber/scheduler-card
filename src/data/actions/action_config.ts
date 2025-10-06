@@ -22,8 +22,9 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
 
   if (!customize) return config;
 
-  let entity = action.target?.entity_id || domain;
-  if (domain == 'script' || domain == 'notify') entity = entity || action.service;
+  let entity = action.target?.entity_id;
+  if (!entity && ['script', 'notify'].includes(domain)) entity = action.service;
+  else if (!entity) entity = domain;
 
   const actionConfig = parseCustomActions(customize, [entity].flat().pop());
 

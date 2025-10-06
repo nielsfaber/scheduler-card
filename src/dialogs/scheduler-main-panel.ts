@@ -220,8 +220,8 @@ export class SchedulerMainPanel extends LitElement {
       </div>
     `;
 
-    const domain = computeDomain(action.service);
     const config = actionConfig(action, this.config.customize);
+    const domain = config.target?.domain || computeDomain(action.service);
 
     const hasFixedEntity = isDefined(config?.target?.entity_id) || this.schedule.entries[this.selectedEntry!].slots.some(e => e.actions.length && isDefined(actionConfig(e.actions[0], this.config.customize)?.target?.entity_id));
 
@@ -359,7 +359,6 @@ export class SchedulerMainPanel extends LitElement {
     }
     else if (ev.detail.hasOwnProperty('slots')) {
       this._updateEntry({ slots: ev.detail.slots });
-
     }
   }
 

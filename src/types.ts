@@ -206,5 +206,9 @@ export interface CustomActionConfig extends Action {
   icon?: string;
   service: string;
   service_data: Record<string, any>;
-  variables?: Record<string, VariableConfig>
+  variables?: Record<string, VariableConfig>;
+  target?: {
+    entity_id?: string[] | string,
+    domain?: string,
+  }
 }
