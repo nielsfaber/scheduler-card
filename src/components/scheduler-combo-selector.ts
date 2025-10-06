@@ -169,6 +169,7 @@ export class SchedulerComboSelector extends LitElement {
         value = roundFloat(value);
 
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+        ev.stopPropagation();
       }
 
       return html`
