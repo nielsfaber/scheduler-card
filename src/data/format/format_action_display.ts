@@ -29,13 +29,15 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
   const config = actionConfig(action, customize);
 
   let actionDisplay = config.name || '';
-  let attributes = Object.fromEntries(
+  let attributes: Record<string, any> = Object.fromEntries(
     Object.entries(action.service_data)
       .filter(([_, value]) => isDefined(value))
       .map(([field, value]) => {
         const selector = selectorConfig(action.service, action.target?.entity_id, field, hass, customize);
+        if (!selector) return [field, null];
         return [field, formatSelectorDisplay(value, selector, hass)];
       })
+      .filter(([_, value]) => isDefined(value))
   );
 
   if (formatShort) {
