@@ -294,7 +294,8 @@ export class SchedulerCard extends LitElement {
       return;
     }
     fetchScheduleItem(this.hass!, ev.schedule_id).then(schedule => {
-      const oldSchedule = this.schedules![ev.schedule_id];
+      const oldScheduleIdx = this.schedules!.findIndex(e => e.schedule_id == ev.schedule_id);
+      const oldSchedule = oldScheduleIdx >= 0 ? this.schedules![oldScheduleIdx] : null;
       let schedules = [...(this.schedules || [])];
 
       if (!schedule || (!this._config.discover_existing && !isIncludedSchedule(schedule, this._config!))) {
@@ -307,10 +308,11 @@ export class SchedulerCard extends LitElement {
         schedules = sortSchedules([...schedules, schedule], this._config, this.hass);
       } else if (oldSchedule.timestamps[oldSchedule.next_entries[0] || 0] == schedule.timestamps[schedule.next_entries[0] || 0]) {
         //only overwrite the existing schedule
-        schedules = { ...schedules, [ev.schedule_id]: schedule };
+        schedules = Object.assign(schedules, { [oldScheduleIdx]: schedule });
       } else {
         //overwrite the existing schedule and sort
-        schedules = sortSchedules({ ...schedules, [ev.schedule_id]: schedule }, this._config, this.hass);
+        schedules = Object.assign(schedules, { [oldScheduleIdx]: schedule });
+        schedules = sortSchedules(schedules, this._config, this.hass);
       }
       this.schedules = [...schedules];
     });
