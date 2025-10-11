@@ -247,6 +247,7 @@ export class SchedulerComboSelector extends LitElement {
         flex-direction: row;
         width: 100%;
         align-items: center;
+        gap: 4px;
       }
       div.slider-wrapper > * {
         display: flex;

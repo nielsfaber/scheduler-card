@@ -229,9 +229,9 @@ export class SchedulerOptionsPanel extends LitElement {
     if (this.conditionIdx == conditions.length) conditions = [...conditions, {}];
 
     return conditions.map((condition, i) => {
-
-      const domain = this.selectedDomain || computeDomain(condition.entity_id || "");
-      const selector = computeStatesForEntity(this.selectedEntity || domain!, this.hass, this.config.customize);
+      const entityId = this.conditionIdx == i ? this.selectedEntity || condition.entity_id || "" : condition.entity_id || "";
+      const domain = this.conditionIdx == i ? this.selectedDomain || computeDomain(entityId) : computeDomain(entityId);
+      const selector = computeStatesForEntity(entityId || domain, this.hass, this.config.customize);
 
       const matchTypes =
         selector && selector.hasOwnProperty('number')

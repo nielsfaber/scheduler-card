@@ -207,7 +207,11 @@ export class DialogSelectAction extends LitElement {
   _renderDomainActions() {
     let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
     if (this._params!.entityFilter?.length) {
-      result = result.filter(item => this._params!.entityFilter?.every(entity => !Object.keys(item.action.service_data).includes('entity_id') || item.action.service_data.entity_id == entity));
+      result = result.filter(item => this._params!.entityFilter?.every(entity => {
+        if (Object.keys(item.action.service_data).includes('entity_id') && item.action.service_data.entity_id != entity) return false;
+        else if (Object.keys(item.action.target || {}).includes('entity_id') && (item.action.target || {}).entity_id != entity) return false;
+        else return true;
+      }));
     }
     if (this._filter) {
       result = result.filter(e => {

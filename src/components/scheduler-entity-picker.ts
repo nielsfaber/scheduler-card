@@ -58,7 +58,8 @@ export class SchedulerEntityPicker extends LitElement {
     }
   }
 
-  private _valueRenderer: PickerValueRenderer = (value) => {
+  private _valueRenderer: PickerValueRenderer = (value: string | string[]) => {
+    if (Array.isArray(value)) value = value.length ? value.pop()! : "";
     const entityId = value || "";
 
     const stateObj = this.hass.states[entityId];

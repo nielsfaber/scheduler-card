@@ -31,6 +31,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
       res = ((config.include || []).some(e => matchPattern(e, `${domain}.${action}`)) ||
         Object.keys(config.customize || {}).some(e => matchPattern(e, `${domain}.${action}`))) &&
         !(config.exclude || []).some(e => matchPattern(e, `${domain}.${action}`));
+      if (res) res = Object.keys(hass.states).includes(`${domain}.${action}`);
     }
     return res;
   };
