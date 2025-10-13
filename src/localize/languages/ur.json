@@ -1,0 +1,266 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} کو {value} پر سیٹ کریں",
+      "action_with_parameter": "{parameter} کے ساتھ {action}"
+    },
+    "climate": {
+      "set_temperature": "درجہ حرارت سیٹ کریں[ {temperature} پر]",
+      "set_temperature_hvac_mode_heat": "ہیٹ[ {temperature} پر]",
+      "set_temperature_hvac_mode_cool": "کول[ {temperature} پر]",
+      "set_temperature_hvac_mode_heat_cool": "ہیٹ/کول[ {temperature} پر]",
+      "set_temperature_hvac_mode_heat_cool_range": "ہیٹ/کول[ {target_temp_low} سے {target_temp_high} تک]",
+      "set_temperature_hvac_mode_auto": "آٹو[ {temperature} پر]",
+      "set_hvac_mode": "موڈ سیٹ کریں[ {hvac_mode} پر]",
+      "set_preset_mode": "پری سیٹ موڈ سیٹ کریں[ {preset_mode} پر]",
+      "set_fan_mode": "فین موڈ سیٹ کریں[ {fan_mode} پر]"
+    },
+    "cover": {
+      "close_cover": "بند کریں",
+      "open_cover": "کھولیں",
+      "set_cover_position": "پوزیشن سیٹ کریں[ {position} پر]",
+      "set_cover_tilt_position": "جھکاؤ پوزیشن سیٹ کریں[ {tilt_position} پر]"
+    },
+    "fan": {
+      "set_percentage": "رفتار سیٹ کریں[ {percentage} پر]",
+      "set_direction": "سمت سیٹ کریں[ {direction} پر]",
+      "oscillate": "آسیلیشن سیٹ کریں[ {oscillate} پر]"
+    },
+    "humidifier": {
+      "set_humidity": "نمی سیٹ کریں[ {humidity} پر]",
+      "set_mode": "موڈ سیٹ کریں[ {mode} پر]"
+    },
+    "input_number": {
+      "set_value": "ویلیو سیٹ کریں[ {value} پر]"
+    },
+    "input_select": {
+      "select_option": "آپشن منتخب کریں[ {option}]"
+    },
+    "select": {
+      "select_option": "آپشن منتخب کریں[ {option}]"
+    },
+    "light": {
+      "turn_on": "آن کریں[ {brightness} چمک کے ساتھ]"
+    },
+    "media_player": {
+      "select_source": "سورس منتخب کریں[ {source}]"
+    },
+    "notify": {
+      "send_message": "نوٹیفکیشن بھیجیں"
+    },
+    "script": {
+      "execute": "چلائیں"
+    },
+    "vacuum": {
+      "start_pause": "شروع / روکیں"
+    },
+    "water_heater": {
+      "set_operation_mode": "موڈ سیٹ کریں[ {operation_mode} پر]",
+      "set_away_mode": "غیر موجودگی کا موڈ سیٹ کریں"
+    }
+  },
+  "domains": {
+    "alarm_control_panel": "الارم کنٹرول پینل",
+    "binary_sensor": "بائنری سینسرز",
+    "climate": "موسمی نظام",
+    "cover": "کورز",
+    "fan": "فینز",
+    "group": "اینٹیٹی گروپس",
+    "humidifier": "ہمیڈیفائرز",
+    "input_boolean": "ان پٹ بولین",
+    "input_number": "ان پٹ نمبر",
+    "input_select": "ان پٹ سلیکٹ",
+    "lawn_mower": "لان موور",
+    "light": "لائٹس",
+    "lock": "تالے",
+    "media_player": "میڈیا پلیئرز",
+    "notify": "اطلاع",
+    "switch": "سوئچز",
+    "vacuum": "ویکیومز",
+    "water_heater": "واٹر ہیٹرز"
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "روزانہ",
+          "workdays": "کام کے دن",
+          "weekend": "ہفتہ اختتام"
+        },
+        "day_types_long": {
+          "daily": "ہر دن",
+          "workdays": "کام کے دنوں میں",
+          "weekend": "ہفتے کے آخر میں"
+        },
+        "days": "دن",
+        "tomorrow": "کل",
+        "repeated_days": "ہر {days}",
+        "repeated_days_except": "ہر دن سوائے {excludedDays}",
+        "days_range": "{startDay} سے {endDay} تک",
+        "next_week_day": "اگلا {weekday}"
+      },
+      "time": {
+        "absolute": "{time} پر",
+        "interval": "{startTime} سے {endTime} تک",
+        "at_midnight": "آدھی رات کو",
+        "at_noon": "دوپہر کو",
+        "at_sun_event": "{sunEvent} کے وقت"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "ترمیم مکمل کریں",
+        "description": "جو شیڈول آپ نے بدلا ہے وہ اس وقت غیر فعال ہے، کیا آپ اسے فعال کرنا چاہتے ہیں؟"
+      },
+      "confirm_delete": {
+        "title": "اینٹیٹی حذف کریں؟",
+        "description": "کیا آپ واقعی اس اینٹیٹی کو حذف کرنا چاہتے ہیں؟"
+      },
+      "confirm_migrate": {
+        "title": "شیڈول اپ ڈیٹ کریں",
+        "description": "اس تبدیلی سے کچھ سیٹنگز ضائع ہو سکتی ہیں۔ کیا آپ جاری رکھنا چاہتے ہیں؟"
+      },
+      "weekday_picker": {
+        "title": "شیڈول کے لیے دہرائے گئے دن",
+        "choose": "منتخب کریں..."
+      },
+      "entity_picker": {
+        "title": "اینٹیٹیز منتخب کریں",
+        "choose": "منتخب کریں...",
+        "no_results": "کوئی مماثل آئٹمز نہیں ملے"
+      },
+      "action_picker": {
+        "title": "عمل منتخب کریں"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "شیڈولر",
+        "new_schedule": "نیا شیڈول",
+        "default_name": "شیڈول #{id}"
+      },
+      "overview": {
+        "no_entries": "دکھانے کے لیے کوئی آئٹمز نہیں ہیں",
+        "backend_error": "شیڈولر کمپوننٹ سے کنکشن نہیں ہو سکا۔ اسے کارڈ استعمال کرنے سے پہلے انٹیگریشن کے طور پر انسٹال کرنا ضروری ہے۔",
+        "excluded_items": "{number} خارج شدہ {if number is 1} آئٹم {else} آئٹمز",
+        "hide_excluded": "خارج شدہ آئٹمز چھپائیں",
+        "additional_tasks": "{number} مزید {if number is 1} کام {else} کام"
+      },
+      "editor": {
+        "repeated_days": "دہرائے گئے دن",
+        "start_time": "آغاز کا وقت",
+        "stop_time": "اختتامی وقت",
+        "action": "عمل",
+        "add_action": "عمل شامل کریں",
+        "select_timeslot": "ٹائم سلاٹ منتخب کریں",
+        "toggle_single_mode": "سنگل موڈ پر جائیں",
+        "toggle_scheme_mode": "اسکیم موڈ پر جائیں",
+        "validation_errors": {
+          "overlapping_time": "شیڈول میں وقتوں کا اوورلیپ ہے",
+          "missing_target_entity": "ایک یا زیادہ اعمال میں ہدف اینٹیٹی غائب ہے",
+          "missing_service_parameter": "ایک یا زیادہ اعمال میں مطلوبہ سیٹنگ غائب ہے",
+          "missing_action": "شیڈول میں کوئی عمل موجود نہیں"
+        }
+      },
+      "options": {
+        "conditions": {
+          "header": "شرائط",
+          "add_condition": "شرط شامل کریں",
+          "new_condition": "نئی شرط",
+          "types": {
+            "equal_to": "{entity} {value} کے برابر ہے",
+            "unequal_to": "{entity} {value} کے برابر نہیں ہے",
+            "above": "{entity} {value} سے زیادہ ہے",
+            "below": "{entity} {value} سے کم ہے"
+          },
+          "options": {
+            "logic_and": "تمام شرائط درست ہونی چاہئیں",
+            "logic_or": "کوئی ایک شرط درست ہونی چاہیے",
+            "track_changes": "جب شرائط بدلیں تو دوبارہ جانچ کریں"
+          }
+        },
+        "period": {
+          "header": "مدت",
+          "start_date": "سے",
+          "end_date": "تک"
+        },
+        "repeat_type": "مکمل ہونے کے بعد کا برتاؤ",
+        "tags": "ٹیگز"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "اینٹیٹیز",
+          "other": "دیگر"
+        },
+        "fields": {
+          "title": {
+            "heading": "کارڈ کا عنوان",
+            "options": {
+              "standard": "معیاری",
+              "hidden": "چھپا ہوا",
+              "custom": "حسبِ ضرورت"
+            },
+            "custom_title": "اپنا عنوان"
+          },
+          "discover_existing": {
+            "heading": "تمام شیڈولز دکھائیں",
+            "description": "یہ 'discover existing' پیرامیٹر سیٹ کرتا ہے۔ پہلے سے بنائے گئے شیڈولز خود بخود کارڈ میں شامل ہو جائیں گے۔"
+          },
+          "time_step": {
+            "heading": "وقت کا وقفہ",
+            "description": "شیڈول بنانے کے لیے وقت کی ریزولوشن (منٹ میں)",
+            "unit_minutes": "منٹ"
+          },
+          "default_editor": {
+            "heading": "ڈیفالٹ ٹائم ایڈیٹر",
+            "options": {
+              "single": "سنگل شیڈول موڈ",
+              "scheme": "ٹائم اسکیم موڈ"
+            }
+          },
+          "sort_by": {
+            "heading": "ترتیب کے اختیارات",
+            "description": "کارڈ میں شیڈولز کی ترتیب",
+            "options": {
+              "relative_time": "اگلے عمل تک باقی وقت",
+              "title": "شیڈول کا دکھایا گیا عنوان",
+              "state": "فعال شیڈولز اوپر دکھائیں"
+            }
+          },
+          "display_format_primary": {
+            "heading": "مرکزی معلومات کی نمائش",
+            "description": "اوورویو میں شیڈولز کے لیے لیبل کنفیگر کریں",
+            "options": {
+              "default": "شیڈول کا نام",
+              "entity_action": "کام کا خلاصہ"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "ثانوی معلومات کی نمائش",
+            "description": "اوورویو میں اضافی خصوصیات دکھانے کا انتخاب کریں",
+            "options": {
+              "relative_time": "اگلے عمل تک باقی وقت",
+              "time": "اگلے عمل کا وقت",
+              "days": "ہفتے کے دہرائے گئے دن",
+              "additional_tasks": "اضافی کاموں کی تعداد"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "ہیڈر ٹوگل دکھائیں",
+            "description": "کارڈ کے اوپر تمام اینٹیٹیز کو فعال/غیر فعال کرنے کے لیے سوئچ دکھائیں"
+          },
+          "tags": {
+            "heading": "ٹیگز",
+            "description": "شیڈولز کو مختلف کارڈز میں تقسیم کرنے کے لیے ٹیگز استعمال کریں"
+          },
+          "entities": {
+            "button_label": "شامل اینٹیٹیز ترتیب دیں",
+            "heading": "شامل اینٹیٹیز",
+            "description": "وہ اینٹیٹیز منتخب کریں جنہیں آپ شیڈولر کے ذریعے کنٹرول کرنا چاہتے ہیں۔ آپ گروپ پر کلک کر کے اسے کھول سکتے ہیں۔ یاد رکھیں کہ کچھ اینٹیٹیز (جیسے سینسرز) صرف شرائط کے لیے استعمال ہو سکتی ہیں، اعمال کے لیے نہیں۔",
+            "included_number": "{number}/{total} منتخب شدہ"
+          }
+        }
+      }
+    }
+  }
+}
