@@ -144,7 +144,10 @@
         "backend_error": "Не вдалося підключитися до компонента планувальника. Перш ніж використовувати цю карту, її потрібно встановити як інтеграцію.",
         "excluded_items": "{number} виключено {if number is 1} елемент {else} елементів",
         "hide_excluded": "сховати виключені елементи",
-        "additional_tasks": "{number} більше {if number is 1} завдання {else} завдань"
+        "additional_tasks": "{number} більше {if number is 1} завдання {else} завдань",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "поведінка після спрацювання",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

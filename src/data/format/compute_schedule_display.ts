@@ -11,7 +11,7 @@ import { computeEntityDisplay } from "./compute_entity_display";
 
 export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem | string)[] | DisplayItem | string, hass: HomeAssistant, customize?: CustomConfig): string[] => {
 
-  const computeDisplay = (item: DisplayItem | string) => {
+  const computeDisplay = (item: DisplayItem | string): string | string[] => {
 
     switch (item) {
       case DisplayItem.Action:
@@ -26,6 +26,8 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
           ? '+' +
           localize('ui.panel.overview.additional_tasks', hass, '{number}', String(schedule.entries[0].slots.length - 1))
           : '';
+      case DisplayItem.AdditionalTaskInfo:
+        return computeAdditionalTaskInfo(schedule, hass, customize);
       case DisplayItem.Entity:
         const nextAction = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
         let entityIds = [nextAction.target?.entity_id || []].flat();
@@ -48,15 +50,63 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
         const regex = /\{([^\}]+)\}/;
         let res;
         while ((res = regex.exec(item))) {
-          item = item.replace(res[0], String(computeDisplay(String(res[1]))));
+          const replacement = computeDisplay(String(res[1]));
+          const replacementString = Array.isArray(replacement)
+            ? replacement.join('<br/>')
+            : String(replacement);
+          item = item.replace(res[0], replacementString);
         }
         return item;
     }
   };
 
-  return [...[config].flat()].map(e => {
-    let result = computeDisplay(e);
-    if (!result) return '';
-    return result;
+  return [...[config].flat()].flatMap(item => {
+    const result = computeDisplay(item);
+    const values = Array.isArray(result) ? result : [result];
+    return values.filter(entry => Boolean(entry));
   });
 }
+
+const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, customize?: CustomConfig): string[] => {
+  const entry = schedule.entries?.[0];
+  const slots = entry?.slots || [];
+
+  if (!slots.length) return [];
+
+  const stateObj = schedule.entity_id ? hass.states[schedule.entity_id] : undefined;
+  const isEnabled = stateObj?.state !== 'off';
+
+  const parseIndex = (value: unknown): number | undefined => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string' && value.trim().length && !Number.isNaN(Number(value))) return Number(value);
+    return undefined;
+  };
+
+  const currentSlotAttr = parseIndex(stateObj?.attributes?.current_slot);
+  const nextEntry = parseIndex(schedule.next_entries?.[0]);
+  const startIndex = typeof currentSlotAttr === 'number'
+    ? currentSlotAttr
+    : (typeof nextEntry === 'number' ? nextEntry : 0);
+
+  const order = slots.map((_, index) => (startIndex + index) % slots.length);
+
+  return order.map(index => {
+    const slot = slots[index];
+    const action = slot.actions?.[0];
+    let actionDisplay = action
+      ? formatActionDisplay(action, hass, customize, false, true)
+      : '';
+    if (!actionDisplay?.trim()) {
+      actionDisplay = localize('ui.panel.overview.additional_task_info.no_action', hass);
+    }
+    actionDisplay = capitalizeFirstLetter(actionDisplay);
+    const timeDisplay = capitalizeFirstLetter(computeTimeDisplay(slot.start, slot.stop, hass));
+
+    const classes = ['slot-info'];
+    const isActive = isEnabled && typeof currentSlotAttr === 'number' && index === currentSlotAttr;
+    classes.push(isActive ? 'slot-info--active' : 'slot-info--inactive');
+    if (!isEnabled) classes.push('slot-info--disabled');
+
+    return `<span class="${classes.join(' ')}">${actionDisplay}: ${timeDisplay}</span>`;
+  });
+};

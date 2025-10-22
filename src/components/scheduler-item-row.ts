@@ -150,6 +150,25 @@ export class SchedulerItemRow extends LitElement {
         color: var(--secondary-text-color);
         transition: color 0.2s ease-in-out;
       }
+      span.slot-info {
+        display: block;
+      }
+      span.slot-info--active {
+        color: var(--primary-text-color);
+        font-weight: 600;
+      }
+      span.slot-info--inactive {
+        color: var(--disabled-text-color);
+      }
+      span.slot-info--disabled {
+        color: var(--disabled-text-color);
+        font-weight: normal;
+      }
+      .info.disabled span.slot-info,
+      .info.disabled span.slot-info--active {
+        color: var(--disabled-text-color);
+        font-weight: normal;
+      }
       .state {
         text-align: var(--float-end);
       }

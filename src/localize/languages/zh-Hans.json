@@ -144,7 +144,10 @@
         "backend_error": "计划任务组件关联失败。本卡片使用前，需先安装计划任务组件和集成.",
         "excluded_items": "{number} 除外 {if number is 1} 事项 {else} 事项",
         "hide_excluded": "隐藏除外事项",
-        "additional_tasks": "{number} 更多 {if number is 1} 任务 {else} 任务"
+        "additional_tasks": "{number} 更多 {if number is 1} 任务 {else} 任务",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "触发后的行为",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

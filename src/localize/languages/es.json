@@ -144,7 +144,10 @@
         "backend_error": "Fallo de conexión con Scheduler component. Debe ser installado como integración antes de poder usar este panel.",
         "excluded_items": "{number} {if number is 1} elemento excluido {else} elementos excluidos",
         "hide_excluded": "ocultar elementos excluidos",
-        "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
+        "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales",
+        "additional_task_info": {
+          "no_action": "Sin acción configurada"
+        }
       },
       "editor": {
         "repeated_days": "Días repetidos",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "acción después de la finalización",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Información extra de tareas adicionales"
+            }
+          }
+        }
       }
     }
   }

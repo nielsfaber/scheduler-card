@@ -144,7 +144,10 @@
         "backend_error": "Impossible de se connecter au composant du planificateur. Il doit être installé en tant qu'intégration avant que cette carte ne puisse être utilisée.",
         "excluded_items": "{number} {if number is 1}entrée exclue{else}entrées exclues",
         "hide_excluded": "cacher les entrées exclues",
-        "additional_tasks": "{number} {if number is 1}tâche à venir{else}tâches à venir"
+        "additional_tasks": "{number} {if number is 1}tâche à venir{else}tâches à venir",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Jours de répétition",
@@ -186,8 +189,16 @@
         },
         "repeat_type": "Comportement après l'achèvement",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }
-
 }

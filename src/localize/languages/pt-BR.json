@@ -144,7 +144,10 @@
         "backend_error": "Não foi possível conectar com o componente agendador. Ele precisa ser instalado como integração antes que este cartão possa ser usado.",
         "excluded_items": "{number}{if number is 1} item excluído {else} itens excluídos",
         "hide_excluded": "ocultar itens excluídos",
-        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
+        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "comportamento após a conclusão",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }
