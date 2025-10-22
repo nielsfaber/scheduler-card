@@ -21,11 +21,17 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
         return capitalizeFirstLetter(formatWeekdayDisplay(schedule.entries[0].weekdays, 'long', hass));
       case DisplayItem.Name:
         return capitalizeFirstLetter(schedule.name || '');
-      case DisplayItem.AdditionalTasks:
-        return schedule.entries[0].slots.length > 1
-          ? '+' +
-          localize('ui.panel.overview.additional_tasks', hass, '{number}', String(schedule.entries[0].slots.length - 1))
+      case DisplayItem.AdditionalTasks: {
+        const additionalCount = schedule.entries[0].slots.length - 1;
+        return additionalCount > 0
+          ? `+${localize(
+              'ui.panel.overview.additional_tasks',
+              hass,
+              '{number}',
+              String(additionalCount)
+            )}`
           : '';
+      }
       case DisplayItem.AdditionalTaskInfo:
         return computeAdditionalTaskInfo(schedule, hass, customize);
       case DisplayItem.Entity:
@@ -37,7 +43,7 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
       case DisplayItem.RelativeTime:
         return '<relative-time></relative-time>';
       case DisplayItem.Tags:
-        return schedule.tags?.map(e => `<tag>${e}</tag>`).join('');
+        return schedule.tags?.map(e => `<tag>${e}</tag>`).join('') || '';
       case DisplayItem.Time:
         const slot = schedule.entries[0].slots[schedule.next_entries[0] || 0];
         return capitalizeFirstLetter(computeTimeDisplay(slot.start, slot.stop, hass));
@@ -90,8 +96,8 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
 
   const order = slots.map((_, index) => (startIndex + index) % slots.length);
 
-  return order.map(index => {
-    const slot = slots[index];
+  return order.map(slotIndex => {
+    const slot = slots[slotIndex];
     const action = slot.actions?.[0];
     let actionDisplay = action
       ? formatActionDisplay(action, hass, customize, false, true)
@@ -103,7 +109,7 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
     const timeDisplay = capitalizeFirstLetter(computeTimeDisplay(slot.start, slot.stop, hass));
 
     const classes = ['slot-info'];
-    const isActive = isEnabled && typeof currentSlotAttr === 'number' && index === currentSlotAttr;
+    const isActive = isEnabled && typeof currentSlotAttr === 'number' && slotIndex === currentSlotAttr;
     classes.push(isActive ? 'slot-info--active' : 'slot-info--inactive');
     if (!isEnabled) classes.push('slot-info--disabled');
 
