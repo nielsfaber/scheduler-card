@@ -2755,15 +2755,20 @@ function he(e,t){return ue({descriptor:i=>{const a={get(){var t,i;return null!==
         color: var(--secondary-text-color);
         transition: color 0.2s ease-in-out;
       }
+      .secondary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
       span.slot-info {
         display: block;
         margin: 0;
-        line-height: 1.2;
+        line-height: 1.1;
       }
       span.slot-info--active {
         color: var(--primary-text-color);
         font-weight: 600;
-        font-size: 1.05em;
+        font-size: 1.16em;
       }
       span.slot-info--inactive {
         color: var(--disabled-text-color);
@@ -2771,9 +2776,6 @@ function he(e,t){return ue({descriptor:i=>{const a={get(){var t,i;return null!==
       span.slot-info--disabled {
         color: var(--disabled-text-color);
         font-weight: normal;
-      }
-      .secondary span.slot-info + span.slot-info {
-        margin-top: 0.25rem;
       }
       .info.disabled span.slot-info,
       .info.disabled span.slot-info--active {
