@@ -1,4 +1,4 @@
-import { CSSResultGroup, LitElement, css, html, nothing } from "lit";
+import { CSSResultGroup, LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators";
 import { CardConfig, Schedule } from "../types";
 import { computeActionIcon } from "../data/format/compute_action_icon";
@@ -97,12 +97,13 @@ export class SchedulerItemRow extends LitElement {
     const entries = computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
       .filter(e => e.length);
 
-    return entries.map((entry, index) => {
+    return entries.map(entry => {
       const content = replacePreservedTags(entry);
       const isSlotInfo = entry.includes('class="slot-info"');
-      const needsBreak = !isSlotInfo && index < entries.length - 1;
 
-      return html`${content}${needsBreak ? html`<br/>` : nothing}`;
+      if (isSlotInfo) return content;
+
+      return html`<span class="secondary-line">${content}</span>`;
     });
   }
 
@@ -158,7 +159,11 @@ export class SchedulerItemRow extends LitElement {
       .secondary {
         display: flex;
         flex-direction: column;
-        gap: 0.15rem;
+        gap: 0.05rem;
+      }
+      span.secondary-line {
+        display: block;
+        margin: 0;
       }
       span.slot-info {
         display: block;
@@ -168,7 +173,7 @@ export class SchedulerItemRow extends LitElement {
       span.slot-info--active {
         color: var(--primary-text-color);
         font-weight: 600;
-        font-size: 1.16em;
+        font-size: 1.24em;
       }
       span.slot-info--inactive {
         color: var(--disabled-text-color);
