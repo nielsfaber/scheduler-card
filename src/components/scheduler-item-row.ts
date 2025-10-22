@@ -199,10 +199,6 @@ export class SchedulerItemRow extends LitElement {
         text-overflow: ellipsis;
         padding-inline-end: 0.1em;
       }
-      span.slot-info__separator {
-        flex: 0 0 auto;
-        padding-inline-end: 0.3em;
-      }
       span.slot-info__time {
         flex: 0 0 auto;
         white-space: nowrap;
@@ -216,7 +212,6 @@ export class SchedulerItemRow extends LitElement {
       }
       .info.disabled span.slot-info__content,
       .info.disabled span.slot-info__label,
-      .info.disabled span.slot-info__separator,
       .info.disabled span.slot-info__time {
         color: inherit;
       }

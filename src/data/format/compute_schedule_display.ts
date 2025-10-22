@@ -127,6 +127,6 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
     classes.push(isActive ? 'slot-info--active' : 'slot-info--inactive');
     if (!isEnabled) classes.push('slot-info--disabled');
 
-    return `<span class="${classes.join(' ')}"><span class="slot-info__content"><span class="slot-info__label">${actionDisplay}</span><span class="slot-info__separator">:</span></span><span class="slot-info__time">${timeDisplay}</span></span>`;
+    return `<span class="${classes.join(' ')}"><span class="slot-info__content"><span class="slot-info__label">${actionDisplay}</span></span><span class="slot-info__time">${timeDisplay}</span></span>`;
   });
 };
