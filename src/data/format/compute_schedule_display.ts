@@ -1,7 +1,7 @@
 import { computeDomain, friendlyName } from "../../lib/entity";
 import { HomeAssistant } from "../../lib/types";
 import { CustomConfig, DisplayItem, Schedule } from "../../types";
-import { computeTimeDisplay } from "./compute_time_display";
+import { computeTimeDisplay, computeTimeStrings } from "./compute_time_display";
 import { formatActionDisplay } from "./format_action_display";
 import { localize } from "../../localize/localize";
 import { capitalizeFirstLetter } from "../../lib/capitalize_first_letter";
@@ -80,7 +80,7 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
   if (!slots.length) return [];
 
   const stateObj = schedule.entity_id ? hass.states[schedule.entity_id] : undefined;
-  const isEnabled = stateObj?.state !== 'off';
+  const isEnabled = stateObj ? stateObj.state !== 'off' : schedule.enabled !== false;
 
   const parseIndex = (value: unknown): number | undefined => {
     if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -90,9 +90,20 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
 
   const currentSlotAttr = parseIndex(stateObj?.attributes?.current_slot);
   const nextEntry = parseIndex(schedule.next_entries?.[0]);
+
+  const activeSlotIndex = typeof currentSlotAttr === 'number'
+    ? currentSlotAttr
+    : (isEnabled && typeof nextEntry === 'number' && slots.length
+      ? (nextEntry + slots.length - 1) % slots.length
+      : undefined);
+
   const startIndex = typeof currentSlotAttr === 'number'
     ? currentSlotAttr
-    : (typeof nextEntry === 'number' ? nextEntry : 0);
+    : (typeof nextEntry === 'number'
+      ? (isEnabled && typeof activeSlotIndex === 'number'
+        ? activeSlotIndex
+        : nextEntry)
+      : 0);
 
   const order = slots.map((_, index) => (startIndex + index) % slots.length);
 
@@ -106,10 +117,13 @@ const computeAdditionalTaskInfo = (schedule: Schedule, hass: HomeAssistant, cust
       actionDisplay = localize('ui.panel.overview.additional_task_info.no_action', hass);
     }
     actionDisplay = capitalizeFirstLetter(actionDisplay);
-    const timeDisplay = capitalizeFirstLetter(computeTimeDisplay(slot.start, slot.stop, hass));
+    const timeStrings = computeTimeStrings(slot.start, slot.stop, hass).map(capitalizeFirstLetter);
+    const timeDisplay = slot.stop
+      ? `${timeStrings[0]} → ${timeStrings[1]}`
+      : timeStrings[0];
 
     const classes = ['slot-info'];
-    const isActive = isEnabled && typeof currentSlotAttr === 'number' && slotIndex === currentSlotAttr;
+    const isActive = isEnabled && typeof activeSlotIndex === 'number' && slotIndex === activeSlotIndex;
     classes.push(isActive ? 'slot-info--active' : 'slot-info--inactive');
     if (!isEnabled) classes.push('slot-info--disabled');
 
