@@ -2718,7 +2718,7 @@ function he(e,t){return ue({descriptor:i=>{const a={get(){var t,i;return null!==
         `}if(null!==e.match(/^(<tag>[^<]*<\/tag>)+$/)){let t=e.split(/<tag>([^<]*)<\/tag>/).filter(e=>e);return q`
           <div class="tags">
             ${null==t?void 0:t.map(e=>q`<span class="tag">${e}</span>`)}
-          </div>`}return oo(e)},i=Ma(this.schedule,e,this.hass,this.config.customize).filter(e=>e.length);return i.map((e,a)=>{const s=t(e),o=!e.includes('class="slot-info"')&&a<i.length-1;return q`${s}${o?q`<br/>`:H}`})}_handleItemClick(e){const t=new CustomEvent("editClick",{detail:{schedule_id:this.schedule_id}});this.dispatchEvent(t)}_handleIconClick(e){const t=new CustomEvent("editClick",{detail:{schedule_id:this.schedule_id}});this.dispatchEvent(t)}static get styles(){return r`
+          </div>`}return oo(e)};return Ma(this.schedule,e,this.hass,this.config.customize).filter(e=>e.length).map(e=>{const i=t(e);return e.includes('class="slot-info"')?i:q`<span class="secondary-line">${i}</span>`})}_handleItemClick(e){const t=new CustomEvent("editClick",{detail:{schedule_id:this.schedule_id}});this.dispatchEvent(t)}_handleIconClick(e){const t=new CustomEvent("editClick",{detail:{schedule_id:this.schedule_id}});this.dispatchEvent(t)}static get styles(){return r`
       :host {
         display: flex;
         align-items: center;
@@ -2758,7 +2758,11 @@ function he(e,t){return ue({descriptor:i=>{const a={get(){var t,i;return null!==
       .secondary {
         display: flex;
         flex-direction: column;
-        gap: 0.15rem;
+        gap: 0.05rem;
+      }
+      span.secondary-line {
+        display: block;
+        margin: 0;
       }
       span.slot-info {
         display: block;
@@ -2768,7 +2772,7 @@ function he(e,t){return ue({descriptor:i=>{const a={get(){var t,i;return null!==
       span.slot-info--active {
         color: var(--primary-text-color);
         font-weight: 600;
-        font-size: 1.16em;
+        font-size: 1.24em;
       }
       span.slot-info--inactive {
         color: var(--disabled-text-color);
