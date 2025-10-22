@@ -1,4 +1,4 @@
-import { CSSResultGroup, LitElement, css, html } from "lit";
+import { CSSResultGroup, LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { CardConfig, Schedule } from "../types";
 import { computeActionIcon } from "../data/format/compute_action_icon";
@@ -94,11 +94,16 @@ export class SchedulerItemRow extends LitElement {
       return unsafeHTML(input);
     };
 
-    return computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
-      .filter(e => e.length)
-      .map(e =>
-        html`${replacePreservedTags(e)}<br/>`
-      );
+    const entries = computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
+      .filter(e => e.length);
+
+    return entries.map((entry, index) => {
+      const content = replacePreservedTags(entry);
+      const isSlotInfo = entry.includes('class="slot-info"');
+      const needsBreak = !isSlotInfo && index < entries.length - 1;
+
+      return html`${content}${needsBreak ? html`<br/>` : nothing}`;
+    });
   }
 
   private _handleItemClick(_ev: Event) {
@@ -152,10 +157,13 @@ export class SchedulerItemRow extends LitElement {
       }
       span.slot-info {
         display: block;
+        margin: 0;
+        line-height: 1.2;
       }
       span.slot-info--active {
         color: var(--primary-text-color);
         font-weight: 600;
+        font-size: 1.05em;
       }
       span.slot-info--inactive {
         color: var(--disabled-text-color);
@@ -164,10 +172,14 @@ export class SchedulerItemRow extends LitElement {
         color: var(--disabled-text-color);
         font-weight: normal;
       }
+      .secondary span.slot-info + span.slot-info {
+        margin-top: 0.25rem;
+      }
       .info.disabled span.slot-info,
       .info.disabled span.slot-info--active {
         color: var(--disabled-text-color);
         font-weight: normal;
+        font-size: inherit;
       }
       .state {
         text-align: var(--float-end);
