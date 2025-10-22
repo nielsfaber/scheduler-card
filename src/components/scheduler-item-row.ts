@@ -94,11 +94,17 @@ export class SchedulerItemRow extends LitElement {
       return unsafeHTML(input);
     };
 
-    return computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
-      .filter(e => e.length)
-      .map(e =>
-        html`${replacePreservedTags(e)}<br/>`
-      );
+    const entries = computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
+      .filter(e => e.length);
+
+    return entries.map(entry => {
+      const content = replacePreservedTags(entry);
+      const isSlotInfo = entry.includes('class="slot-info"');
+
+      if (isSlotInfo) return content;
+
+      return html`<span class="secondary-line">${content}</span>`;
+    });
   }
 
   private _handleItemClick(_ev: Event) {
@@ -149,6 +155,65 @@ export class SchedulerItemRow extends LitElement {
       ha-relative-time {
         color: var(--secondary-text-color);
         transition: color 0.2s ease-in-out;
+      }
+      .secondary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.05rem;
+      }
+      span.secondary-line {
+        display: block;
+        margin: 0;
+      }
+      span.slot-info {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 0.4em;
+        margin: 0;
+        line-height: 1.12;
+        width: 100%;
+      }
+      span.slot-info--active {
+        color: var(--primary-text-color);
+        font-weight: 600;
+        font-size: 1.32em;
+      }
+      span.slot-info--inactive {
+        color: var(--disabled-text-color);
+      }
+      span.slot-info--disabled {
+        color: var(--disabled-text-color);
+        font-weight: normal;
+      }
+      span.slot-info__content {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: baseline;
+        min-width: 0;
+      }
+      span.slot-info__label {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-inline-end: 0.1em;
+      }
+      span.slot-info__time {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-feature-settings: "tnum";
+      }
+      .info.disabled span.slot-info,
+      .info.disabled span.slot-info--active {
+        color: var(--disabled-text-color);
+        font-weight: normal;
+        font-size: inherit;
+      }
+      .info.disabled span.slot-info__content,
+      .info.disabled span.slot-info__label,
+      .info.disabled span.slot-info__time {
+        color: inherit;
       }
       .state {
         text-align: var(--float-end);

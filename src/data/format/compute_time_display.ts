@@ -27,29 +27,39 @@ const formatRelativeTimeString = (input: Time, hass: HomeAssistant) => {
   return `${timeString} ${signString} ${eventString}`;
 };
 
-export const computeTimeDisplay = (startTime: string, stopTime: string | undefined, hass: HomeAssistant) => {
+export const computeTimeStrings = (startTime: string, stopTime: string | undefined, hass: HomeAssistant): string[] => {
 
   const amPmFormat = useAmPm(hass.locale);
 
+  const formatTime = (time: string) => {
+    const parsed = parseTimeString(time);
+    return parsed.mode == TimeMode.Fixed
+      ? timeToString(parsed, { am_pm: amPmFormat })
+      : formatRelativeTimeString(parsed, hass);
+  };
+
+  const startTimeString = formatTime(startTime);
+
   if (stopTime) {
-    const ts_start = parseTimeString(startTime);
-    const ts_stop = parseTimeString(stopTime);
-
-    const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_start, hass);
-
-    const stopTimeString = ts_stop.mode == TimeMode.Fixed
-      ? timeToString(ts_stop, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_stop, hass);
-
-    return capitalizeFirstLetter(localize('ui.components.time.interval', hass, ['{startTime}', '{endTime}'], [startTimeString, stopTimeString]));
+    const stopTimeString = formatTime(stopTime);
+    return [startTimeString, stopTimeString];
   }
-  else {
-    const ts_start = parseTimeString(startTime);
-    const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_start, hass);
-    return capitalizeFirstLetter(localize('ui.components.time.absolute', hass, '{time}', startTimeString));
+
+  return [startTimeString];
+};
+
+export const computeTimeDisplay = (startTime: string, stopTime: string | undefined, hass: HomeAssistant) => {
+
+  const timeStrings = computeTimeStrings(startTime, stopTime, hass);
+
+  if (stopTime) {
+    return capitalizeFirstLetter(
+      localize('ui.components.time.interval', hass, ['{startTime}', '{endTime}'], timeStrings)
+    );
   }
+
+  return capitalizeFirstLetter(
+    localize('ui.components.time.absolute', hass, '{time}', timeStrings[0])
+  );
 }
+

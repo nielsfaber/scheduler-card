@@ -144,7 +144,10 @@
         "backend_error": "Não consegui ligar ao componente de agendamento. Essa integração tem que ser instalada antes da utilização deste cartão.",
         "excluded_items": "{number}{if number is 1} item excluído {else} itens excluídos",
         "hide_excluded": "ocultar itens excluídos",
-        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
+        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repetições semanais",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "Comportamento após a conclusão",
         "tags": "Etiquetas"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

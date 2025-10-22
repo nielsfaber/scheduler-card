@@ -144,7 +144,10 @@
         "backend_error": "Er kon geen verbinding worden gemaakt met het Scheduler component. Deze moet als integratie zijn geinstalleerd voordat deze kaart gebruikt kan worden.",
         "excluded_items": "{number} uitgesloten {if number is 1} item {else} items",
         "hide_excluded": "verberg uitgesloten items",
-        "additional_tasks": "{number} overige {if number is 1} taak {else} taken"
+        "additional_tasks": "{number} overige {if number is 1} taak {else} taken",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Herhaling",
@@ -242,7 +245,8 @@
               "relative_time": "Resterende tijd tot volgende actie",
               "time": "Ingestelde tijd voor de volgende actie",
               "days": "Herhaalde dagen van de week",
-              "additional_tasks": "Aantal resterende acties"
+              "additional_tasks": "Aantal resterende acties",
+              "additional_task_info": "Extra info additional task"
             }
           },
           "show_header_toggle": {

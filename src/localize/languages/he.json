@@ -144,7 +144,10 @@
         "backend_error": "אין אפשרות להתחבר לרכיב התזמונים. נדרש להתקין את הרכיב באינטגרציה לפני השימוש בכרטיס.",
         "excluded_items": "{number} לא נכלל {if number is 1} פריט {else} פריטים",
         "hide_excluded": "הסתר פריטים לא כלולים",
-        "additional_tasks": "{number} נוסף {if number is 1} משימה {else} משימות"
+        "additional_tasks": "{number} נוסף {if number is 1} משימה {else} משימות",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "התנהגות לאחר הפעלה",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }
