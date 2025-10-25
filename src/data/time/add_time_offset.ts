@@ -16,7 +16,7 @@ export const addTimeOffset = (time: Time, offsetTime: { hours?: number, minutes?
   hours += offsetHours;
   minutes += offsetMinutes;
 
-  if (minutes >= 60 || (minutes > 0 && hours < 0)) {
+  if (minutes >= 60 || (minutes > 0 && hours < 0 && time.mode != TimeMode.Fixed)) {
     hours = hours + 1;
     minutes -= 60;
   }
