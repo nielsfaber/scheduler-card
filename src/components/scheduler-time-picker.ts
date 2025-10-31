@@ -346,7 +346,9 @@ export class SchedulerTimePicker extends LitElement {
       const offsetMinsSunrise = sunriseOffset.hours * 60 + sunriseOffset.minutes;
       const offsetMinsSunset = sunsetOffset.hours * 60 + sunsetOffset.minutes;
 
-      let mode = newMode || Math.abs(offsetMinsSunrise) <= Math.abs(offsetMinsSunset) ? TimeMode.Sunrise : TimeMode.Sunset;
+      let mode = newMode
+        ? newMode
+        : Math.abs(offsetMinsSunrise) <= Math.abs(offsetMinsSunset) ? TimeMode.Sunrise : TimeMode.Sunset;
       let offsetTime = mode == TimeMode.Sunrise ? sunriseOffset : sunsetOffset;
 
       return {
