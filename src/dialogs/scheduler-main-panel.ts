@@ -30,6 +30,7 @@ import { hassLocalize } from "../localize/hassLocalize";
 import { isDefined } from "../lib/is_defined";
 import { moveTimeslot } from "../data/schedule/move_timeslot";
 import { computeEntityDisplay } from "../data/format/compute_entity_display";
+import { DEFAULT_TIME_STEP } from "../const";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -107,7 +108,7 @@ export class SchedulerMainPanel extends LitElement {
             .time=${this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot!].start}
             @value-changed=${this._startTimeChanged}
             ?useAmPm=${useAmPm(this.hass.locale)}
-            .stepSize=${this.config.time_step}
+            .stepSize=${this.config.time_step || DEFAULT_TIME_STEP}
             large
           >
           </scheduler-time-picker>

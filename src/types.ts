@@ -1,22 +1,22 @@
 
 
 export interface CardConfig {
-  include: string[];
-  exclude: string[];
-  discover_existing: boolean;
-  title: boolean | string;
-  show_header_toggle: boolean;
-  default_editor: EditorMode;
-  time_step: number;
-  display_options: {
-    primary_info: (DisplayItem | string)[] | DisplayItem | string;
-    secondary_info: (DisplayItem | string)[] | DisplayItem | string;
+  include?: string[];
+  exclude?: string[];
+  discover_existing?: boolean;
+  title?: boolean | string;
+  show_header_toggle?: boolean;
+  default_editor?: EditorMode;
+  time_step?: number;
+  display_options?: {
+    primary_info?: (DisplayItem | string)[] | DisplayItem | string;
+    secondary_info?: (DisplayItem | string)[] | DisplayItem | string;
     icon?: string;
   };
-  sort_by: string[] | string;
-  customize: CustomConfig;
-  tags: string[] | string;
-  exclude_tags: string[] | string;
+  sort_by?: string[] | string;
+  customize?: CustomConfig;
+  tags?: string[] | string;
+  exclude_tags?: string[] | string;
   show_add_button?: boolean;
 }
 

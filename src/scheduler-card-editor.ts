@@ -3,7 +3,6 @@ import { customElement, property } from "lit/decorators";
 import { DialogSelectEntitiesParams } from "./dialogs/dialog-select-entities";
 import { HomeAssistant } from "./lib/types";
 import { localize } from "./localize/localize";
-import { DefaultCardConfig } from "./const";
 import { CardConfig, EditorMode } from "./types";
 import { fireEvent } from "./lib/fire_event";
 import { NumberSelector, SelectSelector } from "./lib/selector";
@@ -15,16 +14,17 @@ import './dialogs/dialog-select-entities';
 import "./components/scheduler-entity-picker";
 import "./components/scheduler-collapsible-section";
 import './components/scheduler-combo-selector';
+import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY, DEFAULT_SORT_BY, DEFAULT_TIME_STEP } from "./const";
 
 @customElement("scheduler-card-editor")
 export class SchedulerCardEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property()
-  private _config: CardConfig = DefaultCardConfig;
+  private _config: CardConfig = {};
 
-  setConfig(config: Partial<CardConfig>) {
-    this._config = { ...DefaultCardConfig, ...config };
+  setConfig(config: CardConfig) {
+    this._config = { ...config };
   }
 
   @property()
@@ -119,7 +119,7 @@ export class SchedulerCardEditor extends LitElement {
           <scheduler-combo-selector
             .hass=${this.hass}
             .config=${timeStepSelector}
-            .value=${this._config.time_step || DefaultCardConfig.time_step}
+            .value=${this._config.time_step || DEFAULT_TIME_STEP}
             @value-changed=${(ev: CustomEvent) => { this._updateConfig({ time_step: ev.detail.value }) }}
           >
           </scheduler-combo-selector>
@@ -133,7 +133,7 @@ export class SchedulerCardEditor extends LitElement {
                 name="default_editor"
                 value="${EditorMode.Single}"
                 @change=${() => { this._updateConfig({ default_editor: EditorMode.Single }) }}
-                ?checked=${this._config.default_editor == EditorMode.Single}
+                ?checked=${this._config.default_editor != EditorMode.Scheme}
               >
               </ha-radio>
             </ha-formfield>
@@ -161,7 +161,7 @@ export class SchedulerCardEditor extends LitElement {
               name="sort_by"
               value="relative-time"
               @change=${this._setSortBy}
-              ?checked=${[this._config.sort_by].flat().includes('relative-time')}
+              ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes('relative-time')}
             ></ha-radio>
           </ha-formfield>
 
@@ -173,7 +173,7 @@ export class SchedulerCardEditor extends LitElement {
               name="sort_by"
               value="title"
               @change=${this._setSortBy}
-              ?checked=${[this._config.sort_by].flat().includes('title')}
+              ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes('title')}
             ></ha-radio>
           </ha-formfield>
         </div>
@@ -191,7 +191,7 @@ export class SchedulerCardEditor extends LitElement {
               name="display_format_primary"
               value="default"
               @change=${this._setDisplayOptionsPrimary}
-              ?checked=${[this._config.display_options.primary_info].flat().includes('default')}
+              ?checked=${[this._config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY].flat().includes('default')}
             >
             </ha-radio>
           </ha-formfield>
@@ -204,7 +204,7 @@ export class SchedulerCardEditor extends LitElement {
               name="display_format_primary"
               value="{entity}: {action}"
               @change=${this._setDisplayOptionsPrimary}
-              ?checked=${[this._config.display_options.primary_info].flat().includes('{entity}: {action}')}
+              ?checked=${[this._config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY].flat().includes('{entity}: {action}')}
             >
             </ha-radio>
           </ha-formfield>
@@ -221,7 +221,7 @@ export class SchedulerCardEditor extends LitElement {
             <ha-checkbox
               value="relative-time"
               @change=${this._setDisplayOptionsSecondary}
-              ?checked=${[this._config.display_options.secondary_info].flat().includes('relative-time')}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('relative-time')}
             >
             </ha-checkbox>
           </ha-formfield>
@@ -230,7 +230,7 @@ export class SchedulerCardEditor extends LitElement {
             <ha-checkbox
               value="time"
               @change=${this._setDisplayOptionsSecondary}
-              ?checked=${[this._config.display_options.secondary_info].flat().includes('time')}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('time')}
             >
             </ha-checkbox>
           </ha-formfield>
@@ -241,7 +241,7 @@ export class SchedulerCardEditor extends LitElement {
             <ha-checkbox
               value="days"
               @change=${this._setDisplayOptionsSecondary}
-              ?checked=${[this._config.display_options.secondary_info].flat().includes('days')}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('days')}
             >
             </ha-checkbox>
           </ha-formfield>
@@ -250,7 +250,7 @@ export class SchedulerCardEditor extends LitElement {
             <ha-checkbox
               value="additional-tasks"
               @change=${this._setDisplayOptionsSecondary}
-              ?checked=${[this._config.display_options.secondary_info].flat().includes('additional-tasks')}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('additional-tasks')}
             >
             </ha-checkbox>
           </ha-formfield>
@@ -290,7 +290,7 @@ export class SchedulerCardEditor extends LitElement {
 
   private _setSortBy(ev: Event) {
     const value = (ev.target as HTMLInputElement).value;
-    let config = [this._config?.sort_by || DefaultCardConfig.sort_by].flat();
+    let config = [this._config?.sort_by || DEFAULT_SORT_BY].flat();
     config = config.filter(e => e == 'state');
     if (!config.includes(value)) config = [...config, value];
     this._updateConfig({ sort_by: config });
@@ -299,7 +299,7 @@ export class SchedulerCardEditor extends LitElement {
   private _setDisplayOptionsPrimary(ev: Event) {
     const value = (ev.target as HTMLInputElement).value;
     const displayOptions = {
-      ...(this._config?.display_options || DefaultCardConfig.display_options),
+      ...this._config?.display_options,
       primary_info: value,
     };
     this._updateConfig({ display_options: displayOptions });
@@ -308,9 +308,7 @@ export class SchedulerCardEditor extends LitElement {
   private _setDisplayOptionsSecondary(ev: Event) {
     const value = (ev.target as HTMLInputElement).value;
     const checked = (ev.target as HTMLInputElement).checked;
-    let displayOptions = {
-      ...(this._config?.display_options || DefaultCardConfig.display_options),
-    };
+    let displayOptions = { ...this._config?.display_options };
     let secondaryInfo = [displayOptions.secondary_info || []].flat();
     secondaryInfo = checked ? Array.from(new Set([...secondaryInfo, value])) : secondaryInfo.filter(e => e !== value);
     secondaryInfo.sort((a, b) => {
@@ -331,8 +329,8 @@ export class SchedulerCardEditor extends LitElement {
   }
 
   async _showIncludedEntitiesDialog(ev: Event) {
-    let domains = this._config.include.filter(e => !e.includes('.'));
-    let entities = this._config.include.filter(e => e.includes('.'));
+    let domains = (this._config.include || []).filter(e => !e.includes('.'));
+    let entities = (this._config.include || []).filter(e => e.includes('.'));
 
     await new Promise<{ domains: string[], entities: string[] } | null>(resolve => {
       const params: DialogSelectEntitiesParams = {

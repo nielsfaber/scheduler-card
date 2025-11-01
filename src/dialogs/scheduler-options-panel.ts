@@ -18,13 +18,13 @@ import { SelectSelector } from '../lib/selector';
 import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
 import { asArray } from '../lib/as_array';
 import { hassLocalize } from '../localize/hassLocalize';
+import { formatSelectorDisplay } from '../data/selectors/format_selector_display';
+import { isDefined } from '../lib/is_defined';
 
 import '../components/scheduler-collapsible-section';
 import './dialog-select-condition';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import { formatSelectorDisplay } from '../data/selectors/format_selector_display';
-import { isDefined } from '../lib/is_defined';
 
 @customElement('scheduler-options-panel')
 export class SchedulerOptionsPanel extends LitElement {
@@ -57,7 +57,7 @@ export class SchedulerOptionsPanel extends LitElement {
 
     const tagEntries = await fetchTags(this.hass!);
     const storedTags = tagEntries.map(e => e.name);
-    const configTags = [...this.config.tags].flat();
+    const configTags = [...(this.config.tags || [])].flat();
     this.tags = [
       ...storedTags,
       ...configTags.filter(e => !storedTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),

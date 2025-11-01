@@ -7,7 +7,7 @@ import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { CardConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
-import { CARD_VERSION, DefaultCardConfig, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
+import { CARD_VERSION, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
 import { validateConfig } from "./data/validate_config";
 import { localize } from "./localize/localize";
 import { isIncludedSchedule } from "./data/schedule/is_included_schedule";
@@ -25,7 +25,7 @@ export class SchedulerCard extends LitElement {
 
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @property() _config: CardConfig = DefaultCardConfig;
+  @property() _config: CardConfig = {};
 
   @state() public schedules?: ScheduleStorageEntry[];
 
@@ -36,12 +36,9 @@ export class SchedulerCard extends LitElement {
 
   private __unsubs?: Array<UnsubscribeFunc | Promise<UnsubscribeFunc>>;
 
-  setConfig(userConfig: Partial<CardConfig>) {
+  setConfig(userConfig: CardConfig) {
     userConfig = validateConfig(userConfig);
-    this._config = {
-      ...DefaultCardConfig,
-      ...userConfig,
-    };
+    this._config = { ...userConfig };
   }
 
   firstUpdated() {
@@ -268,7 +265,7 @@ export class SchedulerCard extends LitElement {
         if (!this._config || (!this.schedules && !this.connectionError && retries < 50)) return;
         let cardSize = this._config!.title || this._config!.show_header_toggle ? 3 : 1;
         if (this._config.show_add_button) cardSize += 1;
-        const rowSize = (([this._config.display_options.secondary_info || []].flat().length || 2) + 1) / 2;
+        const rowSize = (([this._config.display_options?.secondary_info || []].flat().length || 2) + 1) / 2;
         if (this.schedules)
           cardSize += this.showDiscovered
             ? Object.keys(this.schedules).length * rowSize
@@ -298,7 +295,7 @@ export class SchedulerCard extends LitElement {
       const oldSchedule = oldScheduleIdx >= 0 ? this.schedules![oldScheduleIdx] : null;
       let schedules = [...(this.schedules || [])];
 
-      if (!schedule || (!this._config.discover_existing && !isIncludedSchedule(schedule, this._config!))) {
+      if (!schedule || (this._config.discover_existing === false && !isIncludedSchedule(schedule, this._config!))) {
         //schedule is not in the list, remove if it was in the list
         if (oldSchedule) {
           schedules = schedules.filter(e => e.schedule_id !== ev.schedule_id);

@@ -1,3 +1,4 @@
+import { DEFAULT_INCLUDED_DOMAINS } from "../../const";
 import { matchPattern } from "../../lib/patterns";
 import { Schedule, CardConfig } from "../../types";
 
@@ -16,13 +17,13 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
   });
 
   if (![...new Set(entityList)].every(entityId =>
-    ((config.include || []).some(e => matchPattern(e, entityId)) ||
+    ((config.include || DEFAULT_INCLUDED_DOMAINS).some(e => matchPattern(e, entityId)) ||
       Object.keys(config.customize || {}).some(e => matchPattern(e, entityId))) &&
     !(config.exclude || []).some(e => matchPattern(e, entityId))
   )) return false;
 
   //filter items by tags
-  const filterTags = [config.tags].flat();
+  const filterTags = [config.tags || []].flat();
   if (filterTags.length) {
     res = false;
     if ((schedule.tags || []).some(e => filterTags.includes(e))) res = true;
@@ -32,7 +33,7 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
   }
 
   //filter items by exclude_tags
-  const excludeFilters = [config.exclude_tags].flat();
+  const excludeFilters = [config.exclude_tags || []].flat();
   if (excludeFilters.length && res) {
     if ((schedule.tags || []).some(e => excludeFilters.includes(e))) res = false;
     else if (excludeFilters.includes('none') && !schedule.tags?.length) res = false;

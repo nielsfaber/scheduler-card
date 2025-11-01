@@ -40,7 +40,7 @@ const computeDomains = (hass: HomeAssistant) => {
   return domains;
 };
 
-const computeEntitiesForDomain = (domain: string, customize: CustomConfig, hass: HomeAssistant) => {
+const computeEntitiesForDomain = (domain: string, customize: CustomConfig | undefined, hass: HomeAssistant) => {
   if (['script', 'notify'].includes(domain)) {
     let entities = Object.keys(hass.services[domain]);
     if (domain == 'script') entities = entities.filter(e => !['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(e));

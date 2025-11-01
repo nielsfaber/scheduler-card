@@ -11,6 +11,7 @@ import { CustomConfig } from "../types";
 
 import './scheduler-chip-set';
 import './scheduler-picker';
+import { DEFAULT_INCLUDED_DOMAINS } from "../const";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -228,7 +229,7 @@ export class SchedulerEntityPicker extends LitElement {
 
     if (this.config) {
       entityIds = entityIds.filter(entityId => {
-        return ((this.config!.include || []).some(e => matchPattern(e, entityId)) ||
+        return ((this.config!.include || DEFAULT_INCLUDED_DOMAINS).some(e => matchPattern(e, entityId)) ||
           Object.keys(this.config!.customize || {}).some(e => matchPattern(e, entityId))) &&
           !(this.config!.exclude || []).some(e => matchPattern(e, entityId))
       });

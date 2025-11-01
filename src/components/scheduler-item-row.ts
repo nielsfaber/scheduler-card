@@ -9,6 +9,7 @@ import { computeEntityIcon } from "../data/format/compute_entity_icon";
 import { computeDomain } from "../lib/entity";
 
 import './scheduler-relative-time';
+import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from "../const";
 
 @customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
@@ -26,7 +27,7 @@ export class SchedulerItemRow extends LitElement {
       const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
       let icon = computeActionIcon(nextAction, this.config.customize);
-      if (this.config.display_options.icon == 'entity') {
+      if (this.config.display_options?.icon == 'entity') {
         let entityId = [nextAction.target?.entity_id || []].flat().shift();
         if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
         if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
@@ -43,9 +44,9 @@ export class SchedulerItemRow extends LitElement {
         class="info ${disabled ? 'disabled' : ''}"
         @click=${this._handleItemClick}
       >
-        ${this.renderDisplayItem(this.config.display_options.primary_info)}
+        ${this.renderDisplayItem(this.config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY)}
         <div class="secondary">
-        ${this.renderDisplayItem(this.config.display_options.secondary_info)}
+        ${this.renderDisplayItem(this.config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY)}
         </div>
       </div>
       <div class="state">

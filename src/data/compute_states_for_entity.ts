@@ -108,14 +108,14 @@ const standardStatesForEntity = (entityId: string, hass: HomeAssistant) => {
   }
 }
 
-export const computeStatesForEntity = (entityId: string, hass: HomeAssistant, customize: CustomConfig): Selector => {
+export const computeStatesForEntity = (entityId: string, hass: HomeAssistant, customize: CustomConfig | undefined): Selector => {
   let stateConfig = standardStatesForEntity(entityId, hass);
 
-  let customStateConfig = Object.keys(customize)
+  let customStateConfig = Object.keys(customize || {})
     .filter(key => matchPattern(key, computeDomain(entityId)) || matchPattern(key, entityId))
-    .filter(e => Object.keys(customize[e]).includes('states'))
+    .filter(e => Object.keys(customize![e]).includes('states'))
     .sort((a, b) => a.length - b.length)
-    .map(e => customize[e].states)
+    .map(e => customize![e].states)
     .shift();
 
   if (customStateConfig) {

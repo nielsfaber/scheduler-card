@@ -1,3 +1,4 @@
+import { DEFAULT_PRIMARY_INFO_DISPLAY } from "../../const";
 import { sortByName } from "../../lib/sort";
 import { HomeAssistant } from "../../lib/types";
 import { CardConfig, CustomConfig, DisplayItem, Schedule, ScheduleStorageEntry } from "../../types";
@@ -63,7 +64,7 @@ export const sortSchedules = (schedules: ScheduleStorageEntry[], config: CardCon
   }
 
   if (sortingOptions.includes('title')) {
-    schedules = schedules.sort((a, b) => sortByTitle(a, b, config.display_options.primary_info, hass, config.customize))
+    schedules = schedules.sort((a, b) => sortByTitle(a, b, config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY, hass, config.customize))
   }
 
   if (sortingOptions.includes('state')) {
