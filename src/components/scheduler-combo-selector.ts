@@ -151,15 +151,15 @@ export class SchedulerComboSelector extends LitElement {
     }
     else if ((this.config as NumberSelector).number) {
       const config = (this.config as NumberSelector).number!;
-      let min = config.min || 0;
-      let max = config.max || 255;
-      let value = typeof this.value == 'number' ? this.value : min;
+      const boxMode = config.mode == 'box' || !isDefined(config.min) || !isDefined(config.max);
 
-      if (typeof config.scale_factor == 'number') value = (value / config.scale_factor);
-      if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
-      value = roundFloat(value);
+      let value = this.value;
+      if (!boxMode && typeof value !== 'number') value = config.min;
+      if (typeof config.scale_factor == 'number') value = (Number(value) / config.scale_factor);
+      if (typeof config?.step === 'number') value = Math.round(Number(value) / config.step) * config.step;
+      if (isDefined(value)) value = roundFloat(Number(value));
 
-      const valueChanged = (ev: Event) => {
+      const sliderValueChanged = (ev: Event) => {
         let value = Number((ev.target as HTMLInputElement).value);
 
         if (typeof config.scale_factor == 'number')
@@ -172,17 +172,57 @@ export class SchedulerComboSelector extends LitElement {
         ev.stopPropagation();
       }
 
+      const boxValueChanged = (ev: InputEvent) => {
+        ev.stopPropagation();
+        let input = (ev.target as HTMLInputElement).value;
+        const value = input === "" || isNaN(Number(input)) ? undefined : Number(input);
+        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+      }
+
+      const validateBoxInput = (value: any, _nativeValidity: any) => {
+        let valid = config.step && Number(config.step) % 1 == 0
+          ? value.match(/^-?\d+$/) !== null
+          : value.match(/^[+-]?\d+([.,]\d+)?$/) !== null;
+        if (valid && isDefined(config.min)) valid = Number(value) >= config.min;
+        if (valid && isDefined(config.max)) valid = Number(value) <= config.max;
+
+        return {
+          valid: valid,
+          customError: !valid
+        }
+      }
+
       return html`
         <div class="slider-wrapper">
+        ${boxMode
+          ? html`
+        <ha-textfield
+          .inputMode=${config.step && Number(config.step) % 1 == 0 ? "numeric" : "decimal"}
+          .min=${config.min}
+          .max=${config.max}
+          .value=${value || ""}
+          .step=${config.step ?? 1}
+          .disabled=${this.disabled}
+          .required=${true}
+          .suffix=${config.unit}
+          type="number"
+          autoValidate
+          .validityTransform=${validateBoxInput}
+          @input=${boxValueChanged}
+        >
+        </ha-textfield>
+        `
+          : html`
         <ha-slider
-          .min=${min}
-          .max=${max}
+          .min=${config.min}
+          .max=${config.max}
           .step=${config.step || 1}
           .value=${value}
-          @change=${valueChanged}
+          @change=${sliderValueChanged}
           ?disabled=${this.disabled}
         ></ha-slider>
         <span class="value">${value} ${config.unit || ''}</span>
+        `}
         </div>
       `
     }
@@ -260,6 +300,9 @@ export class SchedulerComboSelector extends LitElement {
         align-self: center;
         min-width: 45px;
         text-align: end;
+      }
+      div.slider-wrapper ha-textfield {
+        --ha-textfield-input-width: 40px;
       }
       div.select-wrapper {
         display: flex;

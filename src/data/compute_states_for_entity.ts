@@ -6,6 +6,7 @@ import { HomeAssistant } from "../lib/types";
 import { stateIcon } from "./state_icon";
 import { CustomConfig } from "../types";
 import { matchPattern } from "../lib/patterns";
+import { isDefined } from "../lib/is_defined";
 
 export const SUPPORTED_CONDITION_DOMAINS = [
   'alarm_control_panel',
@@ -86,7 +87,7 @@ const standardStatesForEntity = (entityId: string, hass: HomeAssistant) => {
     case 'proximity':
       return numericSelector({ mode: 'box', unit: attr.unit_of_measurement });
     case 'sensor':
-      return !isNaN(Number(stateObj?.state))
+      return !isNaN(Number(stateObj?.state)) || isDefined(attr.unit_of_measurement)
         ? numericSelector({
           mode: 'box',
           unit: attr.unit_of_measurement,
