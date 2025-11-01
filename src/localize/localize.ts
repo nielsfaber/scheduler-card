@@ -19,6 +19,7 @@ import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
 import * as sl from './languages/sl.json';
 import * as uk from './languages/uk.json';
+import * as ur from './languages/ur.json';
 import * as zh_Hans from './languages/zh-Hans.json';
 
 import { HomeAssistant } from '../lib/types';
@@ -48,6 +49,7 @@ const languages: any = {
   sl: sl,
   ru: ru,
   uk: uk,
+  ur: ur,
   'zh-Hans': zh_Hans,
 };
 
