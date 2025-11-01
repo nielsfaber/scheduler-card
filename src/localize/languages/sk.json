@@ -144,7 +144,10 @@
         "backend_error": "Nepodarilo sa pripojiť ku komponentu Scheduler. Pred tým, ako použijete túto kartu ho musíte nainštalovať ako integráciu.",
         "excluded_items": "Vylúčené položky: {number}",
         "hide_excluded": "skryť vylúčené položky",
-        "additional_tasks": "Ďalšie úlohy: {number}"
+        "additional_tasks": "Ďalšie úlohy: {number}",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Dni opakovania",
@@ -242,7 +245,8 @@
               "relative_time": "Zostávajúci čas do ďalšej akcie",
               "time": "Nastavený čas pre ďalšiu akciu",
               "days": "Opakované dni v týždni",
-              "additional_tasks": "Počet dodatočných úloh"
+              "additional_tasks": "Počet dodatočných úloh",
+              "additional_task_info": "Extra info additional task"
             }
           },
           "show_header_toggle": {

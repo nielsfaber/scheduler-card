@@ -144,7 +144,10 @@
         "backend_error": "Kunne ikke koble til tidsplankomponenten. Den må installeres som en integrasjon før dette kortet kan benyttes.",
         "excluded_items": "{number} ekskludert {if number is 1} element {else} elementer",
         "hide_excluded": "skjul ekskluderte elementer",
-        "additional_tasks": "{number} flere {if number is 1} oppgaver {else} oppgaver"
+        "additional_tasks": "{number} flere {if number is 1} oppgaver {else} oppgaver",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "oppførsel etter fullføring",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

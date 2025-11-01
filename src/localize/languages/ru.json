@@ -144,7 +144,10 @@
         "backend_error": "Нет соединенияс scheduler component. Scheduler component должен быть установлен до применения этой карты.",
         "excluded_items": "{number} исключено {if number is 1} элемент {else} элементов",
         "hide_excluded": "скрыть исключенные элементы",
-        "additional_tasks": "{number} больше {if number is 1} задача {else} задач"
+        "additional_tasks": "{number} больше {if number is 1} задача {else} задач",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "поведение после срабатывания",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

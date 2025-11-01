@@ -144,7 +144,10 @@
         "backend_error": "Nie można połączyć się z komponentem harmonogramu. Musi być zainstalowany jako integracja, zanim ta karta będzie mogła być używana.",
         "excluded_items": "{number} wykluczonych {if number is 1} element {else} elementów",
         "hide_excluded": "ukryj wykluczone elementy",
-        "additional_tasks": "{number} dodatkowych {if number is 1} zadanie {else} zadań"
+        "additional_tasks": "{number} dodatkowych {if number is 1} zadanie {else} zadań",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Powtarzane dni",
@@ -242,7 +245,8 @@
               "relative_time": "Czas do następnej akcji",
               "time": "Skonfigurowany czas następnej akcji",
               "days": "Powtarzane dni tygodnia",
-              "additional_tasks": "Liczba dodatkowych zadań"
+              "additional_tasks": "Liczba dodatkowych zadań",
+              "additional_task_info": "Extra info additional task"
             }
           },
           "show_header_toggle": {

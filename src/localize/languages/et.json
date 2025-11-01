@@ -144,7 +144,10 @@
         "backend_error": "Ajastaja sidumine puudub. Sidumine tuleb luua enne selle kaardi kasutamist.",
         "excluded_items": "välja on jäetud {number}  {if number is 1} ajastus {else} ajastust",
         "hide_excluded": "peida välja jäetud ajastused",
-        "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust"
+        "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "toiming peale käivitumist",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }

@@ -254,6 +254,15 @@ export class SchedulerCardEditor extends LitElement {
             >
             </ha-checkbox>
           </ha-formfield>
+
+          <ha-formfield label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.additional_task_info', this.hass)}">
+            <ha-checkbox
+              value="additional-task-info"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options.secondary_info].flat().includes('additional-task-info')}
+            >
+            </ha-checkbox>
+          </ha-formfield>
         </div>
 
         </div>
@@ -319,6 +328,7 @@ export class SchedulerCardEditor extends LitElement {
         time: secondaryInfo.includes('relative-time') ? 3 : 2,
         days: secondaryInfo.includes('relative-time') ? 2 : 3,
         'additional-tasks': 4,
+        'additional-task-info': 5,
       };
       const rankA = Object.keys(ranking).includes(a) ? ranking[a] : 5;
       const rankB = Object.keys(ranking).includes(b) ? ranking[b] : 5;

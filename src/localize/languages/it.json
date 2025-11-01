@@ -144,7 +144,10 @@
         "backend_error": "Impossibile connettersi con il componente scheduler. Deve essere installato come integrazione prima di poter utilizzare questa card.",
         "excluded_items": "{number} {if number is 1} oggetto escluso {else} oggetti esclusi",
         "hide_excluded": "Nascondi oggetti esclusi",
-        "additional_tasks": "{number} attività in più"
+        "additional_tasks": "{number} attività in più",
+        "additional_task_info": {
+          "no_action": "No action configured"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -186,6 +189,15 @@
         },
         "repeat_type": "comportamento dopo il completamento",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "fields": {
+          "display_format_secondary": {
+            "options": {
+              "additional_task_info": "Extra info additional task"
+            }
+          }
+        }
       }
     }
   }
