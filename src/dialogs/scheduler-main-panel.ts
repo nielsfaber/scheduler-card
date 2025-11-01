@@ -580,12 +580,6 @@ export class SchedulerMainPanel extends LitElement {
   scheduler-collapsible-section .header span {
     flex: 1;
   }
-  ha-button ha-icon[slot='start'] {
-    margin: 0px 4px 0px -8px;
-  }
-  ha-button ha-icon[slot='end'] {
-    margin: 0px -8px 0px 4px;
-  }
   mwc-checkbox {
     align-self: center;
   }
