@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "automatika[ na {temperature}]",
       "set_hvac_mode": "nastavit režim[ na {hvac_mode}]",
       "set_preset_mode": "nastavit předvolbu[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "set fan mode[ to {fan_mode}]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "zavřít",

@@ -51,6 +51,8 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return listSelector({ options: computeOptionIcons(attr.preset_modes), translation_key: 'state_attributes.climate.preset_mode.${value}' });
     case 'climate.fan_mode':
       return listSelector({ options: computeOptionIcons(attr.fan_modes) });
+    case 'climate.swing_mode':
+      return listSelector({ options: computeOptionIcons(attr.swing_modes) });
     case 'cover.position':
     case 'cover.tilt_position':
     case 'fan.percentage':

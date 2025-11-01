@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "automatisch[ naar {temperature}]",
       "set_hvac_mode": "modus aanpassen[ naar {hvac_mode}]",
       "set_preset_mode": "programma[ {preset_mode}] instellen",
-      "set_fan_mode": "ventilatiemodus aanpassen[ naar {fan_mode}]"
+      "set_fan_mode": "ventilatiemodus aanpassen[ naar {fan_mode}]",
+      "set_swing_mode": "oscillatiemodus aanpassen[ naar {swing_mode}]"
     },
     "cover": {
       "close_cover": "sluiten",

@@ -8,10 +8,11 @@ import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
 import { mdiChevronDown, mdiChevronUp, mdiShape } from "@mdi/js";
 import { fetchItems } from "../data/store/fetch_items";
 import { CustomConfig } from "../types";
+import { DEFAULT_INCLUDED_DOMAINS } from "../const";
+import { HassEntity } from "home-assistant-js-websocket";
 
 import './scheduler-chip-set';
 import './scheduler-picker';
-import { DEFAULT_INCLUDED_DOMAINS } from "../const";
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -28,6 +29,8 @@ export class SchedulerEntityPicker extends LitElement {
 
   @property({ type: Boolean })
   disabled = false;
+
+  filterFunc?: (stateObj: HassEntity) => boolean;
 
   @state() multipleMode = false;
 
@@ -235,6 +238,8 @@ export class SchedulerEntityPicker extends LitElement {
       });
     }
     entityIds = entityIds.filter(e => !this.scheduleEntities.includes(e));
+
+    if (this.filterFunc) entityIds = entityIds.filter(e => this.filterFunc!(this.hass.states[e]));
 
     // if (this.initialValue && !entityIds.includes(this.initialValue) && !this.valueMultiple.includes(this.initialValue)) {
     //   entityIds = [...entityIds, this.initialValue];

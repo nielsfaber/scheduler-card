@@ -40,6 +40,7 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
+import { HassEntity } from "home-assistant-js-websocket";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -261,6 +262,7 @@ export class SchedulerMainPanel extends LitElement {
               .hass=${this.hass}
               .config=${this.config}
               .domain=${domain}
+              .filterFunc=${(stateObj: HassEntity) => config.supported_features ? (stateObj.attributes.supported_features || 0) & config.supported_features : true}
               @value-changed=${this._selectEntity}
               .value=${[action.target?.entity_id || []].flat()}
               ?multiple=${true}

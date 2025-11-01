@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "Automatisch[ auf {temperature}]",
       "set_hvac_mode": "Modus setzen[ auf {hvac_mode}]",
       "set_preset_mode": "Voreinstellung setzen[ auf {preset_mode}]",
-      "set_fan_mode": "Lüftermodus einstellen[ auf {fan_mode}]"
+      "set_fan_mode": "Lüftermodus einstellen[ auf {fan_mode}]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "Schließen",
@@ -189,5 +190,4 @@
       }
     }
   }
-
 }

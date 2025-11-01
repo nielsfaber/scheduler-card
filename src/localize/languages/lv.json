@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "auto[ uz {temperature}]",
       "set_hvac_mode": "iestatīt[ uz {hvac_mode}]",
       "set_preset_mode": "iestatīt režīmu[ uz {preset_mode}]",
-      "set_fan_mode": "iestatīt ventilatora režīmu[ uz {fan_mode}]"
+      "set_fan_mode": "iestatīt ventilatora režīmu[ uz {fan_mode}]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "aizvērt",

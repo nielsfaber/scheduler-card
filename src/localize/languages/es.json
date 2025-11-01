@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "automático[ a {temperature}]",
       "set_hvac_mode": "establecer modo[ a {hvac_mode}]",
       "set_preset_mode": "establecer preajuste[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]"
+      "set_fan_mode": "set fan mode[ to {fan_mode}]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "cerrado",

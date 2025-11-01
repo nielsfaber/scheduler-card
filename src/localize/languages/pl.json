@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "auto[ na {temperature}]",
       "set_hvac_mode": "ustaw tryb[ na {hvac_mode}]",
       "set_preset_mode": "ustaw tryb[ na {preset_mode}]",
-      "set_fan_mode": "ustaw tryb wentylatora[ na {fan_mode}]"
+      "set_fan_mode": "ustaw tryb wentylatora[ na {fan_mode}]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "zamknij",

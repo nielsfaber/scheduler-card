@@ -13,7 +13,8 @@
       "set_temperature_hvac_mode_auto": "آٹو[ {temperature} پر]",
       "set_hvac_mode": "موڈ سیٹ کریں[ {hvac_mode} پر]",
       "set_preset_mode": "پری سیٹ موڈ سیٹ کریں[ {preset_mode} پر]",
-      "set_fan_mode": "فین موڈ سیٹ کریں[ {fan_mode} پر]"
+      "set_fan_mode": "فین موڈ سیٹ کریں[ {fan_mode} پر]",
+      "set_swing_mode": "set swing mode[ to {swing_mode}]"
     },
     "cover": {
       "close_cover": "بند کریں",

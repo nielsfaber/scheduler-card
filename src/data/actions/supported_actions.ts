@@ -22,18 +22,23 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {}
     },
     alarm_arm_home: {
+      supported_features: 1,
       target: {}
     },
     alarm_arm_away: {
+      supported_features: 2,
       target: {}
     },
     alarm_arm_night: {
+      supported_features: 4,
       target: {}
     },
     alarm_arm_custom_bypass: {
+      supported_features: 16,
       target: {}
     },
     alarm_arm_vacation: {
+      supported_features: 32,
       target: {}
     },
   },
@@ -94,6 +99,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_preset_mode: {
       translation_key: 'services.climate.set_preset_mode',
+      supported_features: 16,
       target: {},
       fields: {
         preset_mode: {
@@ -102,22 +108,35 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_fan_mode: {
       translation_key: 'services.climate.set_fan_mode',
+      supported_features: 8,
       target: {},
       fields: {
         fan_mode: {
         }
       }
     },
+    set_swing_mode: {
+      translation_key: 'services.climate.set_swing_mode',
+      supported_features: 32,
+      target: {},
+      fields: {
+        swing_mode: {
+        }
+      }
+    }
   },
   cover: {
     close_cover: {
+      supported_features: 2,
       target: {}
     },
     open_cover: {
+      supported_features: 1,
       target: {}
     },
     set_cover_position: {
       translation_key: 'services.cover.set_cover_position',
+      supported_features: 4,
       target: {},
       fields: {
         position: {
@@ -126,6 +145,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_tilt_position: {
       translation_key: 'services.cover.set_cover_tilt_position',
+      supported_features: 128,
       target: {},
       fields: {
         tilt_position: {
@@ -142,6 +162,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_percentage: {
       translation_key: 'services.fan.set_percentage',
+      supported_features: 1,
       target: {},
       fields: {
         percentage: {}
@@ -149,6 +170,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     oscillate: {
       translation_key: 'services.fan.oscillate',
+      supported_features: 2,
       target: {},
       fields: {
         oscillating: {}
@@ -156,6 +178,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_direction: {
       translation_key: 'services.fan.set_direction',
+      supported_features: 4,
       target: {},
       fields: {
         direction: {}
@@ -163,6 +186,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_preset_mode: {
       translation_key: 'services.climate.set_preset_mode',
+      supported_features: 8,
       target: {},
       fields: {
         preset_mode: {
@@ -187,6 +211,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_mode: {
       translation_key: 'services.humidifier.set_mode',
+      supported_features: 1,
       target: {},
       fields: {
         mode: {}
@@ -269,6 +294,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     select_source: {
       translation_key: 'services.media_player.select_source',
+      supported_features: 2048,
       target: {},
       fields: {
         source: {
@@ -326,9 +352,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   vacuum: {
     turn_on: {
+      supported_features: 1,
       target: {}
     },
     start: {
+      supported_features: 8192,
       target: {}
     },
     play_pause: {
@@ -337,13 +365,16 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   valve: {
     open_valve: {
+      supported_features: 1,
       target: {}
     },
     close_valve: {
+      supported_features: 2,
       target: {}
     },
     set_valve_position: {
       translation_key: 'services.cover.set_cover_position',
+      supported_features: 4,
       target: {},
       fields: {
         position: {
@@ -354,6 +385,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   water_heater: {
     set_temperature: {
       translation_key: 'services.climate.set_temperature',
+      supported_features: 1,
       target: {},
       fields: {
         temperature: {
@@ -362,6 +394,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_operation_mode: {
       translation_key: 'services.water_heater.set_operation_mode',
+      supported_features: 2,
       target: {},
       fields: {
         operation_mode: {
@@ -370,6 +403,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
     },
     set_away_mode: {
       translation_key: 'services.water_heater.set_away_mode',
+      supported_features: 4,
       target: {},
       fields: {
         away_mode: {

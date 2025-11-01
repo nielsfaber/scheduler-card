@@ -26,7 +26,7 @@ export const parseListSelectorOption = (input: Record<string, any>) => {
     cfg = { ...cfg, value: String(input.label) };
 
 
-  if (Object.keys(input).includes('icon'))
+  if (Object.keys(input).includes('icon') && isDefined(input.icon))
     cfg = { ...cfg, icon: String(input.icon) };
 
   if (!cfg.value.length || !cfg.label.length) return null;
