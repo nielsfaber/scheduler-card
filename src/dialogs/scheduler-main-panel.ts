@@ -1,4 +1,4 @@
-import { mdiChevronLeft, mdiChevronRight, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
+import { mdiChevronLeft, mdiChevronRight, mdiDotsVertical, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
@@ -11,7 +11,7 @@ import { NumberSelector, Selector } from "../lib/selector";
 import { DialogSelectActionParams } from "./dialog-select-action";
 import { DialogSelectWeekdayParams } from "./dialog-select-weekdays";
 
-import { computeDomain, friendlyName } from "../lib/entity";
+import { computeDomain } from "../lib/entity";
 import { timeToString } from "../data/time/time_to_string";
 import { parseTimeString } from "../data/time/parse_time_string";
 import { addTimeOffset } from "../data/time/add_time_offset";
@@ -252,7 +252,26 @@ export class SchedulerMainPanel extends LitElement {
           <ha-icon slot="icon" icon="${computeActionIcon(action, this.config.customize)}"></ha-icon>
           <span>${capitalizeFirstLetter(heading)}</span>
         </div>
-        <ha-icon-button slot="contextMenu" .path=${mdiTrashCanOutline} @click=${this._removeAction}></ha-icon-button>
+
+        <ha-button-menu
+          slot="contextMenu" 
+          @action=${this._actionItemOptionsClick}
+          @closed=${(ev: Event) => { ev.stopPropagation() }}
+          @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
+          fixed
+        >
+          <ha-icon-button slot="trigger" .path=${mdiDotsVertical}>
+          </ha-icon-button>
+          <mwc-list-item graphic="icon">
+            ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
+            <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
+          </mwc-list-item>
+          <mwc-list-item graphic="icon" class="warning">
+            ${hassLocalize('ui.common.delete', this.hass)}
+            <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
+          </mwc-list-item>
+        </ha-button-menu>
+
         <div slot="content">
 
           ${config.target ? html`
@@ -262,7 +281,7 @@ export class SchedulerMainPanel extends LitElement {
               .hass=${this.hass}
               .config=${this.config}
               .domain=${domain}
-              .filterFunc=${(stateObj: HassEntity) => config.supported_features ? (stateObj.attributes.supported_features || 0) & config.supported_features : true}
+              .filterFunc=${(stateObj: HassEntity) => config.supported_features ? ((stateObj.attributes.supported_features || 0) & config.supported_features) > 0 : true}
               @value-changed=${this._selectEntity}
               .value=${[action.target?.entity_id || []].flat()}
               ?multiple=${true}
@@ -416,10 +435,8 @@ export class SchedulerMainPanel extends LitElement {
       .then((res: TWeekday[] | null) => {
         if (!res) return;
         this._updateEntry({ weekdays: res });
-
       });
   }
-
 
   async _showActionDialog(ev: Event) {
     let filteredDomains: string[] = [];
@@ -461,8 +478,17 @@ export class SchedulerMainPanel extends LitElement {
       });
   }
 
-  _removeAction() {
-    this._updateSlot({ actions: [] });
+
+  _actionItemOptionsClick(ev: CustomEvent) {
+    const option = ev.detail.index;
+    switch (option) {
+      case 0:
+        this._showActionDialog(ev);
+        break;
+      case 1:
+        this._updateSlot({ actions: [] });
+        break;
+    }
   }
 
   _stopTimeChanged(ev: CustomEvent) {
@@ -584,6 +610,9 @@ export class SchedulerMainPanel extends LitElement {
   }
   mwc-checkbox {
     align-self: center;
+  }
+  mwc-list-item.warning, mwc-list-item.warning ha-icon {
+    color: var(--error-color);
   }
     `;
   }

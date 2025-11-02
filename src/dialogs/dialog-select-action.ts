@@ -9,6 +9,7 @@ import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { Action, CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
+import { actionConfig } from '../data/actions/action_config';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -208,7 +209,10 @@ export class DialogSelectAction extends LitElement {
     let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
     if (this._params!.entityFilter?.length) {
       result = result.filter(item => this._params!.entityFilter?.every(entity => {
-        if (Object.keys(item.action.service_data).includes('entity_id') && item.action.service_data.entity_id != entity) return false;
+        const config = actionConfig(item.action, this._params!.cardConfig.customize);
+        const stateObj = this.hass.states[entity];
+        if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features)) return false;
+        else if (Object.keys(item.action.service_data).includes('entity_id') && item.action.service_data.entity_id != entity) return false;
         else if (Object.keys(item.action.target || {}).includes('entity_id') && (item.action.target || {}).entity_id != entity) return false;
         else return true;
       }));
