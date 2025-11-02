@@ -60,26 +60,6 @@
       "set_away_mode": "iestatīt prombūtnes režīmu"
     }
   },
-  "domains": {
-    "alarm_control_panel": "trauksmes kontroles panelis",
-    "binary_sensor": "binārie sensori",
-    "climate": "klimats",
-    "cover": "pārsegi",
-    "fan": "ventilatori",
-    "group": "vienību grupas",
-    "humidifier": "mitrinātāji",
-    "input_boolean": "ievades binārais lauks",
-    "input_number": "ievades numurs",
-    "input_select": "ievades izvēle",
-    "lawn_mower": "lawn mower",
-    "light": "gaismas",
-    "lock": "slēdzene",
-    "media_player": "multivides atskaņotāji",
-    "notify": "paziņojums",
-    "switch": "slēdži",
-    "vacuum": "putekļu sūcēji",
-    "water_heater": "ūdens sildītāji"
-  },
   "ui": {
     "components": {
       "date": {

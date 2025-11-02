@@ -60,26 +60,6 @@
       "set_away_mode": "ustaw tryb poza domem"
     }
   },
-  "domains": {
-    "alarm_control_panel": "panel alarmowy",
-    "binary_sensor": "czujnik binarny",
-    "climate": "klimatyzacja",
-    "cover": "roleta",
-    "fan": "wentylator",
-    "group": "grupa encji",
-    "humidifier": "nawilżacz",
-    "input_boolean": "przełącznik logiczny",
-    "input_number": "wartość liczbowa",
-    "input_select": "lista wyboru",
-    "lawn_mower": "kosiarka",
-    "light": "światło",
-    "lock": "zamek",
-    "media_player": "odtwarzacz multimedialny",
-    "notify": "powiadomienie",
-    "switch": "przełącznik",
-    "vacuum": "odkurzacz",
-    "water_heater": "podgrzewacz wody"
-  },
   "ui": {
     "components": {
       "date": {

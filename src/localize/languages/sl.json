@@ -60,26 +60,6 @@
       "set_away_mode": "nastavi način odsoten"
     }
   },
-  "domains": {
-    "alarm_control_panel": "kontrolna plošča alarma",
-    "binary_sensor": "binarni sensorji",
-    "climate": "klime",
-    "cover": "rolete",
-    "fan": "ventilatorji",
-    "group": "skupine entitet",
-    "humidifier": "vlažilniki",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
-    "light": "luči",
-    "lock": "ključavnice",
-    "media_player": "medijsi predvajalniki",
-    "notify": "obvestila",
-    "switch": "stikala",
-    "vacuum": "sesalniki",
-    "water_heater": "grelniki vode"
-  },
   "ui": {
     "components": {
       "date": {

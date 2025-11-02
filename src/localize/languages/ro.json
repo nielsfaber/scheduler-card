@@ -60,26 +60,6 @@
       "set_away_mode": "setare mod plecat"
     }
   },
-  "domains": {
-    "alarm_control_panel": "panou control alarmă",
-    "binary_sensor": "binary sensors",
-    "climate": "climat",
-    "cover": "jaluzele",
-    "fan": "ventilatoare",
-    "group": "grupuri",
-    "humidifier": "umidificatoare",
-    "input_boolean": "input boolean",
-    "input_number": "input număr",
-    "input_select": "input selecție",
-    "lawn_mower": "lawn mower",
-    "light": "lumini",
-    "lock": "încuietori",
-    "media_player": "media playere",
-    "notify": "notification",
-    "switch": "întrerupătoare",
-    "vacuum": "aspiratoare",
-    "water_heater": "încălzitoare apă"
-  },
   "ui": {
     "components": {
       "date": {

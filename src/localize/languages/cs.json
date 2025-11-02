@@ -60,26 +60,6 @@
       "set_away_mode": "vypnout režim"
     }
   },
-  "domains": {
-    "alarm_control_panel": "poplašný ovládací panel",
-    "binary_sensor": "binary sensors",
-    "climate": "klima",
-    "cover": "rolety",
-    "fan": "ventilátory",
-    "group": "skupiny",
-    "humidifier": "zvlhčovače",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
-    "light": "světla",
-    "lock": "zámky",
-    "media_player": "média přehrávače",
-    "notify": "notification",
-    "switch": "spínače",
-    "vacuum": "vysavače",
-    "water_heater": "ohřívače vody"
-  },
   "ui": {
     "components": {
       "date": {

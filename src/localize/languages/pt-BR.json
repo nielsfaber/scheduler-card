@@ -60,26 +60,6 @@
       "set_away_mode": "definir modo ausente"
     }
   },
-  "domains": {
-    "alarm_control_panel": "painel de alarme",
-    "binary_sensor": "sensores binários",
-    "climate": "ambiente",
-    "cover": "persiana",
-    "fan": "ventiladores",
-    "group": "grupos",
-    "humidifier": "humidificadores",
-    "input_boolean": "campo booleano",
-    "input_number": "campo numérico",
-    "input_select": "campo de opção",
-    "lawn_mower": "lawn mower",
-    "light": "iluminação",
-    "lock": "fechaduras",
-    "media_player": "reprodutores de mídia",
-    "notify": "notificar",
-    "switch": "interruptores",
-    "vacuum": "aspiradores",
-    "water_heater": "aquecedores hidráulicos"
-  },
   "ui": {
     "components": {
       "date": {

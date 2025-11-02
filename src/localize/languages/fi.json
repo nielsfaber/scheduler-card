@@ -60,26 +60,6 @@
       "set_away_mode": "aseta poissa-tila"
     }
   },
-  "domains": {
-    "alarm_control_panel": "hälytyspaneeli",
-    "binary_sensor": "binary sensor",
-    "climate": "ilmastointi",
-    "cover": "kaihdin/tallin ovi",
-    "fan": "tuuletin",
-    "group": "ryhmä",
-    "humidifier": "ilmankosteuttimet",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
-    "light": "valaisin",
-    "lock": "lukko",
-    "media_player": "mediatoistin",
-    "notify": "ilmoitus",
-    "switch": "kytkin",
-    "vacuum": "imuri",
-    "water_heater": "vedenlämmitin"
-  },
   "ui": {
     "components": {
       "date": {

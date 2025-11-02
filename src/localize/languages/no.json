@@ -60,26 +60,6 @@
       "set_away_mode": "sett bortemodus"
     }
   },
-  "domains": {
-    "alarm_control_panel": "alarmpanel",
-    "binary_sensor": "binary sensors",
-    "climate": "klima",
-    "cover": "solskjerming",
-    "fan": "vifter",
-    "group": "grupper",
-    "humidifier": "luftfuktere",
-    "input_boolean": "input boolsk",
-    "input_number": "input nummer",
-    "input_select": "input valg",
-    "lawn_mower": "lawn mower",
-    "light": "lys",
-    "lock": "låser",
-    "media_player": "mediaspillere",
-    "notify": "notification",
-    "switch": "brytere",
-    "vacuum": "støvsugere",
-    "water_heater": "varmtvannsberedere"
-  },
   "ui": {
     "components": {
       "date": {

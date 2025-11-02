@@ -60,26 +60,6 @@
       "set_away_mode": "imposta fuori casa"
     }
   },
-  "domains": {
-    "alarm_control_panel": "pannello di controllo allarme",
-    "binary_sensor": "binary sensors",
-    "climate": "clima",
-    "cover": "serrande",
-    "fan": "ventole",
-    "group": "gruppi",
-    "humidifier": "umidificatori",
-    "input_boolean": "input booleani",
-    "input_number": "input numerici",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
-    "light": "luci",
-    "lock": "lucchetti",
-    "media_player": "media player",
-    "notify": "notification",
-    "switch": "interruttori",
-    "vacuum": "aspirapolveri",
-    "water_heater": "scaldabagno"
-  },
   "ui": {
     "components": {
       "date": {

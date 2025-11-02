@@ -60,26 +60,6 @@
       "set_away_mode": "קבע מצב מוץ לבית"
     }
   },
-  "domains": {
-    "alarm_control_panel": "בקרת אזעקה",
-    "binary_sensor": "binary sensors",
-    "climate": "מזג אוויר",
-    "cover": "תריסים",
-    "fan": "מאווררים",
-    "group": "קבוצות יישויות",
-    "humidifier": "מכשירי אדים",
-    "input_boolean": "כניסה בוליאנית",
-    "input_number": "כניסה מספרית",
-    "input_select": "בחירת כניסה",
-    "lawn_mower": "lawn mower",
-    "light": "תאורה",
-    "lock": "מנעולים",
-    "media_player": "נגני מדיה",
-    "notify": "notification",
-    "switch": "מפסקים",
-    "vacuum": "שואבי אבק",
-    "water_heater": "מחממי מים"
-  },
   "ui": {
     "components": {
       "date": {

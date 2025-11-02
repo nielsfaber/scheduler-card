@@ -60,26 +60,6 @@
       "set_away_mode": "встановити режим Не вдома"
     }
   },
-  "domains": {
-    "alarm_control_panel": "панель керування сигналізацією",
-    "binary_sensor": "binary sensors",
-    "climate": "клімат",
-    "cover": "жалюзі",
-    "fan": "вентилятори",
-    "group": "групи",
-    "humidifier": "зволожувачі",
-    "input_boolean": "логічні",
-    "input_number": "числові",
-    "input_select": "списки",
-    "lawn_mower": "lawn mower",
-    "light": "освітлення",
-    "lock": "замки",
-    "media_player": "медіаплеєри",
-    "notify": "notification",
-    "switch": "вимикачі",
-    "vacuum": "пилососи",
-    "water_heater": "водонагрівачі"
-  },
   "ui": {
     "components": {
       "date": {

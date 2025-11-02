@@ -60,26 +60,6 @@
       "set_away_mode": "choisir le mode absent"
     }
   },
-  "domains": {
-    "alarm_control_panel": "panneau de contrôle de l'alarme",
-    "binary_sensor": "capteurs binaires",
-    "climate": "thermostat",
-    "cover": "volet",
-    "fan": "ventilateur",
-    "group": "groupe",
-    "humidifier": "humidificateur",
-    "input_boolean": "entrée booléenne",
-    "input_number": "entrée numérique",
-    "input_select": "entrée de sélection",
-    "lawn_mower": "tondeuse",
-    "light": "lumière",
-    "lock": "serrure",
-    "media_player": "lecteur multimédia",
-    "notify": "notification",
-    "switch": "interrupteur",
-    "vacuum": "aspirateur",
-    "water_heater": "chauffe eau"
-  },
   "ui": {
     "components": {
       "date": {

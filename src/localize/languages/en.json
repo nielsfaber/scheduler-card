@@ -60,26 +60,6 @@
       "set_away_mode": "set away mode"
     }
   },
-  "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "binary_sensor": "binary sensors",
-    "climate": "climate",
-    "cover": "covers",
-    "fan": "fans",
-    "group": "entity groups",
-    "humidifier": "humidifiers",
-    "input_boolean": "input boolean",
-    "input_number": "input number",
-    "input_select": "input select",
-    "lawn_mower": "lawn mower",
-    "light": "lights",
-    "lock": "locks",
-    "media_player": "media players",
-    "notify": "notification",
-    "switch": "switches",
-    "vacuum": "vacuums",
-    "water_heater": "water heaters"
-  },
   "ui": {
     "components": {
       "date": {

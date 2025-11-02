@@ -60,26 +60,6 @@
       "set_away_mode": "stel afwezigheidsmode in"
     }
   },
-  "domains": {
-    "alarm_control_panel": "alarmsystemen",
-    "binary_sensor": "binaire sensoren",
-    "climate": "verwarming",
-    "cover": "zonwering",
-    "fan": "ventilatie",
-    "group": "groepen",
-    "humidifier": "luchtbevochtigers",
-    "input_boolean": "input_boolean",
-    "input_number": "input_number",
-    "input_select": "input_select",
-    "lawn_mower": "lawn mower",
-    "light": "verlichting",
-    "lock": "sloten",
-    "media_player": "mediaspelers",
-    "notify": "notificatie",
-    "switch": "schakelaars",
-    "vacuum": "stofzuigers",
-    "water_heater": "waterverwarming"
-  },
   "ui": {
     "components": {
       "date": {

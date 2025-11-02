@@ -60,26 +60,6 @@
       "set_away_mode": "Abwesenheitsmodus setzen"
     }
   },
-  "domains": {
-    "alarm_control_panel": "Alarmzentrale",
-    "binary_sensor": "Binärsensor",
-    "climate": "Heizung",
-    "cover": "Beschattung",
-    "fan": "Lüfter",
-    "group": "Gruppe",
-    "humidifier": "Befeuchter",
-    "input_boolean": "Eingabe-Boolean",
-    "input_number": "Eingabe-Nummer",
-    "input_select": "Eingabe-Auswahl",
-    "lawn_mower": "Rasenmäher",
-    "light": "Licht",
-    "lock": "Schloss",
-    "media_player": "Medienplayer",
-    "notify": "Benachrichtigung",
-    "switch": "Schalter",
-    "vacuum": "Staubsauger",
-    "water_heater": "Boiler"
-  },
   "ui": {
     "components": {
       "date": {

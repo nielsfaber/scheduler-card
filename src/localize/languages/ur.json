@@ -60,26 +60,6 @@
       "set_away_mode": "غیر موجودگی کا موڈ سیٹ کریں"
     }
   },
-  "domains": {
-    "alarm_control_panel": "الارم کنٹرول پینل",
-    "binary_sensor": "بائنری سینسرز",
-    "climate": "موسمی نظام",
-    "cover": "کورز",
-    "fan": "فینز",
-    "group": "اینٹیٹی گروپس",
-    "humidifier": "ہمیڈیفائرز",
-    "input_boolean": "ان پٹ بولین",
-    "input_number": "ان پٹ نمبر",
-    "input_select": "ان پٹ سلیکٹ",
-    "lawn_mower": "لان موور",
-    "light": "لائٹس",
-    "lock": "تالے",
-    "media_player": "میڈیا پلیئرز",
-    "notify": "اطلاع",
-    "switch": "سوئچز",
-    "vacuum": "ویکیومز",
-    "water_heater": "واٹر ہیٹرز"
-  },
   "ui": {
     "components": {
       "date": {

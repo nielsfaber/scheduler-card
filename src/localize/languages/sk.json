@@ -60,26 +60,6 @@
       "set_away_mode": "nastaviť režim neprítomnosti"
     }
   },
-  "domains": {
-    "alarm_control_panel": "ovládací panel alarmu",
-    "binary_sensor": "binárny snímač",
-    "climate": "klimatizácia",
-    "cover": "rolety",
-    "fan": "ventilátory",
-    "group": "skupiny",
-    "humidifier": "zvlhčovače",
-    "input_boolean": "vstup boolean",
-    "input_number": "vstup číslo",
-    "input_select": "vstup voľba",
-    "lawn_mower": "kosačka",
-    "light": "svetlá",
-    "lock": "zámky",
-    "media_player": "mediálne prehrávače",
-    "notify": "upozornenie",
-    "switch": "vypínače",
-    "vacuum": "vysávače",
-    "water_heater": "ohrievače vody"
-  },
   "ui": {
     "components": {
       "date": {

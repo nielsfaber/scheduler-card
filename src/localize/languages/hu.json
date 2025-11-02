@@ -60,26 +60,6 @@
       "set_away_mode": "set away mode"
     }
   },
-  "domains": {
-    "alarm_control_panel": "alarm control panel",
-    "binary_sensor": "binary sensors",
-    "climate": "termosztát",
-    "cover": "redőny",
-    "fan": "ventilátor",
-    "group": "csoportok",
-    "humidifier": "humifiers",
-    "input_boolean": "logikai bemenet",
-    "input_number": "szám bemenet",
-    "input_select": "legördülő bemenet",
-    "lawn_mower": "lawn mower",
-    "light": "lámpa",
-    "lock": "locks",
-    "media_player": "lejátszó",
-    "notify": "notification",
-    "switch": "kapcsoló",
-    "vacuum": "pórszívó",
-    "water_heater": "water heaters"
-  },
   "ui": {
     "components": {
       "date": {

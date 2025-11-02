@@ -60,26 +60,6 @@
       "set_away_mode": "kodust ära"
     }
   },
-  "domains": {
-    "alarm_control_panel": "valvepaneel",
-    "binary_sensor": "binary sensors",
-    "climate": "kliimaseade",
-    "cover": "aknakatted",
-    "fan": "ventilaatorid",
-    "group": "grupid",
-    "humidifier": "niisutajad",
-    "input_boolean": "tõeväärtus",
-    "input_number": "numbriline valik",
-    "input_select": "valikmenüü",
-    "lawn_mower": "lawn mower",
-    "light": "valgustid",
-    "lock": "lukud",
-    "media_player": "meediamängijad",
-    "notify": "notification",
-    "switch": "lülitid",
-    "vacuum": "tolmuimejad",
-    "water_heater": "veeboilerid"
-  },
   "ui": {
     "components": {
       "date": {
