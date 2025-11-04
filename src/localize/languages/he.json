@@ -47,7 +47,7 @@
       "select_source": "select source[ {source}]"
     },
     "notify": {
-      "send_message": "send notification"
+      "send_message": "שלח התראה"
     },
     "script": {
       "execute": "בצע"
@@ -102,16 +102,16 @@
         "description": "חלק מההגדרות יאבדו על ידי פעולה זו. האם אתה רוצה להמשיך?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "ימים לחזרה עבור לוח זמנים",
+        "choose": "בחר..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "בחר ישויות",
+        "choose": "בחר...",
+        "no_results": "לא נמצאו פריטים תואמים"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "בחר פעולה"
       }
     },
     "panel": {
@@ -128,11 +128,11 @@
         "additional_tasks": "{number} נוסף {if number is 1} משימה {else} משימות"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "ימים לחזרה",
+        "start_time": "זמן התחלה",
+        "stop_time": "זמן סיום",
+        "action": "פעולה",
+        "add_action": "הוספת פעולה",
         "select_timeslot": "בחר משבצת זמן קודם",
         "toggle_single_mode": "למצב פשוט",
         "toggle_scheme_mode": "למצב דיאגרמה",
@@ -145,14 +145,14 @@
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "header": "תנאים",
+          "add_condition": "הוספת תנאי",
+          "new_condition": "תנאי חדש",
           "types": {
-            "equal_to": "{entity} is equal to {value}",
-            "unequal_to": "{entity} is unequal to {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "equal_to": "{entity} שווה ל-{value}",
+            "unequal_to": "{entity} לא שווה ל-{value}",
+            "above": "{entity} מעל {value}",
+            "below": "{entity} מתחת {value}"
           },
           "options": {
             "logic_and": "All conditions must be true",
@@ -162,12 +162,13 @@
         },
         "period": {
           "header": "פרק זמן",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "התחלה",
+          "end_date": "סיום"
         },
         "repeat_type": "התנהגות לאחר הפעלה",
-        "tags": "Tags"
+        "tags": "תוויות"
       }
     }
   }
+
 }
