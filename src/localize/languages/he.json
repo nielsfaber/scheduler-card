@@ -13,8 +13,8 @@
       "set_temperature_hvac_mode_auto": "אוטומטי[ ל {temperature}]",
       "set_hvac_mode": "קבע מצב עבודה[ ל {hvac_mode}]",
       "set_preset_mode": "קבע הגדרה[ ל {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]",
-      "set_swing_mode": "set swing mode[ to {swing_mode}]"
+      "set_fan_mode": "הגדר מצב מאוורר[ ל {fan_mode}]",
+      "set_swing_mode": "הגדר מצב תנודת תריס[ ל {swing_mode}]"
     },
     "cover": {
       "close_cover": "סגירה",
@@ -25,7 +25,7 @@
     "fan": {
       "set_speed": "קבע מהירות[ ל {speed}]",
       "set_direction": "קבע כיוון[ ל {direction}]",
-      "oscillate": "קבע תנודה[ ל {oscillate}]"
+      "oscillate": "קבע תנודת תריס[ ל {oscillate}]"
     },
     "humidifier": {
       "set_humidity": "קבע לחות[ ל {humidity}]",
@@ -44,10 +44,10 @@
       "turn_on": "הדלקה[ בעוצמה של {brightness}]"
     },
     "media_player": {
-      "select_source": "select source[ {source}]"
+      "select_source": "בחר מקור[ {source}]"
     },
     "notify": {
-      "send_message": "send notification"
+      "send_message": "שלח התראה"
     },
     "script": {
       "execute": "בצע"
@@ -102,16 +102,16 @@
         "description": "חלק מההגדרות יאבדו על ידי פעולה זו. האם אתה רוצה להמשיך?"
       },
       "weekday_picker": {
-        "title": "Repeated days for schedule",
-        "choose": "Choose..."
+        "title": "ימים חוזרים עבור לוח הזמנים",
+        "choose": "בחר..."
       },
       "entity_picker": {
-        "title": "Choose entities",
-        "choose": "Choose...",
-        "no_results": "No matching items found"
+        "title": "בחר ישויות",
+        "choose": "בחר...",
+        "no_results": "לא נמצאו פריטים תואמים"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "בחירת פעולה"
       }
     },
     "panel": {
@@ -128,45 +128,119 @@
         "additional_tasks": "{number} נוסף {if number is 1} משימה {else} משימות"
       },
       "editor": {
-        "repeated_days": "Repeated days",
-        "start_time": "Start time",
-        "stop_time": "End time",
-        "action": "Action",
-        "add_action": "Add action",
+        "repeated_days": "ימים לחזרה",
+        "start_time": "שעת התחלה",
+        "stop_time": "שעת סיום",
+        "action": "פעולה",
+        "add_action": "הוסף פעולה",
         "select_timeslot": "בחר משבצת זמן קודם",
         "toggle_single_mode": "למצב פשוט",
         "toggle_scheme_mode": "למצב דיאגרמה",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "לוח הזמנים כולל משבצות זמן חופפות",
+          "missing_target_entity": "אחת או יותר מהפעולות חסרות ישות יעד",
+          "missing_service_parameter": "אחת או יותר מהפעולות חסרות הגדרה נדרשת",
+          "missing_action": "לוח הזמנים אינו כולל פעולות"
         }
       },
       "options": {
         "conditions": {
-          "header": "Conditions",
-          "add_condition": "Add condition",
-          "new_condition": "New condition",
+          "header": "תנאים",
+          "add_condition": "הוסף תנאי",
+          "new_condition": "תנאי חדש",
           "types": {
-            "equal_to": "{entity} is equal to {value}",
-            "unequal_to": "{entity} is unequal to {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "equal_to": "{entity} שווה ל {value}",
+            "unequal_to": "{entity} שונה מ {value}",
+            "above": "{entity} מעל {value}",
+            "below": "{entity} מתחת ל {value}"
           },
           "options": {
-            "logic_and": "All conditions must be true",
-            "logic_or": "Any condition must be true",
-            "track_changes": "Re-evaluate when conditions change"
+            "logic_and": "כל התנאים חייבים להיות נכונים",
+            "logic_or": "כל תנאי חייב להיות נכון",
+            "track_changes": "הערכה מחדש כאשר התנאים משתנים"
           }
         },
         "period": {
           "header": "פרק זמן",
-          "start_date": "From",
-          "end_date": "To"
+          "start_date": "מ",
+          "end_date": "ל"
         },
         "repeat_type": "התנהגות לאחר הפעלה",
-        "tags": "Tags"
+        "tags": "תגים"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "ישויות",
+          "other": "אחר"
+        },
+        "fields": {
+          "title": {
+            "heading": "כותרת הכרטיס",
+            "options": {
+              "standard": "רגילה",
+              "hidden": "מוסתרת",
+              "custom": "מותאמת אישית"
+            },
+            "custom_title": "כותרת מותאמת אישית"
+          },
+          "discover_existing": {
+            "heading": "הצג את כל לוחות הזמנים",
+            "description": "הגדרה זו קובעת את הפרמטר 'discover existing'. לוחות זמנים שנוצרו בעבר יתווספו אוטומטית לכרטיס"
+          },
+          "time_step": {
+            "heading": "מרווח זמן",
+            "description": "רזולוציה (בדקות) ליצירת לוחות זמנים",
+            "unit_minutes": "דק'"
+          },
+          "default_editor": {
+            "heading": "עורך זמן ברירת מחדל",
+            "options": {
+              "single": "מצב לוח זמנים בודד",
+              "scheme": "מצב תבנית זמנים"
+            }
+          },
+          "sort_by": {
+            "heading": "אפשרויות מיון",
+            "description": "סדר הופעת לוחות הזמנים בכרטיס",
+            "options": {
+              "relative_time": "זמן שנותר עד הפעולה הבאה",
+              "title": "כותרת לוח הזמנים המוצגת",
+              "state": "הצג לוחות זמנים פעילים בראש"
+            }
+          },
+          "display_format_primary": {
+            "heading": "מידע ראשי מוצג",
+            "description": "הגדר איזו תווית תשמש עבור לוחות הזמנים בסקירה הכללית",
+            "options": {
+              "default": "שם לוח הזמנים",
+              "entity_action": "סיכום המשימה"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "מידע משני מוצג",
+            "description": "הגדר אילו מאפיינים נוספים יהיו גלויים בסקירה הכללית",
+            "options": {
+              "relative_time": "זמן שנותר עד הפעולה הבאה",
+              "time": "זמן מוגדר לפעולה הבאה",
+              "days": "ימים חוזרים בשבוע",
+              "additional_tasks": "מספר משימות נוספות"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "הצג מתג בכותרת",
+            "description": "הצג מתג הפעלה/כיבוי בראש הכרטיס להפעלה/השבתה של כל הישויות"
+          },
+          "tags": {
+            "heading": "תגיות",
+            "description": "השתמש בתגיות כדי לחלק לוחות זמנים בין כרטיסים שונים"
+          },
+          "entities": {
+            "button_label": "הגדר ישויות כלולות",
+            "heading": "ישויות כלולות",
+            "description": "בחר את הישויות שברצונך לשלוט בהן באמצעות המתזמן. ניתן ללחוץ על קבוצה כדי לפתוח אותה. שים לב שחלק מהישויות (כמו חיישנים) יכולות לשמש רק לתנאים, ולא לפעולות.",
+            "included_number": "{number}/{total} נבחרו"
+          }
+        }
       }
     }
   }
