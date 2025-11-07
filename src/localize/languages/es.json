@@ -13,8 +13,8 @@
       "set_temperature_hvac_mode_auto": "automático[ a {temperature}]",
       "set_hvac_mode": "establecer modo[ a {hvac_mode}]",
       "set_preset_mode": "establecer preajuste[ {preset_mode}]",
-      "set_fan_mode": "set fan mode[ to {fan_mode}]",
-      "set_swing_mode": "set swing mode[ to {swing_mode}]"
+      "set_fan_mode": "establecer ventilador[ a {fan_mode}]",
+      "set_swing_mode": "establecer oscilación[ a {swing_mode}]"
     },
     "cover": {
       "close_cover": "cerrado",
@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "establecer inclinación[ a {tilt_position}]"
     },
     "fan": {
-      "set_speed": "establecer velocidad [ a {speed}]",
+      "set_speed": "establecer velocidad[ a {speed}]",
       "set_direction": "establecer dirección[ a {direction}]",
       "oscillate": "establecer oscilación[ a {oscillate}]"
     },
@@ -35,7 +35,7 @@
       "set_value": "establecer valor[ a {value}]"
     },
     "input_select": {
-      "select_option": "seleccionar opción[ {option}]"
+      "select_option": "seleccionar opción[ a {option}]"
     },
     "select": {
       "select_option": "seleccionar opción[ {option}]"
@@ -64,14 +64,14 @@
     "components": {
       "date": {
         "day_types_short": {
-          "daily": "a diario",
+          "daily": "todos los días",
           "workdays": "días hábiles",
           "weekend": "fin de semana"
         },
         "day_types_long": {
           "daily": "todos los días",
-          "workdays": "en días hábiles",
-          "weekend": "en el fin de semana"
+          "workdays": "días hábiles",
+          "weekend": "fin de semana"
         },
         "days": "días",
         "tomorrow": "mañana",
@@ -81,25 +81,25 @@
         "next_week_day": "próximo {weekday}"
       },
       "time": {
-        "absolute": "a las {time}",
-        "interval": "desde las {startTime} a las {endTime}",
+        "absolute": "a la(s) {time}",
+        "interval": "desde la(s) {startTime} hasta la(s) {endTime}",
         "at_midnight": "a la medianoche",
-        "at_noon": "a la mediodía",
-        "at_sun_event": "a la {sunEvent}"
+        "at_noon": "al mediodía",
+        "at_sun_event": "al {sunEvent}"
       }
     },
     "dialog": {
       "enable_schedule": {
-        "title": "Completa las modificaciones",
-        "description": "El horario que se ha cambiado está actualmente deshabilitado, ¿debería habilitarse?"
+        "title": "Completar modificaciones",
+        "description": "El horario que ha modificado está actualmente deshabilitado, ¿Desea habilitarlo?"
       },
       "confirm_delete": {
         "title": "¿Eliminar entidad?",
-        "description": "¿Estás seguro de que deseas eliminar esta entidad?"
+        "description": "¿Está seguro de que deseas eliminar esta entidad?"
       },
       "confirm_migrate": {
         "title": "Modificar horario",
-        "description": "Algunas configuraciones se perderán con este cambio. Quieres proceder?"
+        "description": "Algunas configuraciones se perderán con este cambio. ¿Desea proceder?"
       },
       "weekday_picker": {
         "title": "Días repetidos para el horario",
@@ -111,36 +111,36 @@
         "no_results": "No se encontraron artículos coincidentes"
       },
       "action_picker": {
-        "title": "Elige Acción"
+        "title": "Elija Acción"
       }
     },
     "panel": {
       "common": {
-        "title": "Programador",
+        "title": "Planificador",
         "new_schedule": "Nuevo horario",
         "default_name": "Horario #{id}"
       },
       "overview": {
         "no_entries": "No hay ningún elemento que mostrar",
-        "backend_error": "Fallo de conexión con Scheduler component. Debe ser installado como integración antes de poder usar este panel.",
+        "backend_error": "Fallo de conexión con el componente planificador (Scheduler component). Debe ser instalado como integración antes de poder usar este panel.",
         "excluded_items": "{number} {if number is 1} elemento excluido {else} elementos excluidos",
         "hide_excluded": "ocultar elementos excluidos",
         "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
       },
       "editor": {
         "repeated_days": "Días repetidos",
-        "start_time": "Inicio",
-        "stop_time": "Finalización",
+        "start_time": "Tiempo de inicio",
+        "stop_time": "Tiempo de finalización",
         "action": "Acción",
         "add_action": "Agregar acción",
-        "select_timeslot": "selecciona un bloque de tiempo",
+        "select_timeslot": "Seleccione un bloque de tiempo",
         "toggle_single_mode": "Al modo simple",
         "toggle_scheme_mode": "Al modo esquema",
         "validation_errors": {
-          "overlapping_time": "Schedule has overlapping timeslots",
-          "missing_target_entity": "One or more actions are missing a target entity",
-          "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
+          "overlapping_time": "El esquema tiene bloques de tiempo sobrepuestos",
+          "missing_target_entity": "Una o más acciones carecen de una entidad asociada",
+          "missing_service_parameter": "Una o más acciones carecen de una configuración requerida",
+          "missing_action": "El horario no tiene acciones"
         }
       },
       "options": {
@@ -150,12 +150,12 @@
           "new_condition": "Nueva condición",
           "types": {
             "equal_to": "{entity} es igual a {value}",
-            "unequal_to": "{entity} es desigual a {value}",
-            "above": "{entity} is above {value}",
-            "below": "{entity} is below {value}"
+            "unequal_to": "{entity} es diferente a {value}",
+            "above": "{entity} es mayor que {value}",
+            "below": "{entity} es menor que {value}"
           },
           "options": {
-            "logic_and": "Todas condiciones deben ser válidas",
+            "logic_and": "Todas las condiciones deben ser válidas",
             "logic_or": "Cualquier condición debe ser válida",
             "track_changes": "Reevaluar si una condición cambia"
           }
@@ -165,8 +165,82 @@
           "start_date": "De",
           "end_date": "A"
         },
-        "repeat_type": "acción después de la finalización",
-        "tags": "Tags"
+        "repeat_type": "comportamiento despues de finalizar ",
+        "tags": "Etiquetas"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entidades",
+          "other": "Otros"
+        },
+        "fields": {
+          "title": {
+            "heading": "Títujo de la tarjeta",
+            "options": {
+              "standard": "estándar",
+              "hidden": "oculta",
+              "custom": "personalizada"
+            },
+            "custom_title": "Título personalizado"
+          },
+          "discover_existing": {
+            "heading": "Mostrar todos los horarios",
+            "description": "Esto ajustará el parámetro 'descubrir existentes (discover existing)'. Los horarios creados anteriormente deberán de ser agregados automáticamente a la tarjeta."
+          },
+          "time_step": {
+            "heading": "Paso de tiempo",
+            "description": "Resolución (en minutos) para la creación de horarios.",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Editor de tiempo por defecto",
+            "options": {
+              "single": "Modo de horario sencillo",
+              "scheme": "Modo de esquema de tiempo"
+            }
+          },
+          "sort_by": {
+            "heading": "Opciones de clasificación",
+            "description": "Orden en que los horarios aparecen en la tarjeta",
+            "options": {
+              "relative_time": "Tiempo restante hasta la siguiente acción",
+              "title": "Título mostrado del horario",
+              "state": "Mostrar los horarios activos primero"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Mostrar información primaria",
+            "description": "Configura que etiqueta se utiliza para los horarios en la vista principal",
+            "options": {
+              "default": "Nombre del horario",
+              "entity_action": "Resumen de la tarea"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Mostrar información secundaria",
+            "description": "Configura que propiedades adicionales son visibles en la vista principal",
+            "options": {
+              "relative_time": "Tiempo restante hasta la siguiente acción",
+              "time": "Tiempo configurado para la siguiente acción",
+              "days": "Días repetidos de la semana",
+              "additional_tasks": "Número de tareas adicionales"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Mostrar el interruptor del encabezado",
+            "description": "Muestra el interruptor en la parte alta de la tarjeta para habilitar/desabilitar todas las entidades Show toggle switch at the top of the card for enabling/disabling all entities"
+          },
+          "tags": {
+            "heading": "Etiquetas",
+            "description": "Use etiquetas para dividir los horarios entre múltiples tarjetas"
+          },
+          "entities": {
+            "button_label": "Configurar entidades incluidas",
+            "heading": "Entidades incluidas",
+            "description": "Seleccione las entidades que desea controlar usando el planificador. Puede hacer click en un grupo para abrirlo. Note que algunas entidades (como los sensores) solo pueden ser usados para condiciones, no para acciones.",
+            "included_number": "{number}/{total} seleccionados"
+          }
+        }
       }
     }
   }
