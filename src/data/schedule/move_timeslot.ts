@@ -114,7 +114,7 @@ export const moveTimeslot = (slots: Timeslot[], slotIdx: number, update: { start
       }
       slots = Object.assign(slots, { [slotIdx]: <Timeslot>{ ...slots[slotIdx], start: timeToString(newTime) } });
 
-      if (isDefined(slots[slotIdx - 1].stop)) {
+      if (slotIdx > 0 && isDefined(slots[slotIdx - 1].stop)) {
         //stretch previous slot
         slots = Object.assign(slots, { [slotIdx - 1]: <Timeslot>{ ...slots[slotIdx - 1], stop: timeToString(newTime) } });
       }
@@ -122,20 +122,25 @@ export const moveTimeslot = (slots: Timeslot[], slotIdx: number, update: { start
         //insert new filler before
         slots = [
           ...slots.slice(0, slotIdx),
-          <Timeslot>{ ...slots[slotIdx], start: timeToString(stopTime(slots[slotIdx - 1])), stop: timeToString(newTime), actions: [] },
+          <Timeslot>{
+            ...slots[slotIdx],
+            start: slotIdx > 0 ? timeToString(stopTime(slots[slotIdx - 1])) : '00:00:00',
+            stop: timeToString(newTime),
+            actions: []
+          },
           ...slots.slice(slotIdx),
         ];
         slotIdxOut = slotIdx + 1;
       }
 
       for (let i = (slotIdxOut + 1); i < slots.length; i++) { //walk through all slots after the modified one
-        let d1 = computeDuration(startTime(slots[i]), newTime, hass);
-        let d2 = computeDuration(stopTime(slots[i]), newTime, hass);
-
+        let newStopTime = stopTime(slots[slotIdxOut]);
+        let d1 = computeDuration(startTime(slots[i]), newStopTime, hass);
+        let d2 = computeDuration(stopTime(slots[i]), newStopTime, hass);
 
         if (d1 > 0 && d2 < 0) {
           //timeslot has partial overlap with the new time point, it should be shortened.
-          slots = Object.assign(slots, { [i]: <Timeslot>{ ...slots[i], start: timeToString(newTime) } });
+          slots = Object.assign(slots, { [i]: <Timeslot>{ ...slots[i], start: timeToString(newStopTime) } });
         }
         else if (d1 < 0) {
           //timeslot slot ends before the new time point, stop iterating
