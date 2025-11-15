@@ -1,5 +1,5 @@
 import { HomeAssistant } from "../../lib/types";
-import { Schedule, TimeMode, Timeslot } from "../../types";
+import { Schedule, ScheduleEntry, TimeMode, Timeslot } from "../../types";
 import { addTimeOffset } from "./add_time_offset";
 import { computeTimestamp } from "./compute_timestamp";
 import { parseTimeString } from "./parse_time_string";
@@ -11,15 +11,13 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
   const processSlots = (slots: Timeslot[]): Timeslot[] => {
 
     //correct timeslots which are outside of 00:00:00 - 23:59:00 window
-    slots = slots.map(e =>
-      Object({
-        ...e,
-        start: computeTimestamp(e.start, hass) < 0 ? '00:00:00' : e.start,
-        stop: e.stop
-          ? computeTimestamp(e.stop, hass) > 3600 * 24 ? '00:00:00' : e.stop
-          : undefined
-      })
-    );
+    slots = slots.map((e): Timeslot => ({
+      ...e,
+      start: computeTimestamp(e.start, hass) < 0 ? '00:00:00' : e.start,
+      stop: e.stop
+        ? computeTimestamp(e.stop, hass) > 3600 * 24 ? '00:00:00' : e.stop
+        : undefined
+    }));
 
     slots = slots.map(slot => {
       //correct timeslots who have their start and stop point flipped
@@ -94,7 +92,7 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
 
   schedule = {
     ...schedule,
-    entries: schedule.entries.map(entry => Object({ ...entry, slots: processSlots(entry.slots) }))
+    entries: schedule.entries.map((entry): ScheduleEntry => ({ ...entry, slots: processSlots(entry.slots) }))
   };
 
   return schedule;

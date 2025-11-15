@@ -29,7 +29,8 @@ interface listItem {
   icon: string;
 }
 
-interface domainsList extends Array<listItem & { entities: listItem[] }> { }
+type domainsListItem = listItem & { entities: listItem[] };
+interface domainsList extends Array<domainsListItem> { };
 
 const computeDomains = (hass: HomeAssistant) => {
   let domains = computeActionDomains(hass, { include: ['*'] });
@@ -45,9 +46,9 @@ const computeEntitiesForDomain = (domain: string, customize: CustomConfig | unde
     let entities = Object.keys(hass.services[domain]);
     if (domain == 'script') entities = entities.filter(e => !['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(e));
 
-    let entityList: listItem[] = entities.map(e => Object({
+    let entityList = entities.map((e): listItem => ({
       key: `${domain}.${e}`,
-      name: hass.states[`${domain}.${e}`] ? friendlyName(`${domain}.${e}`, hass.states[`${domain}.${e}`]?.attributes) : hass.services[domain][e].name,
+      name: hass.states[`${domain}.${e}`] ? friendlyName(`${domain}.${e}`, hass.states[`${domain}.${e}`]?.attributes) : hass.services[domain][e].name || `${domain}.${e}`,
       description: "",
       icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, customize, hass) : domainIcon(domain)
     }));
@@ -58,7 +59,7 @@ const computeEntitiesForDomain = (domain: string, customize: CustomConfig | unde
   else {
     const entities = Object.keys(hass.states).filter(e => computeDomain(e) == domain);
 
-    let entityList: listItem[] = entities.map(e => Object({
+    let entityList = entities.map((e): listItem => ({
       key: e,
       name: friendlyName(e, hass.states[e]?.attributes),
       description: "",
@@ -112,7 +113,7 @@ export class DialogSelectEntities extends LitElement {
 
   loadOptions() {
     let domains = computeDomains(this.hass);
-    this.options = domains.map(item => Object({
+    this.options = domains.map((item): domainsListItem => ({
       ...item,
       entities: computeEntitiesForDomain(item.key, this._params!.cardConfig.customize, this.hass)
     }));

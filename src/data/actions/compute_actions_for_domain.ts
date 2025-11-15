@@ -53,7 +53,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
     return description;
   }
 
-  let actionList: actionItem[] = services.map(e => Object(<actionItem>{
+  let actionList = services.map((e): actionItem => ({
     key: e,
     name: `${domainName(domain)}: ${serviceName(e)}`,
     description: serviceDescription(e),
