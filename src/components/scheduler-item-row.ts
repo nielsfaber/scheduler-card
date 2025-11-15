@@ -32,6 +32,8 @@ export class SchedulerItemRow extends LitElement {
         if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
         if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
       }
+      const hasRemovedEntity = !([nextAction.target?.entity_id || []].flat()).every(entity_id => Object.keys(this.hass.states).includes(entity_id));
+      if (hasRemovedEntity) icon = 'mdi:help';
 
       return html`
       <ha-icon
@@ -41,7 +43,7 @@ export class SchedulerItemRow extends LitElement {
       ></ha-icon>
 
       <div
-        class="info ${disabled ? 'disabled' : ''}"
+        class="info ${disabled ? 'disabled' : ''} ${hasRemovedEntity ? 'defective' : ''}"
         @click=${this._handleItemClick}
       >
         ${this.renderDisplayItem(this.config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY)}
@@ -191,6 +193,9 @@ export class SchedulerItemRow extends LitElement {
         display: flex;
         align-items: center;
         box-sizing: border-box;
+      }
+      .defective {
+        text-decoration: line-through;
       }
     `;
   }
