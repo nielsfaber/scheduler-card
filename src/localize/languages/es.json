@@ -129,8 +129,8 @@
       },
       "editor": {
         "repeated_days": "Días repetidos",
-        "start_time": "Tiempo de inicio",
-        "stop_time": "Tiempo de finalización",
+        "start_time": "Inicio",
+        "stop_time": "Finalización",
         "action": "Acción",
         "add_action": "Agregar acción",
         "select_timeslot": "Seleccione un bloque de tiempo",

@@ -18,6 +18,7 @@ import * as ro from './languages/ro.json';
 import * as ru from './languages/ru.json';
 import * as sk from './languages/sk.json';
 import * as sl from './languages/sl.json';
+import * as sv from './languages/sv.json';
 import * as uk from './languages/uk.json';
 import * as ur from './languages/ur.json';
 import * as zh_Hans from './languages/zh-Hans.json';
@@ -47,6 +48,7 @@ const languages: any = {
   ro: ro,
   sk: sk,
   sl: sl,
+  sv: sv,
   ru: ru,
   uk: uk,
   ur: ur,

@@ -185,7 +185,7 @@
           },
           "discover_existing": {
             "heading": "Visa alla scheman",
-            "description": "Detta ställer in parametern "upptäck befintliga". Tidigare skapade scheman läggs automatiskt till på kortet."
+            "description": "Detta ställer in parametern ''upptäck befintliga''. Tidigare skapade scheman läggs automatiskt till på kortet."
           },
           "time_step": {
             "heading": "Tidssteg",
