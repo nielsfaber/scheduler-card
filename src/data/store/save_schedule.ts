@@ -108,7 +108,7 @@ const parseAction = (input: Action): ServiceCall | ServiceCall[] => {
     return output;
   }
   else {
-    let output: ServiceCall[] = input?.target.entity_id.map(e => Object({
+    let output = input?.target.entity_id.map((e): ServiceCall => ({
       service: input.service,
       service_data: parseServiceData(input.service_data),
       entity_id: e

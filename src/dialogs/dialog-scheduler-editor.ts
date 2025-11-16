@@ -1,7 +1,7 @@
 import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
 import { LitElement, PropertyValues, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import { CardConfig, EditorMode, Schedule } from "../types";
+import { CardConfig, EditorMode, Schedule, ScheduleEntry } from "../types";
 import { EditorDialogStyles } from "../card.styles";
 import { localize } from "../localize/localize";
 import { HomeAssistant } from "../lib/types";
@@ -284,7 +284,7 @@ export class DialogSchedulerEditor extends LitElement {
         entries: this.schedule.entries.map(e => {
           let idx = e.slots.findIndex(e => e.actions.length)
           if (idx < 0) idx = Math.floor(e.slots.length / 2);
-          return Object({ ...e, slots: e.slots.map((e, i) => i == idx ? { ...e, stop: undefined } : null).filter(isDefined) });
+          return <ScheduleEntry>{ ...e, slots: e.slots.map((e, i) => i == idx ? { ...e, stop: undefined } : null).filter(isDefined) };
         })
       }
       this.schedule = parseTimeBar(schedule, this.hass);

@@ -41,7 +41,7 @@ export const computeConditionDomains = (hass: HomeAssistant, config: entityConfi
       !(config.exclude || []).some(e => matchPattern(e, domain))
   });
 
-  let actionList: listItem[] = domains.map(e => Object({
+  let actionList = domains.map((e): listItem => ({
     key: e,
     name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, " "),
     description: "",

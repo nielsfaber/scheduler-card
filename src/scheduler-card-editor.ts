@@ -9,12 +9,13 @@ import { NumberSelector, SelectSelector } from "./lib/selector";
 import { fetchTags } from "./data/store/fetch_tags";
 import { sortByName } from "./lib/sort";
 import { mdiArrowRight } from "@mdi/js";
+import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY, DEFAULT_SORT_BY, DEFAULT_TIME_STEP } from "./const";
+import { loadConfigFromEntityRegistry } from "./data/load_config_from_entity_registry";
 
 import './dialogs/dialog-select-entities';
 import "./components/scheduler-entity-picker";
 import "./components/scheduler-collapsible-section";
 import './components/scheduler-combo-selector';
-import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY, DEFAULT_SORT_BY, DEFAULT_TIME_STEP } from "./const";
 
 @customElement("scheduler-card-editor")
 export class SchedulerCardEditor extends LitElement {
@@ -332,13 +333,19 @@ export class SchedulerCardEditor extends LitElement {
     let domains = (this._config.include || []).filter(e => !e.includes('.'));
     let entities = (this._config.include || []).filter(e => e.includes('.'));
 
+    const extraConfig = await loadConfigFromEntityRegistry(this.hass);
+    let config: CardConfig = {
+      ...this._config,
+      customize: { ...extraConfig, ...(this._config.customize || {}) }
+    };
+
     await new Promise<{ domains: string[], entities: string[] } | null>(resolve => {
       const params: DialogSelectEntitiesParams = {
         cancel: () => resolve(null),
         confirm: (out: { domains: string[], entities: string[] }) => resolve(out),
         domains: domains,
         entities: entities,
-        cardConfig: this._config
+        cardConfig: config
       };
 
       fireEvent(ev.target as HTMLElement, 'show-dialog', {

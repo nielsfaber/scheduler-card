@@ -143,7 +143,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
         }
       }
     },
-    set_tilt_position: {
+    set_cover_tilt_position: {
       translation_key: 'services.cover.set_cover_tilt_position',
       supported_features: 128,
       target: {},

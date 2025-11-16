@@ -102,7 +102,7 @@
         "description": "חלק מההגדרות יאבדו על ידי פעולה זו. האם אתה רוצה להמשיך?"
       },
       "weekday_picker": {
-        "title": "ימים חוזרים עבור לוח הזמנים",
+        "title": "ימים לחזרה עבור לוח זמנים",
         "choose": "בחר..."
       },
       "entity_picker": {
@@ -111,7 +111,7 @@
         "no_results": "לא נמצאו פריטים תואמים"
       },
       "action_picker": {
-        "title": "בחירת פעולה"
+        "title": "בחר פעולה"
       }
     },
     "panel": {
@@ -129,10 +129,10 @@
       },
       "editor": {
         "repeated_days": "ימים לחזרה",
-        "start_time": "שעת התחלה",
-        "stop_time": "שעת סיום",
+        "start_time": "זמן התחלה",
+        "stop_time": "זמן סיום",
         "action": "פעולה",
-        "add_action": "הוסף פעולה",
+        "add_action": "הוספת פעולה",
         "select_timeslot": "בחר משבצת זמן קודם",
         "toggle_single_mode": "למצב פשוט",
         "toggle_scheme_mode": "למצב דיאגרמה",
@@ -146,13 +146,13 @@
       "options": {
         "conditions": {
           "header": "תנאים",
-          "add_condition": "הוסף תנאי",
+          "add_condition": "הוספת תנאי",
           "new_condition": "תנאי חדש",
           "types": {
-            "equal_to": "{entity} שווה ל {value}",
-            "unequal_to": "{entity} שונה מ {value}",
+            "equal_to": "{entity} שווה ל-{value}",
+            "unequal_to": "{entity} לא שווה ל-{value}",
             "above": "{entity} מעל {value}",
-            "below": "{entity} מתחת ל {value}"
+            "below": "{entity} מתחת {value}"
           },
           "options": {
             "logic_and": "כל התנאים חייבים להיות נכונים",

@@ -28,10 +28,10 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
     if (!Object.keys(supportedActions).includes(domain)) return false;
     let res = Object.keys(supportedActions[domain]).includes(action);
     if (!res && Object.keys(supportedActions[domain]).includes('{entity_id}')) {
+      if (domain == 'script' && ['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(action)) return false;
       res = ((config.include || []).some(e => matchPattern(e, `${domain}.${action}`)) ||
         Object.keys(config.customize || {}).some(e => matchPattern(e, `${domain}.${action}`))) &&
         !(config.exclude || []).some(e => matchPattern(e, `${domain}.${action}`));
-      if (res) res = Object.keys(hass.states).includes(`${domain}.${action}`);
     }
     return res;
   };
@@ -42,9 +42,18 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
 
   const domainName = (domain: string) => hassLocalize(`component.${domain}.title`, hass, false) || domain.replace(/_/g, " ");
 
-  const serviceName = (service: string) => hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
-    !!hass.services[domain] && !!hass.services[domain][service] && hass.services[domain][service].name ||
-    service.replace(/_/g, ' ');
+  const serviceName = (service: string) => {
+    const serviceName = hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
+      !!hass.services[domain] && !!hass.services[domain][service] && hass.services[domain][service].name ||
+      service.replace(/_/g, ' ');
+
+    if (domain == 'script') {
+      return Object.keys(config.customize || {}).includes(`${domain}.${service}`) && isDefined(config.customize![`${domain}.${service}`].name)
+        ? config.customize![`${domain}.${service}`].name!
+        : serviceName;
+    }
+    return `${domainName(domain)}: ${serviceName}`;
+  }
 
   const serviceDescription = (service: string) => {
     let description = hassLocalize(`component.${domain}.services.${service}.description`, hass, false);
@@ -53,11 +62,24 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
     return description;
   }
 
-  let actionList: actionItem[] = services.map(e => Object(<actionItem>{
+  const serviceIcon = (service: string) => {
+    if (
+      domain == 'script'
+      && Object.keys(config.customize || {}).includes(`${domain}.${service}`)
+      && isDefined(config.customize![`${domain}.${service}`].icon)
+    ) {
+      return config.customize![`${domain}.${service}`].icon!;
+    }
+    return Object.keys(serviceIcons).includes(domain) && Object.keys(serviceIcons[domain].services).includes(service)
+      ? serviceIcons[domain].services[service]
+      : domainIcon(domain);
+  }
+
+  let actionList = services.map((e): actionItem => ({
     key: e,
-    name: `${domainName(domain)}: ${serviceName(e)}`,
+    name: serviceName(e),
     description: serviceDescription(e),
-    icon: Object.keys(serviceIcons).includes(domain) && Object.keys(serviceIcons[domain].services).includes(e) ? serviceIcons[domain].services[e] : domainIcon(domain),
+    icon: serviceIcon(e),
     action: <Action>{
       service: e.includes('.') ? e : `${domain}.${e}`,
       service_data: {},

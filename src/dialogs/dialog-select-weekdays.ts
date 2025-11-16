@@ -187,7 +187,13 @@ export class DialogSelectWeekdays extends LitElement {
   static get styles(): CSSResultGroup {
     return css`
       ha-dialog {
-        --dialog-content-padding: 0px;
+        --dialog-content-padding: 0;
+        --mdc-dialog-max-height: 60vh;
+      }
+      @media all and (min-width: 350px) {
+        ha-dialog {
+          --mdc-dialog-min-width: 300px;
+        }
       }
       div.wrapper {
         color: var(--primary-text-color);
@@ -205,17 +211,17 @@ export class DialogSelectWeekdays extends LitElement {
         --mdc-list-side-padding: 36px;
       }
       .badge {
-      height: 24px;
-      border-radius: 12px;
-      background: rgba(var(--rgb-primary-color), 0.3);
-      line-height: 1.25rem;
-      font-size: 0.875rem;
-      font-weight: 400;
-      padding: 0px 12px;
-      display: inline-flex;
-      align-items: center;
-      box-sizing: border-box;
-      margin: 0px 16px;
+        height: 24px;
+        border-radius: 12px;
+        background: rgba(var(--rgb-primary-color), 0.3);
+        line-height: 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        padding: 0px 12px;
+        display: inline-flex;
+        align-items: center;
+        box-sizing: border-box;
+        margin: 0px 16px;
       }
     `;
   }

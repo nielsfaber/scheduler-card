@@ -26,11 +26,11 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   const domain = computeDomain(entityId);
   const searchKey = `${domain}.${field}`;
 
-  const computeOptionIcons = (options: string[]) => {
+  const computeOptionIcons = (options?: string[]) => {
     const iconConfig = serviceIcons[domain]?.attributes?.[field];
-    const useIcons = !!iconConfig && options.every(e => e in iconConfig);
+    const useIcons = !!iconConfig && (options || []).every(e => e in iconConfig);
 
-    return options.map(e => ({
+    return (options || []).map(e => ({
       value: e,
       label: e,
       icon: useIcons ? iconConfig[e] : undefined,

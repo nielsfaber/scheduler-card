@@ -11,15 +11,14 @@ const checkIconPrefix = (icon: string) => {
   return `mdi:${icon}`;
 }
 
-
 export const computeEntityIcon = (entityId: string, customize: CustomConfig | undefined, hass: HomeAssistant) => {
-  if (!Object.keys(hass.states).includes(entityId)) {
-    return FALLBACK_ICON;
-  }
-
   let customConfig = Object.entries(customize || {}).filter(([k, v]) => matchPattern(k, entityId) && v.icon).map(([_k, v]) => v);
   if (customConfig.length) {
     return customConfig.map(e => checkIconPrefix(e.icon!)).shift()!;
+  }
+
+  if (!Object.keys(hass.states).includes(entityId)) {
+    return FALLBACK_ICON;
   }
 
   const stateObj = hass.states[entityId];
