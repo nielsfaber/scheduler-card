@@ -1,11 +1,10 @@
-
-import { css, html, LitElement, nothing, PropertyValues, TemplateResult, type CSSResultGroup } from "lit";
-import { customElement, property, query, state } from "lit/decorators";
-import { HomeAssistant } from "../lib/types";
-import { fireEvent } from "../lib/fire_event";
-import { sortByName } from "../lib/sort";
-import { mdiClose, mdiMenuDown } from "@mdi/js";
-import { localize } from "../localize/localize";
+import { css, html, LitElement, nothing, PropertyValues, TemplateResult, type CSSResultGroup } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators';
+import { HomeAssistant } from '../lib/types';
+import { fireEvent } from '../lib/fire_event';
+import { sortByName } from '../lib/sort';
+import { mdiClose, mdiMenuDown } from '@mdi/js';
+import { localize } from '../localize/localize';
 
 type ComboBox = HTMLElement & { renderer: Function; requestContentUpdate: Function };
 type ComboBoxItemModel<T> = { item: T };
@@ -18,20 +17,19 @@ export interface PickerComboBoxItem {
   icon?: string;
 }
 
-const NO_MATCHING_ITEMS_FOUND_ID = "___no_matching_items_found___";
+const NO_MATCHING_ITEMS_FOUND_ID = '___no_matching_items_found___';
 
 export type PickerValueRenderer = (value: string) => TemplateResult<1>;
 
-@customElement("scheduler-picker")
+@customElement('scheduler-picker')
 export class SchedulerPicker extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
 
   @property({ type: Boolean }) public disabled = false;
 
-  @property({ type: Boolean, attribute: "allow-custom-value" })
+  @property({ type: Boolean, attribute: 'allow-custom-value' })
   public allowCustomValue;
 
   @property() public label?: string;
@@ -42,10 +40,10 @@ export class SchedulerPicker extends LitElement {
 
   @property() public placeholder?;
 
-  @property({ type: String, attribute: "search-label" })
+  @property({ type: String, attribute: 'search-label' })
   public searchLabel?: string;
 
-  @property({ attribute: "hide-clear-icon", type: Boolean })
+  @property({ attribute: 'hide-clear-icon', type: Boolean })
   public hideClearIcon = false;
 
   @property({ attribute: false, type: Array })
@@ -60,12 +58,12 @@ export class SchedulerPicker extends LitElement {
   @property({ attribute: false })
   public valueRenderer?: PickerValueRenderer;
 
-  @property({ attribute: "not-found-label", type: String })
+  @property({ attribute: 'not-found-label', type: String })
   public notFoundLabel?: string;
 
-  @query(".textInput") private _field?: HTMLInputElement;
+  @query('.textInput') private _field?: HTMLInputElement;
 
-  @query("ha-combo-box") private _comboBox?: HTMLInputElement;
+  @query('ha-combo-box') private _comboBox?: HTMLInputElement;
 
   @state() private _opened = false;
   private _isOpening = false;
@@ -88,89 +86,65 @@ export class SchedulerPicker extends LitElement {
   };
 
   protected shouldUpdate(changedProps: PropertyValues) {
-    if (
-      changedProps.has("value") ||
-      changedProps.has("label") ||
-      changedProps.has("disabled")
-    ) {
+    if (changedProps.has('value') || changedProps.has('label') || changedProps.has('disabled')) {
       return true;
     }
 
-    return !(!changedProps.has("_opened") && this._opened);
+    return !(!changedProps.has('_opened') && this._opened);
   }
 
   public willUpdate(changedProps: PropertyValues) {
-    if (changedProps.has("_opened") && this._opened) {
+    if (changedProps.has('_opened') && this._opened) {
       this._items = this._getItems();
     }
   }
 
   protected render() {
-    const showClearIcon =
-      !!this.value && !this.disabled && !this.hideClearIcon;
+    const showClearIcon = !!this.value && !this.disabled && !this.hideClearIcon;
 
     return html`
-      ${this.label
-        ? html`<label ?disabled=${this.disabled}>${this.label}</label>`
-        : nothing}
+      ${this.label ? html`<label ?disabled=${this.disabled}>${this.label}</label>` : nothing}
       <div class="container">
         ${!this._opened
-        ? html`
-
-          <ha-combo-box-item
-            .disabled=${this.disabled}
-            type="button"
-            compact
-            class="textInput"
-            @click=${this.open}
-
-          >
-            ${this.value
-            ? this.valueRenderer
-              ? this.valueRenderer(this.value)
-              : html`<span slot="headline">${this.value}</span>`
-            : html`
-              <span slot="headline" class="placeholder">
-                ${this.placeholder || localize('ui.dialog.entity_picker.choose', this.hass)}
-              </span>
-            `}
-            ${showClearIcon
-            ? html`
-                <ha-icon-button
-                  class="clear"
-                  slot="end"
-                  @click=${this._clear}
-                  .path=${mdiClose}
-                ></ha-icon-button>
-                `
-            : nothing}
-            <ha-svg-icon
-              class="arrow"
-              slot="end"
-              .path=${mdiMenuDown}
-            ></ha-svg-icon>
-          </ha-combo-box-item>
+          ? html`
+              <ha-combo-box-item .disabled=${this.disabled} type="button" compact class="textInput" @click=${this.open}>
+                ${this.value
+                  ? this.valueRenderer
+                    ? this.valueRenderer(this.value)
+                    : html`<span slot="headline">${this.value}</span>`
+                  : html`
+                      <span slot="headline" class="placeholder">
+                        ${this.placeholder || localize('ui.dialog.entity_picker.choose', this.hass)}
+                      </span>
+                    `}
+                ${showClearIcon
+                  ? html`
+                      <ha-icon-button class="clear" slot="end" @click=${this._clear} .path=${mdiClose}></ha-icon-button>
+                    `
+                  : nothing}
+                <ha-svg-icon class="arrow" slot="end" .path=${mdiMenuDown}></ha-svg-icon>
+              </ha-combo-box-item>
             `
-        : html`
-            <ha-combo-box
-              item-id-path="id"
-              item-value-path="id"
-              item-label-path="a11y_label"
-              clear-initial-value
-              .hass=${this.hass}
-              .value=${this._value}
-              .label=${this.label}
-              .helper=${this.helper}
-              .allowCustomValue=${this.allowCustomValue}
-              .filteredItems=${this._items}
-              .renderer=${this.rowRenderer}
-              .disabled=${this.disabled}
-              .hideClearIcon=${this.hideClearIcon}
-              @opened-changed=${this._openedChanged}
-              @value-changed=${this._valueChanged}
-              @filter-changed=${this._filterChanged}
-            >
-            </ha-combo-box>
+          : html`
+              <ha-combo-box
+                item-id-path="id"
+                item-value-path="id"
+                item-label-path="a11y_label"
+                clear-initial-value
+                .hass=${this.hass}
+                .value=${this._value}
+                .label=${this.label}
+                .helper=${this.helper}
+                .allowCustomValue=${this.allowCustomValue}
+                .filteredItems=${this._items}
+                .renderer=${this.rowRenderer}
+                .disabled=${this.disabled}
+                .hideClearIcon=${this.hideClearIcon}
+                @opened-changed=${this._openedChanged}
+                @value-changed=${this._valueChanged}
+                @filter-changed=${this._filterChanged}
+              >
+              </ha-combo-box>
             `}
       </div>
       ${this._renderHelper()}
@@ -178,28 +152,24 @@ export class SchedulerPicker extends LitElement {
   }
 
   private get _value() {
-    return this.value || "";
+    return this.value || '';
   }
 
   private _renderHelper() {
     return this.helper
-      ? html`<ha-input-helper-text .disabled=${this.disabled}
-          >${this.helper}</ha-input-helper-text
-        >`
+      ? html`<ha-input-helper-text .disabled=${this.disabled}>${this.helper}</ha-input-helper-text>`
       : nothing;
   }
 
   private _valueChanged(ev: CustomEvent) {
     ev.stopPropagation();
     // Clear the input field to prevent showing the old value next time
-    (this._comboBox as any).setTextFieldValue("");
+    (this._comboBox as any).setTextFieldValue('');
     const newValue = ev.detail.value?.trim();
 
     if (newValue === NO_MATCHING_ITEMS_FOUND_ID) {
       return;
-    }
-
-    else if (!this._items.find(e => e.id == newValue) && !this.allowCustomValue) {
+    } else if (!this._items.find((e) => e.id == newValue) && !this.allowCustomValue) {
       return;
     }
 
@@ -214,11 +184,16 @@ export class SchedulerPicker extends LitElement {
     let filteredItems = this._items as PickerComboBoxItem[];
 
     const target = ev.target as HTMLInputElement;
-    const searchTerms: string[] = ev.detail.value.trim().split(" ").map(String).filter(e => e.length).map(e => e.trim());
+    const searchTerms: string[] = ev.detail.value
+      .trim()
+      .split(' ')
+      .map(String)
+      .filter((e) => e.length)
+      .map((e) => e.trim());
 
     if (searchTerms.length) {
-      filteredItems = filteredItems.filter(item => {
-        return searchTerms.every(term => item.primary.includes(term) || item.secondary?.includes(term));
+      filteredItems = filteredItems.filter((item) => {
+        return searchTerms.every((term) => item.primary.includes(term) || item.secondary?.includes(term));
       });
     }
 
@@ -232,7 +207,7 @@ export class SchedulerPicker extends LitElement {
 
   private _setValue(value: string | undefined) {
     this.value = value;
-    fireEvent(this, "value-changed", { value });
+    fireEvent(this, 'value-changed', { value });
   }
 
   public async focus() {
@@ -246,7 +221,7 @@ export class SchedulerPicker extends LitElement {
     await this.updateComplete;
     this._comboBox?.focus();
     (this._comboBox as any).open();
-    (this._comboBox as any).value = "";
+    (this._comboBox as any).value = '';
   }
 
   private async _openedChanged(ev: CustomEvent) {
@@ -254,8 +229,7 @@ export class SchedulerPicker extends LitElement {
     ev.stopPropagation();
     if (this._isOpening) {
       this._isOpening = false;
-    }
-    else if (this._opened && !opened) {
+    } else if (this._opened && !opened) {
       this._opened = false;
       await this.updateComplete;
       this._field?.focus();
@@ -282,10 +256,7 @@ export class SchedulerPicker extends LitElement {
         }
 
         ha-combo-box-item.textInput[disabled] {
-          background-color: var(
-            --mdc-text-field-disabled-fill-color,
-            whitesmoke
-          );
+          background-color: var(--mdc-text-field-disabled-fill-color, whitesmoke);
         }
         ha-combo-box-item.textInput {
           background-color: var(--mdc-text-field-fill-color, whitesmoke);
@@ -306,14 +277,11 @@ export class SchedulerPicker extends LitElement {
 
         /* Add Similar focus style as the text field */
         ha-combo-box-item.textInput[disabled]:after {
-          background-color: var(
-            --mdc-text-field-disabled-line-color,
-            rgba(0, 0, 0, 0.42)
-          );
+          background-color: var(--mdc-text-field-disabled-line-color, rgba(0, 0, 0, 0.42));
         }
         ha-combo-box-item.textInput:after {
           display: block;
-          content: "";
+          content: '';
           position: absolute;
           pointer-events: none;
           bottom: 0;
@@ -321,10 +289,7 @@ export class SchedulerPicker extends LitElement {
           right: 0;
           height: 1px;
           width: 100%;
-          background-color: var(
-            --mdc-text-field-idle-line-color,
-            rgba(0, 0, 0, 0.42)
-          );
+          background-color: var(--mdc-text-field-idle-line-color, rgba(0, 0, 0, 0.42));
           transform:
             height 180ms ease-in-out,
             background-color 180ms ease-in-out;
@@ -354,6 +319,6 @@ export class SchedulerPicker extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "scheduler-picker": SchedulerPicker;
+    'scheduler-picker': SchedulerPicker;
   }
 }

@@ -1,5 +1,4 @@
-import { css } from "lit";
-
+import { css } from 'lit';
 
 export const EditorDialogStyles = css`
   ha-dialog {
@@ -23,9 +22,9 @@ export const EditorDialogStyles = css`
   }
   @media (min-width: 450px) and (min-height: 500px) {
     .header-bar {
-        padding: 16px 16px 8px 16px;
+      padding: 16px 16px 8px 16px;
     }
-}
+  }
   ha-dialog {
     --dialog-surface-position: static;
     --dialog-content-position: static;
@@ -54,19 +53,18 @@ export const EditorDialogStyles = css`
     right: 0px;
   }
   .buttons {
-      box-sizing: border-box;
-      display: flex;
-      padding: 16px 24px;
-      justify-content: space-between;
-      background-color: var(--mdc-theme-surface, #fff);
-      border-top: 1px solid var(--divider-color);
-      position: sticky;
-      bottom: 0px;
-    }
+    box-sizing: border-box;
+    display: flex;
+    padding: 16px 24px;
+    justify-content: space-between;
+    background-color: var(--mdc-theme-surface, #fff);
+    border-top: 1px solid var(--divider-color);
+    position: sticky;
+    bottom: 0px;
+  }
   .content {
     padding: 0px 24px 16px 24px;
   }
-
 `;
 
 export const styles = css`
@@ -113,8 +111,4 @@ export const styles = css`
     align-content: center;
     flex-wrap: wrap;
   }
-
-
 `;
-
-

@@ -1,234 +1,226 @@
-
 export type ActionConfig = {
-  supported_features?: number,
-  translation_key?: string | string[],
+  supported_features?: number;
+  translation_key?: string | string[];
   fields?: {
     [key: string]: {
-      supported_features?: number,
-      optional?: boolean
-    }
-  },
+      supported_features?: number;
+      optional?: boolean;
+    };
+  };
   target?: {
-    entity_id?: string[] | string,
-    domain?: string,
-  },
-  name?: string,
-  icon?: string
-}
+    entity_id?: string[] | string;
+    domain?: string;
+  };
+  name?: string;
+  icon?: string;
+};
 
 export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   alarm_control_panel: {
     alarm_disarm: {
-      target: {}
+      target: {},
     },
     alarm_arm_home: {
       supported_features: 1,
-      target: {}
+      target: {},
     },
     alarm_arm_away: {
       supported_features: 2,
-      target: {}
+      target: {},
     },
     alarm_arm_night: {
       supported_features: 4,
-      target: {}
+      target: {},
     },
     alarm_arm_custom_bypass: {
       supported_features: 16,
-      target: {}
+      target: {},
     },
     alarm_arm_vacation: {
       supported_features: 32,
-      target: {}
+      target: {},
     },
   },
   automation: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
+      target: {},
     },
     trigger: {
-      target: {}
+      target: {},
     },
   },
   button: {
     press: {
-      target: {}
+      target: {},
     },
   },
   climate: {
     turn_off: {
       target: {},
-      supported_features: 128
+      supported_features: 128,
     },
     turn_on: {
       target: {},
-      supported_features: 256
+      supported_features: 256,
     },
     set_hvac_mode: {
       translation_key: 'services.climate.set_hvac_mode',
       target: {},
       fields: {
-        hvac_mode: {}
-      }
+        hvac_mode: {},
+      },
     },
     set_temperature: {
       translation_key: [
         'services.climate.set_temperature',
         'services.climate.set_temperature_hvac_mode_heat',
         'services.climate.set_temperature_hvac_mode_cool',
-        'services.climate.set_temperature_hvac_mode_heat_cool'
+        'services.climate.set_temperature_hvac_mode_heat_cool',
       ],
       target: {},
       fields: {
         temperature: {
-          supported_features: 1
+          supported_features: 1,
         },
         target_temp_high: {
-          supported_features: 2
+          supported_features: 2,
         },
         target_temp_low: {
-          supported_features: 2
+          supported_features: 2,
         },
         hvac_mode: {
-          optional: true
-        }
-      }
+          optional: true,
+        },
+      },
     },
     set_preset_mode: {
       translation_key: 'services.climate.set_preset_mode',
       supported_features: 16,
       target: {},
       fields: {
-        preset_mode: {
-        }
-      }
+        preset_mode: {},
+      },
     },
     set_fan_mode: {
       translation_key: 'services.climate.set_fan_mode',
       supported_features: 8,
       target: {},
       fields: {
-        fan_mode: {
-        }
-      }
+        fan_mode: {},
+      },
     },
     set_swing_mode: {
       translation_key: 'services.climate.set_swing_mode',
       supported_features: 32,
       target: {},
       fields: {
-        swing_mode: {
-        }
-      }
-    }
+        swing_mode: {},
+      },
+    },
   },
   cover: {
     close_cover: {
       supported_features: 2,
-      target: {}
+      target: {},
     },
     open_cover: {
       supported_features: 1,
-      target: {}
+      target: {},
     },
     set_cover_position: {
       translation_key: 'services.cover.set_cover_position',
       supported_features: 4,
       target: {},
       fields: {
-        position: {
-        }
-      }
+        position: {},
+      },
     },
     set_cover_tilt_position: {
       translation_key: 'services.cover.set_cover_tilt_position',
       supported_features: 128,
       target: {},
       fields: {
-        tilt_position: {
-        }
-      }
+        tilt_position: {},
+      },
     },
   },
   fan: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
+      target: {},
     },
     set_percentage: {
       translation_key: 'services.fan.set_percentage',
       supported_features: 1,
       target: {},
       fields: {
-        percentage: {}
-      }
+        percentage: {},
+      },
     },
     oscillate: {
       translation_key: 'services.fan.oscillate',
       supported_features: 2,
       target: {},
       fields: {
-        oscillating: {}
-      }
+        oscillating: {},
+      },
     },
     set_direction: {
       translation_key: 'services.fan.set_direction',
       supported_features: 4,
       target: {},
       fields: {
-        direction: {}
-      }
+        direction: {},
+      },
     },
     set_preset_mode: {
       translation_key: 'services.climate.set_preset_mode',
       supported_features: 8,
       target: {},
       fields: {
-        preset_mode: {
-        }
-      }
+        preset_mode: {},
+      },
     },
   },
   humidifier: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
+      target: {},
     },
     set_humidity: {
       translation_key: 'services.humidifier.set_humidity',
       target: {},
       fields: {
-        humidity: {
-        }
-      }
+        humidity: {},
+      },
     },
     set_mode: {
       translation_key: 'services.humidifier.set_mode',
       supported_features: 1,
       target: {},
       fields: {
-        mode: {}
-      }
+        mode: {},
+      },
     },
   },
   input_boolean: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
-    }
+      target: {},
+    },
   },
   input_button: {
     press: {
-      target: {}
+      target: {},
     },
   },
   input_number: {
@@ -236,32 +228,32 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       translation_key: 'services.input_number.set_value',
       target: {},
       fields: {
-        value: {}
-      }
-    }
+        value: {},
+      },
+    },
   },
   input_select: {
     select_option: {
       translation_key: 'services.input_select.select_option',
       target: {},
       fields: {
-        option: {}
-      }
+        option: {},
+      },
     },
   },
   lawn_mower: {
     start_mowing: {
       target: {},
-      supported_features: 1
+      supported_features: 1,
     },
     pause: {
       target: {},
-      supported_features: 2
+      supported_features: 2,
     },
     dock: {
       target: {},
-      supported_features: 4
-    }
+      supported_features: 4,
+    },
   },
   light: {
     turn_on: {
@@ -269,37 +261,36 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       target: {},
       fields: {
         brightness: {
-          optional: true
-        }
-      }
+          optional: true,
+        },
+      },
     },
     turn_off: {
-      target: {}
-    }
+      target: {},
+    },
   },
   lock: {
     lock: {
-      target: {}
+      target: {},
     },
     unlock: {
-      target: {}
+      target: {},
     },
   },
   media_player: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
+      target: {},
     },
     select_source: {
       translation_key: 'services.media_player.select_source',
       supported_features: 2048,
       target: {},
       fields: {
-        source: {
-        }
-      }
+        source: {},
+      },
     },
   },
   notify: {
@@ -307,10 +298,10 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       translation_key: 'services.notify.send_message',
       fields: {
         title: {
-          optional: true
+          optional: true,
         },
-        message: {}
-      }
+        message: {},
+      },
     },
   },
   number: {
@@ -318,13 +309,13 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       translation_key: 'services.input_number.set_value',
       target: {},
       fields: {
-        value: {}
-      }
+        value: {},
+      },
     },
   },
   scene: {
     turn_on: {
-      target: {}
+      target: {},
     },
   },
   script: {
@@ -337,49 +328,47 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       translation_key: 'services.input_select.select_option',
       target: {},
       fields: {
-        option: {
-        }
-      }
+        option: {},
+      },
     },
   },
   switch: {
     turn_on: {
-      target: {}
+      target: {},
     },
     turn_off: {
-      target: {}
-    }
+      target: {},
+    },
   },
   vacuum: {
     turn_on: {
       supported_features: 1,
-      target: {}
+      target: {},
     },
     start: {
       supported_features: 8192,
-      target: {}
+      target: {},
     },
     play_pause: {
-      target: {}
+      target: {},
     },
   },
   valve: {
     open_valve: {
       supported_features: 1,
-      target: {}
+      target: {},
     },
     close_valve: {
       supported_features: 2,
-      target: {}
+      target: {},
     },
     set_valve_position: {
       translation_key: 'services.cover.set_cover_position',
       supported_features: 4,
       target: {},
       fields: {
-        position: {
-        }
-      }
+        position: {},
+      },
     },
   },
   water_heater: {
@@ -388,27 +377,24 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       supported_features: 1,
       target: {},
       fields: {
-        temperature: {
-        }
-      }
+        temperature: {},
+      },
     },
     set_operation_mode: {
       translation_key: 'services.water_heater.set_operation_mode',
       supported_features: 2,
       target: {},
       fields: {
-        operation_mode: {
-        }
-      }
+        operation_mode: {},
+      },
     },
     set_away_mode: {
       translation_key: 'services.water_heater.set_away_mode',
       supported_features: 4,
       target: {},
       fields: {
-        away_mode: {
-        }
-      }
-    }
-  }
+        away_mode: {},
+      },
+    },
+  },
 };

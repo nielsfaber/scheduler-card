@@ -40,27 +40,18 @@ export class GenericDialog extends LitElement {
             .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
-          <span slot="title">
-            ${this._params.title}
-          </span>
+          <span slot="title"> ${this._params.title} </span>
         </ha-dialog-header>
-        <div class="wrapper">
-          ${this._params.description}
-        </div>
+        <div class="wrapper">${this._params.description}</div>
 
         ${this._params.secondaryButtonLabel
-        ? html`
-          <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-            ${this._params.secondaryButtonLabel}
-          </ha-button>
+          ? html`
+              <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
+                ${this._params.secondaryButtonLabel}
+              </ha-button>
             `
-        : ''}
-        <ha-button
-          appearance="accent"
-          slot="primaryAction"
-          @click=${this.confirmClick}
-          dialogAction="close"
-        >
+          : ''}
+        <ha-button appearance="accent" slot="primaryAction" @click=${this.confirmClick} dialogAction="close">
           ${this._params.primaryButtonLabel}
         </ha-button>
       </ha-dialog>

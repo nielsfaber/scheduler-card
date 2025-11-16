@@ -1,6 +1,5 @@
-import { computeDomain } from "../lib/entity";
-import { HomeAssistant } from "../lib/types";
-
+import { computeDomain } from '../lib/entity';
+import { HomeAssistant } from '../lib/types';
 
 const stateIcons: Record<string, Record<string, string> | Record<string, Record<string, string>>> = {
   alarm_control_panel: {
@@ -129,24 +128,24 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
   cover: {
     garage: {
       closed: 'mdi:garage',
-      open: 'mdi:garage-open'
+      open: 'mdi:garage-open',
     },
     door: {
       closed: 'mdi:door-closed',
-      open: 'mdi:door-open'
+      open: 'mdi:door-open',
     },
     blind: {
       closed: 'mdi:blinds',
-      open: 'mdi:blinds-open'
+      open: 'mdi:blinds-open',
     },
     window: {
       closed: 'mdi:window-closed',
-      open: 'mdi:window-open'
+      open: 'mdi:window-open',
     },
     _: {
       closed: 'mdi:window-shutter',
-      open: 'mdi:window-shutter-open'
-    }
+      open: 'mdi:window-shutter-open',
+    },
   },
   climate: {
     off: 'mdi:power-off',
@@ -180,7 +179,7 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
   lawn_mower: {
     mowing: 'mdi:play',
     paused: 'mdi:pause',
-    docked: 'mdi:home-import-outline'
+    docked: 'mdi:home-import-outline',
   },
   lock: {
     unlocked: 'mdi:lock-open-variant-outline',
@@ -205,7 +204,7 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
   },
   valve: {
     open: 'mdi:valve-open',
-    closed: 'mdi:valve-closed'
+    closed: 'mdi:valve-closed',
   },
   water_heater: {
     off: 'mdi:power-off',
@@ -214,8 +213,8 @@ const stateIcons: Record<string, Record<string, string> | Record<string, Record<
     gas: 'mdi:fire',
     heat_pump: 'mdi:hvac',
     high_demand: 'mdi:water-plus-outline',
-    performance: 'mdi:rocket-launch-outline'
-  }
+    performance: 'mdi:rocket-launch-outline',
+  },
 };
 
 export const stateIcon = (entityId: string, state: string, hass: HomeAssistant): string | undefined => {
@@ -231,15 +230,11 @@ export const stateIcon = (entityId: string, state: string, hass: HomeAssistant):
 
     if (deviceClass && Object.keys(iconList).includes(deviceClass)) {
       iconList = iconList[deviceClass] as Record<string, string>;
-    }
-    else {
+    } else {
       iconList = iconList._ as Record<string, string>;
     }
   }
 
   if (!Object.keys(iconList).includes(state)) return;
   return iconList[state] as string;
-}
-
-
-
+};

@@ -1,6 +1,6 @@
-import { CardConfig, EditorMode, Schedule, TConditionLogicType, TRepeatType, TWeekday } from "./types";
+import { CardConfig, EditorMode, Schedule, TConditionLogicType, TRepeatType, TWeekday } from './types';
 
-export const CARD_VERSION = 'v4.0.9';
+export const CARD_VERSION = 'v4.1.0';
 
 export const DEFAULT_TIME_STEP = 15;
 export const DEFAULT_SORT_BY = ['relative-time', 'state'];
@@ -32,9 +32,9 @@ const defaultSlotConfig = {
   conditions: {
     type: TConditionLogicType.Or,
     items: [],
-    track_changes: false
-  }
-}
+    track_changes: false,
+  },
+};
 
 export const defaultTimeSchemeConfig: Schedule = {
   entries: [
@@ -55,14 +55,14 @@ export const defaultTimeSchemeConfig: Schedule = {
           ...defaultSlotConfig,
           start: '16:00:00',
           stop: '00:00:00',
-        }
-      ]
-    }
+        },
+      ],
+    },
   ],
   repeat_type: TRepeatType.Repeat,
   next_entries: [],
   timestamps: [],
-  enabled: true
+  enabled: true,
 };
 
 export const defaultSingleTimerConfig: Schedule = {
@@ -84,8 +84,8 @@ export const defaultSingleTimerConfig: Schedule = {
           ...defaultSlotConfig,
           start: '12:01:00',
           stop: '00:00:00',
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 };

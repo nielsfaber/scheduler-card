@@ -1,4 +1,4 @@
-import { HomeAssistant } from "../../lib/types";
+import { HomeAssistant } from '../../lib/types';
 
 export interface TagEntry {
   name: string;

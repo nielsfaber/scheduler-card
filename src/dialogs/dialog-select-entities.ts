@@ -16,26 +16,26 @@ import { computeEntityDisplay } from '../data/format/compute_entity_display';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
-  confirm: (res: { domains: string[], entities: string[] }) => void;
+  confirm: (res: { domains: string[]; entities: string[] }) => void;
   domains: string[];
   entities: string[];
   cardConfig: CardConfig;
 };
 
 interface listItem {
-  key: string,
-  name: string,
-  description: string,
+  key: string;
+  name: string;
+  description: string;
   icon: string;
 }
 
 type domainsListItem = listItem & { entities: listItem[] };
-interface domainsList extends Array<domainsListItem> { };
+interface domainsList extends Array<domainsListItem> {}
 
 const computeDomains = (hass: HomeAssistant) => {
   let domains = computeActionDomains(hass, { include: ['*'] });
   let conditionDomains = computeConditionDomains(hass, { include: ['*'] });
-  conditionDomains = conditionDomains.filter(e => !domains.map(f => f.key).includes(e.key));
+  conditionDomains = conditionDomains.filter((e) => !domains.map((f) => f.key).includes(e.key));
   domains = [...domains, ...conditionDomains];
   domains.sort((a, b) => sortByName(a.name, b.name));
   return domains;
@@ -44,37 +44,41 @@ const computeDomains = (hass: HomeAssistant) => {
 const computeEntitiesForDomain = (domain: string, customize: CustomConfig | undefined, hass: HomeAssistant) => {
   if (['script', 'notify'].includes(domain)) {
     let entities = Object.keys(hass.services[domain]);
-    if (domain == 'script') entities = entities.filter(e => !['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(e));
+    if (domain == 'script')
+      entities = entities.filter((e) => !['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(e));
 
-    let entityList = entities.map((e): listItem => ({
-      key: `${domain}.${e}`,
-      name: computeEntityDisplay(`${domain}.${e}`, hass, customize),
-      description: "",
-      icon: computeEntityIcon(`${domain}.${e}`, customize, hass)
-    }));
+    const entityList = entities.map(
+      (e): listItem => ({
+        key: `${domain}.${e}`,
+        name: computeEntityDisplay(`${domain}.${e}`, hass, customize),
+        description: '',
+        icon: computeEntityIcon(`${domain}.${e}`, customize, hass),
+      })
+    );
+
+    entityList.sort((a, b) => sortByName(a.name, b.name));
+    return entityList;
+  } else {
+    const entities = Object.keys(hass.states).filter((e) => computeDomain(e) == domain);
+
+    const entityList = entities.map(
+      (e): listItem => ({
+        key: e,
+        name: friendlyName(e, hass.states[e]?.attributes),
+        description: '',
+        icon: computeEntityIcon(e, customize, hass),
+      })
+    );
 
     entityList.sort((a, b) => sortByName(a.name, b.name));
     return entityList;
   }
-  else {
-    const entities = Object.keys(hass.states).filter(e => computeDomain(e) == domain);
-
-    let entityList = entities.map((e): listItem => ({
-      key: e,
-      name: friendlyName(e, hass.states[e]?.attributes),
-      description: "",
-      icon: computeEntityIcon(e, customize, hass)
-    }));
-
-    entityList.sort((a, b) => sortByName(a.name, b.name));
-    return entityList;
-  }
-}
+};
 
 const filteredResult = (obj: listItem, tokens: string[]) => {
   return (
-    tokens.every(token => obj.name.toLowerCase().includes(token)) ||
-    tokens.every(token => obj.key.toLowerCase().includes(token))
+    tokens.every((token) => obj.name.toLowerCase().includes(token)) ||
+    tokens.every((token) => obj.key.toLowerCase().includes(token))
   );
 };
 
@@ -84,8 +88,8 @@ export class DialogSelectEntities extends LitElement {
 
   @state() private _params?: DialogSelectEntitiesParams;
 
-  @state() private _search = "";
-  @state() private _filter = "";
+  @state() private _search = '';
+  @state() private _filter = '';
   timer: number = 0;
 
   @state() private _width?: number;
@@ -113,20 +117,23 @@ export class DialogSelectEntities extends LitElement {
 
   loadOptions() {
     if (!this._params) return;
-    let domains = computeDomains(this.hass);
-    this.options = domains.map((item): domainsListItem => ({
-      ...item,
-      entities: computeEntitiesForDomain(item.key, this._params!.cardConfig.customize, this.hass)
-    }));
+    const domains = computeDomains(this.hass);
+    this.options = domains.map(
+      (item): domainsListItem => ({
+        ...item,
+        entities: computeEntitiesForDomain(item.key, this._params!.cardConfig.customize, this.hass),
+      })
+    );
   }
 
   shouldUpdate(changedProps: PropertyValues) {
     if (
-      changedProps.has('_params')
-      || changedProps.has('expandedGroups')
-      || changedProps.has('_filter')
-      || changedProps.has('scheduleEntities')
-    ) return true;
+      changedProps.has('_params') ||
+      changedProps.has('expandedGroups') ||
+      changedProps.has('_filter') ||
+      changedProps.has('scheduleEntities')
+    )
+      return true;
     return false;
   }
 
@@ -154,15 +161,13 @@ export class DialogSelectEntities extends LitElement {
               .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
-            <span slot="title">
-              ${localize('ui.dialog.entity_picker.title', this.hass)}
-            </span>
+            <span slot="title"> ${localize('ui.dialog.entity_picker.title', this.hass)} </span>
           </ha-dialog-header>
 
           <ha-textfield
             dialogInitialFocus
-            .placeholder=${hassLocalize("ui.common.search", this.hass)}
-            aria-label=${hassLocalize("ui.common.search", this.hass)}
+            .placeholder=${hassLocalize('ui.common.search', this.hass)}
+            aria-label=${hassLocalize('ui.common.search', this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
@@ -170,10 +175,10 @@ export class DialogSelectEntities extends LitElement {
           >
             <div class="trailing" slot="trailingIcon">
               ${this._search &&
-      html`
+              html`
                 <ha-icon-button
                   @click=${this._clearSearch}
-                  .label=${hassLocalize("ui.common.clear", this.hass)}
+                  .label=${hassLocalize('ui.common.clear', this.hass)}
                   .path=${mdiClose}
                   class="clear-button"
                 ></ha-icon-button>
@@ -182,12 +187,12 @@ export class DialogSelectEntities extends LitElement {
             </div>
           </ha-textfield>
         </div>
-        
+
         <mwc-list
           style=${styleMap({
-        width: this._width ? `${this._width}px` : "auto",
-        height: this._height ? `${Math.min(468, this._height)}px` : "auto",
-      })}
+            width: this._width ? `${this._width}px` : 'auto',
+            height: this._height ? `${Math.min(468, this._height)}px` : 'auto',
+          })}
         >
           ${this._renderOptions()}
         </mwc-list>
@@ -197,8 +202,7 @@ export class DialogSelectEntities extends LitElement {
 
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
-    const boundingRect =
-      this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
+    const boundingRect = this.shadowRoot!.querySelector('mwc-list')?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -213,25 +217,24 @@ export class DialogSelectEntities extends LitElement {
   }
 
   _clearSearch() {
-    this._search = "";
-    this._filter = "";
+    this._search = '';
+    this._filter = '';
   }
 
   _toggleSelectEntity(ev: Event) {
     let listItem = ev.target as HTMLElement;
     while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
-    const checkbox = listItem.querySelector("ha-checkbox") as HTMLInputElement;
-    const key = listItem.getAttribute("key") as string;
+    const checkbox = listItem.querySelector('ha-checkbox') as HTMLInputElement;
+    const key = listItem.getAttribute('key') as string;
     if (this._params!.entities.includes(key)) {
       this._params = {
         ...this._params!,
-        entities: this._params!.entities.filter(e => e != key)
+        entities: this._params!.entities.filter((e) => e != key),
       };
-    }
-    else {
+    } else {
       this._params = {
         ...this._params!,
-        entities: [...this._params!.entities, key]
+        entities: [...this._params!.entities, key],
       };
     }
   }
@@ -239,33 +242,32 @@ export class DialogSelectEntities extends LitElement {
   _toggleSelectDomain(ev: Event) {
     let listItem = ev.target as HTMLElement;
     while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
-    const key = listItem.getAttribute("key") as string;
-    const entitiesInDomain = this.options?.find(e => e.key == key)!.entities.map(e => e.key);
+    const key = listItem.getAttribute('key') as string;
+    const entitiesInDomain = this.options?.find((e) => e.key == key)!.entities.map((e) => e.key);
     if (this._params!.domains.includes(key)) {
       this._params = {
         ...this._params!,
-        domains: this._params!.domains.filter(e => e != key),
-        entities: this._params!.entities.filter(e => !entitiesInDomain?.includes(e))
+        domains: this._params!.domains.filter((e) => e != key),
+        entities: this._params!.entities.filter((e) => !entitiesInDomain?.includes(e)),
       };
-    }
-    else {
+    } else {
       this._params = {
         ...this._params!,
-        domains: [...this._params!.domains, key]
+        domains: [...this._params!.domains, key],
       };
     }
     ev.stopPropagation();
   }
 
   closeGroupByKey(key: string) {
-    const menu = this.shadowRoot!.querySelector("mwc-list") as HTMLElement;
-    menu.childNodes.forEach(e => {
+    const menu = this.shadowRoot!.querySelector('mwc-list') as HTMLElement;
+    menu.childNodes.forEach((e) => {
       if (e.nodeType != Node.ELEMENT_NODE) return;
       if ((e as HTMLElement).tagName != 'MWC-LIST-ITEM') return;
-      if ((e as HTMLElement).getAttribute("key") == key) {
+      if ((e as HTMLElement).getAttribute('key') == key) {
         const listItem = e as HTMLElement;
         const container = listItem.nextElementSibling as HTMLElement;
-        const button = listItem.querySelector("ha-icon-button") as HTMLElement;
+        const button = listItem.querySelector('ha-icon-button') as HTMLElement;
         container.style.height = '0px';
         listItem.removeAttribute('expanded');
         button.classList.remove('expanded');
@@ -276,26 +278,24 @@ export class DialogSelectEntities extends LitElement {
   async _toggleExpandGroup(ev: Event) {
     let listItem = ev.target as HTMLElement;
     while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
-    const button = listItem.querySelector("ha-icon-button") as HTMLElement;
-    const key = listItem.getAttribute("key") as string;
+    const button = listItem.querySelector('ha-icon-button') as HTMLElement;
+    const key = listItem.getAttribute('key') as string;
     if (!this.expandedGroups.includes(key)) {
-      this.expandedGroups.forEach(e => this.closeGroupByKey(e));
+      this.expandedGroups.forEach((e) => this.closeGroupByKey(e));
       this.expandedGroups = [key];
       await this.requestUpdate();
     }
     const container = listItem.nextElementSibling as HTMLElement;
     const scrollHeight = container.scrollHeight;
 
-
     if (listItem.hasAttribute('expanded')) {
       listItem.removeAttribute('expanded');
       button.classList.remove('expanded');
       container.style.height = '0px';
       setTimeout(() => {
-        this.expandedGroups = this.expandedGroups.filter(e => e != key);
+        this.expandedGroups = this.expandedGroups.filter((e) => e != key);
       }, 300);
-    }
-    else {
+    } else {
       listItem.setAttribute('expanded', 'true');
       button.classList.add('expanded');
       container.style.height = `${scrollHeight}px`;
@@ -304,20 +304,21 @@ export class DialogSelectEntities extends LitElement {
 
   _renderOptions() {
     if (!this.options) return;
-    let filteredOptions = [...this.options]
+    let filteredOptions = [...this.options];
 
     const filterApplied = this._filter && this._filter.trim().length;
 
     if (filterApplied) {
-      const tokens = this._filter.toLowerCase().trim().split(" ");
-      filteredOptions = filteredOptions.map(item => {
-        let res = filteredResult(item, tokens);
-        if (res) return item;
-        item = { ...item, entities: (item.entities || []).filter(subitem => filteredResult(subitem, tokens)) };
-        if (!item.entities.length) return;
-        return item;
-      })
-        .filter(e => e !== undefined)
+      const tokens = this._filter.toLowerCase().trim().split(' ');
+      filteredOptions = filteredOptions
+        .map((item) => {
+          const res = filteredResult(item, tokens);
+          if (res) return item;
+          item = { ...item, entities: (item.entities || []).filter((subitem) => filteredResult(subitem, tokens)) };
+          if (!item.entities.length) return;
+          return item;
+        })
+        .filter((e) => e !== undefined);
     }
 
     if (!filteredOptions.length) {
@@ -328,69 +329,79 @@ export class DialogSelectEntities extends LitElement {
       `;
     }
 
-    return (Object.keys(filteredOptions)).map((key) => {
+    return Object.keys(filteredOptions).map((key) => {
       const domain = filteredOptions[key].key;
       const domainIncluded = this._params?.domains.includes(domain);
       let entities = [...filteredOptions[key].entities];
-      if (domain == 'switch') entities = entities.filter(e => !this.scheduleEntities.includes(e.key));
+      if (domain == 'switch') entities = entities.filter((e) => !this.scheduleEntities.includes(e.key));
 
       const numIncludedEntities = domainIncluded
         ? entities.length
         : entities.filter((e: listItem) => this._params?.entities.includes(e.key)).length;
 
       return html`
-        <mwc-list-item
-          graphic="icon"
-          twoline
-          hasMeta
-          @click=${this._toggleExpandGroup}
-          key="${domain}"
-        >
+        <mwc-list-item graphic="icon" twoline hasMeta @click=${this._toggleExpandGroup} key="${domain}">
           <ha-icon slot="graphic" icon="${filteredOptions[key].icon}"></ha-icon>
           <div slot="meta" class="meta">
-            <ha-button
-              appearance="plain"
-              @click=${this._toggleSelectDomain}
-              size="small"
-            >
-              ${this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key))
-          ? hassLocalize('ui.components.media-browser.file_management.deselect_all', this.hass)
-          : hassLocalize('ui.components.subpage-data-table.select_all', this.hass)
-        }
+            <ha-button appearance="plain" @click=${this._toggleSelectDomain} size="small">
+              ${this._params?.domains.includes(domain) ||
+              filteredOptions[key].entities.every((e) => this._params?.entities.includes(e.key))
+                ? hassLocalize('ui.components.media-browser.file_management.deselect_all', this.hass)
+                : hassLocalize('ui.components.subpage-data-table.select_all', this.hass)}
             </ha-button>
-            <ha-icon-button .path="${mdiChevronDown}" @click=${(ev: Event) => { (ev.target as HTMLElement).blur() }} class="chevron"></ha-icon-button>
+            <ha-icon-button
+              .path="${mdiChevronDown}"
+              @click=${(ev: Event) => {
+                (ev.target as HTMLElement).blur();
+              }}
+              class="chevron"
+            ></ha-icon-button>
           </div>
           <span>${filteredOptions[key].name}</span>
-          <span slot="secondary">${localize('ui.panel.card_editor.fields.entities.included_number', this.hass, ['{number}', '{total}'], [numIncludedEntities, entities.length])}</span>
-        </mwc-list-item>
-        ${this.expandedGroups.includes(domain) || filterApplied ? html`
-        <div class="group ${filterApplied ? 'open' : ''}">
-          <li role="divider"></li>
-        ${entities.map(e => html`
-          <mwc-list-item
-            graphic="icon"
-            twoline
-            hasMeta
-            @click=${this._toggleSelectEntity}
-            class="nested"
-            key="${e.key}"
+          <span slot="secondary"
+            >${localize(
+              'ui.panel.card_editor.fields.entities.included_number',
+              this.hass,
+              ['{number}', '{total}'],
+              [numIncludedEntities, entities.length]
+            )}</span
           >
-            ${Object.keys(this.hass.states).includes(e.key)
-            ? html`<ha-state-icon .stateObj=${this.hass.states[e.key]} .hass=${this.hass} slot="graphic"></ha-state-icon>`
-            : html`<ha-icon slot="graphic" icon="${e.icon}"></ha-icon>`
-          }
-            <ha-checkbox
-              slot="meta"
-              ?checked=${this._params?.entities.includes(e.key) || this._params?.domains.includes(domain)}
-            ></ha-checkbox>
+        </mwc-list-item>
+        ${this.expandedGroups.includes(domain) || filterApplied
+          ? html`
+              <div class="group ${filterApplied ? 'open' : ''}">
+                <li role="divider"></li>
+                ${entities.map(
+                  (e) => html`
+                    <mwc-list-item
+                      graphic="icon"
+                      twoline
+                      hasMeta
+                      @click=${this._toggleSelectEntity}
+                      class="nested"
+                      key="${e.key}"
+                    >
+                      ${Object.keys(this.hass.states).includes(e.key)
+                        ? html`<ha-state-icon
+                            .stateObj=${this.hass.states[e.key]}
+                            .hass=${this.hass}
+                            slot="graphic"
+                          ></ha-state-icon>`
+                        : html`<ha-icon slot="graphic" icon="${e.icon}"></ha-icon>`}
+                      <ha-checkbox
+                        slot="meta"
+                        ?checked=${this._params?.entities.includes(e.key) || this._params?.domains.includes(domain)}
+                      ></ha-checkbox>
 
-            <span>${e.name}</span>
-            <span slot="secondary">${e.key}</span>
-          </mwc-list-item>
-        `)}
-          <li role="divider"></li>
-        </div>
-      ` : ''}
+                      <span>${e.name}</span>
+                      <span slot="secondary">${e.key}</span>
+                    </mwc-list-item>
+                  `
+                )}
+                <li role="divider"></li>
+              </div>
+            `
+          : ''}
       `;
     });
   }
@@ -424,7 +435,9 @@ export class DialogSelectEntities extends LitElement {
         display: flex;
         justify-content: flex-end;
       }
-      mwc-list-item ha-checkbox, mwc-list-item ha-icon-button, mwc-list-item ha-button {
+      mwc-list-item ha-checkbox,
+      mwc-list-item ha-icon-button,
+      mwc-list-item ha-button {
         display: flex;
         align-items: center;
         justify-content: center;

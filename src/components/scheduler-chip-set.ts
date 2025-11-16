@@ -1,5 +1,5 @@
 import { LitElement, html, TemplateResult, CSSResultGroup, css } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement } from 'lit/decorators';
 import { HomeAssistant } from '../lib/types';
 
 import './scheduler-chip';
@@ -9,12 +9,11 @@ interface ChipItem {
   value?: string;
   icon?: string;
   badge?: any;
-  useStateIcon?: boolean
+  useStateIcon?: boolean;
 }
 
 @customElement('scheduler-chip-set')
 export class SchedulerChipSet extends LitElement {
-
   @property({ attribute: false })
   hass!: HomeAssistant;
 
@@ -39,9 +38,7 @@ export class SchedulerChipSet extends LitElement {
   protected render(): TemplateResult {
     if (!this.items) return html``;
 
-    return html`
-      ${Object.values(this.items).map(e => this.renderChipitem(e))}
-    `;
+    return html` ${Object.values(this.items).map((e) => this.renderChipitem(e))} `;
   }
 
   private renderChipitem(item: ChipItem): TemplateResult {
@@ -64,7 +61,7 @@ export class SchedulerChipSet extends LitElement {
       >
         ${item.name}
       </scheduler-chip>
-      `;
+    `;
   }
 
   private _handleClick(ev: CustomEvent) {
@@ -72,12 +69,11 @@ export class SchedulerChipSet extends LitElement {
     if (this.toggleable) {
       const value = ev.detail.value;
       const active = ev.detail.active;
-      if (this.value.includes(value) && !active) this.value = this.value.filter(e => e != value);
+      if (this.value.includes(value) && !active) this.value = this.value.filter((e) => e != value);
       else if (!this.value.includes(value) && value) this.value = [...this.value, value];
       const myEvent = new CustomEvent('value-changed', { detail: this.value });
       this.dispatchEvent(myEvent);
-    }
-    else {
+    } else {
       const myEvent = new CustomEvent('value-changed', { detail: ev.detail.value });
       this.dispatchEvent(myEvent);
     }

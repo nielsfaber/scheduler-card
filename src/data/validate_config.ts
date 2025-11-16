@@ -1,16 +1,14 @@
-import { isDefined } from "../lib/is_defined";
+import { isDefined } from '../lib/is_defined';
 
 const hasKey = (obj: Record<string, any>, key: string) => Object.keys(obj).includes(key);
 const isTypeBoolean = (obj: any) => typeof obj == 'boolean';
 const isTypeNumber = (obj: any) => typeof obj == 'number';
 const isTypeString = (obj: any) => typeof obj == 'string';
 const isTypeObject = (obj: any) => typeof obj == 'object' && !Array.isArray(obj);
-const isTypeListOfStrings = (obj: any) => Array.isArray(obj) && obj.every(e => typeof e == 'string');
-
+const isTypeListOfStrings = (obj: any) => Array.isArray(obj) && obj.every((e) => typeof e == 'string');
 
 export const validateConfig = (config: any) => {
-
-  let errors: string[] = [];
+  const errors: string[] = [];
 
   if (hasKey(config, 'include') && !isTypeListOfStrings(config.include)) {
     errors.push(`'include' must be a list of strings`);
@@ -28,7 +26,10 @@ export const validateConfig = (config: any) => {
     errors.push(`'title' must be a boolean or string`);
   }
 
-  if (hasKey(config, 'time_step') && (!isTypeNumber(config.time_step) || Number(config.time_step) < 1 || Number(config.time_step) > 30)) {
+  if (
+    hasKey(config, 'time_step') &&
+    (!isTypeNumber(config.time_step) || Number(config.time_step) < 1 || Number(config.time_step) > 30)
+  ) {
     errors.push(`'time_step' must be a number between 1 and 30`);
   }
 
@@ -45,39 +46,39 @@ export const validateConfig = (config: any) => {
       errors.push(`'display_options' must be a struct`);
     } else {
       if (
-        hasKey(config.display_options, 'primary_info')
-        && !isTypeString(config.display_options.primary_info)
-        && !isTypeListOfStrings(config.display_options.primary_info)
+        hasKey(config.display_options, 'primary_info') &&
+        !isTypeString(config.display_options.primary_info) &&
+        !isTypeListOfStrings(config.display_options.primary_info)
       ) {
         errors.push(`in 'display_options': 'primary_info' must be a string or list of strings`);
       }
 
       if (
-        hasKey(config.display_options, 'secondary_info')
-        && !isTypeString(config.display_options.secondary_info)
-        && !isTypeListOfStrings(config.display_options.secondary_info)
+        hasKey(config.display_options, 'secondary_info') &&
+        !isTypeString(config.display_options.secondary_info) &&
+        !isTypeListOfStrings(config.display_options.secondary_info)
       ) {
         errors.push(`in 'display_options': 'secondary_info' must be a string or list of strings`);
       }
 
-      if (hasKey(config.display_options, 'icon') && (!isTypeString(config.display_options.icon) || !['action', 'entity'].includes(config.display_options.icon))) {
+      if (
+        hasKey(config.display_options, 'icon') &&
+        (!isTypeString(config.display_options.icon) || !['action', 'entity'].includes(config.display_options.icon))
+      ) {
         errors.push(`in 'display_options': 'icon' must be a set to either 'action' or 'entity' `);
       }
     }
   }
-  if (
-    hasKey(config, 'sort_by')
-    && !isTypeString(config.sort_by)
-    && !isTypeListOfStrings(config.sort_by)
-  ) {
+  if (hasKey(config, 'sort_by') && !isTypeString(config.sort_by) && !isTypeListOfStrings(config.sort_by)) {
     errors.push(`'sort_by' must be a string or list of strings`);
   }
 
   if (hasKey(config, 'customize') && !isTypeObject(config.customize)) {
     errors.push(`'customize' must be a struct`);
-  }
-  else if (hasKey(config, 'customize')) {
-    let customizeErrors = Object.entries(config.customize).map(([key, val]) => validateCustomConfig(key, val)).filter(isDefined);
+  } else if (hasKey(config, 'customize')) {
+    const customizeErrors = Object.entries(config.customize)
+      .map(([key, val]) => validateCustomConfig(key, val))
+      .filter(isDefined);
     if (customizeErrors.length) errors.push(...customizeErrors);
   }
   if (hasKey(config, 'tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
@@ -93,7 +94,7 @@ export const validateConfig = (config: any) => {
     );
   }
   return config;
-}
+};
 
 const validateCustomConfig = (key: string, val: any) => {
   //TBD: complete validation for customize input
@@ -103,8 +104,7 @@ const validateCustomConfig = (key: string, val: any) => {
   if (hasKey(val, 'states')) {
     if (
       !isTypeListOfStrings(val.states) &&
-      (
-        !isTypeObject(val.states) ||
+      (!isTypeObject(val.states) ||
         !(
           hasKey(val.states, 'min') &&
           isTypeNumber(val.states.min) &&

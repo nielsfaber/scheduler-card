@@ -1,17 +1,20 @@
-import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector } from "../../lib/selector";
-import { HomeAssistant } from "../../lib/types";
-import { hassLocalize } from "../../localize/hassLocalize";
-import { roundFloat } from "../../lib/round_float";
-
+import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector } from '../../lib/selector';
+import { HomeAssistant } from '../../lib/types';
+import { hassLocalize } from '../../localize/hassLocalize';
+import { roundFloat } from '../../lib/round_float';
 
 export const formatSelectorDisplay = (value: any, selector: Selector | null, hass: HomeAssistant) => {
   if (!selector) return value;
 
   if (Object.keys(selector).includes('select') && (selector as SelectSelector).select) {
     const config = (selector as SelectSelector).select!;
-    let options: SelectOption[] = config.options.map(e => typeof e == 'string' ? Object(<SelectOption>{ value: e, label: e }) : e);
-    let match = options?.find(e => e.value == value);
-    if (config.translation_key) value = hassLocalize(config.translation_key.replace('${value}', value), hass, false) || match ? match?.label : value;
+    let options: SelectOption[] = config.options.map((e) =>
+      typeof e == 'string' ? Object(<SelectOption>{ value: e, label: e }) : e
+    );
+    let match = options?.find((e) => e.value == value);
+    if (config.translation_key)
+      value =
+        hassLocalize(config.translation_key.replace('${value}', value), hass, false) || match ? match?.label : value;
     else if (match) value = match.label;
   }
 
@@ -28,4 +31,4 @@ export const formatSelectorDisplay = (value: any, selector: Selector | null, has
     value = Boolean(value) ? 'True' : 'False';
   }
   return value;
-}
+};
