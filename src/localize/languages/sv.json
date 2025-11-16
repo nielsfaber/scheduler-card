@@ -1,0 +1,247 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} till {value}",
+      "action_with_parameter": "{action} med {parameter}"
+    },
+    "climate": {
+      "set_temperature": "ställ in temperaturen[ på {temperature}]",
+      "set_temperature_hvac_mode_heat": "värma[ till {temperature}]",
+      "set_temperature_hvac_mode_cool": "kyla[ till {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "värma/kyla[ till {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "värma/kyla[ till {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "auto[ till {temperature}]",
+      "set_hvac_mode": "ställ in läget[ till {hvac_mode}]",
+      "set_preset_mode": "ställ in förinställningen[ till {preset_mode}]",
+      "set_fan_mode": "ställ in fläktläge[ till {fan_mode}]",
+      "set_swing_mode": "ställ in svängningsläge[ till {swing_mode}]"
+    },
+    "cover": {
+      "close_cover": "stäng",
+      "open_cover": "öppna",
+      "set_cover_position": "ställ in positionen[ till {position}]",
+      "set_cover_tilt_position": "ställ in lutningsposition[ till {tilt_position}]"
+    },
+    "fan": {
+      "set_percentage": "ställ in hastighet[ till {percentage}]",
+      "set_direction": "ställ in riktning[ till {direction}]",
+      "oscillate": "ställ in oscillation[ till {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "ställ in luftfuktighet[ till {humidity}]",
+      "set_mode": "ställ in läge[ till {mode}]"
+    },
+    "input_number": {
+      "set_value": "ställ in den[ till {value}]"
+    },
+    "input_select": {
+      "select_option": "välj alternativ[ {option}]"
+    },
+    "select": {
+      "select_option": "välj alternativ[ {option}]"
+    },
+    "light": {
+      "turn_on": "slå på[ med {brightness} brightness]"
+    },
+    "media_player": {
+      "select_source": "välj källa[ {source}]"
+    },
+    "notify": {
+      "send_message": "send notification"
+    },
+    "script": {
+      "execute": "utföra"
+    },
+    "vacuum": {
+      "start_pause": "starta / pausa"
+    },
+    "water_heater": {
+      "set_operation_mode": "ställ in läget[ till {operation_mode}]",
+      "set_away_mode": "ställ in borta läget"
+    }
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "daglig",
+          "workdays": "arbetsdagar",
+          "weekend": "helgen"
+        },
+        "day_types_long": {
+          "daily": "varje dag",
+          "workdays": "på arbetsdagar",
+          "weekend": "i helgen"
+        },
+        "days": "dagar",
+        "tomorrow": "imorgon",
+        "repeated_days": "varje {days}",
+        "repeated_days_except": "varje dag utom {excludedDays}",
+        "days_range": "från {startDay} till {endDay}",
+        "next_week_day": "nästa {weekday}"
+      },
+      "time": {
+        "absolute": "kl. {time}",
+        "interval": "från {startTime} till {endTime}",
+        "at_midnight": "vid midnatt",
+        "at_noon": "vid middagstid",
+        "at_sun_event": "vid {sunEvent}"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Slutför modifieringar",
+        "description": "Schemat du har ändrat är för närvarande inaktiverat, vill du aktivera den?"
+      },
+      "confirm_delete": {
+        "title": "Ta bort enheten?",
+        "description": "Är du säker på att du vill ta bort den här enheten?"
+      },
+      "confirm_migrate": {
+        "title": "Uppdatera schema",
+        "description": "Vissa inställningar kommer att gå förlorade genom den här ändringen. Vill du fortsätta?"
+      },
+      "weekday_picker": {
+        "title": "Upprepade dagar för schema",
+        "choose": "Välj..."
+      },
+      "entity_picker": {
+        "title": "Välj enheter",
+        "choose": "Välj...",
+        "no_results": "Inga matchande objekt hittades"
+      },
+      "action_picker": {
+        "title": "Välj åtgärd"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Schemaläggare",
+        "new_schedule": "Ny schema",
+        "default_name": "Schema #{id}"
+      },
+      "overview": {
+        "no_entries": "Det finns inga objekt att visa",
+        "backend_error": "Kunde inte ansluta till schemaläggarkomponenten. Den måste installeras som integration innan det här kortet kan användas.",
+        "excluded_items": "{number} utesluten {if number is 1} artikel {else} artiklar",
+        "hide_excluded": "dölj uteslutna objekt",
+        "additional_tasks": "{number} mer {if number is 1} uppgift {else} uppgifter"
+      },
+      "editor": {
+        "repeated_days": "Upprepade dagar",
+        "start_time": "Starttid",
+        "stop_time": "Sluttid",
+        "action": "Åtgärd",
+        "add_action": "Lägg till åtgärd",
+        "select_timeslot": "Välj en tidslucka",
+        "toggle_single_mode": "Till enkelläge",
+        "toggle_scheme_mode": "Till schemaläge",
+        "validation_errors": {
+          "overlapping_time": "Schemat har överlappande tidsluckor",
+          "missing_target_entity": "En eller flera åtgärder saknar en målentitet",
+          "missing_service_parameter": "En eller flera åtgärder saknar en obligatorisk inställning",
+          "missing_action": "Schemat har inga åtgärder"
+        }
+      },
+      "options": {
+        "conditions": {
+          "header": "Villkor",
+          "add_condition": "Lägg till villkor",
+          "new_condition": "Nytt villkor",
+          "types": {
+            "equal_to": "{entity} är lika med {value}",
+            "unequal_to": "{entity} är ojämlik med {value}",
+            "above": "{entity} är över {value}",
+            "below": "{entity} är under {value}"
+          },
+          "options": {
+            "logic_and": "Alla villkor måste vara sanna",
+            "logic_or": "Något av villkoren måste vara sant",
+            "track_changes": "Omvärdera när förutsättningarna förändras"
+          }
+        },
+        "period": {
+          "header": "Period",
+          "start_date": "Från",
+          "end_date": "Till"
+        },
+        "repeat_type": "beteende efter avslutad",
+        "tags": "Taggar"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Enheter",
+          "other": "Andra"
+        },
+        "fields": {
+          "title": {
+            "heading": "Kortets titel",
+            "options": {
+              "standard": "standard",
+              "hidden": "dold",
+              "custom": "anpassad"
+            },
+            "custom_title": "Anpassad titel"
+          },
+          "discover_existing": {
+            "heading": "Visa alla scheman",
+            "description": "Detta ställer in parametern "upptäck befintliga". Tidigare skapade scheman läggs automatiskt till på kortet."
+          },
+          "time_step": {
+            "heading": "Tidssteg",
+            "description": "Upplösning (i minuter) för att skapa scheman",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Standard tidsredigerare",
+            "options": {
+              "single": "Enkelt schemalagt läge",
+              "scheme": "Tidschemaläge"
+            }
+          },
+          "sort_by": {
+            "heading": "Sorteringsalternativ",
+            "description": "Ordning i vilken scheman visas på kortet",
+            "options": {
+              "relative_time": "Tid kvar till nästa åtgärd",
+              "title": "Visad titel på schemat",
+              "state": "Visa aktiva scheman överst"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Visad primär information",
+            "description": "Konfigurera vilken etikett som används för scheman i översikten",
+            "options": {
+              "default": "Schemanamn",
+              "entity_action": "Sammanfattning av uppgiften"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Visad sekundär information",
+            "description": "Konfigurera vilka ytterligare egenskaper som ska synas i översikten",
+            "options": {
+              "relative_time": "Tid kvar till nästa åtgärd",
+              "time": "Konfigurerad tid för nästa åtgärd",
+              "days": "Upprepade dagar i veckan",
+              "additional_tasks": "Antal ytterligare uppgifter"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Visa rubrikväxling",
+            "description": "Visa växlingsknappen högst upp på kortet för att aktivera/inaktivera alla enheter"
+          },
+          "tags": {
+            "heading": "Taggar",
+            "description": "Använd taggar för att dela upp scheman mellan flera kort"
+          },
+          "entities": {
+            "button_label": "Konfigurera inkluderade entiteter",
+            "heading": "Inkluderade enheter",
+            "description": "Välj de enheter som du vill styra med hjälp av schemaläggaren. Du kan klicka på en grupp för att öppna den. Observera att vissa enheter (t.ex. sensorer) bara kan användas för villkor, inte för åtgärder.",
+            "included_number": "{number}/{total} vald"
+          }
+        }
+      }
+    }
+  }
+}
