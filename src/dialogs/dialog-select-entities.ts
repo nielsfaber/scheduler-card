@@ -9,10 +9,10 @@ import { HomeAssistant } from '../lib/types';
 import { computeConditionDomains } from '../data/compute_condition_domains';
 import { computeDomain, friendlyName } from '../lib/entity';
 import { computeEntityIcon } from '../data/format/compute_entity_icon';
-import { domainIcon } from '../data/actions/domain_icon';
 import { hassLocalize } from '../localize/hassLocalize';
 import { CardConfig, CustomConfig } from '../types';
 import { fetchItems } from '../data/store/fetch_items';
+import { computeEntityDisplay } from '../data/format/compute_entity_display';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
@@ -48,9 +48,9 @@ const computeEntitiesForDomain = (domain: string, customize: CustomConfig | unde
 
     let entityList = entities.map((e): listItem => ({
       key: `${domain}.${e}`,
-      name: hass.states[`${domain}.${e}`] ? friendlyName(`${domain}.${e}`, hass.states[`${domain}.${e}`]?.attributes) : hass.services[domain][e].name || `${domain}.${e}`,
+      name: computeEntityDisplay(`${domain}.${e}`, hass, customize),
       description: "",
-      icon: hass.states[`${domain}.${e}`] ? computeEntityIcon(`${domain}.${e}`, customize, hass) : domainIcon(domain)
+      icon: computeEntityIcon(`${domain}.${e}`, customize, hass)
     }));
 
     entityList.sort((a, b) => sortByName(a.name, b.name));
@@ -112,6 +112,7 @@ export class DialogSelectEntities extends LitElement {
   }
 
   loadOptions() {
+    if (!this._params) return;
     let domains = computeDomains(this.hass);
     this.options = domains.map((item): domainsListItem => ({
       ...item,
@@ -374,7 +375,10 @@ export class DialogSelectEntities extends LitElement {
             class="nested"
             key="${e.key}"
           >
-            <ha-state-icon .stateObj=${this.hass.states[e.key]} .hass=${this.hass} slot="graphic"></ha-state-icon>
+            ${Object.keys(this.hass.states).includes(e.key)
+            ? html`<ha-state-icon .stateObj=${this.hass.states[e.key]} .hass=${this.hass} slot="graphic"></ha-state-icon>`
+            : html`<ha-icon slot="graphic" icon="${e.icon}"></ha-icon>`
+          }
             <ha-checkbox
               slot="meta"
               ?checked=${this._params?.entities.includes(e.key) || this._params?.domains.includes(domain)}

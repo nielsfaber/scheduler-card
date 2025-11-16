@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { CardConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from "./types";
+import { CardConfig, CustomConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from "./types";
 import { parseTimeBar } from "./data/time/parse_time_bar";
 import { HomeAssistant } from "./lib/types";
 import { CARD_VERSION, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
@@ -15,6 +15,7 @@ import { sortSchedules } from "./data/schedule/sort_schedules";
 import { fetchScheduleItem } from "./data/store/fetch_item";
 import { fireEvent } from "./lib/fire_event";
 import { hassLocalize } from "./localize/hassLocalize";
+import { loadConfigFromEntityRegistry } from "./data/load_config_from_entity_registry";
 
 import './scheduler-card-editor';
 import "./dialogs/dialog-scheduler-editor";
@@ -36,15 +37,23 @@ export class SchedulerCard extends LitElement {
 
   private __unsubs?: Array<UnsubscribeFunc | Promise<UnsubscribeFunc>>;
 
-  setConfig(userConfig: CardConfig) {
+  async setConfig(userConfig: CardConfig) {
     userConfig = validateConfig(userConfig);
     this._config = { ...userConfig };
   }
 
-  firstUpdated() {
-    (async () => await loadHaForm())();
+  async firstUpdated() {
+    await loadHaForm();
     const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
     el._loadFragmentTranslations(this.hass.language, 'config');
+
+    await loadConfigFromEntityRegistry(this.hass)
+      .then(extraConfig => {
+        this._config = {
+          ...this._config,
+          customize: { ...extraConfig, ...(this._config.customize || {}) }
+        };
+      });
   }
 
   protected willUpdate(): void {
