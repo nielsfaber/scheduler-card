@@ -1,4 +1,3 @@
-
 import { css, html, LitElement, nothing, PropertyValues, TemplateResult, type CSSResultGroup } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { HomeAssistant } from "../lib/types";
@@ -26,7 +25,6 @@ export type PickerValueRenderer = (value: string) => TemplateResult<1>;
 export class SchedulerPicker extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
 
   @property({ type: Boolean }) public disabled = false;
@@ -80,19 +78,15 @@ export class SchedulerPicker extends LitElement {
     if (!sortedItems.length) {
       sortedItems.push({
         id: NO_MATCHING_ITEMS_FOUND_ID,
-        primary: localize('ui.dialog.entity_picker.no_results', this.hass),
-        icon: 'mdi:cancel',
+        primary: localize("ui.dialog.entity_picker.no_results", this.hass),
+        icon: "mdi:cancel",
       });
     }
     return sortedItems;
   };
 
   protected shouldUpdate(changedProps: PropertyValues) {
-    if (
-      changedProps.has("value") ||
-      changedProps.has("label") ||
-      changedProps.has("disabled")
-    ) {
+    if (changedProps.has("value") || changedProps.has("label") || changedProps.has("disabled")) {
       return true;
     }
 
@@ -106,71 +100,51 @@ export class SchedulerPicker extends LitElement {
   }
 
   protected render() {
-    const showClearIcon =
-      !!this.value && !this.disabled && !this.hideClearIcon;
+    const showClearIcon = !!this.value && !this.disabled && !this.hideClearIcon;
 
     return html`
-      ${this.label
-        ? html`<label ?disabled=${this.disabled}>${this.label}</label>`
-        : nothing}
+      ${this.label ? html`<label ?disabled=${this.disabled}>${this.label}</label>` : nothing}
       <div class="container">
         ${!this._opened
-        ? html`
-
-          <ha-combo-box-item
-            .disabled=${this.disabled}
-            type="button"
-            compact
-            class="textInput"
-            @click=${this.open}
-
-          >
-            ${this.value
-            ? this.valueRenderer
-              ? this.valueRenderer(this.value)
-              : html`<span slot="headline">${this.value}</span>`
-            : html`
-              <span slot="headline" class="placeholder">
-                ${this.placeholder || localize('ui.dialog.entity_picker.choose', this.hass)}
-              </span>
-            `}
-            ${showClearIcon
-            ? html`
-                <ha-icon-button
-                  class="clear"
-                  slot="end"
-                  @click=${this._clear}
-                  .path=${mdiClose}
-                ></ha-icon-button>
-                `
-            : nothing}
-            <ha-svg-icon
-              class="arrow"
-              slot="end"
-              .path=${mdiMenuDown}
-            ></ha-svg-icon>
-          </ha-combo-box-item>
+          ? html`
+              <ha-combo-box-item .disabled=${this.disabled} type="button" compact class="textInput" @click=${this.open}>
+                ${this.value
+                  ? this.valueRenderer
+                    ? this.valueRenderer(this.value)
+                    : html`<span slot="headline">${this.value}</span>`
+                  : html`
+                      <span slot="headline" class="placeholder">
+                        ${this.placeholder || localize("ui.dialog.entity_picker.choose", this.hass)}
+                      </span>
+                    `}
+                ${showClearIcon
+                  ? html`
+                      <ha-icon-button class="clear" slot="end" @click=${this._clear} .path=${mdiClose}></ha-icon-button>
+                    `
+                  : nothing}
+                <ha-svg-icon class="arrow" slot="end" .path=${mdiMenuDown}></ha-svg-icon>
+              </ha-combo-box-item>
             `
-        : html`
-            <ha-combo-box
-              item-id-path="id"
-              item-value-path="id"
-              item-label-path="a11y_label"
-              clear-initial-value
-              .hass=${this.hass}
-              .value=${this._value}
-              .label=${this.label}
-              .helper=${this.helper}
-              .allowCustomValue=${this.allowCustomValue}
-              .filteredItems=${this._items}
-              .renderer=${this.rowRenderer}
-              .disabled=${this.disabled}
-              .hideClearIcon=${this.hideClearIcon}
-              @opened-changed=${this._openedChanged}
-              @value-changed=${this._valueChanged}
-              @filter-changed=${this._filterChanged}
-            >
-            </ha-combo-box>
+          : html`
+              <ha-combo-box
+                item-id-path="id"
+                item-value-path="id"
+                item-label-path="a11y_label"
+                clear-initial-value
+                .hass=${this.hass}
+                .value=${this._value}
+                .label=${this.label}
+                .helper=${this.helper}
+                .allowCustomValue=${this.allowCustomValue}
+                .filteredItems=${this._items}
+                .renderer=${this.rowRenderer}
+                .disabled=${this.disabled}
+                .hideClearIcon=${this.hideClearIcon}
+                @opened-changed=${this._openedChanged}
+                @value-changed=${this._valueChanged}
+                @filter-changed=${this._filterChanged}
+              >
+              </ha-combo-box>
             `}
       </div>
       ${this._renderHelper()}
@@ -183,9 +157,7 @@ export class SchedulerPicker extends LitElement {
 
   private _renderHelper() {
     return this.helper
-      ? html`<ha-input-helper-text .disabled=${this.disabled}
-          >${this.helper}</ha-input-helper-text
-        >`
+      ? html`<ha-input-helper-text .disabled=${this.disabled}>${this.helper}</ha-input-helper-text>`
       : nothing;
   }
 
@@ -197,9 +169,7 @@ export class SchedulerPicker extends LitElement {
 
     if (newValue === NO_MATCHING_ITEMS_FOUND_ID) {
       return;
-    }
-
-    else if (!this._items.find(e => e.id == newValue) && !this.allowCustomValue) {
+    } else if (!this._items.find((e) => e.id == newValue) && !this.allowCustomValue) {
       return;
     }
 
@@ -214,11 +184,16 @@ export class SchedulerPicker extends LitElement {
     let filteredItems = this._items as PickerComboBoxItem[];
 
     const target = ev.target as HTMLInputElement;
-    const searchTerms: string[] = ev.detail.value.trim().split(" ").map(String).filter(e => e.length).map(e => e.trim());
+    const searchTerms: string[] = ev.detail.value
+      .trim()
+      .split(" ")
+      .map(String)
+      .filter((e) => e.length)
+      .map((e) => e.trim());
 
     if (searchTerms.length) {
-      filteredItems = filteredItems.filter(item => {
-        return searchTerms.every(term => item.primary.includes(term) || item.secondary?.includes(term));
+      filteredItems = filteredItems.filter((item) => {
+        return searchTerms.every((term) => item.primary.includes(term) || item.secondary?.includes(term));
       });
     }
 
@@ -254,8 +229,7 @@ export class SchedulerPicker extends LitElement {
     ev.stopPropagation();
     if (this._isOpening) {
       this._isOpening = false;
-    }
-    else if (this._opened && !opened) {
+    } else if (this._opened && !opened) {
       this._opened = false;
       await this.updateComplete;
       this._field?.focus();
@@ -282,10 +256,7 @@ export class SchedulerPicker extends LitElement {
         }
 
         ha-combo-box-item.textInput[disabled] {
-          background-color: var(
-            --mdc-text-field-disabled-fill-color,
-            whitesmoke
-          );
+          background-color: var(--mdc-text-field-disabled-fill-color, whitesmoke);
         }
         ha-combo-box-item.textInput {
           background-color: var(--mdc-text-field-fill-color, whitesmoke);
@@ -306,10 +277,7 @@ export class SchedulerPicker extends LitElement {
 
         /* Add Similar focus style as the text field */
         ha-combo-box-item.textInput[disabled]:after {
-          background-color: var(
-            --mdc-text-field-disabled-line-color,
-            rgba(0, 0, 0, 0.42)
-          );
+          background-color: var(--mdc-text-field-disabled-line-color, rgba(0, 0, 0, 0.42));
         }
         ha-combo-box-item.textInput:after {
           display: block;
@@ -321,10 +289,7 @@ export class SchedulerPicker extends LitElement {
           right: 0;
           height: 1px;
           width: 100%;
-          background-color: var(
-            --mdc-text-field-idle-line-color,
-            rgba(0, 0, 0, 0.42)
-          );
+          background-color: var(--mdc-text-field-idle-line-color, rgba(0, 0, 0, 0.42));
           transform:
             height 180ms ease-in-out,
             background-color 180ms ease-in-out;

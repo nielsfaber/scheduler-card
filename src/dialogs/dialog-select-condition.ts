@@ -1,22 +1,22 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import { mdiClose } from '@mdi/js';
-import { sortByName } from '../lib/sort';
-import { computeConditionDomains } from '../data/compute_condition_domains';
-import { localize } from '../localize/localize';
-import { HomeAssistant } from '../lib/types';
-import { styleMap } from 'lit/directives/style-map';
-import { CardConfig } from '../types';
-import { hassLocalize } from '../localize/hassLocalize';
+import { LitElement, html, css, CSSResultGroup } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
+import { mdiClose } from "@mdi/js";
+import { sortByName } from "../lib/sort";
+import { computeConditionDomains } from "../data/compute_condition_domains";
+import { localize } from "../localize/localize";
+import { HomeAssistant } from "../lib/types";
+import { styleMap } from "lit/directives/style-map";
+import { CardConfig } from "../types";
+import { hassLocalize } from "../localize/hassLocalize";
 
 export type DialogSelectConditionParams = {
   cancel: () => void;
   confirm: (res: string) => void;
   domain?: string;
-  cardConfig: CardConfig
+  cardConfig: CardConfig;
 };
 
-@customElement('dialog-select-condition')
+@customElement("dialog-select-condition")
 export class DialogSelectCondition extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -44,7 +44,6 @@ export class DialogSelectCondition extends LitElement {
 
   async willUpdate() {
     (this.hass as any).loadBackendTranslation("title");
-
   }
 
   render() {
@@ -63,12 +62,10 @@ export class DialogSelectCondition extends LitElement {
             <ha-icon-button
               slot="navigationIcon"
               dialogAction="cancel"
-              .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+              .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
-            <span slot="title">
-              ${localize('ui.panel.options.conditions.add_condition', this.hass)}
-            </span>
+            <span slot="title"> ${localize("ui.panel.options.conditions.add_condition", this.hass)} </span>
           </ha-dialog-header>
 
           <ha-textfield
@@ -82,7 +79,7 @@ export class DialogSelectCondition extends LitElement {
           >
             <div class="trailing" slot="trailingIcon">
               ${this._search &&
-      html`
+              html`
                 <ha-icon-button
                   @click=${this._clearSearch}
                   .label=${hassLocalize("ui.common.clear", this.hass)}
@@ -97,9 +94,9 @@ export class DialogSelectCondition extends LitElement {
 
         <mwc-list
           style=${styleMap({
-        width: this._width ? `${this._width}px` : "auto",
-        height: this._height ? `${Math.min(468, this._height)}px` : "auto",
-      })}
+            width: this._width ? `${this._width}px` : "auto",
+            height: this._height ? `${Math.min(468, this._height)}px` : "auto",
+          })}
         >
           ${this._renderOptions()}
         </mwc-list>
@@ -109,8 +106,7 @@ export class DialogSelectCondition extends LitElement {
 
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
-    const boundingRect =
-      this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
+    const boundingRect = this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -136,24 +132,23 @@ export class DialogSelectCondition extends LitElement {
     domains.sort((a, b) => sortByName(a.name, b.name));
 
     if (this._filter) {
-      domains = domains.filter(e => {
+      domains = domains.filter((e) => {
         const tokens = this._filter.toLowerCase().trim().split(" ");
         return (
-          tokens.every(token => e.name.toLowerCase().includes(token)) ||
-          tokens.every(token => e.key.toLowerCase().includes(token))
-        )
-      })
+          tokens.every((token) => e.name.toLowerCase().includes(token)) ||
+          tokens.every((token) => e.key.toLowerCase().includes(token))
+        );
+      });
     }
 
-    return (Object.keys(domains)).map((key) => html`
-        <mwc-list-item
-          graphic="icon"
-          @click=${() => this._handleDomainClick(domains[key].key)}
-        >
+    return Object.keys(domains).map(
+      (key) => html`
+        <mwc-list-item graphic="icon" @click=${() => this._handleDomainClick(domains[key].key)}>
           <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
           <span>${domains[key].name}</span>
         </mwc-list-item>
-    `);
+      `
+    );
   }
 
   _handleDomainClick(key: string) {

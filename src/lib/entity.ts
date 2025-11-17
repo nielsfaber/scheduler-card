@@ -1,5 +1,3 @@
-
-
 export const computeEntity = (entityId: string): string => entityId.split(".")[1] || "";
 
 export const computeDomain = (entityId: string): string => entityId.split(".")[0] || "";

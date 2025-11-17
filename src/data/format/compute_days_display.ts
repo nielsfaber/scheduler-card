@@ -4,35 +4,31 @@ import { TWeekday } from "../../types";
 
 const supportLocaleString = () => {
   try {
-    new Date().toLocaleDateString('i');
+    new Date().toLocaleDateString("i");
   } catch (e: any) {
-    return e.name === 'RangeError';
+    return e.name === "RangeError";
   }
   return false;
 };
 
-const weekdayList = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const weekdayList = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
-export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 'long', hass: HomeAssistant) => {
+export const computeDayDisplay = (input: TWeekday | Date, formatType: "short" | "long", hass: HomeAssistant) => {
   let weekday: TWeekday;
 
   if (input instanceof Date) {
-
     let day = input.getDay();
     weekday = TWeekday.Friday;
 
     if (supportLocaleString()) {
       return input.toLocaleDateString(hass.locale.language, { weekday: formatType });
-    }
-    else {
+    } else {
       let day = input.getDay();
       weekday = TWeekday.Friday;
     }
-  }
-  else {
+  } else {
     weekday = input;
   }
-
 
   switch (weekday) {
     case TWeekday.Daily:
@@ -49,11 +45,11 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
     case TWeekday.Saturday:
     case TWeekday.Sunday:
       let date = new Date(2017, 1, 26);
-      let dayNumber = weekdayList.findIndex(e => e == weekday);
+      let dayNumber = weekdayList.findIndex((e) => e == weekday);
       if (!supportLocaleString()) return weekdayList[dayNumber];
       date.setDate(date.getDate() + dayNumber);
       return date.toLocaleDateString(hass.locale.language, { weekday: formatType });
     default:
-      return '';
+      return "";
   }
-}
+};

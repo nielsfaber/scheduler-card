@@ -1,17 +1,15 @@
-import { css, html, LitElement, PropertyValues } from 'lit';
-import { customElement, property, state } from 'lit/decorators';
+import { css, html, LitElement, PropertyValues } from "lit";
+import { customElement, property, state } from "lit/decorators";
 
-
-@customElement('scheduler-collapsible-section')
+@customElement("scheduler-collapsible-section")
 class SchedulerCollapsibleSection extends LitElement {
-
   @property({ type: Boolean, reflect: true }) expanded = false;
   @property({ type: Boolean, reflect: true }) disabled = false;
 
   @property({ attribute: true }) idx = -1;
 
   @property({ type: CustomEvent })
-  openClose = new CustomEvent('open-close', {
+  openClose = new CustomEvent("open-close", {
     detail: {},
     bubbles: true,
     composed: true,
@@ -20,7 +18,7 @@ class SchedulerCollapsibleSection extends LitElement {
   render() {
     return html`
       <div
-        class="header ${this.expanded ? 'expanded' : ''}"
+        class="header ${this.expanded ? "expanded" : ""}"
         @click=${this._toggleContent}
         @focus=${this._focusChanged}
         @blur=${this._focusChanged}
@@ -30,17 +28,11 @@ class SchedulerCollapsibleSection extends LitElement {
         aria-controls="sect1"
       >
         ${this.disabled
-        ? ''
-        : html`
-        <ha-icon
-          icon="mdi:chevron-down"
-          class="chevron ${this.expanded ? 'expanded' : ''}"
-        ></ha-icon>
-        `}
+          ? ""
+          : html` <ha-icon icon="mdi:chevron-down" class="chevron ${this.expanded ? "expanded" : ""}"></ha-icon> `}
         <slot name="header" class="title"></slot>
         <div id="contextMenu">
-          <slot name="contextMenu">
-          </slot>
+          <slot name="contextMenu"> </slot>
         </div>
       </div>
 
@@ -55,7 +47,6 @@ class SchedulerCollapsibleSection extends LitElement {
     this.dispatchEvent(this.openClose);
   }
 
-
   attributeChangedCallback(name, oldval, newval) {
     let container: HTMLElement | undefined = undefined;
     if (this.shadowRoot !== null) {
@@ -67,11 +58,11 @@ class SchedulerCollapsibleSection extends LitElement {
       }
     }
     if (container) {
-      if (this.hasAttribute('expanded')) {
+      if (this.hasAttribute("expanded")) {
         const scrollHeight = container.scrollHeight;
         container.style.height = `${scrollHeight}px`;
       } else {
-        container.style.height = `0px`;
+        container.style.height = "0px";
       }
     }
     super.attributeChangedCallback(name, oldval, newval);
@@ -79,10 +70,7 @@ class SchedulerCollapsibleSection extends LitElement {
 
   private _focusChanged(ev: Event) {
     if (this.disabled) return;
-    this.shadowRoot!.querySelector(".header")!.classList.toggle(
-      "focused",
-      ev.type === "focus"
-    );
+    this.shadowRoot!.querySelector(".header")!.classList.toggle("focused", ev.type === "focus");
   }
 
   static get styles() {
@@ -156,10 +144,8 @@ class SchedulerCollapsibleSection extends LitElement {
   }
 }
 
-
-@customElement('scheduler-collapsible-group')
+@customElement("scheduler-collapsible-group")
 class SchedulerCollapsibleGroup extends LitElement {
-
   @property() disabled = false;
 
   @state() _openedItem: number = -1;
@@ -175,11 +161,11 @@ class SchedulerCollapsibleGroup extends LitElement {
 
   constructor() {
     super();
-    this.addEventListener('open-close', this.toggleActiveSection);
+    this.addEventListener("open-close", this.toggleActiveSection);
   }
 
   firstUpdated() {
-    const sections = this.querySelectorAll('scheduler-collapsible-section');
+    const sections = this.querySelectorAll("scheduler-collapsible-section");
     this._numItems = sections.length;
   }
 
@@ -187,27 +173,25 @@ class SchedulerCollapsibleGroup extends LitElement {
     if (this.disabled) return;
     const el = ev.target as HTMLElement;
 
-    const itemIdx = Number(el.getAttribute('idx'));
+    const itemIdx = Number(el.getAttribute("idx"));
     const expanded = el.getAttribute("expanded") === "true";
     if (!expanded) this.updateOpenedItem(itemIdx);
     else this.updateOpenedItem(-1);
   }
 
   updateOpenedItem(idx: number) {
-    const sections = this.querySelectorAll('scheduler-collapsible-section');
+    const sections = this.querySelectorAll("scheduler-collapsible-section");
     sections.forEach(function (item) {
-      const itemIdx = Number(item.getAttribute('idx'));
-      if (itemIdx !== idx && item.getAttribute('expanded')) item.removeAttribute('expanded');
-      else if (itemIdx === idx && !item.getAttribute('expanded')) item.setAttribute('expanded', 'true');
+      const itemIdx = Number(item.getAttribute("idx"));
+      if (itemIdx !== idx && item.getAttribute("expanded")) item.removeAttribute("expanded");
+      else if (itemIdx === idx && !item.getAttribute("expanded")) item.setAttribute("expanded", "true");
     });
     this._openedItem = idx;
-    const myEvent = new CustomEvent('openclose-changed', { detail: { item: idx } });
+    const myEvent = new CustomEvent("openclose-changed", { detail: { item: idx } });
     this.dispatchEvent(myEvent);
   }
 
   render() {
-    return html`
-      <slot></slot>
-    `;
+    return html` <slot></slot> `;
   }
 }

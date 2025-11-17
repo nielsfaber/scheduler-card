@@ -1,26 +1,15 @@
+export type Selector = BooleanSelector | NumberSelector | SelectSelector | StringSelector;
 
-
-export type Selector =
-  | BooleanSelector
-  | NumberSelector
-  | SelectSelector
-  | StringSelector;
-
-export type SelectorTemplate =
-  | BooleanSelector
-  | NumberSelectorTemplate
-  | SelectSelectorTemplate
-  | StringSelector;
+export type SelectorTemplate = BooleanSelector | NumberSelectorTemplate | SelectSelectorTemplate | StringSelector;
 
 export enum supportedSelectors {
-  Boolean = 'boolean',
-  Select = 'select',
-  Number = 'number',
-  Text = 'text'
+  Boolean = "boolean",
+  Select = "select",
+  Number = "number",
+  Text = "text",
 }
 
 export interface BooleanSelector {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   boolean: {} | null;
 }
 
@@ -67,7 +56,6 @@ export interface NumberSelector {
   } | null;
 }
 
-
 export interface NumberSelectorTemplate {
   number: {
     min?: number | string;
@@ -82,19 +70,19 @@ export interface StringSelector {
   text: {
     multiline?: boolean;
     type?:
-    | "number"
-    | "text"
-    | "search"
-    | "tel"
-    | "url"
-    | "email"
-    | "password"
-    | "date"
-    | "month"
-    | "week"
-    | "time"
-    | "datetime-local"
-    | "color";
+      | "number"
+      | "text"
+      | "search"
+      | "tel"
+      | "url"
+      | "email"
+      | "password"
+      | "date"
+      | "month"
+      | "week"
+      | "time"
+      | "datetime-local"
+      | "color";
     prefix?: string;
     suffix?: string;
     autocomplete?: string;

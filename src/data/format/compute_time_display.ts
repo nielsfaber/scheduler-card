@@ -10,46 +10,49 @@ import { timeToString } from "../time/time_to_string";
 const formatRelativeTimeString = (input: Time, hass: HomeAssistant) => {
   let eventString =
     input.mode == TimeMode.Sunrise
-      ? hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.sunrise', hass)
-      : hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.sunset', hass);
-  if (hass.language != 'de') eventString = eventString.toLowerCase();
+      ? hassLocalize("ui.panel.config.automation.editor.conditions.type.sun.sunrise", hass)
+      : hassLocalize("ui.panel.config.automation.editor.conditions.type.sun.sunset", hass);
+  if (hass.language != "de") eventString = eventString.toLowerCase();
 
   const offset = input.hours * 3600 + input.minutes * 60;
-  if (Math.abs(offset) <= 60)
-    return localize('ui.components.time.at_sun_event', hass, '{sunEvent}', eventString);
+  if (Math.abs(offset) <= 60) return localize("ui.components.time.at_sun_event", hass, "{sunEvent}", eventString);
 
-  let signString = offset < 0
-    ? hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.before', hass)
-    : hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.after', hass);
-  signString = signString.replace(/[^a-z]/gi, '').toLowerCase();
+  let signString =
+    offset < 0
+      ? hassLocalize("ui.panel.config.automation.editor.conditions.type.sun.before", hass)
+      : hassLocalize("ui.panel.config.automation.editor.conditions.type.sun.after", hass);
+  signString = signString.replace(/[^a-z]/gi, "").toLowerCase();
 
   let timeString = timeToString(input, { seconds: false }).split(/\+|\-/).pop();
   return `${timeString} ${signString} ${eventString}`;
 };
 
 export const computeTimeDisplay = (startTime: string, stopTime: string | undefined, hass: HomeAssistant) => {
-
   const amPmFormat = useAmPm(hass.locale);
 
   if (stopTime) {
     const ts_start = parseTimeString(startTime);
     const ts_stop = parseTimeString(stopTime);
 
-    const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_start, hass);
+    const startTimeString =
+      ts_start.mode == TimeMode.Fixed
+        ? timeToString(ts_start, { am_pm: amPmFormat })
+        : formatRelativeTimeString(ts_start, hass);
 
-    const stopTimeString = ts_stop.mode == TimeMode.Fixed
-      ? timeToString(ts_stop, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_stop, hass);
+    const stopTimeString =
+      ts_stop.mode == TimeMode.Fixed
+        ? timeToString(ts_stop, { am_pm: amPmFormat })
+        : formatRelativeTimeString(ts_stop, hass);
 
-    return capitalizeFirstLetter(localize('ui.components.time.interval', hass, ['{startTime}', '{endTime}'], [startTimeString, stopTimeString]));
-  }
-  else {
+    return capitalizeFirstLetter(
+      localize("ui.components.time.interval", hass, ["{startTime}", "{endTime}"], [startTimeString, stopTimeString])
+    );
+  } else {
     const ts_start = parseTimeString(startTime);
-    const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
-      : formatRelativeTimeString(ts_start, hass);
-    return capitalizeFirstLetter(localize('ui.components.time.absolute', hass, '{time}', startTimeString));
+    const startTimeString =
+      ts_start.mode == TimeMode.Fixed
+        ? timeToString(ts_start, { am_pm: amPmFormat })
+        : formatRelativeTimeString(ts_start, hass);
+    return capitalizeFirstLetter(localize("ui.components.time.absolute", hass, "{time}", startTimeString));
   }
-}
+};

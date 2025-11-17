@@ -8,7 +8,6 @@ import {
   HassServiceTarget,
 } from "home-assistant-js-websocket";
 
-
 export interface ServiceCallRequest {
   domain: string;
   service: string;
@@ -127,10 +126,7 @@ export interface HomeAssistant {
     path: string,
     parameters?: { [key: string]: any }
   ) => Promise<T>;
-  fetchWithAuth: (
-    path: string,
-    init?: { [key: string]: any }
-  ) => Promise<Response>;
+  fetchWithAuth: (path: string, init?: { [key: string]: any }) => Promise<Response>;
   sendWS: (msg: MessageBase) => Promise<void>;
   callWS: <T>(msg: MessageBase) => Promise<T>;
 }

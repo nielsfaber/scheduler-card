@@ -7,5 +7,5 @@ export interface TagEntry {
 
 export const fetchTags = (hass: HomeAssistant): Promise<TagEntry[]> =>
   hass.callWS({
-    type: 'scheduler/tags',
+    type: "scheduler/tags",
   });
