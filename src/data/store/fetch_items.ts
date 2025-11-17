@@ -10,8 +10,22 @@ export const fetchItems = (hass: HomeAssistant): Promise<ScheduleStorageEntry[]>
     })
     .then((res) => {
       console.log("[DEBUG] fetchItems: WebSocket response received:", res);
-      const converted = (res as LegacySchedule[]).map(convertLegacySchedule);
-      console.log("[DEBUG] fetchItems: Converted", converted.length, "schedules");
+      const converted: ScheduleStorageEntry[] = [];
+      
+      (res as LegacySchedule[]).forEach((item, index) => {
+        console.log(`[DEBUG] fetchItems: Converting item ${index}:`, item);
+        try {
+          const result = convertLegacySchedule(item);
+          console.log(`[DEBUG] fetchItems: Item ${index} converted successfully`);
+          converted.push(result);
+        } catch (error) {
+          console.warn(`[DEBUG] fetchItems: Skipping invalid item ${index}:`, error);
+          console.warn(`[DEBUG] fetchItems: Invalid item details:`, JSON.stringify(item, null, 2));
+          // Continue processing other items instead of throwing
+        }
+      });
+      
+      console.log("[DEBUG] fetchItems: Converted", converted.length, "valid schedules out of", (res as LegacySchedule[]).length, "total items");
       return converted;
     })
     .catch((error) => {
