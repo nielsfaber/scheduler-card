@@ -1,9 +1,9 @@
-import { LitElement, html, TemplateResult, css, CSSResultGroup, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { HomeAssistant } from '../lib/types';
-import { hassLocalize } from '../localize/hassLocalize';
+import { LitElement, html, TemplateResult, css, CSSResultGroup, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { HomeAssistant } from "../lib/types";
+import { hassLocalize } from "../localize/hassLocalize";
 
-@customElement('scheduler-chip')
+@customElement("scheduler-chip")
 export class SchedulerChip extends LitElement {
   @property({ attribute: false })
   hass!: HomeAssistant;
@@ -37,7 +37,7 @@ export class SchedulerChip extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <div class="chip ${this.active ? 'active' : ''}" @click=${this._handleClick}>
+      <div class="chip ${this.active ? "active" : ""}" @click=${this._handleClick}>
         <div class="overlay"></div>
         ${this.renderIcon()}
         <span class="value"><slot></slot></span>
@@ -56,7 +56,7 @@ export class SchedulerChip extends LitElement {
       `;
     }
     if (this.useStateIcon) {
-      const stateObj = this.hass.states[this.value || ''];
+      const stateObj = this.hass.states[this.value || ""];
 
       return html`
         <div class="icon filled">
@@ -83,7 +83,7 @@ export class SchedulerChip extends LitElement {
       <div class="trailing-icon" @click=${this._iconClick}>
         <ha-icon icon="mdi:close" id="${uniqueId}"></ha-icon>
         ${!this.disabled
-          ? html`<ha-tooltip for="${uniqueId}">${hassLocalize('ui.common.remove', this.hass)}</ha-tooltip>`
+          ? html`<ha-tooltip for="${uniqueId}">${hassLocalize("ui.common.remove", this.hass)}</ha-tooltip>`
           : nothing}
       </div>
     `;
@@ -93,7 +93,7 @@ export class SchedulerChip extends LitElement {
     if (this.disabled) return;
     if (this.toggleable) {
       this.active = !this.active;
-      const myEvent = new CustomEvent('click', {
+      const myEvent = new CustomEvent("click", {
         detail: {
           active: this.active,
           value: this.value,
@@ -101,7 +101,7 @@ export class SchedulerChip extends LitElement {
       });
       this.dispatchEvent(myEvent);
     } else {
-      const myEvent = new CustomEvent('click', {
+      const myEvent = new CustomEvent("click", {
         detail: {
           value: this.value,
         },
@@ -114,7 +114,7 @@ export class SchedulerChip extends LitElement {
   private _iconClick(ev: Event) {
     ev.stopPropagation();
     if (this.disabled) return;
-    const myEvent = new CustomEvent('icon-clicked', {
+    const myEvent = new CustomEvent("icon-clicked", {
       detail: {
         value: this.value,
       },
@@ -144,7 +144,7 @@ export class SchedulerChip extends LitElement {
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         border: 1px solid var(--chip-color, rgb(168, 225, 251));
         border-radius: var(--chip-border-radius, 32px);
         background: rgba(0, 0, 0, 0);
@@ -173,7 +173,7 @@ export class SchedulerChip extends LitElement {
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, rgb(168, 225, 251));
         border-radius: 32px;
         z-index: -2;
@@ -207,7 +207,7 @@ export class SchedulerChip extends LitElement {
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, var(--secondary-text-color));
         border-radius: 26px;
         z-index: -2;
@@ -299,7 +299,7 @@ export class SchedulerChip extends LitElement {
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, var(--secondary-text-color));
         border-radius: 26px;
         z-index: -2;

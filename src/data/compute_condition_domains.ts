@@ -1,11 +1,11 @@
-import { domainIcon } from './actions/domain_icon';
-import { computeDomain } from '../lib/entity';
-import { SUPPORTED_CONDITION_DOMAINS } from './compute_states_for_entity';
-import { HomeAssistant } from '../lib/types';
-import { matchPattern } from '../lib/patterns';
-import { hassLocalize } from '../localize/hassLocalize';
-import { CustomConfig } from '../types';
-import { DEFAULT_INCLUDED_DOMAINS } from '../const';
+import { domainIcon } from "./actions/domain_icon";
+import { computeDomain } from "../lib/entity";
+import { SUPPORTED_CONDITION_DOMAINS } from "./compute_states_for_entity";
+import { HomeAssistant } from "../lib/types";
+import { matchPattern } from "../lib/patterns";
+import { hassLocalize } from "../localize/hassLocalize";
+import { CustomConfig } from "../types";
+import { DEFAULT_INCLUDED_DOMAINS } from "../const";
 
 const isSupportedDomain = (domain: string, customConfig: CustomConfig) => {
   const res = SUPPORTED_CONDITION_DOMAINS.includes(domain);
@@ -45,8 +45,8 @@ export const computeConditionDomains = (hass: HomeAssistant, config: entityConfi
   const actionList = domains.map(
     (e): listItem => ({
       key: e,
-      name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, ' '),
-      description: '',
+      name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, " "),
+      description: "",
       icon: domainIcon(e),
     })
   );

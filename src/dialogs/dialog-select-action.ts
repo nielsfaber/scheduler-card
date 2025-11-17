@@ -1,15 +1,15 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import { mdiChevronLeft, mdiClose } from '@mdi/js';
-import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
-import { actionItem as domainsActionItem, computeActionDomains } from '../data/actions/compute_action_domains';
-import { sortByName } from '../lib/sort';
-import { styleMap } from 'lit/directives/style-map';
-import { localize } from '../localize/localize';
-import { HomeAssistant } from '../lib/types';
-import { Action, CardConfig } from '../types';
-import { hassLocalize } from '../localize/hassLocalize';
-import { actionConfig } from '../data/actions/action_config';
+import { LitElement, html, css, CSSResultGroup } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
+import { mdiChevronLeft, mdiClose } from "@mdi/js";
+import { actionItem, computeActionsForDomain } from "../data/actions/compute_actions_for_domain";
+import { actionItem as domainsActionItem, computeActionDomains } from "../data/actions/compute_action_domains";
+import { sortByName } from "../lib/sort";
+import { styleMap } from "lit/directives/style-map";
+import { localize } from "../localize/localize";
+import { HomeAssistant } from "../lib/types";
+import { Action, CardConfig } from "../types";
+import { hassLocalize } from "../localize/hassLocalize";
+import { actionConfig } from "../data/actions/action_config";
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -19,14 +19,14 @@ export type DialogSelectActionParams = {
   cardConfig: CardConfig;
 };
 
-@customElement('dialog-select-action')
+@customElement("dialog-select-action")
 export class DialogSelectAction extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @state() private _params?: DialogSelectActionParams;
 
-  @state() private _search = '';
-  @state() private _filter = '';
+  @state() private _search = "";
+  @state() private _filter = "";
   timer: number = 0;
 
   @state() private _width?: number;
@@ -49,8 +49,8 @@ export class DialogSelectAction extends LitElement {
   }
 
   async willUpdate() {
-    (this.hass as any).loadBackendTranslation('title');
-    (this.hass as any).loadBackendTranslation('services');
+    (this.hass as any).loadBackendTranslation("title");
+    (this.hass as any).loadBackendTranslation("services");
   }
 
   render() {
@@ -70,7 +70,7 @@ export class DialogSelectAction extends LitElement {
               ? html`
                   <ha-icon-button
                     slot="navigationIcon"
-                    .label=${hassLocalize('ui.common.back', this.hass)}
+                    .label=${hassLocalize("ui.common.back", this.hass)}
                     .path=${mdiChevronLeft}
                     @click=${this._clearDomain}
                   ></ha-icon-button>
@@ -79,17 +79,17 @@ export class DialogSelectAction extends LitElement {
                   <ha-icon-button
                     slot="navigationIcon"
                     dialogAction="cancel"
-                    .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                    .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
                     .path=${mdiClose}
                   ></ha-icon-button>
                 `}
-            <span slot="title"> ${localize('ui.dialog.action_picker.title', this.hass)} </span>
+            <span slot="title"> ${localize("ui.dialog.action_picker.title", this.hass)} </span>
           </ha-dialog-header>
 
           <ha-textfield
             dialogInitialFocus
-            .placeholder=${hassLocalize('ui.common.search', this.hass)}
-            aria-label=${hassLocalize('ui.common.search', this.hass)}
+            .placeholder=${hassLocalize("ui.common.search", this.hass)}
+            aria-label=${hassLocalize("ui.common.search", this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
@@ -100,7 +100,7 @@ export class DialogSelectAction extends LitElement {
               html`
                 <ha-icon-button
                   @click=${this._clearSearch}
-                  .label=${hassLocalize('ui.common.clear', this.hass)}
+                  .label=${hassLocalize("ui.common.clear", this.hass)}
                   .path=${mdiClose}
                   class="clear-button"
                 ></ha-icon-button>
@@ -112,8 +112,8 @@ export class DialogSelectAction extends LitElement {
 
         <mwc-list
           style=${styleMap({
-            width: this._width ? `${this._width}px` : 'auto',
-            height: this._height ? `${Math.min(468, this._height)}px` : 'auto',
+            width: this._width ? `${this._width}px` : "auto",
+            height: this._height ? `${Math.min(468, this._height)}px` : "auto",
           })}
         >
           ${this._renderOptions()}
@@ -124,7 +124,7 @@ export class DialogSelectAction extends LitElement {
 
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
-    const boundingRect = this.shadowRoot!.querySelector('mwc-list')?.getBoundingClientRect();
+    const boundingRect = this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -159,7 +159,7 @@ export class DialogSelectAction extends LitElement {
 
     if (this._filter) {
       domains = domains.filter((e) => {
-        const tokens = this._filter.toLowerCase().trim().split(' ');
+        const tokens = this._filter.toLowerCase().trim().split(" ");
         return (
           tokens.every((token) => e.name.toLowerCase().includes(token)) ||
           tokens.every((token) => e.key.toLowerCase().includes(token))
@@ -174,7 +174,7 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(domains).length) {
       return html`
-        <mwc-list-item disabled> ${hassLocalize('ui.components.combo-box.no_match', this.hass)} </mwc-list-item>
+        <mwc-list-item disabled> ${hassLocalize("ui.components.combo-box.no_match", this.hass)} </mwc-list-item>
       `;
     }
     return html`
@@ -202,12 +202,12 @@ export class DialogSelectAction extends LitElement {
           if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features))
             return false;
           else if (
-            Object.keys(item.action.service_data).includes('entity_id') &&
+            Object.keys(item.action.service_data).includes("entity_id") &&
             item.action.service_data.entity_id != entity
           )
             return false;
           else if (
-            Object.keys(item.action.target || {}).includes('entity_id') &&
+            Object.keys(item.action.target || {}).includes("entity_id") &&
             (item.action.target || {}).entity_id != entity
           )
             return false;
@@ -217,7 +217,7 @@ export class DialogSelectAction extends LitElement {
     }
     if (this._filter) {
       result = result.filter((e) => {
-        const tokens = this._filter.toLowerCase().trim().split(' ');
+        const tokens = this._filter.toLowerCase().trim().split(" ");
         return (
           tokens.every((token) => e.name.toLowerCase().includes(token)) ||
           tokens.every((token) => e.key.toLowerCase().includes(token))
@@ -227,7 +227,7 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(result).length) {
       return html`
-        <mwc-list-item disabled> ${hassLocalize('ui.components.combo-box.no_match', this.hass)} </mwc-list-item>
+        <mwc-list-item disabled> ${hassLocalize("ui.components.combo-box.no_match", this.hass)} </mwc-list-item>
       `;
     }
     return Object.keys(result).map(
@@ -258,8 +258,8 @@ export class DialogSelectAction extends LitElement {
   }
 
   _clearSearch() {
-    this._search = '';
-    this._filter = '';
+    this._search = "";
+    this._filter = "";
   }
 
   static get styles(): CSSResultGroup {

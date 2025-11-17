@@ -264,7 +264,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         border: 1px solid var(--chip-color, rgb(168, 225, 251));
         border-radius: var(--chip-border-radius, 32px);
         background: rgba(0, 0, 0, 0);
@@ -293,7 +293,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, rgb(168, 225, 251));
         border-radius: 32px;
         z-index: -2;
@@ -327,7 +327,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, var(--secondary-text-color));
         border-radius: 26px;
         z-index: -2;
@@ -419,7 +419,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         right: 0;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         background: var(--chip-color, var(--secondary-text-color));
         border-radius: 26px;
         z-index: -2;
@@ -537,7 +537,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         }
         ha-combo-box-item.textInput:after {
           display: block;
-          content: '';
+          content: "";
           position: absolute;
           pointer-events: none;
           bottom: 0;
@@ -2601,7 +2601,7 @@ function he(e,t){return ue({descriptor:t=>{const i={get(){var t,i;return null!==
         margin-inline-end: initial;
         min-width: 0;
       }
-      .flex ::slotted([slot='secondary']) {
+      .flex ::slotted([slot="secondary"]) {
         margin-left: 0;
         margin-inline-start: 0;
         margin-inline-end: initial;

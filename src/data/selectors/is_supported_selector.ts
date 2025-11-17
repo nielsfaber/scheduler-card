@@ -1,8 +1,8 @@
-import { selectorConfig } from './selector_config';
-import { actionConfig } from '../actions/action_config';
-import { HomeAssistant } from '../../lib/types';
-import { Action, CustomConfig } from '../../types';
-import { computeDomain } from '../../lib/entity';
+import { selectorConfig } from "./selector_config";
+import { actionConfig } from "../actions/action_config";
+import { HomeAssistant } from "../../lib/types";
+import { Action, CustomConfig } from "../../types";
+import { computeDomain } from "../../lib/entity";
 
 export const isSupportedSelector = (
   action: Action,
@@ -36,14 +36,14 @@ export const isSupportedSelector = (
       return false;
   }
 
-  if (computeDomain(service) == 'light') {
+  if (computeDomain(service) == "light") {
     //for light entities use color_modes for determining whether dimming is supported
     if (
       ![entityId || []].flat().every((e) => {
         if (!Object.keys(hass.states).includes(e)) return false;
         const stateObj = hass.states[e];
         const colorModes = stateObj.attributes.supported_color_modes || [];
-        if (field == 'brightness') return colorModes.filter((e) => e != 'onoff').length;
+        if (field == "brightness") return colorModes.filter((e) => e != "onoff").length;
         else return true;
       })
     )

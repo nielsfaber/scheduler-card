@@ -1,13 +1,13 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import { mdiChevronLeft, mdiClose } from '@mdi/js';
-import { TWeekday } from '../types';
-import { HomeAssistant } from '../lib/types';
-import { localize } from '../localize/localize';
-import { computeDayDisplay } from '../data/format/compute_days_display';
-import { computeStartOfWeek } from '../data/days';
-import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
-import { hassLocalize } from '../localize/hassLocalize';
+import { LitElement, html, css, CSSResultGroup } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
+import { mdiChevronLeft, mdiClose } from "@mdi/js";
+import { TWeekday } from "../types";
+import { HomeAssistant } from "../lib/types";
+import { localize } from "../localize/localize";
+import { computeDayDisplay } from "../data/format/compute_days_display";
+import { computeStartOfWeek } from "../data/days";
+import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
+import { hassLocalize } from "../localize/hassLocalize";
 
 export type DialogSelectWeekdayParams = {
   weekdays: TWeekday[];
@@ -15,9 +15,9 @@ export type DialogSelectWeekdayParams = {
   confirm: (res: TWeekday[]) => void;
 };
 
-const WeekdayTypeCustom = 'Custom';
+const WeekdayTypeCustom = "Custom";
 
-@customElement('dialog-select-weekdays')
+@customElement("dialog-select-weekdays")
 export class DialogSelectWeekdays extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -51,7 +51,7 @@ export class DialogSelectWeekdays extends LitElement {
             ? html`
                 <ha-icon-button
                   slot="navigationIcon"
-                  .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                  .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
                   .path=${mdiChevronLeft}
                   @click=${this.backClick}
                 ></ha-icon-button>
@@ -60,18 +60,18 @@ export class DialogSelectWeekdays extends LitElement {
                 <ha-icon-button
                   slot="navigationIcon"
                   dialogAction="cancel"
-                  .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                  .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
                   .path=${mdiClose}
                 ></ha-icon-button>
               `};
-          <span slot="title"> ${localize('ui.dialog.weekday_picker.title', this.hass)} </span>
+          <span slot="title"> ${localize("ui.dialog.weekday_picker.title", this.hass)} </span>
         </ha-dialog-header>
         <div class="wrapper">
           <mwc-list> ${this._renderWeekdayOptions()} </mwc-list>
         </div>
 
         <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-          ${hassLocalize('ui.common.cancel', this.hass)}
+          ${hassLocalize("ui.common.cancel", this.hass)}
         </ha-button>
         <ha-button
           appearance="accent"
@@ -80,7 +80,7 @@ export class DialogSelectWeekdays extends LitElement {
           dialogAction="close"
           ?disabled=${!this._params.weekdays.length}
         >
-          ${hassLocalize('ui.common.ok', this.hass)}
+          ${hassLocalize("ui.common.ok", this.hass)}
         </ha-button>
       </ha-dialog>
     `;
@@ -120,21 +120,21 @@ export class DialogSelectWeekdays extends LitElement {
           option="${key}"
           ?hasMeta=${key == WeekdayTypeCustom}
         >
-          ${isSelectedOption(key) ? html`<ha-icon slot="graphic" icon="mdi:check"></ha-icon>` : ''}
+          ${isSelectedOption(key) ? html`<ha-icon slot="graphic" icon="mdi:check"></ha-icon>` : ""}
           ${key == WeekdayTypeCustom
             ? html`
-                ${capitalizeFirstLetter(localize('ui.dialog.weekday_picker.choose', this.hass))}
-                ${isSelectedOption(key) ? html`<span class="badge">${this.selectedWeekdays.length}</span>` : ''}
+                ${capitalizeFirstLetter(localize("ui.dialog.weekday_picker.choose", this.hass))}
+                ${isSelectedOption(key) ? html`<span class="badge">${this.selectedWeekdays.length}</span>` : ""}
               `
-            : capitalizeFirstLetter(computeDayDisplay(key as TWeekday, 'long', this.hass))}
-          ${key == WeekdayTypeCustom ? html`<ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>` : ''}
+            : capitalizeFirstLetter(computeDayDisplay(key as TWeekday, "long", this.hass))}
+          ${key == WeekdayTypeCustom ? html`<ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>` : ""}
         </mwc-list-item>
       `;
     });
   }
 
   _toggleSelectOption(ev: Event) {
-    const option = (ev.target as HTMLElement).getAttribute('option') as TWeekday | typeof WeekdayTypeCustom;
+    const option = (ev.target as HTMLElement).getAttribute("option") as TWeekday | typeof WeekdayTypeCustom;
     let weekdays = [...this._params!.weekdays];
     if (option == WeekdayTypeCustom) {
       weekdays = this.selectedWeekdays;

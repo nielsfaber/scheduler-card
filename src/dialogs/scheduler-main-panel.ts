@@ -5,51 +5,51 @@ import {
   mdiPencil,
   mdiShapeRectanglePlus,
   mdiTrashCanOutline,
-} from '@mdi/js';
-import { CSSResultGroup, LitElement, PropertyValues, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators';
-import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from '../types';
-import { actionConfig } from '../data/actions/action_config';
-import { formatWeekdayDisplay } from '../data/days';
-import { defaultSelectorValue } from '../data/selectors/default_selector_value';
-import { isSupportedSelector } from '../data/selectors/is_supported_selector';
-import { selectorConfig } from '../data/selectors/selector_config';
-import { NumberSelector, Selector } from '../lib/selector';
-import { DialogSelectActionParams } from './dialog-select-action';
-import { DialogSelectWeekdayParams } from './dialog-select-weekdays';
+} from "@mdi/js";
+import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
+import { customElement, property, state } from "lit/decorators";
+import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
+import { actionConfig } from "../data/actions/action_config";
+import { formatWeekdayDisplay } from "../data/days";
+import { defaultSelectorValue } from "../data/selectors/default_selector_value";
+import { isSupportedSelector } from "../data/selectors/is_supported_selector";
+import { selectorConfig } from "../data/selectors/selector_config";
+import { NumberSelector, Selector } from "../lib/selector";
+import { DialogSelectActionParams } from "./dialog-select-action";
+import { DialogSelectWeekdayParams } from "./dialog-select-weekdays";
 
-import { computeDomain } from '../lib/entity';
-import { timeToString } from '../data/time/time_to_string';
-import { parseTimeString } from '../data/time/parse_time_string';
-import { addTimeOffset } from '../data/time/add_time_offset';
-import { HomeAssistant } from '../lib/types';
-import { localize } from '../localize/localize';
-import { insertTimeslot } from '../data/schedule/insert_timeslot';
-import { removeTimeslot } from '../data/schedule/remove_timeslot';
-import { computeTimestamp } from '../data/time/compute_timestamp';
-import { formatFieldDisplay } from '../data/format/format_field_display';
-import { formatActionDisplay } from '../data/format/format_action_display';
-import { computeActionIcon } from '../data/format/compute_action_icon';
-import { fireEvent } from '../lib/fire_event';
-import { useAmPm } from '../lib/use_am_pm';
-import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
-import { hassLocalize } from '../localize/hassLocalize';
-import { isDefined } from '../lib/is_defined';
-import { moveTimeslot } from '../data/schedule/move_timeslot';
-import { computeEntityDisplay } from '../data/format/compute_entity_display';
-import { DEFAULT_TIME_STEP } from '../const';
+import { computeDomain } from "../lib/entity";
+import { timeToString } from "../data/time/time_to_string";
+import { parseTimeString } from "../data/time/parse_time_string";
+import { addTimeOffset } from "../data/time/add_time_offset";
+import { HomeAssistant } from "../lib/types";
+import { localize } from "../localize/localize";
+import { insertTimeslot } from "../data/schedule/insert_timeslot";
+import { removeTimeslot } from "../data/schedule/remove_timeslot";
+import { computeTimestamp } from "../data/time/compute_timestamp";
+import { formatFieldDisplay } from "../data/format/format_field_display";
+import { formatActionDisplay } from "../data/format/format_action_display";
+import { computeActionIcon } from "../data/format/compute_action_icon";
+import { fireEvent } from "../lib/fire_event";
+import { useAmPm } from "../lib/use_am_pm";
+import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
+import { hassLocalize } from "../localize/hassLocalize";
+import { isDefined } from "../lib/is_defined";
+import { moveTimeslot } from "../data/schedule/move_timeslot";
+import { computeEntityDisplay } from "../data/format/compute_entity_display";
+import { DEFAULT_TIME_STEP } from "../const";
 
-import '../components/scheduler-timeslot-editor';
-import '../components/scheduler-time-picker';
-import '../components/scheduler-entity-picker';
-import '../dialogs/dialog-select-weekdays';
-import '../dialogs/dialog-select-action';
-import '../components/scheduler-collapsible-section';
-import '../components/scheduler-settings-row';
-import '../components/scheduler-combo-selector';
-import { HassEntity } from 'home-assistant-js-websocket';
+import "../components/scheduler-timeslot-editor";
+import "../components/scheduler-time-picker";
+import "../components/scheduler-entity-picker";
+import "../dialogs/dialog-select-weekdays";
+import "../dialogs/dialog-select-action";
+import "../components/scheduler-collapsible-section";
+import "../components/scheduler-settings-row";
+import "../components/scheduler-combo-selector";
+import { HassEntity } from "home-assistant-js-websocket";
 
-@customElement('scheduler-main-panel')
+@customElement("scheduler-main-panel")
 export class SchedulerMainPanel extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @property({ attribute: false }) public config!: CardConfig;
@@ -61,8 +61,8 @@ export class SchedulerMainPanel extends LitElement {
   @state() selectedEntry: number | null = 0;
 
   shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.get('schedule')) {
-      this.dispatchEvent(new CustomEvent('change', { detail: { schedule: this.schedule } }));
+    if (changedProps.get("schedule")) {
+      this.dispatchEvent(new CustomEvent("change", { detail: { schedule: this.schedule } }));
     }
     return true;
   }
@@ -74,8 +74,8 @@ export class SchedulerMainPanel extends LitElement {
           <div class="editor-header">
             <div class="weekdays">
               <span>
-                ${localize('ui.panel.editor.repeated_days', this.hass)}:
-                ${formatWeekdayDisplay(entry.weekdays, 'short', this.hass)}
+                ${localize("ui.panel.editor.repeated_days", this.hass)}:
+                ${formatWeekdayDisplay(entry.weekdays, "short", this.hass)}
               </span>
               <ha-icon-button
                 .path=${mdiPencil}
@@ -85,8 +85,8 @@ export class SchedulerMainPanel extends LitElement {
             <div class="weekdays-actions">
               <ha-button appearance="plain" size="small" @click=${this.toggleViewMode}>
                 ${this.viewMode == EditorMode.Scheme
-                  ? localize('ui.panel.editor.toggle_single_mode', this.hass)
-                  : localize('ui.panel.editor.toggle_scheme_mode', this.hass)}
+                  ? localize("ui.panel.editor.toggle_single_mode", this.hass)
+                  : localize("ui.panel.editor.toggle_scheme_mode", this.hass)}
                 <ha-icon slot="end" icon="mdi:swap-horizontal"></ha-icon>
               </ha-button>
             </div>
@@ -95,7 +95,7 @@ export class SchedulerMainPanel extends LitElement {
           ${this.viewMode == EditorMode.Scheme
             ? html`
                 <div class="editor-header">
-                  <div class="weekdays">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:</div>
+                  <div class="weekdays">${this.hass.localize("ui.dialogs.helper_settings.input_datetime.time")}:</div>
                   ${this.renderActionButtons()}
                 </div>
                 <scheduler-timeslot-editor
@@ -109,7 +109,7 @@ export class SchedulerMainPanel extends LitElement {
                 </scheduler-timeslot-editor>
               `
             : html`
-                ${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:
+                ${this.hass.localize("ui.dialogs.helper_settings.input_datetime.time")}:
                 <scheduler-time-picker
                   .hass=${this.hass}
                   .time=${this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot!].start}
@@ -128,7 +128,7 @@ export class SchedulerMainPanel extends LitElement {
 
   toggleViewMode() {
     const newViewMode: EditorMode = this.viewMode == EditorMode.Scheme ? EditorMode.Single : EditorMode.Scheme;
-    this.dispatchEvent(new CustomEvent('setViewMode', { detail: newViewMode }));
+    this.dispatchEvent(new CustomEvent("setViewMode", { detail: newViewMode }));
   }
 
   renderActionButtons() {
@@ -177,7 +177,7 @@ export class SchedulerMainPanel extends LitElement {
 
   renderSlot() {
     if (this.selectedEntry === null || this.selectedSlot === null) {
-      return html` <div class="slot-placeholder">${localize('ui.panel.editor.select_timeslot', this.hass)}</div> `;
+      return html` <div class="slot-placeholder">${localize("ui.panel.editor.select_timeslot", this.hass)}</div> `;
     }
     const slot = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot];
     let endTime = slot.stop;
@@ -191,7 +191,7 @@ export class SchedulerMainPanel extends LitElement {
             <div class="column">
               <scheduler-time-picker
                 .hass=${this.hass}
-                label="${localize('ui.panel.editor.start_time', this.hass)}:"
+                label="${localize("ui.panel.editor.start_time", this.hass)}:"
                 ?disabled=${this.selectedSlot == 0}
                 .time=${slot.start}
                 @value-changed=${this._startTimeChanged}
@@ -205,7 +205,7 @@ export class SchedulerMainPanel extends LitElement {
 
                 <scheduler-time-picker
                   .hass=${this.hass}
-                  label="${localize('ui.panel.editor.stop_time', this.hass)}:"
+                  label="${localize("ui.panel.editor.stop_time", this.hass)}:"
                   ?disabled=${slot.stop === undefined ||
                   this.selectedSlot == this.schedule.entries[this.selectedEntry!].slots.length - 1}
                   .time=${endTime}
@@ -216,8 +216,8 @@ export class SchedulerMainPanel extends LitElement {
               </div>
             </div>
           </div>`
-        : ''}
-      ${localize('ui.panel.editor.action', this.hass)}: ${this._renderActionConfig()}
+        : ""}
+      ${localize("ui.panel.editor.action", this.hass)}: ${this._renderActionConfig()}
     `;
   }
 
@@ -229,7 +229,7 @@ export class SchedulerMainPanel extends LitElement {
         <div>
           <ha-button appearance="plain" @click=${this._showActionDialog}>
             <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-            ${localize('ui.panel.editor.add_action', this.hass)}
+            ${localize("ui.panel.editor.add_action", this.hass)}
           </ha-button>
         </div>
       `;
@@ -250,14 +250,14 @@ export class SchedulerMainPanel extends LitElement {
       isSupportedSelector(action, e, this.hass!, this.config.customize)
     );
 
-    let heading = '';
+    let heading = "";
 
     let entityIds = [action.target?.entity_id || []].flat();
-    if (!entityIds.length && ['notify', 'script'].includes(domain)) entityIds = [action.service];
+    if (!entityIds.length && ["notify", "script"].includes(domain)) entityIds = [action.service];
 
     if (entityIds.length) {
-      heading += entityIds.map((e) => computeEntityDisplay(e, this.hass, this.config.customize)).join(', ');
-      heading += ': ';
+      heading += entityIds.map((e) => computeEntityDisplay(e, this.hass, this.config.customize)).join(", ");
+      heading += ": ";
     }
     heading += formatActionDisplay(action, this.hass, this.config.customize, false, true);
 
@@ -282,11 +282,11 @@ export class SchedulerMainPanel extends LitElement {
         >
           <ha-icon-button slot="trigger" .path=${mdiDotsVertical}> </ha-icon-button>
           <mwc-list-item graphic="icon">
-            ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
+            ${hassLocalize("ui.panel.lovelace.editor.card.conditional.change_type", this.hass)}
             <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
           </mwc-list-item>
           <mwc-list-item graphic="icon" class="warning">
-            ${hassLocalize('ui.common.delete', this.hass)}
+            ${hassLocalize("ui.common.delete", this.hass)}
             <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
           </mwc-list-item>
         </ha-button-menu>
@@ -295,7 +295,7 @@ export class SchedulerMainPanel extends LitElement {
           ${config.target
             ? html`
                 <scheduler-settings-row>
-                  <span slot="heading">${hassLocalize('ui.components.entity.entity-picker.entity', this.hass)}</span>
+                  <span slot="heading">${hassLocalize("ui.components.entity.entity-picker.entity", this.hass)}</span>
                   <scheduler-entity-picker
                     .hass=${this.hass}
                     .config=${this.config}
@@ -312,7 +312,7 @@ export class SchedulerMainPanel extends LitElement {
                   </scheduler-entity-picker>
                 </scheduler-settings-row>
               `
-            : ''}
+            : ""}
           ${fields.map((field) => {
             const selector = selectorConfig(
               action.service,
@@ -321,7 +321,7 @@ export class SchedulerMainPanel extends LitElement {
               this.hass!,
               this.config.customize
             );
-            if (selector === null) return '';
+            if (selector === null) return "";
             const optional: boolean | undefined =
               config.fields![field].optional || ((selector as NumberSelector).number || {}).optional;
             const checked = optional ? Object.keys(action.service_data).includes(field) : true;
@@ -336,7 +336,7 @@ export class SchedulerMainPanel extends LitElement {
                       >
                       </ha-checkbox>
                     `
-                  : ''}
+                  : ""}
                 <span slot="heading"> ${formatFieldDisplay(action, field, this.hass, this.config.customize)} </span>
                 <scheduler-combo-selector
                   .hass=${this.hass}
@@ -382,10 +382,10 @@ export class SchedulerMainPanel extends LitElement {
     if (checked) {
       this._selectField(
         field,
-        new CustomEvent('value-changed', { detail: { value: isDefined(value) ? value : null } })
+        new CustomEvent("value-changed", { detail: { value: isDefined(value) ? value : null } })
       );
     } else {
-      this._selectField(field, new CustomEvent('value-changed', { detail: { value: undefined } }));
+      this._selectField(field, new CustomEvent("value-changed", { detail: { value: undefined } }));
     }
   }
 
@@ -407,16 +407,16 @@ export class SchedulerMainPanel extends LitElement {
 
   _handleUpdate(ev: CustomEvent, entry: number) {
     this.selectedEntry = entry;
-    if (ev.detail.hasOwnProperty('selectedSlot')) {
+    if (ev.detail.hasOwnProperty("selectedSlot")) {
       this._updateSelectedSlot(ev.detail.selectedSlot);
       this.selectedSlot = ev.detail.selectedSlot;
-    } else if (ev.detail.hasOwnProperty('slots')) {
+    } else if (ev.detail.hasOwnProperty("slots")) {
       this._updateEntry({ slots: ev.detail.slots });
     }
   }
 
   _updateSelectedSlot(slot: number | null) {
-    this.dispatchEvent(new CustomEvent('change', { detail: { selectedSlot: slot } }));
+    this.dispatchEvent(new CustomEvent("change", { detail: { selectedSlot: slot } }));
   }
 
   _updateEntry(update: Partial<ScheduleEntry>) {
@@ -449,9 +449,9 @@ export class SchedulerMainPanel extends LitElement {
         confirm: (out) => resolve(out),
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'dialog-select-weekdays',
-        dialogImport: () => import('./dialog-select-weekdays'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "dialog-select-weekdays",
+        dialogImport: () => import("./dialog-select-weekdays"),
         dialogParams: params,
       });
     }).then((res: TWeekday[] | null) => {
@@ -487,9 +487,9 @@ export class SchedulerMainPanel extends LitElement {
         cardConfig: this.config,
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'dialog-select-action',
-        dialogImport: () => import('./dialog-select-action'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "dialog-select-action",
+        dialogImport: () => import("./dialog-select-action"),
         dialogParams: params,
       });
     }).then((res: Action | null) => {

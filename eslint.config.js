@@ -29,6 +29,7 @@ export default tseslint.config(
       'no-empty': 'off',
       'no-duplicate-case': 'off',
       'lit/no-native-attributes': 'off',
+      'quotes': ['error', 'double', { 'avoidEscape': true, 'allowTemplateLiterals': false }],
     },
     languageOptions: {
       parserOptions: {

@@ -1,8 +1,8 @@
-import { DEFAULT_PRIMARY_INFO_DISPLAY } from '../../const';
-import { sortByName } from '../../lib/sort';
-import { HomeAssistant } from '../../lib/types';
-import { CardConfig, CustomConfig, DisplayItem, Schedule, ScheduleStorageEntry } from '../../types';
-import { computeScheduleDisplay } from '../format/compute_schedule_display';
+import { DEFAULT_PRIMARY_INFO_DISPLAY } from "../../const";
+import { sortByName } from "../../lib/sort";
+import { HomeAssistant } from "../../lib/types";
+import { CardConfig, CustomConfig, DisplayItem, Schedule, ScheduleStorageEntry } from "../../types";
+import { computeScheduleDisplay } from "../format/compute_schedule_display";
 
 const sortByRelativeTime = (
   scheduleA: Schedule & { entity_id: string },
@@ -50,15 +50,15 @@ const sortByState = (
   const stateA = hass.states[scheduleA.entity_id]?.state;
   const stateB = hass.states[scheduleB.entity_id]?.state;
 
-  const scheduleA_active = ['on', 'triggered'].includes(stateA);
-  const scheduleB_active = ['on', 'triggered'].includes(stateB);
+  const scheduleA_active = ["on", "triggered"].includes(stateA);
+  const scheduleB_active = ["on", "triggered"].includes(stateB);
 
   if (scheduleA_active && !scheduleB_active) return -1;
   else if (!scheduleA_active && scheduleB_active) return 1;
 
   if (expiredSchedulesLast) {
-    if (stateA != 'off' && stateB == 'off') return 1;
-    else if (stateA == 'off' && stateB != 'off') return -1;
+    if (stateA != "off" && stateB == "off") return 1;
+    else if (stateA == "off" && stateB != "off") return -1;
   }
 
   return 0;
@@ -67,18 +67,18 @@ const sortByState = (
 export const sortSchedules = (schedules: ScheduleStorageEntry[], config: CardConfig, hass: HomeAssistant) => {
   const sortingOptions = [config.sort_by].flat();
 
-  if (sortingOptions.includes('relative-time')) {
+  if (sortingOptions.includes("relative-time")) {
     schedules = schedules.sort(sortByRelativeTime);
   }
 
-  if (sortingOptions.includes('title')) {
+  if (sortingOptions.includes("title")) {
     schedules = schedules.sort((a, b) =>
       sortByTitle(a, b, config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY, hass, config.customize)
     );
   }
 
-  if (sortingOptions.includes('state')) {
-    schedules = schedules.sort((a, b) => sortByState(a, b, hass, sortingOptions.includes('relative-time')));
+  if (sortingOptions.includes("state")) {
+    schedules = schedules.sort((a, b) => sortByState(a, b, hass, sortingOptions.includes("relative-time")));
   }
 
   return schedules;

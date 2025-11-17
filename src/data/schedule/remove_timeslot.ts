@@ -1,4 +1,4 @@
-import { Schedule } from '../../types';
+import { Schedule } from "../../types";
 
 export const removeTimeslot = (schedule: Schedule, entry: number, slotIdx: number): Schedule => {
   let slots = [...schedule.entries[entry].slots];

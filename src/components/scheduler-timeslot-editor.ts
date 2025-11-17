@@ -1,22 +1,22 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
-import { property, customElement, state, eventOptions } from 'lit/decorators.js';
-import { styleMap } from 'lit/directives/style-map.js';
-import { CardConfig, ScheduleEntry, Time, TimeMode } from '../types';
-import { mdiUnfoldMoreVertical } from '@mdi/js';
-import { roundTime } from '../data/time/round_time';
-import { timeToString } from '../data/time/time_to_string';
-import { computeActionIcon } from '../data/format/compute_action_icon';
-import { formatActionDisplay } from '../data/format/format_action_display';
-import { parseTimeString } from '../data/time/parse_time_string';
-import { computeTimestamp } from '../data/time/compute_timestamp';
-import { HomeAssistant } from '../lib/types';
-import { computeTimeOffset } from '../data/time/compute_time_offset';
-import { useAmPm } from '../lib/use_am_pm';
-import { addTimeOffset } from '../data/time/add_time_offset';
+import { LitElement, html, css, CSSResultGroup } from "lit";
+import { property, customElement, state, eventOptions } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { CardConfig, ScheduleEntry, Time, TimeMode } from "../types";
+import { mdiUnfoldMoreVertical } from "@mdi/js";
+import { roundTime } from "../data/time/round_time";
+import { timeToString } from "../data/time/time_to_string";
+import { computeActionIcon } from "../data/format/compute_action_icon";
+import { formatActionDisplay } from "../data/format/format_action_display";
+import { parseTimeString } from "../data/time/parse_time_string";
+import { computeTimestamp } from "../data/time/compute_timestamp";
+import { HomeAssistant } from "../lib/types";
+import { computeTimeOffset } from "../data/time/compute_time_offset";
+import { useAmPm } from "../lib/use_am_pm";
+import { addTimeOffset } from "../data/time/add_time_offset";
 
 const SEC_PER_DAY = 24 * 3600;
 
-@customElement('scheduler-timeslot-editor')
+@customElement("scheduler-timeslot-editor")
 export class SchedulerTimeslotEditor extends LitElement {
   public hass!: HomeAssistant;
   @property({ attribute: false }) public config!: CardConfig;
@@ -54,7 +54,7 @@ export class SchedulerTimeslotEditor extends LitElement {
   }
 
   renderTimebar() {
-    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue("width"));
     const allowedStepSizes = [1, 2, 3, 4, 6, 8, 12];
 
     const amPm = useAmPm(this.hass.locale);
@@ -104,9 +104,9 @@ export class SchedulerTimeslotEditor extends LitElement {
       const width = ((ts_stop - ts_start) / SEC_PER_DAY) * 100;
       const actionText = slot.actions.length
         ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true)
-        : '';
+        : "";
 
-      const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+      const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue("width"));
       const textWidth = actionText.length * 5 + 10;
       const leftMargin = i > 0 ? 15 : 0;
       const rightMargin = i < slots.length - 1 ? 15 : 0;
@@ -115,33 +115,33 @@ export class SchedulerTimeslotEditor extends LitElement {
 
       return html`
         <div
-          class="slot ${this.selectedSlot == i ? 'selected' : ''} ${slot.actions.length ? '' : 'empty'} ${slot.stop ===
+          class="slot ${this.selectedSlot == i ? "selected" : ""} ${slot.actions.length ? "" : "empty"} ${slot.stop ===
           undefined
-            ? 'short'
-            : ''}"
+            ? "short"
+            : ""}"
           style="${styleMap({ width: `${slotWidths[i]}px` })}"
           @click=${this._toggleSelectTimeslot}
           idx="${i}"
         >
           ${slot.stop || 1 == 1
-            ? ''
+            ? ""
             : html` <div class="marker" @click=${this._toggleSelectTimeslot} idx="${i}"></div>`}
           ${slot.actions.length
             ? actionText && (slotWidth > textWidth / 3 || slotWidth > 50) && slotWidth > 30
               ? html`<span style="margin-left: ${leftMargin}px; margin-right: ${rightMargin}px">${actionText}</span>`
               : slotWidth > 16
                 ? html`<ha-icon icon="${computeActionIcon(slot.actions[0], this.config.customize)}"></ha-icon>`
-                : ''
-            : ''}
+                : ""
+            : ""}
         </div>
         ${i < slots.length - 1 && slot.stop
           ? html`
               <div
                 idx="${i}"
-                class="handle ${this.selectedSlot == i + 1 || this.selectedSlot == i ? '' : 'hidden'} ${nextSlot &&
+                class="handle ${this.selectedSlot == i + 1 || this.selectedSlot == i ? "" : "hidden"} ${nextSlot &&
                 !nextSlot.stop
-                  ? 'center'
-                  : ''}"
+                  ? "center"
+                  : ""}"
               >
                 <span>
                   <ha-icon-button
@@ -153,13 +153,13 @@ export class SchedulerTimeslotEditor extends LitElement {
                 </span>
               </div>
             `
-          : ''}
+          : ""}
       `;
     });
   }
 
   computeSlotWidths() {
-    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue("width"));
 
     const slots = this.schedule!.slots;
 
@@ -190,10 +190,10 @@ export class SchedulerTimeslotEditor extends LitElement {
 
   _toggleSelectTimeslot(ev: Event) {
     let slot = ev.target as HTMLElement;
-    if (slot.tagName.toLowerCase() != 'div') slot = slot.parentElement as HTMLElement;
-    const num = Number(slot.getAttribute('idx'));
+    if (slot.tagName.toLowerCase() != "div") slot = slot.parentElement as HTMLElement;
+    const num = Number(slot.getAttribute("idx"));
     this.selectedSlot = this.selectedSlot !== num ? num : null;
-    const myEvent = new CustomEvent('update', { detail: { selectedSlot: this.selectedSlot } });
+    const myEvent = new CustomEvent("update", { detail: { selectedSlot: this.selectedSlot } });
     this.dispatchEvent(myEvent);
     ev.stopPropagation();
   }
@@ -201,12 +201,12 @@ export class SchedulerTimeslotEditor extends LitElement {
   @eventOptions({ passive: true })
   _handleDragStart(ev: MouseEvent | TouchEvent) {
     let el = ev.target as HTMLElement;
-    while (el.tagName !== 'DIV') el = el.parentElement as HTMLElement;
+    while (el.tagName !== "DIV") el = el.parentElement as HTMLElement;
 
     const trackElement = el.parentElement as HTMLElement;
     const trackBounds = trackElement.getBoundingClientRect();
 
-    const slotIdx = Number(el.getAttribute('idx'));
+    const slotIdx = Number(el.getAttribute("idx"));
     let ts_min =
       slotIdx > 0
         ? computeTimestamp(
@@ -242,7 +242,7 @@ export class SchedulerTimeslotEditor extends LitElement {
     let mouseMoveHandler = (ev: MouseEvent | TouchEvent) => {
       let mouseX;
 
-      if (typeof TouchEvent !== 'undefined') {
+      if (typeof TouchEvent !== "undefined") {
         if (ev instanceof TouchEvent) mouseX = ev.changedTouches[0].pageX;
         else mouseX = ev.pageX;
       } else mouseX = (ev as MouseEvent).pageX;
@@ -263,8 +263,8 @@ export class SchedulerTimeslotEditor extends LitElement {
       if ([TimeMode.Sunrise, TimeMode.Sunset].includes(timeInputMode)) {
         const referenceTime =
           timeInputMode == TimeMode.Sunrise
-            ? this.hass.states['sun.sun'].attributes['next_rising']
-            : this.hass.states['sun.sun'].attributes['next_setting'];
+            ? this.hass.states["sun.sun"].attributes["next_rising"]
+            : this.hass.states["sun.sun"].attributes["next_setting"];
 
         const offset = computeTimeOffset(time, referenceTime);
         time = { mode: timeInputMode, hours: offset.hours, minutes: offset.minutes };
@@ -285,26 +285,26 @@ export class SchedulerTimeslotEditor extends LitElement {
         });
       }
       this.schedule = { ...this.schedule!, slots: slots };
-      const myEvent = new CustomEvent('update', { detail: { slots: slots } });
+      const myEvent = new CustomEvent("update", { detail: { slots: slots } });
       this.dispatchEvent(myEvent);
     };
 
     const mouseUpHandler = () => {
-      window.removeEventListener('mousemove', mouseMoveHandler);
-      window.removeEventListener('touchmove', mouseMoveHandler);
-      window.removeEventListener('mouseup', mouseUpHandler);
-      window.removeEventListener('touchend', mouseUpHandler);
-      window.removeEventListener('blur', mouseUpHandler);
+      window.removeEventListener("mousemove", mouseMoveHandler);
+      window.removeEventListener("touchmove", mouseMoveHandler);
+      window.removeEventListener("mouseup", mouseUpHandler);
+      window.removeEventListener("touchend", mouseUpHandler);
+      window.removeEventListener("blur", mouseUpHandler);
       mouseMoveHandler = () => {
         /**/
       };
     };
 
-    window.addEventListener('mouseup', mouseUpHandler);
-    window.addEventListener('touchend', mouseUpHandler);
-    window.addEventListener('blur', mouseUpHandler);
-    window.addEventListener('mousemove', mouseMoveHandler);
-    window.addEventListener('touchmove', mouseMoveHandler);
+    window.addEventListener("mouseup", mouseUpHandler);
+    window.addEventListener("touchend", mouseUpHandler);
+    window.addEventListener("blur", mouseUpHandler);
+    window.addEventListener("mousemove", mouseMoveHandler);
+    window.addEventListener("touchmove", mouseMoveHandler);
   }
 
   static get styles(): CSSResultGroup {

@@ -1,27 +1,27 @@
-import { mdiArrowLeft, mdiClose, mdiCogOutline } from '@mdi/js';
-import { LitElement, PropertyValues, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators';
-import { CardConfig, EditorMode, Schedule, ScheduleEntry } from '../types';
-import { EditorDialogStyles } from '../card.styles';
-import { localize } from '../localize/localize';
-import { HomeAssistant } from '../lib/types';
-import { validateSchedule } from '../data/schedule/validate_schedule';
-import { GenericDialogParams } from './generic-dialog';
-import { saveSchedule } from '../data/store/save_schedule';
-import { handleWebsocketError } from '../data/store/handle_websocket_error';
-import { deleteSchedule } from '../data/store/delete_schedule';
-import { fireEvent } from '../lib/fire_event';
-import { updateSchedule } from '../data/store/update_schedule';
-import { fetchScheduleItem } from '../data/store/fetch_item';
-import { deepCompare } from '../lib/deep_compare';
-import { parseTimeBar } from '../data/time/parse_time_bar';
-import { hassLocalize } from '../localize/hassLocalize';
-import { convertSchemeToSingle } from '../data/schedule/convert_scheme_to_single';
-import { isDefined } from '../lib/is_defined';
+import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
+import { LitElement, PropertyValues, html } from "lit";
+import { customElement, property, state } from "lit/decorators";
+import { CardConfig, EditorMode, Schedule, ScheduleEntry } from "../types";
+import { EditorDialogStyles } from "../card.styles";
+import { localize } from "../localize/localize";
+import { HomeAssistant } from "../lib/types";
+import { validateSchedule } from "../data/schedule/validate_schedule";
+import { GenericDialogParams } from "./generic-dialog";
+import { saveSchedule } from "../data/store/save_schedule";
+import { handleWebsocketError } from "../data/store/handle_websocket_error";
+import { deleteSchedule } from "../data/store/delete_schedule";
+import { fireEvent } from "../lib/fire_event";
+import { updateSchedule } from "../data/store/update_schedule";
+import { fetchScheduleItem } from "../data/store/fetch_item";
+import { deepCompare } from "../lib/deep_compare";
+import { parseTimeBar } from "../data/time/parse_time_bar";
+import { hassLocalize } from "../localize/hassLocalize";
+import { convertSchemeToSingle } from "../data/schedule/convert_scheme_to_single";
+import { isDefined } from "../lib/is_defined";
 
-import './scheduler-main-panel';
-import './scheduler-options-panel';
-import './generic-dialog';
+import "./scheduler-main-panel";
+import "./scheduler-options-panel";
+import "./generic-dialog";
 
 export type SchedulerDialogParams = {
   schedule: Schedule;
@@ -29,7 +29,7 @@ export type SchedulerDialogParams = {
   editItem?: string;
 };
 
-@customElement('dialog-scheduler-editor')
+@customElement("dialog-scheduler-editor")
 export class DialogSchedulerEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -41,7 +41,7 @@ export class DialogSchedulerEditor extends LitElement {
   @state() selectedEntry: number | null = 0;
   @state() selectedSlot: number | null = null;
 
-  @state() _panel: 'main' | 'options' = 'main';
+  @state() _panel: "main" | "options" = "main";
 
   @state() _viewMode: EditorMode = EditorMode.Single;
   set viewMode(mode: EditorMode) {
@@ -54,14 +54,14 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   shouldUpdate(changedProps: PropertyValues) {
-    if (changedProps.size == 1 && changedProps.has('hass') && isDefined(this.hass)) return false;
+    if (changedProps.size == 1 && changedProps.has("hass") && isDefined(this.hass)) return false;
     return true;
   }
 
   public async showDialog(params: any): Promise<void> {
     this._params = params;
     this.schedule = params.schedule;
-    this._panel = 'main';
+    this._panel = "main";
     this.large = false;
 
     const isTimeSchemeType =
@@ -83,7 +83,7 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   protected willUpdate(): void {
-    (this.hass as any).loadBackendTranslation('config');
+    (this.hass as any).loadBackendTranslation("config");
   }
 
   render() {
@@ -91,12 +91,12 @@ export class DialogSchedulerEditor extends LitElement {
     return html`
       <ha-dialog open @closed=${this.closeDialog} .heading=${true} hideActions scrimClickAction="">
         <ha-dialog-header slot="heading">
-          ${this._panel == 'main'
+          ${this._panel == "main"
             ? html`
                 <ha-icon-button
                   slot="navigationIcon"
                   dialogAction="cancel"
-                  .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                  .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
                   .path=${mdiClose}
                 ></ha-icon-button>
                 <ha-icon-button
@@ -104,17 +104,17 @@ export class DialogSchedulerEditor extends LitElement {
                   .label=""
                   .path=${mdiCogOutline}
                   @click=${() => {
-                    this._panel = 'options';
+                    this._panel = "options";
                   }}
                 ></ha-icon-button>
               `
             : html`
                 <ha-icon-button
                   slot="navigationIcon"
-                  .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                  .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
                   .path=${mdiArrowLeft}
                   @click=${() => {
-                    this._panel = 'main';
+                    this._panel = "main";
                   }}
                 ></ha-icon-button>
               `}
@@ -122,13 +122,13 @@ export class DialogSchedulerEditor extends LitElement {
             ${this._params.editItem
               ? this.schedule.name
                 ? this.schedule?.name
-                : localize('ui.panel.common.default_name', this.hass, '{id}', this._params.editItem)
-              : localize('ui.panel.common.new_schedule', this.hass)}
+                : localize("ui.panel.common.default_name", this.hass, "{id}", this._params.editItem)
+              : localize("ui.panel.common.new_schedule", this.hass)}
           </span>
         </ha-dialog-header>
 
         <div class="content">
-          ${this._panel == 'main'
+          ${this._panel == "main"
             ? html`
                 <scheduler-main-panel
                   .hass=${this.hass}
@@ -160,10 +160,10 @@ export class DialogSchedulerEditor extends LitElement {
             variant="danger"
             ?disabled=${!this.schedule.entity_id}
           >
-            ${hassLocalize('ui.common.delete', this.hass)}
+            ${hassLocalize("ui.common.delete", this.hass)}
           </ha-button>
           <ha-button appearance="plain" @click=${this._handleSaveClick}>
-            ${hassLocalize('ui.common.save', this.hass)}
+            ${hassLocalize("ui.common.save", this.hass)}
           </ha-button>
         </div>
       </ha-dialog>
@@ -172,11 +172,11 @@ export class DialogSchedulerEditor extends LitElement {
 
   _updateSchedule(ev: CustomEvent) {
     const changedProps = Object.keys(ev.detail);
-    if (changedProps.includes('schedule')) {
+    if (changedProps.includes("schedule")) {
       const schedule = ev.detail.schedule;
       this.schedule = schedule;
     }
-    if (changedProps.includes('selectedSlot')) {
+    if (changedProps.includes("selectedSlot")) {
       this.selectedSlot = ev.detail.selectedSlot;
     }
   }
@@ -188,14 +188,14 @@ export class DialogSchedulerEditor extends LitElement {
         const params: GenericDialogParams = {
           cancel: () => resolve(false),
           confirm: () => resolve(true),
-          title: hassLocalize('state_badge.default.error', this.hass),
+          title: hassLocalize("state_badge.default.error", this.hass),
           description: localize(`ui.panel.editor.validation_errors.${error}`, this.hass),
-          primaryButtonLabel: hassLocalize('ui.common.ok', this.hass),
+          primaryButtonLabel: hassLocalize("ui.common.ok", this.hass),
         };
 
-        fireEvent(ev.target as HTMLElement, 'show-dialog', {
-          dialogTag: 'scheduler-generic-dialog',
-          dialogImport: () => import('./generic-dialog'),
+        fireEvent(ev.target as HTMLElement, "show-dialog", {
+          dialogTag: "scheduler-generic-dialog",
+          dialogImport: () => import("./generic-dialog"),
           dialogParams: params,
         });
       });
@@ -210,10 +210,10 @@ export class DialogSchedulerEditor extends LitElement {
       if (!oldSchedule.enabled) {
         const result = await new Promise((resolve) => {
           const params: GenericDialogParams = {
-            title: localize('ui.dialog.enable_schedule.title', this.hass),
-            description: localize('ui.dialog.enable_schedule.description', this.hass),
-            primaryButtonLabel: hassLocalize('ui.common.yes', this.hass),
-            secondaryButtonLabel: hassLocalize('ui.common.no', this.hass),
+            title: localize("ui.dialog.enable_schedule.title", this.hass),
+            description: localize("ui.dialog.enable_schedule.description", this.hass),
+            primaryButtonLabel: hassLocalize("ui.common.yes", this.hass),
+            secondaryButtonLabel: hassLocalize("ui.common.no", this.hass),
             cancel: () => {
               resolve(false);
             },
@@ -221,13 +221,13 @@ export class DialogSchedulerEditor extends LitElement {
               resolve(true);
             },
           };
-          fireEvent(ev.target as HTMLElement, 'show-dialog', {
-            dialogTag: 'scheduler-generic-dialog',
-            dialogImport: () => import('./generic-dialog'),
+          fireEvent(ev.target as HTMLElement, "show-dialog", {
+            dialogTag: "scheduler-generic-dialog",
+            dialogImport: () => import("./generic-dialog"),
             dialogParams: params,
           });
         });
-        if (result) this.hass!.callService('switch', 'turn_on', { entity_id: oldSchedule.entity_id });
+        if (result) this.hass!.callService("switch", "turn_on", { entity_id: oldSchedule.entity_id });
       }
 
       updateSchedule(this.hass, this.schedule as Schedule & { schedule_id: string })
@@ -249,15 +249,15 @@ export class DialogSchedulerEditor extends LitElement {
       const params: GenericDialogParams = {
         cancel: () => resolve(false),
         confirm: () => resolve(true),
-        title: localize('ui.dialog.confirm_delete.title', this.hass),
-        description: localize('ui.dialog.confirm_delete.description', this.hass),
-        primaryButtonLabel: hassLocalize('ui.common.ok', this.hass),
-        secondaryButtonLabel: hassLocalize('ui.common.cancel', this.hass),
+        title: localize("ui.dialog.confirm_delete.title", this.hass),
+        description: localize("ui.dialog.confirm_delete.description", this.hass),
+        primaryButtonLabel: hassLocalize("ui.common.ok", this.hass),
+        secondaryButtonLabel: hassLocalize("ui.common.cancel", this.hass),
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'scheduler-generic-dialog',
-        dialogImport: () => import('./generic-dialog'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "scheduler-generic-dialog",
+        dialogImport: () => import("./generic-dialog"),
         dialogParams: params,
       });
     }).then((res) => {
@@ -297,10 +297,10 @@ export class DialogSchedulerEditor extends LitElement {
 
     new Promise<boolean>((resolve) => {
       const params: GenericDialogParams = {
-        title: localize('ui.dialog.confirm_migrate.title', this.hass),
-        description: localize('ui.dialog.confirm_migrate.description', this.hass),
-        primaryButtonLabel: this.hass.localize('ui.common.yes'),
-        secondaryButtonLabel: this.hass.localize('ui.common.no'),
+        title: localize("ui.dialog.confirm_migrate.title", this.hass),
+        description: localize("ui.dialog.confirm_migrate.description", this.hass),
+        primaryButtonLabel: this.hass.localize("ui.common.yes"),
+        secondaryButtonLabel: this.hass.localize("ui.common.no"),
         cancel: () => {
           resolve(false);
         },
@@ -309,9 +309,9 @@ export class DialogSchedulerEditor extends LitElement {
         },
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'scheduler-generic-dialog',
-        dialogImport: () => import('./generic-dialog'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "scheduler-generic-dialog",
+        dialogImport: () => import("./generic-dialog"),
         dialogParams: params,
       });
     }).then((res: boolean) => {

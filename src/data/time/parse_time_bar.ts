@@ -1,9 +1,9 @@
-import { HomeAssistant } from '../../lib/types';
-import { Schedule, ScheduleEntry, TimeMode, Timeslot } from '../../types';
-import { addTimeOffset } from './add_time_offset';
-import { computeTimestamp } from './compute_timestamp';
-import { parseTimeString } from './parse_time_string';
-import { timeToString } from './time_to_string';
+import { HomeAssistant } from "../../lib/types";
+import { Schedule, ScheduleEntry, TimeMode, Timeslot } from "../../types";
+import { addTimeOffset } from "./add_time_offset";
+import { computeTimestamp } from "./compute_timestamp";
+import { parseTimeString } from "./parse_time_string";
+import { timeToString } from "./time_to_string";
 
 export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule => {
   const processSlots = (slots: Timeslot[]): Timeslot[] => {
@@ -11,8 +11,8 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
     slots = slots.map(
       (e): Timeslot => ({
         ...e,
-        start: computeTimestamp(e.start, hass) < 0 ? '00:00:00' : e.start,
-        stop: e.stop ? (computeTimestamp(e.stop, hass) > 3600 * 24 ? '00:00:00' : e.stop) : undefined,
+        start: computeTimestamp(e.start, hass) < 0 ? "00:00:00" : e.start,
+        stop: e.stop ? (computeTimestamp(e.stop, hass) > 3600 * 24 ? "00:00:00" : e.stop) : undefined,
       })
     );
 
@@ -41,7 +41,7 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
       else return computeTimestamp(a.stop || a.start, hass) > computeTimestamp(b.stop || b.start, hass) ? 1 : -1;
     });
 
-    let startTime = '00:00:00';
+    let startTime = "00:00:00";
     let len = slots.length;
 
     //insert empty timeslots where needed

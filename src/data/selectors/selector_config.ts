@@ -5,15 +5,15 @@ import {
   SelectSelector,
   Selector,
   StringSelector,
-} from '../../lib/selector';
-import { listSelector, parseListSelectorOption } from './list_selector';
-import { numericSelector } from './numeric_selector';
-import { HomeAssistant } from '../../lib/types';
-import { computeDomain } from '../../lib/entity';
-import { CustomConfig, VariableConfig } from '../../types';
-import { parseCustomActions } from '../actions/parse_custom_actions';
-import { isDefined } from '../../lib/is_defined';
-import { serviceIcons } from '../format/service_icons';
+} from "../../lib/selector";
+import { listSelector, parseListSelectorOption } from "./list_selector";
+import { numericSelector } from "./numeric_selector";
+import { HomeAssistant } from "../../lib/types";
+import { computeDomain } from "../../lib/entity";
+import { CustomConfig, VariableConfig } from "../../types";
+import { parseCustomActions } from "../actions/parse_custom_actions";
+import { isDefined } from "../../lib/is_defined";
+import { serviceIcons } from "../format/service_icons";
 
 export const selectorConfig = (
   service: string,
@@ -23,7 +23,7 @@ export const selectorConfig = (
   customize?: CustomConfig
 ) => {
   const domain = computeDomain(service);
-  const entityIds = ['script', 'notify'].includes(domain) ? [service] : [entityId || []].flat();
+  const entityIds = ["script", "notify"].includes(domain) ? [service] : [entityId || []].flat();
   let loadedCfg = entityIds.map((e) => selectorConfigFromEntity(e, field, hass));
   let selector: Selector | null = mergeSelectors(loadedCfg);
 
@@ -51,14 +51,14 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   };
 
   switch (searchKey) {
-    case 'climate.temperature':
-    case 'climate.target_temp_low':
-    case 'climate.target_temp_high': {
+    case "climate.temperature":
+    case "climate.target_temp_low":
+    case "climate.target_temp_high": {
       const isOptional =
-        searchKey == 'climate.temperature'
+        searchKey == "climate.temperature"
           ? ((attr.supported_features || 0) & 2) > 0
           : ((attr.supported_features || 0) & 1) > 0;
-      const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
+      const fallbackStep = hass.config.unit_system.temperature.includes("F") ? 1 : 0.5;
       return numericSelector({
         min: attr.min_temp,
         max: attr.max_temp,
@@ -67,43 +67,43 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
         optional: isOptional,
       });
     }
-    case 'climate.hvac_mode':
+    case "climate.hvac_mode":
       return listSelector({
         options: computeOptionIcons(attr.hvac_modes),
-        translation_key: 'component.climate.entity_component._.state.${value}',
+        translation_key: "component.climate.entity_component._.state.${value}",
       });
-    case 'climate.preset_mode':
+    case "climate.preset_mode":
       return listSelector({
         options: computeOptionIcons(attr.preset_modes),
-        translation_key: 'state_attributes.climate.preset_mode.${value}',
+        translation_key: "state_attributes.climate.preset_mode.${value}",
       });
-    case 'climate.fan_mode':
+    case "climate.fan_mode":
       return listSelector({ options: computeOptionIcons(attr.fan_modes) });
-    case 'climate.swing_mode':
+    case "climate.swing_mode":
       return listSelector({ options: computeOptionIcons(attr.swing_modes) });
-    case 'cover.position':
-    case 'cover.tilt_position':
-    case 'fan.percentage':
-    case 'valve.position':
-      return numericSelector({ min: 0, max: 100, step: 1, unit: '%' });
-    case 'fan.oscillating':
+    case "cover.position":
+    case "cover.tilt_position":
+    case "fan.percentage":
+    case "valve.position":
+      return numericSelector({ min: 0, max: 100, step: 1, unit: "%" });
+    case "fan.oscillating":
       return <BooleanSelector>{ boolean: {} };
-    case 'fan.direction':
+    case "fan.direction":
       return listSelector({
-        options: computeOptionIcons(['forward', 'reverse']),
-        translation_key: 'ui.card.fan.${value}',
+        options: computeOptionIcons(["forward", "reverse"]),
+        translation_key: "ui.card.fan.${value}",
       });
-    case 'fan.preset_mode':
+    case "fan.preset_mode":
       return listSelector({ options: computeOptionIcons(attr.preset_modes) });
-    case 'humidifier.humidity':
-      return numericSelector({ min: attr.min_humidity, max: attr.max_humidity, step: 1, unit: '%' });
-    case 'humidifier.mode':
+    case "humidifier.humidity":
+      return numericSelector({ min: attr.min_humidity, max: attr.max_humidity, step: 1, unit: "%" });
+    case "humidifier.mode":
       return listSelector({
         options: computeOptionIcons(attr.available_modes),
-        translation_key: 'component.humidifier.entity_component._.state_attributes.mode.state.${value}',
+        translation_key: "component.humidifier.entity_component._.state_attributes.mode.state.${value}",
       });
-    case 'input_number.value':
-    case 'number.value':
+    case "input_number.value":
+    case "number.value":
       return numericSelector({
         min: attr.min,
         max: attr.max,
@@ -111,18 +111,18 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
         mode: attr.mode,
         unit: attr.unit_of_measurement,
       });
-    case 'input_select.option':
-    case 'select.option':
+    case "input_select.option":
+    case "select.option":
       return listSelector({ options: computeOptionIcons(attr.options) });
-    case 'light.brightness':
-      return numericSelector({ min: 0, max: 100, step: 1, unit: '%', scale_factor: 2.55 });
-    case 'media_player.source':
-    case 'notify.title':
+    case "light.brightness":
+      return numericSelector({ min: 0, max: 100, step: 1, unit: "%", scale_factor: 2.55 });
+    case "media_player.source":
+    case "notify.title":
       return <StringSelector>{ text: {} };
-    case 'notify.message':
+    case "notify.message":
       return <StringSelector>{ text: {} };
-    case 'water_heater.temperature': {
-      const fallbackStep = hass.config.unit_system.temperature.includes('F') ? 1 : 0.5;
+    case "water_heater.temperature": {
+      const fallbackStep = hass.config.unit_system.temperature.includes("F") ? 1 : 0.5;
       return numericSelector({
         min: attr.min_temp,
         max: attr.max_temp,
@@ -130,9 +130,9 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
         unit: `${hass.config.unit_system.temperature}`,
       });
     }
-    case 'water_heater.operation_mode':
+    case "water_heater.operation_mode":
       return listSelector({ options: computeOptionIcons(attr.operation_list) });
-    case 'water_heater.away_mode':
+    case "water_heater.away_mode":
       return <BooleanSelector>{ boolean: {} };
   }
 
@@ -156,9 +156,9 @@ const selectorConfigFromCustomConfig = (service: string, entityId: string, field
 };
 
 export const parseCustomVariable = (config: VariableConfig): Selector => {
-  if (Object.keys(config).includes('options')) {
+  if (Object.keys(config).includes("options")) {
     return listSelector({ options: (config as any).options });
-  } else if (Object.keys(config).includes('min') && Object.keys(config).includes('max')) {
+  } else if (Object.keys(config).includes("min") && Object.keys(config).includes("max")) {
     return numericSelector(config as any);
   } else {
     return <StringSelector>{ text: {} };
@@ -170,17 +170,17 @@ const mergeSelectors = (input: (Selector | null)[]) => {
 
   if (input.some((e) => e === null) || !input.length) return null;
 
-  if (input.every((e) => e!.hasOwnProperty('select'))) {
+  if (input.every((e) => e!.hasOwnProperty("select"))) {
     const optionsLists = (input as SelectSelector[]).map((e) => e.select!.options).filter((e) => e !== undefined);
     let commonOptions: string[] | SelectOption[] = [];
 
-    if (optionsLists.every((e) => e.every((f) => typeof f === 'string'))) {
+    if (optionsLists.every((e) => e.every((f) => typeof f === "string"))) {
       commonOptions = optionsLists.length
         ? (optionsLists as string[][]).reduce((a, b) => a.filter((c) => b.includes(c)))
         : [];
     } else {
       let convertedOptionsLists = optionsLists.map((list) =>
-        list.map((e) => parseListSelectorOption(typeof e === 'object' ? e : { value: e })).filter(isDefined)
+        list.map((e) => parseListSelectorOption(typeof e === "object" ? e : { value: e })).filter(isDefined)
       );
       commonOptions = convertedOptionsLists.length
         ? convertedOptionsLists.reduce((a, b) => a.filter((c) => b.find((el) => el.value === c.value)))
@@ -198,7 +198,7 @@ const mergeSelectors = (input: (Selector | null)[]) => {
           translationKeyLists.length && isUnique(translationKeyLists) ? translationKeyLists[0] : undefined,
       },
     };
-  } else if (input.every((e) => e!.hasOwnProperty('number'))) {
+  } else if (input.every((e) => e!.hasOwnProperty("number"))) {
     const minList = (input as NumberSelector[]).map((e) => e.number!.min).filter((e) => e !== undefined) as number[];
     const maxList = (input as NumberSelector[]).map((e) => e.number!.max).filter((e) => e !== undefined) as number[];
     const stepList = (input as NumberSelector[]).map((e) => e.number!.step).filter((e) => e !== undefined) as number[];
@@ -221,11 +221,11 @@ const mergeSelectors = (input: (Selector | null)[]) => {
       },
     };
     return res;
-  } else if (input.every((e) => e!.hasOwnProperty('boolean'))) {
+  } else if (input.every((e) => e!.hasOwnProperty("boolean"))) {
     return <BooleanSelector>{
       boolean: {},
     };
-  } else if (input.every((e) => e!.hasOwnProperty('text'))) {
+  } else if (input.every((e) => e!.hasOwnProperty("text"))) {
     return <StringSelector>{
       text: {},
     };

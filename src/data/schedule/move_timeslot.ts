@@ -1,15 +1,15 @@
-import { isDefined } from '../../lib/is_defined';
-import { HomeAssistant } from '../../lib/types';
-import { Time, TimeMode, Timeslot } from '../../types';
-import { addTimeOffset } from '../time/add_time_offset';
-import { computeTimestamp } from '../time/compute_timestamp';
-import { parseTimeString } from '../time/parse_time_string';
-import { timeToString } from '../time/time_to_string';
+import { isDefined } from "../../lib/is_defined";
+import { HomeAssistant } from "../../lib/types";
+import { Time, TimeMode, Timeslot } from "../../types";
+import { addTimeOffset } from "../time/add_time_offset";
+import { computeTimestamp } from "../time/compute_timestamp";
+import { parseTimeString } from "../time/parse_time_string";
+import { timeToString } from "../time/time_to_string";
 
 const computeDuration = (timeA: Time | string, timeB: Time | string, hass: HomeAssistant) => {
-  let tsA = typeof timeA == 'string' ? computeTimestamp(parseTimeString(timeA), hass) : computeTimestamp(timeA, hass);
+  let tsA = typeof timeA == "string" ? computeTimestamp(parseTimeString(timeA), hass) : computeTimestamp(timeA, hass);
 
-  let tsB = typeof timeB == 'string' ? computeTimestamp(parseTimeString(timeB), hass) : computeTimestamp(timeB, hass);
+  let tsB = typeof timeB == "string" ? computeTimestamp(parseTimeString(timeB), hass) : computeTimestamp(timeB, hass);
 
   if (tsB > tsA) return 1;
   else if (tsB < tsA) return -1;
@@ -129,7 +129,7 @@ export const moveTimeslot = (
           ...slots.slice(0, slotIdx),
           <Timeslot>{
             ...slots[slotIdx],
-            start: slotIdx > 0 ? timeToString(stopTime(slots[slotIdx - 1])) : '00:00:00',
+            start: slotIdx > 0 ? timeToString(stopTime(slots[slotIdx - 1])) : "00:00:00",
             stop: timeToString(newTime),
             actions: [],
           },

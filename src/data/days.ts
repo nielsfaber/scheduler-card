@@ -1,14 +1,14 @@
-import { HomeAssistant } from '../lib/types';
-import { hassLocalize } from '../localize/hassLocalize';
-import { localize } from '../localize/localize';
-import { TWeekday } from '../types';
-import { computeDayDisplay } from './format/compute_days_display';
+import { HomeAssistant } from "../lib/types";
+import { hassLocalize } from "../localize/hassLocalize";
+import { localize } from "../localize/localize";
+import { TWeekday } from "../types";
+import { computeDayDisplay } from "./format/compute_days_display";
 
 const supportLocaleString = () => {
   try {
-    new Date().toLocaleDateString('i');
+    new Date().toLocaleDateString("i");
   } catch (e: any) {
-    return e.name === 'RangeError';
+    return e.name === "RangeError";
   }
   return false;
 };
@@ -16,19 +16,19 @@ const supportLocaleString = () => {
 export const computeStartOfWeek = (hass: HomeAssistant) => {
   const startOfWeekSetting = (hass.locale as any).first_weekday;
 
-  if (!startOfWeekSetting || startOfWeekSetting == 'language') {
+  if (!startOfWeekSetting || startOfWeekSetting == "language") {
     // @ts-ignore
-    if ('weekInfo' in Intl.Locale.prototype) {
+    if ("weekInfo" in Intl.Locale.prototype) {
       // @ts-ignore
       return new Intl.Locale(hass.locale.language).weekInfo.firstDay % 7;
     } else {
-      const regionSat = 'AEAFBHDJDZEGIQIRJOKWLYOMQASDSY'.match(/../g)!;
+      const regionSat = "AEAFBHDJDZEGIQIRJOKWLYOMQASDSY".match(/../g)!;
       const regionSun =
-        'AGARASAUBDBRBSBTBWBZCACNCODMDOETGTGUHKHNIDILINJMJPKEKHKRLAMHMMMOMTMXMZNINPPAPEPHPKPRPTPYSASGSVTHTTTWUMUSVEVIWSYEZAZW'.match(
+        "AGARASAUBDBRBSBTBWBZCACNCODMDOETGTGUHKHNIDILINJMJPKEKHKRLAMHMMMOMTMXMZNINPPAPEPHPKPRPTPYSASGSVTHTTTWUMUSVEVIWSYEZAZW".match(
           /../g
         )!;
-      const languageSat = ['ar', 'arq', 'arz', 'fa'];
-      const languageSun = 'amasbndzengnguhehiidjajvkmknkolomhmlmrmtmyneomorpapssdsmsnsutatethtnurzhzu'.match(/../g)!;
+      const languageSat = ["ar", "arq", "arz", "fa"];
+      const languageSun = "amasbndzengnguhehiidjajvkmknkolomhmlmrmtmyneomorpapssdsmsnsutatethtnurzhzu".match(/../g)!;
       const parts = hass.locale.language.match(
         /^([a-z]{2,3})(?:-([a-z]{3})(?=$|-))?(?:-([a-z]{4})(?=$|-))?(?:-([a-z]{2}|\d{3})(?=$|-))?/i
       )!;
@@ -72,7 +72,7 @@ const weekdayList = [
 
 // 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday.
 
-export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' | 'long', hass: HomeAssistant) => {
+export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: "short" | "long", hass: HomeAssistant) => {
   const startOfWeek = computeStartOfWeek(hass);
   const rotateArray = (arr: any[], k: number) => arr.concat(arr).slice(k, k + arr.length);
   const weekdayListOrdered = rotateArray(weekdayList, startOfWeek);
@@ -93,7 +93,7 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
     if (weekdayNums.length == 6) {
       const missing = [0, 1, 2, 3, 4, 5, 6].filter((e) => !weekdayNums.includes(e));
       const missingDay = computeDayDisplay(weekdayListOrdered[missing.pop()!], formatType, hass);
-      return localize('ui.components.date.repeated_days_except', hass, '{excludedDays}', missingDay);
+      return localize("ui.components.date.repeated_days_except", hass, "{excludedDays}", missingDay);
     }
 
     const dayNames = weekdayNums.map((e) => computeDayDisplay(weekdayListOrdered[e], formatType, hass));
@@ -105,9 +105,9 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
         start,
         longestSequence,
         localize(
-          'ui.components.date.days_range',
+          "ui.components.date.days_range",
           hass,
-          ['{startDay}', '{endDay}'],
+          ["{startDay}", "{endDay}"],
           [dayNames[start], dayNames[start + longestSequence - 1]]
         )
       );
@@ -115,13 +115,13 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
 
     const daysString =
       dayNames.length > 1
-        ? `${dayNames.slice(0, -1).join(', ')} ${hassLocalize('ui.common.and', hass)} ${dayNames.pop()}`
+        ? `${dayNames.slice(0, -1).join(", ")} ${hassLocalize("ui.common.and", hass)} ${dayNames.pop()}`
         : `${dayNames.pop()}`;
 
     return weekdayNums.length >= 3 && longestSequence >= 3
       ? daysString
-      : localize('ui.components.date.repeated_days', hass, '{days}', daysString);
+      : localize("ui.components.date.repeated_days", hass, "{days}", daysString);
   }
 
-  return weekdays.map((e) => computeDayDisplay(e, formatType, hass)).join(', ');
+  return weekdays.map((e) => computeDayDisplay(e, formatType, hass)).join(", ");
 };

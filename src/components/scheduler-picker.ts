@@ -1,10 +1,10 @@
-import { css, html, LitElement, nothing, PropertyValues, TemplateResult, type CSSResultGroup } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators';
-import { HomeAssistant } from '../lib/types';
-import { fireEvent } from '../lib/fire_event';
-import { sortByName } from '../lib/sort';
-import { mdiClose, mdiMenuDown } from '@mdi/js';
-import { localize } from '../localize/localize';
+import { css, html, LitElement, nothing, PropertyValues, TemplateResult, type CSSResultGroup } from "lit";
+import { customElement, property, query, state } from "lit/decorators";
+import { HomeAssistant } from "../lib/types";
+import { fireEvent } from "../lib/fire_event";
+import { sortByName } from "../lib/sort";
+import { mdiClose, mdiMenuDown } from "@mdi/js";
+import { localize } from "../localize/localize";
 
 type ComboBox = HTMLElement & { renderer: Function; requestContentUpdate: Function };
 type ComboBoxItemModel<T> = { item: T };
@@ -17,11 +17,11 @@ export interface PickerComboBoxItem {
   icon?: string;
 }
 
-const NO_MATCHING_ITEMS_FOUND_ID = '___no_matching_items_found___';
+const NO_MATCHING_ITEMS_FOUND_ID = "___no_matching_items_found___";
 
 export type PickerValueRenderer = (value: string) => TemplateResult<1>;
 
-@customElement('scheduler-picker')
+@customElement("scheduler-picker")
 export class SchedulerPicker extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -29,7 +29,7 @@ export class SchedulerPicker extends LitElement {
 
   @property({ type: Boolean }) public disabled = false;
 
-  @property({ type: Boolean, attribute: 'allow-custom-value' })
+  @property({ type: Boolean, attribute: "allow-custom-value" })
   public allowCustomValue;
 
   @property() public label?: string;
@@ -40,10 +40,10 @@ export class SchedulerPicker extends LitElement {
 
   @property() public placeholder?;
 
-  @property({ type: String, attribute: 'search-label' })
+  @property({ type: String, attribute: "search-label" })
   public searchLabel?: string;
 
-  @property({ attribute: 'hide-clear-icon', type: Boolean })
+  @property({ attribute: "hide-clear-icon", type: Boolean })
   public hideClearIcon = false;
 
   @property({ attribute: false, type: Array })
@@ -58,12 +58,12 @@ export class SchedulerPicker extends LitElement {
   @property({ attribute: false })
   public valueRenderer?: PickerValueRenderer;
 
-  @property({ attribute: 'not-found-label', type: String })
+  @property({ attribute: "not-found-label", type: String })
   public notFoundLabel?: string;
 
-  @query('.textInput') private _field?: HTMLInputElement;
+  @query(".textInput") private _field?: HTMLInputElement;
 
-  @query('ha-combo-box') private _comboBox?: HTMLInputElement;
+  @query("ha-combo-box") private _comboBox?: HTMLInputElement;
 
   @state() private _opened = false;
   private _isOpening = false;
@@ -78,23 +78,23 @@ export class SchedulerPicker extends LitElement {
     if (!sortedItems.length) {
       sortedItems.push({
         id: NO_MATCHING_ITEMS_FOUND_ID,
-        primary: localize('ui.dialog.entity_picker.no_results', this.hass),
-        icon: 'mdi:cancel',
+        primary: localize("ui.dialog.entity_picker.no_results", this.hass),
+        icon: "mdi:cancel",
       });
     }
     return sortedItems;
   };
 
   protected shouldUpdate(changedProps: PropertyValues) {
-    if (changedProps.has('value') || changedProps.has('label') || changedProps.has('disabled')) {
+    if (changedProps.has("value") || changedProps.has("label") || changedProps.has("disabled")) {
       return true;
     }
 
-    return !(!changedProps.has('_opened') && this._opened);
+    return !(!changedProps.has("_opened") && this._opened);
   }
 
   public willUpdate(changedProps: PropertyValues) {
-    if (changedProps.has('_opened') && this._opened) {
+    if (changedProps.has("_opened") && this._opened) {
       this._items = this._getItems();
     }
   }
@@ -114,7 +114,7 @@ export class SchedulerPicker extends LitElement {
                     : html`<span slot="headline">${this.value}</span>`
                   : html`
                       <span slot="headline" class="placeholder">
-                        ${this.placeholder || localize('ui.dialog.entity_picker.choose', this.hass)}
+                        ${this.placeholder || localize("ui.dialog.entity_picker.choose", this.hass)}
                       </span>
                     `}
                 ${showClearIcon
@@ -152,7 +152,7 @@ export class SchedulerPicker extends LitElement {
   }
 
   private get _value() {
-    return this.value || '';
+    return this.value || "";
   }
 
   private _renderHelper() {
@@ -164,7 +164,7 @@ export class SchedulerPicker extends LitElement {
   private _valueChanged(ev: CustomEvent) {
     ev.stopPropagation();
     // Clear the input field to prevent showing the old value next time
-    (this._comboBox as any).setTextFieldValue('');
+    (this._comboBox as any).setTextFieldValue("");
     const newValue = ev.detail.value?.trim();
 
     if (newValue === NO_MATCHING_ITEMS_FOUND_ID) {
@@ -186,7 +186,7 @@ export class SchedulerPicker extends LitElement {
     const target = ev.target as HTMLInputElement;
     const searchTerms: string[] = ev.detail.value
       .trim()
-      .split(' ')
+      .split(" ")
       .map(String)
       .filter((e) => e.length)
       .map((e) => e.trim());
@@ -207,7 +207,7 @@ export class SchedulerPicker extends LitElement {
 
   private _setValue(value: string | undefined) {
     this.value = value;
-    fireEvent(this, 'value-changed', { value });
+    fireEvent(this, "value-changed", { value });
   }
 
   public async focus() {
@@ -221,7 +221,7 @@ export class SchedulerPicker extends LitElement {
     await this.updateComplete;
     this._comboBox?.focus();
     (this._comboBox as any).open();
-    (this._comboBox as any).value = '';
+    (this._comboBox as any).value = "";
   }
 
   private async _openedChanged(ev: CustomEvent) {
@@ -281,7 +281,7 @@ export class SchedulerPicker extends LitElement {
         }
         ha-combo-box-item.textInput:after {
           display: block;
-          content: '';
+          content: "";
           position: absolute;
           pointer-events: none;
           bottom: 0;
@@ -319,6 +319,6 @@ export class SchedulerPicker extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'scheduler-picker': SchedulerPicker;
+    "scheduler-picker": SchedulerPicker;
   }
 }

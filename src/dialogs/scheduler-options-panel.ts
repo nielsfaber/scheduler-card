@@ -1,5 +1,5 @@
-import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
+import { LitElement, html, css, CSSResultGroup, PropertyValues } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
 import {
   CardConfig,
   Condition,
@@ -9,33 +9,33 @@ import {
   TConditionMatchType,
   TRepeatType,
   Timeslot,
-} from '../types';
-import { DialogSelectConditionParams } from './dialog-select-condition';
-import { mdiCog, mdiDotsVertical, mdiPencil } from '@mdi/js';
-import { computeStatesForEntity } from '../data/compute_states_for_entity';
-import { computeEntityIcon } from '../data/format/compute_entity_icon';
-import { computeEntityDisplay } from '../data/format/compute_entity_display';
-import { formatIsoDate } from '../data/time/format_date';
-import { stringToDate } from '../data/time/string_to_date';
-import { computeDomain } from '../lib/entity';
-import { validateSelectorValue } from '../data/selectors/validate_selector_value';
-import { localize } from '../localize/localize';
-import { HomeAssistant } from '../lib/types';
-import { fireEvent } from '../lib/fire_event';
-import { fetchTags } from '../data/store/fetch_tags';
-import { SelectSelector } from '../lib/selector';
-import { capitalizeFirstLetter } from '../lib/capitalize_first_letter';
-import { asArray } from '../lib/as_array';
-import { hassLocalize } from '../localize/hassLocalize';
-import { formatSelectorDisplay } from '../data/selectors/format_selector_display';
-import { isDefined } from '../lib/is_defined';
+} from "../types";
+import { DialogSelectConditionParams } from "./dialog-select-condition";
+import { mdiCog, mdiDotsVertical, mdiPencil } from "@mdi/js";
+import { computeStatesForEntity } from "../data/compute_states_for_entity";
+import { computeEntityIcon } from "../data/format/compute_entity_icon";
+import { computeEntityDisplay } from "../data/format/compute_entity_display";
+import { formatIsoDate } from "../data/time/format_date";
+import { stringToDate } from "../data/time/string_to_date";
+import { computeDomain } from "../lib/entity";
+import { validateSelectorValue } from "../data/selectors/validate_selector_value";
+import { localize } from "../localize/localize";
+import { HomeAssistant } from "../lib/types";
+import { fireEvent } from "../lib/fire_event";
+import { fetchTags } from "../data/store/fetch_tags";
+import { SelectSelector } from "../lib/selector";
+import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
+import { asArray } from "../lib/as_array";
+import { hassLocalize } from "../localize/hassLocalize";
+import { formatSelectorDisplay } from "../data/selectors/format_selector_display";
+import { isDefined } from "../lib/is_defined";
 
-import '../components/scheduler-collapsible-section';
-import './dialog-select-condition';
-import '../components/scheduler-settings-row';
-import '../components/scheduler-combo-selector';
+import "../components/scheduler-collapsible-section";
+import "./dialog-select-condition";
+import "../components/scheduler-settings-row";
+import "../components/scheduler-combo-selector";
 
-@customElement('scheduler-options-panel')
+@customElement("scheduler-options-panel")
 export class SchedulerOptionsPanel extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @property({ attribute: false }) public config!: CardConfig;
@@ -49,16 +49,16 @@ export class SchedulerOptionsPanel extends LitElement {
   @state() conditionValid: boolean = true;
 
   @state()
-  startDate = '';
+  startDate = "";
 
   @state()
-  endDate = '';
+  endDate = "";
 
   @property()
   tags: string[] = [];
 
   async firstUpdated() {
-    (await (window as any).loadCardHelpers()).importMoreInfoControl('input_datetime');
+    (await (window as any).loadCardHelpers()).importMoreInfoControl("input_datetime");
 
     this.startDate = this.schedule?.start_date || formatIsoDate(new Date());
     this.endDate = this.schedule?.end_date || formatIsoDate(new Date());
@@ -68,13 +68,13 @@ export class SchedulerOptionsPanel extends LitElement {
     const configTags = [...(this.config.tags || [])].flat();
     this.tags = [
       ...storedTags,
-      ...configTags.filter((e) => !storedTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),
+      ...configTags.filter((e) => !storedTags.includes(e) && !["none", "disabled", "enabled"].includes(e)),
     ];
   }
 
   shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.get('schedule')) {
-      this.dispatchEvent(new CustomEvent('change', { detail: { schedule: this.schedule } }));
+    if (changedProps.get("schedule")) {
+      this.dispatchEvent(new CustomEvent("change", { detail: { schedule: this.schedule } }));
     }
     return true;
   }
@@ -90,7 +90,7 @@ export class SchedulerOptionsPanel extends LitElement {
 
     return html`
       <div class="header first">
-        <span>${localize('ui.panel.options.conditions.header', this.hass)}:</span>
+        <span>${localize("ui.panel.options.conditions.header", this.hass)}:</span>
         ${this.schedule.entries[0].slots[0].conditions.items.length
           ? html`
               <ha-button-menu
@@ -113,8 +113,8 @@ export class SchedulerOptionsPanel extends LitElement {
                 >
                   ${this.schedule.entries[0].slots[0].conditions.type == TConditionLogicType.Or
                     ? html`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`
-                    : ''}
-                  ${localize('ui.panel.options.conditions.options.logic_or', this.hass)}
+                    : ""}
+                  ${localize("ui.panel.options.conditions.options.logic_or", this.hass)}
                 </mwc-list-item>
                 <mwc-list-item
                   graphic="icon"
@@ -122,18 +122,18 @@ export class SchedulerOptionsPanel extends LitElement {
                 >
                   ${this.schedule.entries[0].slots[0].conditions.type == TConditionLogicType.And
                     ? html`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`
-                    : ''}
-                  ${localize('ui.panel.options.conditions.options.logic_and', this.hass)}
+                    : ""}
+                  ${localize("ui.panel.options.conditions.options.logic_and", this.hass)}
                 </mwc-list-item>
                 <mwc-list-item graphic="icon">
                   ${this.schedule.entries[0].slots[0].conditions.track_changes
                     ? html`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`
-                    : ''}
-                  ${localize('ui.panel.options.conditions.options.track_changes', this.hass)}
+                    : ""}
+                  ${localize("ui.panel.options.conditions.options.track_changes", this.hass)}
                 </mwc-list-item>
               </ha-button-menu>
             `
-          : ''}
+          : ""}
       </div>
       <scheduler-collapsible-group
         ?disabled=${!this.conditionValid}
@@ -146,44 +146,44 @@ export class SchedulerOptionsPanel extends LitElement {
       <div>
         <ha-button appearance="plain" @click=${this._conditionAddClick}>
           <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-          ${localize('ui.panel.options.conditions.add_condition', this.hass)}
+          ${localize("ui.panel.options.conditions.add_condition", this.hass)}
         </ha-button>
       </div>
 
-      <span class="header">${localize('ui.panel.options.period.header', this.hass)}:</span>
+      <span class="header">${localize("ui.panel.options.period.header", this.hass)}:</span>
       <div class="period">
-        <ha-checkbox ?checked=${typeof this.schedule.start_date === 'string'} @change=${this.toggleEnableDateRange}>
+        <ha-checkbox ?checked=${typeof this.schedule.start_date === "string"} @change=${this.toggleEnableDateRange}>
         </ha-checkbox>
-        <span>${localize('ui.panel.options.period.start_date', this.hass)}</span>
+        <span>${localize("ui.panel.options.period.start_date", this.hass)}</span>
         <ha-date-input
           .locale=${this.hass.locale}
           value=${this.startDate}
-          .label=${hassLocalize('ui.components.date-range-picker.start_date', this.hass)}
+          .label=${hassLocalize("ui.components.date-range-picker.start_date", this.hass)}
           @value-changed=${this._setStartDate}
           ?disabled=${!this.schedule.start_date}
         >
         </ha-date-input>
-        <span>${localize('ui.panel.options.period.end_date', this.hass)}</span>
+        <span>${localize("ui.panel.options.period.end_date", this.hass)}</span>
         <ha-date-input
           .locale=${this.hass.locale}
           value=${this.endDate}
-          .label=${hassLocalize('ui.components.date-range-picker.end_date', this.hass)}
+          .label=${hassLocalize("ui.components.date-range-picker.end_date", this.hass)}
           @value-changed=${this._setEndDate}
           ?disabled=${!this.schedule.end_date}
         >
         </ha-date-input>
       </div>
 
-      <span class="header">${hassLocalize('ui.common.name', this.hass)}:</span>
+      <span class="header">${hassLocalize("ui.common.name", this.hass)}:</span>
       <div class="period">
         <ha-textfield
-          value=${this.schedule.name || ''}
-          placeholder=${this.schedule.name ? '' : hassLocalize('ui.common.name', this.hass)}
+          value=${this.schedule.name || ""}
+          placeholder=${this.schedule.name ? "" : hassLocalize("ui.common.name", this.hass)}
           @input=${this.updateName}
         ></ha-textfield>
       </div>
 
-      <span class="header">${localize('ui.panel.options.tags', this.hass)}:</span>
+      <span class="header">${localize("ui.panel.options.tags", this.hass)}:</span>
       <div>
         <scheduler-combo-selector
           .hass=${this.hass}
@@ -194,33 +194,33 @@ export class SchedulerOptionsPanel extends LitElement {
         </scheduler-combo-selector>
       </div>
 
-      <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>
+      <span class="header">${localize("ui.panel.options.repeat_type", this.hass)}:</span>
       <ha-button
-        appearance="${this.schedule.repeat_type == TRepeatType.Repeat ? 'filled' : 'plain'}"
-        variant="${this.schedule.repeat_type == TRepeatType.Repeat ? 'brand' : 'neutral'}"
+        appearance="${this.schedule.repeat_type == TRepeatType.Repeat ? "filled" : "plain"}"
+        variant="${this.schedule.repeat_type == TRepeatType.Repeat ? "brand" : "neutral"}"
         @click=${this.setRepeatType}
         value="${TRepeatType.Repeat}"
       >
         <ha-icon slot="start" icon="mdi:refresh"></ha-icon>
-        ${hassLocalize('ui.components.calendar.event.repeat.label', this.hass)}
+        ${hassLocalize("ui.components.calendar.event.repeat.label", this.hass)}
       </ha-button>
       <ha-button
-        appearance="${this.schedule.repeat_type == TRepeatType.Pause ? 'filled' : 'plain'}"
-        variant="${this.schedule.repeat_type == TRepeatType.Pause ? 'brand' : 'neutral'}"
+        appearance="${this.schedule.repeat_type == TRepeatType.Pause ? "filled" : "plain"}"
+        variant="${this.schedule.repeat_type == TRepeatType.Pause ? "brand" : "neutral"}"
         @click=${this.setRepeatType}
         value="${TRepeatType.Pause}"
       >
         <ha-icon slot="start" icon="mdi:stop"></ha-icon>
-        ${hassLocalize('ui.dialogs.more_info_control.vacuum.stop', this.hass)}
+        ${hassLocalize("ui.dialogs.more_info_control.vacuum.stop", this.hass)}
       </ha-button>
       <ha-button
-        appearance="${this.schedule.repeat_type == TRepeatType.Single ? 'filled' : 'plain'}"
-        variant="${this.schedule.repeat_type == TRepeatType.Single ? 'brand' : 'neutral'}"
+        appearance="${this.schedule.repeat_type == TRepeatType.Single ? "filled" : "plain"}"
+        variant="${this.schedule.repeat_type == TRepeatType.Single ? "brand" : "neutral"}"
         @click=${this.setRepeatType}
         value="${TRepeatType.Single}"
       >
         <ha-icon slot="start" icon="mdi:trash-can-outline"></ha-icon>
-        ${hassLocalize('ui.common.delete', this.hass)}
+        ${hassLocalize("ui.common.delete", this.hass)}
       </ha-button>
     `;
   }
@@ -231,27 +231,27 @@ export class SchedulerOptionsPanel extends LitElement {
 
     return conditions.map((condition, i) => {
       const entityId =
-        this.conditionIdx == i ? this.selectedEntity || condition.entity_id || '' : condition.entity_id || '';
+        this.conditionIdx == i ? this.selectedEntity || condition.entity_id || "" : condition.entity_id || "";
       const domain = this.conditionIdx == i ? this.selectedDomain || computeDomain(entityId) : computeDomain(entityId);
       const selector = computeStatesForEntity(entityId || domain, this.hass, this.config.customize);
 
       const matchTypes =
-        selector && selector.hasOwnProperty('number')
+        selector && selector.hasOwnProperty("number")
           ? [TConditionMatchType.Above, TConditionMatchType.Below]
           : [TConditionMatchType.Equal, TConditionMatchType.Unequal];
 
       const matchTypeIcons = {
-        [TConditionMatchType.Equal]: 'mdi:equal',
-        [TConditionMatchType.Unequal]: 'mdi:not-equal-variant',
-        [TConditionMatchType.Above]: 'mdi:greater-than',
-        [TConditionMatchType.Below]: 'mdi:less-than',
+        [TConditionMatchType.Equal]: "mdi:equal",
+        [TConditionMatchType.Unequal]: "mdi:not-equal-variant",
+        [TConditionMatchType.Above]: "mdi:greater-than",
+        [TConditionMatchType.Below]: "mdi:less-than",
       };
 
       const matchTypeValue = {
-        [TConditionMatchType.Equal]: 'ui.panel.options.conditions.types.equal_to',
-        [TConditionMatchType.Unequal]: 'ui.panel.options.conditions.types.unequal_to',
-        [TConditionMatchType.Above]: 'ui.panel.options.conditions.types.above',
-        [TConditionMatchType.Below]: 'ui.panel.options.conditions.types.below',
+        [TConditionMatchType.Equal]: "ui.panel.options.conditions.types.equal_to",
+        [TConditionMatchType.Unequal]: "ui.panel.options.conditions.types.unequal_to",
+        [TConditionMatchType.Above]: "ui.panel.options.conditions.types.above",
+        [TConditionMatchType.Below]: "ui.panel.options.conditions.types.below",
       };
 
       if (this.conditionIdx === i && !this.selectedMatchType) this.selectedMatchType = matchTypes[0];
@@ -269,15 +269,15 @@ export class SchedulerOptionsPanel extends LitElement {
                     localize(
                       matchTypeValue[condition.match_type!],
                       this.hass,
-                      ['{entity}', '{value}'],
+                      ["{entity}", "{value}"],
                       [
-                        computeEntityDisplay(condition.entity_id, this.hass, this.config.customize) || '',
-                        formatSelectorDisplay(condition.value, selector, this.hass) || '',
+                        computeEntityDisplay(condition.entity_id, this.hass, this.config.customize) || "",
+                        formatSelectorDisplay(condition.value, selector, this.hass) || "",
                       ]
                     )
                   )}
                 `
-              : localize('ui.panel.options.conditions.add_condition', this.hass)}
+              : localize("ui.panel.options.conditions.add_condition", this.hass)}
           </div>
           <ha-button-menu
             slot="contextMenu"
@@ -299,18 +299,18 @@ export class SchedulerOptionsPanel extends LitElement {
             >
             </ha-icon-button>
             <mwc-list-item graphic="icon">
-              ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
+              ${hassLocalize("ui.panel.lovelace.editor.card.conditional.change_type", this.hass)}
               <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
             </mwc-list-item>
             <mwc-list-item graphic="icon" class="warning">
-              ${hassLocalize('ui.common.delete', this.hass)}
+              ${hassLocalize("ui.common.delete", this.hass)}
               <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
             </mwc-list-item>
           </ha-button-menu>
 
           <div slot="content">
             <scheduler-settings-row>
-              <span slot="heading"> ${hassLocalize('ui.components.selectors.selector.types.entity', this.hass)} </span>
+              <span slot="heading"> ${hassLocalize("ui.components.selectors.selector.types.entity", this.hass)} </span>
               <scheduler-entity-picker
                 .hass=${this.hass}
                 .config=${this.config}
@@ -328,8 +328,8 @@ export class SchedulerOptionsPanel extends LitElement {
                   localize(
                     matchTypeValue[this.conditionIdx == i ? this.selectedMatchType! : condition.match_type!],
                     this.hass,
-                    ['{entity}', '{value}'],
-                    ['', '']
+                    ["{entity}", "{value}"],
+                    ["", ""]
                   )
                 )}
                 <ha-button-menu
@@ -349,7 +349,7 @@ export class SchedulerOptionsPanel extends LitElement {
                           : condition.match_type == e}
                       >
                         ${capitalizeFirstLetter(
-                          localize(matchTypeValue[e], this.hass, ['{entity}', '{value}'], ['', ''])
+                          localize(matchTypeValue[e], this.hass, ["{entity}", "{value}"], ["", ""])
                         )}
                         <ha-icon slot="graphic" icon="${matchTypeIcons[e]}"></ha-icon>
                       </mwc-list-item>
@@ -438,9 +438,9 @@ export class SchedulerOptionsPanel extends LitElement {
         cardConfig: this.config,
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'dialog-select-condition',
-        dialogImport: () => import('./dialog-select-condition'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "dialog-select-condition",
+        dialogImport: () => import("./dialog-select-condition"),
         dialogParams: params,
       });
     });
@@ -452,7 +452,7 @@ export class SchedulerOptionsPanel extends LitElement {
     if (this.selectedEntity) {
       const selector = computeStatesForEntity(this.selectedEntity, this.hass, this.config.customize);
       const matchTypes =
-        selector && selector.hasOwnProperty('number')
+        selector && selector.hasOwnProperty("number")
           ? [TConditionMatchType.Above, TConditionMatchType.Below]
           : [TConditionMatchType.Equal, TConditionMatchType.Unequal];
       if (!this.selectedMatchType || !matchTypes.includes(this.selectedMatchType))
@@ -477,7 +477,7 @@ export class SchedulerOptionsPanel extends LitElement {
       entity_id: this.selectedEntity,
       match_type: this.selectedMatchType,
       value: this.conditionValue,
-      attribute: 'state',
+      attribute: "state",
     };
     const conditions: Condition[] = Object.assign(this.schedule.entries[0].slots[0].conditions.items, {
       [this.conditionIdx]: condition,
@@ -574,12 +574,12 @@ export class SchedulerOptionsPanel extends LitElement {
   tagsUpdated(ev: CustomEvent) {
     let value = ev.detail.value as string[];
     value = value.map((e) => e.trim());
-    value = value.filter((e) => !['none', 'disabled', 'enabled'].includes(e));
+    value = value.filter((e) => !["none", "disabled", "enabled"].includes(e));
     this.schedule = { ...this.schedule, tags: value };
   }
 
   setRepeatType(ev: Event) {
-    const value = (ev.target as HTMLElement).getAttribute('value') as TRepeatType;
+    const value = (ev.target as HTMLElement).getAttribute("value") as TRepeatType;
     this.schedule = { ...this.schedule, repeat_type: value };
   }
 

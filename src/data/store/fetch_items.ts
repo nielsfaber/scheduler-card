@@ -1,12 +1,12 @@
-import { HomeAssistant } from '../../lib/types';
-import { Schedule, ScheduleStorageEntry } from '../../types';
-import { LegacySchedule, convertLegacySchedule } from './convert_legacy_schedule';
+import { HomeAssistant } from "../../lib/types";
+import { Schedule, ScheduleStorageEntry } from "../../types";
+import { LegacySchedule, convertLegacySchedule } from "./convert_legacy_schedule";
 
 export const fetchItems = (hass: HomeAssistant): Promise<ScheduleStorageEntry[]> => {
   console.log("[DEBUG] fetchItems: Calling hass.callWS with type 'scheduler'");
   return hass
     .callWS({
-      type: 'scheduler',
+      type: "scheduler",
     })
     .then((res) => {
       console.log('[DEBUG] fetchItems: WebSocket response received:', res);

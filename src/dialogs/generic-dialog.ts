@@ -1,8 +1,8 @@
-import { LitElement, html, css, CSSResultGroup, TemplateResult } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import { mdiClose } from '@mdi/js';
-import { HomeAssistant } from '../lib/types';
-import { hassLocalize } from '../localize/hassLocalize';
+import { LitElement, html, css, CSSResultGroup, TemplateResult } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
+import { mdiClose } from "@mdi/js";
+import { HomeAssistant } from "../lib/types";
+import { hassLocalize } from "../localize/hassLocalize";
 
 export type GenericDialogParams = {
   title: string;
@@ -13,7 +13,7 @@ export type GenericDialogParams = {
   confirm: () => void;
 };
 
-@customElement('scheduler-generic-dialog')
+@customElement("scheduler-generic-dialog")
 export class GenericDialog extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -37,7 +37,7 @@ export class GenericDialog extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+            .label=${hassLocalize("ui.dialogs.more_info_control.dismiss", this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title"> ${this._params.title} </span>
@@ -50,7 +50,7 @@ export class GenericDialog extends LitElement {
                 ${this._params.secondaryButtonLabel}
               </ha-button>
             `
-          : ''}
+          : ""}
         <ha-button appearance="accent" slot="primaryAction" @click=${this.confirmClick} dialogAction="close">
           ${this._params.primaryButtonLabel}
         </ha-button>

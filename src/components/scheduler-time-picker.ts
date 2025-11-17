@@ -1,14 +1,14 @@
-import { mdiClockOutline, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from '@mdi/js';
-import { css, html, LitElement, nothing, TemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators';
-import { computeTimeOffset } from '../data/time/compute_time_offset';
-import { parseTimeString } from '../data/time/parse_time_string';
-import { Time, TimeMode } from '../types';
-import { addTimeOffset } from '../data/time/add_time_offset';
-import { HomeAssistant } from '../lib/types';
-import { AmPmFormat, convertTo12Hour, convertTo24Hour, useAmPm } from '../lib/use_am_pm';
-import { fireEvent } from '../lib/fire_event';
-import { hassLocalize } from '../localize/hassLocalize';
+import { mdiClockOutline, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from "@mdi/js";
+import { css, html, LitElement, nothing, TemplateResult } from "lit";
+import { customElement, property, state } from "lit/decorators";
+import { computeTimeOffset } from "../data/time/compute_time_offset";
+import { parseTimeString } from "../data/time/parse_time_string";
+import { Time, TimeMode } from "../types";
+import { addTimeOffset } from "../data/time/add_time_offset";
+import { HomeAssistant } from "../lib/types";
+import { AmPmFormat, convertTo12Hour, convertTo24Hour, useAmPm } from "../lib/use_am_pm";
+import { fireEvent } from "../lib/fire_event";
+import { hassLocalize } from "../localize/hassLocalize";
 
 const MAX_OFFFSET_HOURS = 4;
 
@@ -19,7 +19,7 @@ const limitOffset = <T extends Time | { hours: number; minutes: number }>(time: 
   return time;
 };
 
-@customElement('scheduler-time-picker')
+@customElement("scheduler-time-picker")
 export class SchedulerTimePicker extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -39,7 +39,7 @@ export class SchedulerTimePicker extends LitElement {
 
   @property({ type: Boolean }) disabled = false;
 
-  @property({ type: String }) label = '';
+  @property({ type: String }) label = "";
 
   @property({ type: Boolean }) useAmPm = false;
 
@@ -98,8 +98,8 @@ export class SchedulerTimePicker extends LitElement {
               max=${this.mode == TimeMode.Fixed ? (this.useAmPm ? 12 : 23) : MAX_OFFFSET_HOURS}
               min=${this.mode != TimeMode.Fixed && !this.large ? -MAX_OFFFSET_HOURS : 0}
               .disabled=${this.disabled}
-              suffix="${this.large ? '' : ':'}"
-              class="${this.large ? '' : 'hasSuffix'}"
+              suffix="${this.large ? "" : ":"}"
+              class="${this.large ? "" : "hasSuffix"}"
               .validityTransform=${_validateHourInput}
             >
             </ha-textfield>
@@ -168,7 +168,7 @@ export class SchedulerTimePicker extends LitElement {
   }
 
   _renderTimeMode() {
-    if (!this.hass.states['sun.sun']) return nothing;
+    if (!this.hass.states["sun.sun"]) return nothing;
 
     if (this.large) {
       const _toggleTimeMode = () => {
@@ -182,11 +182,11 @@ export class SchedulerTimePicker extends LitElement {
 
       return html`
         <div class="mode">
-          ${this.hass.states['sun.sun']
+          ${this.hass.states["sun.sun"]
             ? html`
                 <ha-button
-                  appearance="${this.mode == TimeMode.Fixed ? 'plain' : 'filled'}"
-                  variant="${this.mode == TimeMode.Fixed ? 'neutral' : 'brand'}"
+                  appearance="${this.mode == TimeMode.Fixed ? "plain" : "filled"}"
+                  variant="${this.mode == TimeMode.Fixed ? "neutral" : "brand"}"
                   @click=${_toggleTimeMode}
                 >
                   <ha-icon icon="mdi:theme-light-dark"></ha-icon>
@@ -199,15 +199,15 @@ export class SchedulerTimePicker extends LitElement {
       const modeOptions = [TimeMode.Fixed, TimeMode.Sunrise, TimeMode.Sunset];
 
       const modeOptionLabels = {
-        [TimeMode.Fixed]: hassLocalize('ui.components.selectors.selector.types.time', this.hass),
-        [TimeMode.Sunrise]: hassLocalize('ui.panel.config.automation.editor.triggers.type.sun.sunrise', this.hass),
-        [TimeMode.Sunset]: hassLocalize('ui.panel.config.automation.editor.triggers.type.sun.sunset', this.hass),
+        [TimeMode.Fixed]: hassLocalize("ui.components.selectors.selector.types.time", this.hass),
+        [TimeMode.Sunrise]: hassLocalize("ui.panel.config.automation.editor.triggers.type.sun.sunrise", this.hass),
+        [TimeMode.Sunset]: hassLocalize("ui.panel.config.automation.editor.triggers.type.sun.sunset", this.hass),
       };
 
       const modeOptionIcons = {
-        [TimeMode.Fixed]: 'mdi:clock-outline',
-        [TimeMode.Sunrise]: 'mdi:weather-sunset-up',
-        [TimeMode.Sunset]: 'mdi:weather-sunset-down',
+        [TimeMode.Fixed]: "mdi:clock-outline",
+        [TimeMode.Sunrise]: "mdi:weather-sunset-up",
+        [TimeMode.Sunset]: "mdi:weather-sunset-down",
       };
 
       const buttonIcons = {
@@ -268,7 +268,7 @@ export class SchedulerTimePicker extends LitElement {
       const _toggleAmPmClick = () => {
         const value = convertTo12Hour(this.hours).am_pm;
         const hours12 = convertTo12Hour(this.hours).hours;
-        this.hours = convertTo24Hour(hours12, value == 'AM' ? AmPmFormat.PM : AmPmFormat.AM);
+        this.hours = convertTo24Hour(hours12, value == "AM" ? AmPmFormat.PM : AmPmFormat.AM);
 
         this._valueChanged();
       };
@@ -289,7 +289,7 @@ export class SchedulerTimePicker extends LitElement {
           ${this.useAmPm && this.mode == TimeMode.Fixed
             ? html`
                 <ha-button appearance="plain" @click=${_toggleAmPmClick}>
-                  <span class="large"> ${convertTo12Hour(this.hours).am_pm == AmPmFormat.AM ? 'AM' : 'PM'} </span>
+                  <span class="large"> ${convertTo12Hour(this.hours).am_pm == AmPmFormat.AM ? "AM" : "PM"} </span>
                 </ha-button>
               `
             : nothing}
@@ -299,18 +299,18 @@ export class SchedulerTimePicker extends LitElement {
                   <span class="large">
                     ${this.hours < 0 || this.minutes < 0
                       ? this.hass
-                          .localize('ui.panel.config.automation.editor.conditions.type.sun.before')
+                          .localize("ui.panel.config.automation.editor.conditions.type.sun.before")
                           .trim()
                           .toLowerCase()
                       : this.hass
-                          .localize('ui.panel.config.automation.editor.conditions.type.sun.after')
+                          .localize("ui.panel.config.automation.editor.conditions.type.sun.after")
                           .trim()
                           .toLowerCase()}
                   </span>
                 </ha-button>
                 <ha-button appearance="plain" @click=${_toggleSunriseSunsetClick}>
                   <ha-icon
-                    icon="${this.mode == TimeMode.Sunrise ? 'mdi:weather-sunny' : 'mdi:weather-night'}"
+                    icon="${this.mode == TimeMode.Sunrise ? "mdi:weather-sunny" : "mdi:weather-night"}"
                   ></ha-icon>
                 </ha-button>
               `
@@ -322,7 +322,7 @@ export class SchedulerTimePicker extends LitElement {
       return html`
         <ha-select
           .required=${this.required}
-          .value=${convertTo12Hour(this.hours).am_pm == AmPmFormat.AM ? 'AM' : 'PM'}
+          .value=${convertTo12Hour(this.hours).am_pm == AmPmFormat.AM ? "AM" : "PM"}
           .disabled=${this.disabled}
           name="amPm"
           naturalMenuWidth
@@ -340,8 +340,8 @@ export class SchedulerTimePicker extends LitElement {
   }
 
   private _convertTimeMode(newMode?: TimeMode) {
-    const tsSunrise = this.hass.states['sun.sun'].attributes['next_rising'];
-    const tsSunset = this.hass.states['sun.sun'].attributes['next_setting'];
+    const tsSunrise = this.hass.states["sun.sun"].attributes["next_rising"];
+    const tsSunset = this.hass.states["sun.sun"].attributes["next_setting"];
 
     if ((newMode && newMode != TimeMode.Fixed) || this.mode == TimeMode.Fixed) {
       const sunriseOffset = computeTimeOffset({ hours: this.hours, minutes: this.minutes }, tsSunrise);
@@ -395,7 +395,7 @@ export class SchedulerTimePicker extends LitElement {
     const oldValue = convertTo12Hour(this.hours).am_pm;
     if (oldValue == value) return;
     const hours12 = convertTo12Hour(this.hours).hours;
-    this.hours = convertTo24Hour(hours12, value == 'AM' ? AmPmFormat.AM : AmPmFormat.PM);
+    this.hours = convertTo24Hour(hours12, value == "AM" ? AmPmFormat.AM : AmPmFormat.PM);
     this._valueChanged();
   }
 
@@ -416,7 +416,7 @@ export class SchedulerTimePicker extends LitElement {
       hours: this.hours,
       minutes: this.minutes,
     };
-    fireEvent(this, 'value-changed', {
+    fireEvent(this, "value-changed", {
       value,
     });
   }
@@ -428,14 +428,14 @@ export class SchedulerTimePicker extends LitElement {
   private formatHours() {
     const isNegative = this.hours < 0 || this.minutes < 0;
     const hours = this.useAmPm && this.mode == TimeMode.Fixed ? convertTo12Hour(this.hours).hours : this.hours;
-    if (isNegative && !this.large) return '-' + Math.abs(hours).toFixed();
-    else if (this.mode != TimeMode.Fixed && !this.large) return '+' + Math.abs(hours).toFixed();
+    if (isNegative && !this.large) return "-" + Math.abs(hours).toFixed();
+    else if (this.mode != TimeMode.Fixed && !this.large) return "+" + Math.abs(hours).toFixed();
     else if (this.large) return Math.abs(hours);
     else return hours.toFixed();
   }
 
   private formatMinutes() {
-    return Math.abs(this.minutes).toString().padStart(2, '0');
+    return Math.abs(this.minutes).toString().padStart(2, "0");
   }
 
   static styles = css`
