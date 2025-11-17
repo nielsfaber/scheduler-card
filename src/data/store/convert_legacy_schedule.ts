@@ -116,9 +116,9 @@ const parseWeekdays = (input: WeekdayType): TWeekday => {
 export const convertLegacySchedule = (input: LegacySchedule): ScheduleStorageEntry => {
   // Safety check: ensure timeslots exists and is an array
   if (!input.timeslots || !Array.isArray(input.timeslots)) {
-    console.warn('[convertLegacySchedule] Invalid item - missing or invalid timeslots:', input);
+    console.warn("[convertLegacySchedule] Invalid item - missing or invalid timeslots:", input);
     throw new Error(
-      `Invalid schedule item: missing timeslots property. Item has keys: ${Object.keys(input).join(', ')}`
+      `Invalid schedule item: missing timeslots property. Item has keys: ${Object.keys(input).join(", ")}`
     );
   }
 

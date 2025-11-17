@@ -9,7 +9,7 @@ export const fetchItems = (hass: HomeAssistant): Promise<ScheduleStorageEntry[]>
       type: "scheduler",
     })
     .then((res) => {
-      console.log('[DEBUG] fetchItems: WebSocket response received:', res);
+      console.log("[DEBUG] fetchItems: WebSocket response received:", res);
       const converted: ScheduleStorageEntry[] = [];
 
       (res as LegacySchedule[]).forEach((item, index) => {
@@ -26,16 +26,16 @@ export const fetchItems = (hass: HomeAssistant): Promise<ScheduleStorageEntry[]>
       });
 
       console.log(
-        '[DEBUG] fetchItems: Converted',
+        "[DEBUG] fetchItems: Converted",
         converted.length,
-        'valid schedules out of',
+        "valid schedules out of",
         (res as LegacySchedule[]).length,
-        'total items'
+        "total items"
       );
       return converted;
     })
     .catch((error) => {
-      console.error('[DEBUG] fetchItems: WebSocket call failed:', error);
+      console.error("[DEBUG] fetchItems: WebSocket call failed:", error);
       throw error;
     });
 };

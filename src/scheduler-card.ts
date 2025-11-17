@@ -249,16 +249,16 @@ export class SchedulerCard extends LitElement {
   }
 
   private async loadSchedules(): Promise<void> {
-    console.log('[DEBUG] scheduler-card: Starting loadSchedules()');
+    console.log("[DEBUG] scheduler-card: Starting loadSchedules()");
     fetchItems(this.hass!)
       .then((res) => {
-        console.log('[DEBUG] scheduler-card: fetchItems SUCCESS, received', res.length, 'items');
+        console.log("[DEBUG] scheduler-card: fetchItems SUCCESS, received", res.length, "items");
         this.schedules = sortSchedules(res, this._config, this.hass);
-        console.log('[DEBUG] scheduler-card: Sorted schedules:', this.schedules.length);
+        console.log("[DEBUG] scheduler-card: Sorted schedules:", this.schedules.length);
       })
       .catch((e) => {
-        console.error('[DEBUG] scheduler-card: fetchItems FAILED:', e);
-        console.error('[DEBUG] scheduler-card: Error details:', e.message, e.code, e.type);
+        console.error("[DEBUG] scheduler-card: fetchItems FAILED:", e);
+        console.error("[DEBUG] scheduler-card: Error details:", e.message, e.code, e.type);
         this.schedules = [];
         this.connectionError = true;
       });
