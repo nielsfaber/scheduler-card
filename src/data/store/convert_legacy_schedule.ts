@@ -117,7 +117,9 @@ export const convertLegacySchedule = (input: LegacySchedule): ScheduleStorageEnt
   // Safety check: ensure timeslots exists and is an array
   if (!input.timeslots || !Array.isArray(input.timeslots)) {
     console.warn('[convertLegacySchedule] Invalid item - missing or invalid timeslots:', input);
-    throw new Error(`Invalid schedule item: missing timeslots property. Item has keys: ${Object.keys(input).join(', ')}`);
+    throw new Error(
+      `Invalid schedule item: missing timeslots property. Item has keys: ${Object.keys(input).join(', ')}`
+    );
   }
 
   return <ScheduleStorageEntry>{
