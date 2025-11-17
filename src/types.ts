@@ -19,8 +19,8 @@ export interface CardConfig {
 }
 
 export enum EditorMode {
-  Single = 'single',
-  Scheme = 'scheme',
+  Single = "single",
+  Scheme = "scheme",
 }
 export interface ConditionConfig {
   type: TConditionLogicType;
@@ -64,28 +64,28 @@ export interface Action {
 }
 
 export enum TWeekday {
-  Daily = 'daily',
-  Workday = 'workday',
-  Weekend = 'weekend',
-  Monday = 'monday',
-  Tuesday = 'tuesday',
-  Wednesday = 'wednesday',
-  Thursday = 'thursday',
-  Friday = 'friday',
-  Saturday = 'saturday',
-  Sunday = 'sunday',
+  Daily = "daily",
+  Workday = "workday",
+  Weekend = "weekend",
+  Monday = "monday",
+  Tuesday = "tuesday",
+  Wednesday = "wednesday",
+  Thursday = "thursday",
+  Friday = "friday",
+  Saturday = "saturday",
+  Sunday = "sunday",
 }
 
 export enum TConditionLogicType {
-  Or = 'or',
-  And = 'and',
+  Or = "or",
+  And = "and",
 }
 
 export enum TConditionMatchType {
-  Equal = 'is',
-  Unequal = 'not',
-  Below = 'below',
-  Above = 'above',
+  Equal = "is",
+  Unequal = "not",
+  Below = "below",
+  Above = "above",
 }
 
 export interface Condition {
@@ -96,15 +96,15 @@ export interface Condition {
 }
 
 export enum DisplayItem {
-  Name = 'name',
-  RelativeTime = 'relative-time',
-  AdditionalTasks = 'additional-tasks',
-  Time = 'time',
-  Days = 'days',
-  Entity = 'entity',
-  Action = 'action',
-  Tags = 'tags',
-  Default = 'default',
+  Name = "name",
+  RelativeTime = "relative-time",
+  AdditionalTasks = "additional-tasks",
+  Time = "time",
+  Days = "days",
+  Entity = "entity",
+  Action = "action",
+  Tags = "tags",
+  Default = "default",
 }
 
 // export enum SelectorType {
@@ -137,11 +137,11 @@ export enum DisplayItem {
 //   | NumberSelector
 
 enum SchedulerEvent {
-  ItemCreated = 'scheduler_item_created',
-  ItemUpdated = 'scheduler_item_updated',
-  ItemRemoved = 'scheduler_item_removed',
-  TimerFinished = 'scheduler_timer_finished',
-  TimerUpdated = 'scheduler_timer_updated',
+  ItemCreated = "scheduler_item_created",
+  ItemUpdated = "scheduler_item_updated",
+  ItemRemoved = "scheduler_item_removed",
+  TimerFinished = "scheduler_timer_finished",
+  TimerUpdated = "scheduler_timer_updated",
 }
 
 export interface SchedulerEventData {
@@ -150,15 +150,15 @@ export interface SchedulerEventData {
 }
 
 export enum TRepeatType {
-  Repeat = 'repeat',
-  Pause = 'pause',
-  Single = 'single',
+  Repeat = "repeat",
+  Pause = "pause",
+  Single = "single",
 }
 
 export enum TimeMode {
-  Fixed = 'fixed',
-  Sunrise = 'sunrise',
-  Sunset = 'sunset',
+  Fixed = "fixed",
+  Sunrise = "sunrise",
+  Sunset = "sunset",
 }
 
 export type Time = {

@@ -1,19 +1,19 @@
-import { HomeAssistant } from '../../lib/types';
-import { localize } from '../../localize/localize';
-import { TWeekday } from '../../types';
+import { HomeAssistant } from "../../lib/types";
+import { localize } from "../../localize/localize";
+import { TWeekday } from "../../types";
 
 const supportLocaleString = () => {
   try {
-    new Date().toLocaleDateString('i');
+    new Date().toLocaleDateString("i");
   } catch (e: any) {
-    return e.name === 'RangeError';
+    return e.name === "RangeError";
   }
   return false;
 };
 
-const weekdayList = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const weekdayList = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
-export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 'long', hass: HomeAssistant) => {
+export const computeDayDisplay = (input: TWeekday | Date, formatType: "short" | "long", hass: HomeAssistant) => {
   let weekday: TWeekday;
 
   if (input instanceof Date) {
@@ -50,6 +50,6 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
       date.setDate(date.getDate() + dayNumber);
       return date.toLocaleDateString(hass.locale.language, { weekday: formatType });
     default:
-      return '';
+      return "";
   }
 };

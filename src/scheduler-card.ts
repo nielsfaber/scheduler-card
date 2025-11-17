@@ -1,27 +1,27 @@
-import { css, html, LitElement, PropertyValues } from 'lit';
-import { loadHaForm } from './lib/load_ha_form';
-import { customElement, property, state } from 'lit/decorators';
-import { SchedulerDialogParams } from './dialogs/dialog-scheduler-editor';
-import { fetchItems } from './data/store/fetch_items';
-import { UnsubscribeFunc } from 'home-assistant-js-websocket';
-import { CardConfig, CustomConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from './types';
-import { parseTimeBar } from './data/time/parse_time_bar';
-import { HomeAssistant } from './lib/types';
-import { CARD_VERSION, defaultSingleTimerConfig, defaultTimeSchemeConfig } from './const';
-import { validateConfig } from './data/validate_config';
-import { localize } from './localize/localize';
-import { isIncludedSchedule } from './data/schedule/is_included_schedule';
-import { sortSchedules } from './data/schedule/sort_schedules';
-import { fetchScheduleItem } from './data/store/fetch_item';
-import { fireEvent } from './lib/fire_event';
-import { hassLocalize } from './localize/hassLocalize';
-import { loadConfigFromEntityRegistry } from './data/load_config_from_entity_registry';
+import { css, html, LitElement, PropertyValues } from "lit";
+import { loadHaForm } from "./lib/load_ha_form";
+import { customElement, property, state } from "lit/decorators";
+import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
+import { fetchItems } from "./data/store/fetch_items";
+import { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { CardConfig, CustomConfig, EditorMode, Schedule, SchedulerEventData, ScheduleStorageEntry } from "./types";
+import { parseTimeBar } from "./data/time/parse_time_bar";
+import { HomeAssistant } from "./lib/types";
+import { CARD_VERSION, defaultSingleTimerConfig, defaultTimeSchemeConfig } from "./const";
+import { validateConfig } from "./data/validate_config";
+import { localize } from "./localize/localize";
+import { isIncludedSchedule } from "./data/schedule/is_included_schedule";
+import { sortSchedules } from "./data/schedule/sort_schedules";
+import { fetchScheduleItem } from "./data/store/fetch_item";
+import { fireEvent } from "./lib/fire_event";
+import { hassLocalize } from "./localize/hassLocalize";
+import { loadConfigFromEntityRegistry } from "./data/load_config_from_entity_registry";
 
-import './scheduler-card-editor';
-import './dialogs/dialog-scheduler-editor';
-import './components/scheduler-item-row';
+import "./scheduler-card-editor";
+import "./dialogs/dialog-scheduler-editor";
+import "./components/scheduler-item-row";
 
-@customElement('scheduler-card')
+@customElement("scheduler-card")
 export class SchedulerCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -43,8 +43,8 @@ export class SchedulerCard extends LitElement {
 
   async firstUpdated() {
     await loadHaForm();
-    const el = document.querySelector('home-assistant') as HTMLElement & { _loadFragmentTranslations: any };
-    el._loadFragmentTranslations(this.hass.language, 'config');
+    const el = document.querySelector("home-assistant") as HTMLElement & { _loadFragmentTranslations: any };
+    el._loadFragmentTranslations(this.hass.language, "config");
 
     await loadConfigFromEntityRegistry(this.hass).then((extraConfig) => {
       this._config = {
@@ -55,7 +55,7 @@ export class SchedulerCard extends LitElement {
   }
 
   protected willUpdate(): void {
-    (this.hass as any).loadBackendTranslation('services');
+    (this.hass as any).loadBackendTranslation("services");
   }
 
   private __checkSubscribed(): void {
@@ -87,7 +87,7 @@ export class SchedulerCard extends LitElement {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    if (changedProps.has('hass')) {
+    if (changedProps.has("hass")) {
       this.__checkSubscribed();
     }
   }
@@ -96,25 +96,25 @@ export class SchedulerCard extends LitElement {
     this.loadSchedules();
     return [
       this.hass!.connection.subscribeMessage((ev: SchedulerEventData) => this.handleScheduleItemUpdated(ev), {
-        type: 'scheduler_updated',
+        type: "scheduler_updated",
       }),
     ];
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
-    const oldConfig = changedProps.get('_config') as CardConfig | undefined;
+    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldConfig = changedProps.get("_config") as CardConfig | undefined;
 
     if (oldConfig && this._config) {
       const changedKeys = Object.keys(oldConfig).filter((e) => oldConfig[e] !== this._config![e]);
-      if (changedKeys.some((e) => ['tags', 'discover_existing', 'sort_by', 'display_options'].includes(e)))
+      if (changedKeys.some((e) => ["tags", "discover_existing", "sort_by", "display_options"].includes(e)))
         (async () => await this.loadSchedules())();
     }
 
     if (
       !this.translationsLoaded &&
       hassLocalize(`component.input_boolean.services.turn_on.name`, this.hass, false).length &&
-      hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.sunrise', this.hass, false).length
+      hassLocalize("ui.panel.config.automation.editor.conditions.type.sun.sunrise", this.hass, false).length
     ) {
       this.translationsLoaded = true;
       return true;
@@ -136,23 +136,23 @@ export class SchedulerCard extends LitElement {
     let excludedItems = items.filter((e) => !isIncludedSchedule(e, this._config));
 
     const headerToggleState = this.showDiscovered
-      ? items.some((el) => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''))
-      : includedItems.some((el) => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''));
+      ? items.some((el) => ["on", "triggered"].includes(this.hass!.states[el.entity_id]?.state || ""))
+      : includedItems.some((el) => ["on", "triggered"].includes(this.hass!.states[el.entity_id]?.state || ""));
 
     return html`
       <ha-card>
         <div class="card-header">
           <div class="name">
             ${this._config.title
-              ? typeof this._config.title == 'string'
+              ? typeof this._config.title == "string"
                 ? this._config.title
-                : localize('ui.panel.common.title', this.hass)
-              : ''}
+                : localize("ui.panel.common.title", this.hass)
+              : ""}
           </div>
 
           ${Object.keys(this.schedules || {}).length && this._config.show_header_toggle
             ? html` <ha-switch ?checked=${headerToggleState} @change=${this.toggleDisableAll}> </ha-switch> `
-            : ''}
+            : ""}
         </div>
 
         <div class="card-content" id="states">
@@ -160,12 +160,12 @@ export class SchedulerCard extends LitElement {
             ? html`
                 <div>
                   <hui-warning .hass=${this.hass}>
-                    <span style="white-space: normal"> ${localize('ui.panel.overview.backend_error', this.hass)} </span>
+                    <span style="white-space: normal"> ${localize("ui.panel.overview.backend_error", this.hass)} </span>
                   </hui-warning>
                 </div>
               `
             : !Object.keys(items).length
-              ? html` <div>${localize('ui.panel.overview.no_entries', this.hass)}</div> `
+              ? html` <div>${localize("ui.panel.overview.no_entries", this.hass)}</div> `
               : includedItems.map(
                   (scheduleItem) => html`
                     <scheduler-item-row
@@ -192,9 +192,9 @@ export class SchedulerCard extends LitElement {
                     >
                       +
                       ${localize(
-                        'ui.panel.overview.excluded_items',
+                        "ui.panel.overview.excluded_items",
                         this.hass,
-                        '{number}',
+                        "{number}",
                         Object.keys(items).length - includedItems.length
                       )}
                     </ha-button>
@@ -223,27 +223,27 @@ export class SchedulerCard extends LitElement {
                         this.showDiscovered = false;
                       }}
                     >
-                      ${localize('ui.panel.overview.hide_excluded', this.hass)}
+                      ${localize("ui.panel.overview.hide_excluded", this.hass)}
                     </ha-button>
                   </div>
                 `
-            : ''}
+            : ""}
         </div>
         ${this._config.show_add_button !== false
           ? html` <div class="card-actions">
               ${this.connectionError
                 ? html`
                     <ha-button appearance="plain" variant="warning" @click=${this._retryConnection}
-                      >${hassLocalize('ui.common.refresh', this.hass)}
+                      >${hassLocalize("ui.common.refresh", this.hass)}
                     </ha-button>
                   `
                 : html`
                     <ha-button appearance="plain" @click=${this._addClick}
-                      >${hassLocalize('ui.common.add', this.hass)}
+                      >${hassLocalize("ui.common.add", this.hass)}
                     </ha-button>
                   `}
             </div>`
-          : ''}
+          : ""}
       </ha-card>
     `;
   }
@@ -288,7 +288,7 @@ export class SchedulerCard extends LitElement {
 
   private async handleScheduleItemUpdated(ev: SchedulerEventData): Promise<void> {
     //only update single schedule
-    if (ev.event == 'scheduler_item_removed') {
+    if (ev.event == "scheduler_item_removed") {
       this.schedules = (this.schedules || []).filter((e) => e.schedule_id !== ev.schedule_id);
       return;
     }
@@ -328,15 +328,15 @@ export class SchedulerCard extends LitElement {
       editItem: item.schedule_id!,
     };
 
-    fireEvent(ev.target as HTMLElement, 'show-dialog', {
-      dialogTag: 'dialog-scheduler-editor',
-      dialogImport: () => import('./dialogs/dialog-scheduler-editor'),
+    fireEvent(ev.target as HTMLElement, "show-dialog", {
+      dialogTag: "dialog-scheduler-editor",
+      dialogImport: () => import("./dialogs/dialog-scheduler-editor"),
       dialogParams: params,
     });
   }
 
   private _addClick(_ev: Event) {
-    const defaultTags = [this._config.tags || []].flat().filter((e) => !['none', 'disabled', 'enabled'].includes(e));
+    const defaultTags = [this._config.tags || []].flat().filter((e) => !["none", "disabled", "enabled"].includes(e));
     let clonedConfig: Schedule =
       this._config.default_editor == EditorMode.Scheme
         ? JSON.parse(JSON.stringify(defaultTimeSchemeConfig))
@@ -346,9 +346,9 @@ export class SchedulerCard extends LitElement {
       cardConfig: this._config,
     };
 
-    fireEvent(this, 'show-dialog', {
-      dialogTag: 'dialog-scheduler-editor',
-      dialogImport: () => import('./dialogs/dialog-scheduler-editor'),
+    fireEvent(this, "show-dialog", {
+      dialogTag: "dialog-scheduler-editor",
+      dialogImport: () => import("./dialogs/dialog-scheduler-editor"),
       dialogParams: params,
     });
   }
@@ -361,13 +361,13 @@ export class SchedulerCard extends LitElement {
       (el) => this.showDiscovered || isIncludedSchedule(el, this._config)
     );
     items.forEach((el) => {
-      this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
+      this.hass!.callService("switch", checked ? "turn_on" : "turn_off", { entity_id: el.entity_id });
     });
   }
 
   // card configuration
   public static getConfigElement() {
-    return document.createElement('scheduler-card-editor');
+    return document.createElement("scheduler-card-editor");
   }
 
   static styles = css`
@@ -422,13 +422,13 @@ export class SchedulerCard extends LitElement {
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
-  type: 'scheduler-card',
-  name: 'Scheduler Card',
-  description: 'Card to manage schedule entities made with scheduler-component.',
+  type: "scheduler-card",
+  name: "Scheduler Card",
+  description: "Card to manage schedule entities made with scheduler-component.",
 });
 
 console.info(
-  `%c  SCHEDULER-CARD  \n%c  Version: ${CARD_VERSION.padEnd(7, ' ')}`,
-  'color: orange; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray'
+  `%c  SCHEDULER-CARD  \n%c  Version: ${CARD_VERSION.padEnd(7, " ")}`,
+  "color: orange; font-weight: bold; background: black",
+  "color: white; font-weight: bold; background: dimgray"
 );

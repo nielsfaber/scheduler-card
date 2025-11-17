@@ -1,9 +1,9 @@
-import { Action, CustomConfig } from '../../types';
-import { computeDomain, computeEntity } from '../../lib/entity';
-import { serviceIcons } from './service_icons';
-import { actionConfig } from '../actions/action_config';
+import { Action, CustomConfig } from "../../types";
+import { computeDomain, computeEntity } from "../../lib/entity";
+import { serviceIcons } from "./service_icons";
+import { actionConfig } from "../actions/action_config";
 
-const FALLBACK_ICON = 'mdi:flash';
+const FALLBACK_ICON = "mdi:flash";
 
 const checkIconPrefix = (icon: string) => {
   if (icon.match(/^[a-z]+\:[a-zA-Z\-]+$/)) return icon;
@@ -31,9 +31,9 @@ export const computeActionIcon = (action: Action, customize?: CustomConfig): str
     return serviceIcons[domain].services[domainService];
   } else if (
     Object.keys(serviceIcons).includes(domain) &&
-    Object.keys(serviceIcons[domain].services).includes('{entity_id}')
+    Object.keys(serviceIcons[domain].services).includes("{entity_id}")
   ) {
-    return serviceIcons[domain].services['{entity_id}'];
+    return serviceIcons[domain].services["{entity_id}"];
   } else {
     return FALLBACK_ICON;
   }

@@ -1,11 +1,11 @@
-import { supportedActions } from './supported_actions';
-import { domainIcon } from './domain_icon';
-import { HomeAssistant } from '../../lib/types';
-import { matchPattern } from '../../lib/patterns';
-import { computeDomain } from '../../lib/entity';
-import { CustomConfig } from '../../types';
-import { hassLocalize } from '../../localize/hassLocalize';
-import { DEFAULT_INCLUDED_DOMAINS } from '../../const';
+import { supportedActions } from "./supported_actions";
+import { domainIcon } from "./domain_icon";
+import { HomeAssistant } from "../../lib/types";
+import { matchPattern } from "../../lib/patterns";
+import { computeDomain } from "../../lib/entity";
+import { CustomConfig } from "../../types";
+import { hassLocalize } from "../../localize/hassLocalize";
+import { DEFAULT_INCLUDED_DOMAINS } from "../../const";
 
 const isSupportedDomain = (domain: string, customConfig?: CustomConfig) => {
   let res = Object.keys(supportedActions).includes(domain);
@@ -50,8 +50,8 @@ export const computeActionDomains = (hass: HomeAssistant, config: entityConfig) 
   let actionList = domains.map(
     (e): actionItem => ({
       key: e,
-      name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, ' '),
-      description: '',
+      name: hassLocalize(`component.${e}.title`, hass, false) || e.replace(/_/g, " "),
+      description: "",
       icon: domainIcon(e),
     })
   );

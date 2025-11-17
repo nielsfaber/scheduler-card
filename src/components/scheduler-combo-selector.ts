@@ -1,5 +1,5 @@
-import { css, html, LitElement, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { css, html, LitElement, TemplateResult } from "lit";
+import { customElement, property } from "lit/decorators";
 import {
   BooleanSelector,
   NumberSelector,
@@ -7,15 +7,15 @@ import {
   Selector,
   SelectSelector,
   StringSelector,
-} from '../lib/selector';
-import { HomeAssistant } from '../lib/types';
-import { fireEvent } from '../lib/fire_event';
-import { PickerComboBoxItem, PickerValueRenderer } from './scheduler-picker';
-import { hassLocalize } from '../localize/hassLocalize';
-import { roundFloat } from '../lib/round_float';
-import { isDefined } from '../lib/is_defined';
+} from "../lib/selector";
+import { HomeAssistant } from "../lib/types";
+import { fireEvent } from "../lib/fire_event";
+import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
+import { hassLocalize } from "../localize/hassLocalize";
+import { roundFloat } from "../lib/round_float";
+import { isDefined } from "../lib/is_defined";
 
-@customElement('scheduler-combo-selector')
+@customElement("scheduler-combo-selector")
 export class SchedulerComboSelector extends LitElement {
   @property({ attribute: false }) hass!: HomeAssistant;
   @property({ attribute: false }) config!: Selector;
@@ -31,7 +31,7 @@ export class SchedulerComboSelector extends LitElement {
       const removeClick = (ev: CustomEvent) => {
         const value = ev.detail;
         this.value = values.filter((e) => e != value);
-        fireEvent(this, 'value-changed', { value: this.value });
+        fireEvent(this, "value-changed", { value: this.value });
       };
 
       const renderChips = () => {
@@ -48,14 +48,14 @@ export class SchedulerComboSelector extends LitElement {
 
       const computeItemLabel = (value: string) => {
         const translationKey = (this.config as SelectSelector).select?.translation_key;
-        let label = '';
-        if (translationKey) label = hassLocalize(translationKey.replace('${value}', value), this.hass, false);
+        let label = "";
+        if (translationKey) label = hassLocalize(translationKey.replace("${value}", value), this.hass, false);
         if (!label) label = value;
         return label;
       };
       const filteredItems = (): PickerComboBoxItem[] => {
         const comboBoxOption = (option: string | SelectOption): PickerComboBoxItem => {
-          if (typeof option === 'object') {
+          if (typeof option === "object") {
             return {
               id: option.value,
               primary: computeItemLabel(option.label),
@@ -74,15 +74,15 @@ export class SchedulerComboSelector extends LitElement {
         options = [...options, ...selectedValue.filter((e) => !options.find((f) => f.id == e)).map(comboBoxOption)];
 
         if (Array.isArray(this.value))
-          options = options.filter((e) => (typeof e === 'object' ? !values.includes(e.id) : !values.includes(e)));
+          options = options.filter((e) => (typeof e === "object" ? !values.includes(e.id) : !values.includes(e)));
         return options;
       };
 
       const valueRenderer: PickerValueRenderer = (value: string) => {
         let label = value;
-        let icon = '';
-        const match = config.options.find((e) => (typeof e === 'object' ? e.value === value : e === value));
-        if (match && typeof match === 'object') {
+        let icon = "";
+        const match = config.options.find((e) => (typeof e === "object" ? e.value === value : e === value));
+        if (match && typeof match === "object") {
           label = computeItemLabel(match.label);
           icon = match.icon || icon;
         } else label = computeItemLabel(value);
@@ -116,7 +116,7 @@ export class SchedulerComboSelector extends LitElement {
 
       return html`
         <div class="select-wrapper">
-          ${config.multiple ? html` <div class="chips">${renderChips()}</div> ` : ''}
+          ${config.multiple ? html` <div class="chips">${renderChips()}</div> ` : ""}
           <scheduler-picker
             .hass=${this.hass}
             ?allow-custom-value=${config.custom_value}
@@ -124,7 +124,7 @@ export class SchedulerComboSelector extends LitElement {
             .rowRenderer=${rowRenderer}
             .valueRenderer=${valueRenderer}
             @value-changed=${this._valueChanged}
-            .value=${!Array.isArray(this.value) ? this.value || '' : ''}
+            .value=${!Array.isArray(this.value) ? this.value || "" : ""}
             ?disabled=${this.disabled}
           >
           </scheduler-picker>
@@ -132,31 +132,31 @@ export class SchedulerComboSelector extends LitElement {
       `;
     } else if ((this.config as NumberSelector).number) {
       const config = (this.config as NumberSelector).number!;
-      const boxMode = config.mode == 'box' || !isDefined(config.min) || !isDefined(config.max);
+      const boxMode = config.mode == "box" || !isDefined(config.min) || !isDefined(config.max);
 
       let value = this.value;
-      if (!boxMode && typeof value !== 'number') value = config.min;
-      if (typeof config.scale_factor == 'number') value = Number(value) / config.scale_factor;
-      if (typeof config?.step === 'number') value = Math.round(Number(value) / config.step) * config.step;
+      if (!boxMode && typeof value !== "number") value = config.min;
+      if (typeof config.scale_factor == "number") value = Number(value) / config.scale_factor;
+      if (typeof config?.step === "number") value = Math.round(Number(value) / config.step) * config.step;
       if (isDefined(value)) value = roundFloat(Number(value));
 
       const sliderValueChanged = (ev: Event) => {
         let value = Number((ev.target as HTMLInputElement).value);
 
-        if (typeof config.scale_factor == 'number') value = value * config.scale_factor;
+        if (typeof config.scale_factor == "number") value = value * config.scale_factor;
 
-        if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
+        if (typeof config?.step === "number") value = Math.round(value / config.step) * config.step;
         value = roundFloat(value);
 
-        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+        this._valueChanged(new CustomEvent("value-changed", { detail: { value: value } }));
         ev.stopPropagation();
       };
 
       const boxValueChanged = (ev: InputEvent) => {
         ev.stopPropagation();
         const input = (ev.target as HTMLInputElement).value;
-        const value = input === '' || isNaN(Number(input)) ? undefined : Number(input);
-        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+        const value = input === "" || isNaN(Number(input)) ? undefined : Number(input);
+        this._valueChanged(new CustomEvent("value-changed", { detail: { value: value } }));
       };
 
       const validateBoxInput = (value: any, _nativeValidity: any) => {
@@ -178,10 +178,10 @@ export class SchedulerComboSelector extends LitElement {
           ${boxMode
             ? html`
                 <ha-textfield
-                  .inputMode=${config.step && Number(config.step) % 1 == 0 ? 'numeric' : 'decimal'}
+                  .inputMode=${config.step && Number(config.step) % 1 == 0 ? "numeric" : "decimal"}
                   .min=${config.min}
                   .max=${config.max}
-                  .value=${value || ''}
+                  .value=${value || ""}
                   .step=${config.step ?? 1}
                   .disabled=${this.disabled}
                   .required=${true}
@@ -202,7 +202,7 @@ export class SchedulerComboSelector extends LitElement {
                   @change=${sliderValueChanged}
                   ?disabled=${this.disabled}
                 ></ha-slider>
-                <span class="value">${value} ${config.unit || ''}</span>
+                <span class="value">${value} ${config.unit || ""}</span>
               `}
         </div>
       `;
@@ -211,7 +211,7 @@ export class SchedulerComboSelector extends LitElement {
       return html`
         <div class="textfield-wrapper">
           <ha-textfield
-            .value=${this.value || ''}
+            .value=${this.value || ""}
             @input=${this._valueChanged}
             .placeholder=""
             ?disabled=${this.disabled}
@@ -223,30 +223,30 @@ export class SchedulerComboSelector extends LitElement {
         select: {
           options: [
             {
-              value: 'true',
-              label: 'True',
-              icon: 'mdi:check',
+              value: "true",
+              label: "True",
+              icon: "mdi:check",
             },
             {
-              value: 'false',
-              label: 'False',
-              icon: 'mdi:close',
+              value: "false",
+              label: "False",
+              icon: "mdi:close",
             },
           ],
         },
       };
 
       const valueChanged = (ev: CustomEvent) => {
-        const value = isDefined(ev.detail.value) ? ev.detail.value === 'true' : undefined;
+        const value = isDefined(ev.detail.value) ? ev.detail.value === "true" : undefined;
         ev.stopPropagation();
-        this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
+        this._valueChanged(new CustomEvent("value-changed", { detail: { value: value } }));
       };
 
       return html`
         <scheduler-combo-selector
           .hass=${this.hass}
           .config=${selector}
-          .value=${typeof this.value == 'boolean' ? (this.value ? 'true' : 'false') : undefined}
+          .value=${typeof this.value == "boolean" ? (this.value ? "true" : "false") : undefined}
           @value-changed=${valueChanged}
           ?disabled=${this.disabled}
         >
@@ -305,7 +305,7 @@ export class SchedulerComboSelector extends LitElement {
       const value = (ev as CustomEvent).detail.value;
       if (!value) return;
       this.value = [...this.value, value];
-      (ev.target as any).value = '';
+      (ev.target as any).value = "";
     } else if ((ev as CustomEvent).detail) {
       let value = (ev as CustomEvent).detail.value;
       if (value === undefined) value = null;
@@ -313,12 +313,12 @@ export class SchedulerComboSelector extends LitElement {
     } else {
       this.value = (ev.target as HTMLInputElement).value;
     }
-    fireEvent(this, 'value-changed', { value: this.value });
+    fireEvent(this, "value-changed", { value: this.value });
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'scheduler-combo-selector': SchedulerComboSelector;
+    "scheduler-combo-selector": SchedulerComboSelector;
   }
 }

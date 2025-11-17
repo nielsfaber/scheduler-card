@@ -1,29 +1,29 @@
-import * as cs from './languages/cs.json';
-import * as de from './languages/de.json';
-import * as en from './languages/en.json';
-import * as es from './languages/es.json';
-import * as et from './languages/et.json';
-import * as fi from './languages/fi.json';
-import * as fr from './languages/fr.json';
-import * as he from './languages/he.json';
-import * as hu from './languages/hu.json';
-import * as it from './languages/it.json';
-import * as lv from './languages/lv.json';
-import * as nl from './languages/nl.json';
-import * as no from './languages/no.json';
-import * as pl from './languages/pl.json';
-import * as pt from './languages/pt.json';
-import * as pt_br from './languages/pt-BR.json';
-import * as ro from './languages/ro.json';
-import * as ru from './languages/ru.json';
-import * as sk from './languages/sk.json';
-import * as sl from './languages/sl.json';
-import * as sv from './languages/sv.json';
-import * as uk from './languages/uk.json';
-import * as ur from './languages/ur.json';
-import * as zh_Hans from './languages/zh-Hans.json';
+import * as cs from "./languages/cs.json";
+import * as de from "./languages/de.json";
+import * as en from "./languages/en.json";
+import * as es from "./languages/es.json";
+import * as et from "./languages/et.json";
+import * as fi from "./languages/fi.json";
+import * as fr from "./languages/fr.json";
+import * as he from "./languages/he.json";
+import * as hu from "./languages/hu.json";
+import * as it from "./languages/it.json";
+import * as lv from "./languages/lv.json";
+import * as nl from "./languages/nl.json";
+import * as no from "./languages/no.json";
+import * as pl from "./languages/pl.json";
+import * as pt from "./languages/pt.json";
+import * as pt_br from "./languages/pt-BR.json";
+import * as ro from "./languages/ro.json";
+import * as ru from "./languages/ru.json";
+import * as sk from "./languages/sk.json";
+import * as sl from "./languages/sl.json";
+import * as sv from "./languages/sv.json";
+import * as uk from "./languages/uk.json";
+import * as ur from "./languages/ur.json";
+import * as zh_Hans from "./languages/zh-Hans.json";
 
-import { HomeAssistant } from '../lib/types';
+import { HomeAssistant } from "../lib/types";
 
 const languages: any = {
   cs: cs,
@@ -44,7 +44,7 @@ const languages: any = {
   no: no,
   pl: pl,
   pt: pt,
-  'pt-BR': pt_br,
+  "pt-BR": pt_br,
   ro: ro,
   sk: sk,
   sl: sl,
@@ -52,7 +52,7 @@ const languages: any = {
   ru: ru,
   uk: uk,
   ur: ur,
-  'zh-Hans': zh_Hans,
+  "zh-Hans": zh_Hans,
 };
 
 export function localize(
@@ -64,13 +64,13 @@ export function localize(
   let translated: string;
 
   try {
-    translated = string.split('.').reduce((o, i) => o[i], languages[hass.locale.language]);
-    if (!translated) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
+    translated = string.split(".").reduce((o, i) => o[i], languages[hass.locale.language]);
+    if (!translated) translated = string.split(".").reduce((o, i) => o[i], languages["en"]);
   } catch (e) {
     try {
-      translated = string.split('.').reduce((o, i) => o[i], languages['en']);
+      translated = string.split(".").reduce((o, i) => o[i], languages["en"]);
     } catch (e) {
-      translated = '';
+      translated = "";
     }
   }
 
@@ -80,7 +80,7 @@ export function localize(
     for (let i = 0; i < (search as string[]).length; i++) {
       translated = translated.replace(String(search[i]), String(replace[i]));
       const res = translated.match(/\{if ([a-z]+) is ([^\}]+)\}\ ?([^\{]+)\ ?\{else\}\ ?([^\{]+)/i);
-      if (res && String(search[i]).replace(/[\{\}']+/g, '') == res[1]) {
+      if (res && String(search[i]).replace(/[\{\}']+/g, "") == res[1]) {
         const is_match = String(replace[i]) == res[2];
         if (is_match) translated = translated.replace(res[0], res[3]);
         else translated = translated.replace(res[0], res[4]);
@@ -91,7 +91,7 @@ export function localize(
   const res = /\[([^\]]+)\]/.exec(translated);
   if (res) {
     const hasUnassignedWildcards = /\{([^\}]+)\}/.exec(res[1]);
-    if (hasUnassignedWildcards) translated = translated.replace(res[0], '');
+    if (hasUnassignedWildcards) translated = translated.replace(res[0], "");
     else translated = translated.replace(res[0], res[1]);
   }
 

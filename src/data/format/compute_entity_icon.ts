@@ -1,10 +1,10 @@
-import { computeDomain } from '../../lib/entity';
-import { matchPattern } from '../../lib/patterns';
-import { HomeAssistant } from '../../lib/types';
-import { CustomConfig } from '../../types';
-import { domainIcon } from '../actions/domain_icon';
+import { computeDomain } from "../../lib/entity";
+import { matchPattern } from "../../lib/patterns";
+import { HomeAssistant } from "../../lib/types";
+import { CustomConfig } from "../../types";
+import { domainIcon } from "../actions/domain_icon";
 
-const FALLBACK_ICON = 'mdi:help';
+const FALLBACK_ICON = "mdi:help";
 
 const checkIconPrefix = (icon: string) => {
   if (icon.match(/^[a-z]+\:[a-zA-Z\-]+$/)) return icon;

@@ -1,7 +1,7 @@
-import { Schedule, Timeslot } from '../../types';
-import { addTimeOffset } from '../time/add_time_offset';
-import { parseTimeString } from '../time/parse_time_string';
-import { timeToString } from '../time/time_to_string';
+import { Schedule, Timeslot } from "../../types";
+import { addTimeOffset } from "../time/add_time_offset";
+import { parseTimeString } from "../time/parse_time_string";
+import { timeToString } from "../time/time_to_string";
 
 export const convertSchemeToSingle = (schedule: Schedule) => {
   const convertSlots = (slots: Timeslot[]) => {
@@ -14,9 +14,9 @@ export const convertSchemeToSingle = (schedule: Schedule) => {
     const stopTime = timeToString(addTimeOffset(parseTimeString(startTime), { minutes: 1 }));
 
     slots = [
-      <Timeslot>{ start: '00:00:00', stop: startTime, actions: [], conditions: conditions },
+      <Timeslot>{ start: "00:00:00", stop: startTime, actions: [], conditions: conditions },
       currSlot,
-      <Timeslot>{ start: stopTime, stop: '00:00:00', actions: [], conditions: conditions },
+      <Timeslot>{ start: stopTime, stop: "00:00:00", actions: [], conditions: conditions },
     ];
     return slots;
   };

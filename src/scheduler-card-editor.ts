@@ -1,28 +1,28 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators';
-import { DialogSelectEntitiesParams } from './dialogs/dialog-select-entities';
-import { HomeAssistant } from './lib/types';
-import { localize } from './localize/localize';
-import { CardConfig, EditorMode } from './types';
-import { fireEvent } from './lib/fire_event';
-import { NumberSelector, SelectSelector } from './lib/selector';
-import { fetchTags } from './data/store/fetch_tags';
-import { sortByName } from './lib/sort';
-import { mdiArrowRight } from '@mdi/js';
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators";
+import { DialogSelectEntitiesParams } from "./dialogs/dialog-select-entities";
+import { HomeAssistant } from "./lib/types";
+import { localize } from "./localize/localize";
+import { CardConfig, EditorMode } from "./types";
+import { fireEvent } from "./lib/fire_event";
+import { NumberSelector, SelectSelector } from "./lib/selector";
+import { fetchTags } from "./data/store/fetch_tags";
+import { sortByName } from "./lib/sort";
+import { mdiArrowRight } from "@mdi/js";
 import {
   DEFAULT_PRIMARY_INFO_DISPLAY,
   DEFAULT_SECONDARY_INFO_DISPLAY,
   DEFAULT_SORT_BY,
   DEFAULT_TIME_STEP,
-} from './const';
-import { loadConfigFromEntityRegistry } from './data/load_config_from_entity_registry';
+} from "./const";
+import { loadConfigFromEntityRegistry } from "./data/load_config_from_entity_registry";
 
-import './dialogs/dialog-select-entities';
-import './components/scheduler-entity-picker';
-import './components/scheduler-collapsible-section';
-import './components/scheduler-combo-selector';
+import "./dialogs/dialog-select-entities";
+import "./components/scheduler-entity-picker";
+import "./components/scheduler-collapsible-section";
+import "./components/scheduler-combo-selector";
 
-@customElement('scheduler-card-editor')
+@customElement("scheduler-card-editor")
 export class SchedulerCardEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
@@ -34,13 +34,13 @@ export class SchedulerCardEditor extends LitElement {
   }
 
   @property()
-  title: string = '';
+  title: string = "";
 
   @property()
   tagOptions: string[] = [];
 
   async firstUpdated() {
-    this.title = typeof this._config.title == 'string' ? this._config.title : '';
+    this.title = typeof this._config.title == "string" ? this._config.title : "";
 
     const tagOptions = (await fetchTags(this.hass!)).map((e) => e.name);
     tagOptions.sort(sortByName);
@@ -53,7 +53,7 @@ export class SchedulerCardEditor extends LitElement {
         min: 0,
         max: 30,
         step: 1,
-        unit_of_measurement: localize('ui.panel.card_editor.fields.time_step.unit_minutes', this.hass),
+        unit_of_measurement: localize("ui.panel.card_editor.fields.time_step.unit_minutes", this.hass),
       },
     };
 
@@ -68,26 +68,26 @@ export class SchedulerCardEditor extends LitElement {
     return html`
       <div class="card-config">
         <ha-button @click=${this._showIncludedEntitiesDialog} outlined>
-          ${localize('ui.panel.card_editor.fields.entities.button_label', this.hass)}
+          ${localize("ui.panel.card_editor.fields.entities.button_label", this.hass)}
           <ha-svg-icon slot="trailingIcon" .path=${mdiArrowRight}></ha-svg-icon>
         </ha-button>
 
         <scheduler-settings-row ?showPrefix=${true}>
           <ha-checkbox slot="prefix" ?checked=${this._config.title !== false} @change=${this._setEnableTitle}>
           </ha-checkbox>
-          <span slot="heading">${localize('ui.panel.card_editor.fields.title.heading', this.hass)}</span>
+          <span slot="heading">${localize("ui.panel.card_editor.fields.title.heading", this.hass)}</span>
 
           <ha-textfield
             .value=${this.title}
             @input=${this._setTitle}
-            .placeholder=${localize('ui.panel.common.title', this.hass)}
+            .placeholder=${localize("ui.panel.common.title", this.hass)}
             ?disabled=${this._config.title === false}
           ></ha-textfield>
         </scheduler-settings-row>
 
         <div class="two-columns" style="margin: 10px 0px 15px 0px">
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.discover_existing.heading', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.discover_existing.heading", this.hass)}">
               <ha-switch
                 ?checked=${this._config.discover_existing !== false}
                 @change=${(ev: Event) => {
@@ -97,7 +97,7 @@ export class SchedulerCardEditor extends LitElement {
             </ha-formfield>
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.show_header_toggle.heading', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.show_header_toggle.heading", this.hass)}">
               <ha-switch
                 ?checked=${this._config.show_header_toggle}
                 @change=${(ev: Event) => {
@@ -109,7 +109,7 @@ export class SchedulerCardEditor extends LitElement {
         </div>
 
         <scheduler-settings-row>
-          <span slot="heading">${localize('ui.panel.card_editor.fields.time_step.heading', this.hass)}</span>
+          <span slot="heading">${localize("ui.panel.card_editor.fields.time_step.heading", this.hass)}</span>
 
           <scheduler-combo-selector
             .hass=${this.hass}
@@ -122,10 +122,10 @@ export class SchedulerCardEditor extends LitElement {
           </scheduler-combo-selector>
         </scheduler-settings-row>
 
-        <span>${localize('ui.panel.card_editor.fields.default_editor.heading', this.hass)}</span>
+        <span>${localize("ui.panel.card_editor.fields.default_editor.heading", this.hass)}</span>
         <div class="two-columns">
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.default_editor.options.single', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.default_editor.options.single", this.hass)}">
               <ha-radio
                 name="default_editor"
                 value="${EditorMode.Single}"
@@ -138,7 +138,7 @@ export class SchedulerCardEditor extends LitElement {
             </ha-formfield>
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.default_editor.options.scheme', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.default_editor.options.scheme", this.hass)}">
               <ha-radio
                 name="default_editor"
                 value="${EditorMode.Scheme}"
@@ -152,37 +152,37 @@ export class SchedulerCardEditor extends LitElement {
           </div>
         </div>
 
-        <span slot="heading">${localize('ui.panel.card_editor.fields.sort_by.heading', this.hass)}</span>
+        <span slot="heading">${localize("ui.panel.card_editor.fields.sort_by.heading", this.hass)}</span>
 
         <div class="two-columns">
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.sort_by.options.relative_time', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.sort_by.options.relative_time", this.hass)}">
               <ha-radio
                 name="sort_by"
                 value="relative-time"
                 @change=${this._setSortBy}
-                ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes('relative-time')}
+                ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes("relative-time")}
               ></ha-radio>
             </ha-formfield>
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.sort_by.options.title', this.hass)}">
+            <ha-formfield label="${localize("ui.panel.card_editor.fields.sort_by.options.title", this.hass)}">
               <ha-radio
                 name="sort_by"
                 value="title"
                 @change=${this._setSortBy}
-                ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes('title')}
+                ?checked=${[this._config.sort_by || DEFAULT_SORT_BY].flat().includes("title")}
               ></ha-radio>
             </ha-formfield>
           </div>
         </div>
 
-        <span>${localize('ui.panel.card_editor.fields.display_format_primary.heading', this.hass)}</span>
+        <span>${localize("ui.panel.card_editor.fields.display_format_primary.heading", this.hass)}</span>
 
         <div class="two-columns">
           <div class="column">
             <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_primary.options.default', this.hass)}"
+              label="${localize("ui.panel.card_editor.fields.display_format_primary.options.default", this.hass)}"
             >
               <ha-radio
                 name="display_format_primary"
@@ -190,14 +190,14 @@ export class SchedulerCardEditor extends LitElement {
                 @change=${this._setDisplayOptionsPrimary}
                 ?checked=${[this._config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY]
                   .flat()
-                  .includes('default')}
+                  .includes("default")}
               >
               </ha-radio>
             </ha-formfield>
           </div>
           <div class="column">
             <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_primary.options.entity_action', this.hass)}"
+              label="${localize("ui.panel.card_editor.fields.display_format_primary.options.entity_action", this.hass)}"
             >
               <ha-radio
                 name="display_format_primary"
@@ -205,20 +205,20 @@ export class SchedulerCardEditor extends LitElement {
                 @change=${this._setDisplayOptionsPrimary}
                 ?checked=${[this._config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY]
                   .flat()
-                  .includes('{entity}: {action}')}
+                  .includes("{entity}: {action}")}
               >
               </ha-radio>
             </ha-formfield>
           </div>
         </div>
 
-        <span>${localize('ui.panel.card_editor.fields.display_format_secondary.heading', this.hass)}</span>
+        <span>${localize("ui.panel.card_editor.fields.display_format_secondary.heading", this.hass)}</span>
 
         <div class="two-columns">
           <div class="column">
             <ha-formfield
               label="${localize(
-                'ui.panel.card_editor.fields.display_format_secondary.options.relative_time',
+                "ui.panel.card_editor.fields.display_format_secondary.options.relative_time",
                 this.hass
               )}"
             >
@@ -227,41 +227,41 @@ export class SchedulerCardEditor extends LitElement {
                 @change=${this._setDisplayOptionsSecondary}
                 ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY]
                   .flat()
-                  .includes('relative-time')}
+                  .includes("relative-time")}
               >
               </ha-checkbox>
             </ha-formfield>
 
             <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.time', this.hass)}"
+              label="${localize("ui.panel.card_editor.fields.display_format_secondary.options.time", this.hass)}"
             >
               <ha-checkbox
                 value="time"
                 @change=${this._setDisplayOptionsSecondary}
                 ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY]
                   .flat()
-                  .includes('time')}
+                  .includes("time")}
               >
               </ha-checkbox>
             </ha-formfield>
           </div>
           <div class="column">
             <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.days', this.hass)}"
+              label="${localize("ui.panel.card_editor.fields.display_format_secondary.options.days", this.hass)}"
             >
               <ha-checkbox
                 value="days"
                 @change=${this._setDisplayOptionsSecondary}
                 ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY]
                   .flat()
-                  .includes('days')}
+                  .includes("days")}
               >
               </ha-checkbox>
             </ha-formfield>
 
             <ha-formfield
               label="${localize(
-                'ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks',
+                "ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks",
                 this.hass
               )}"
             >
@@ -270,7 +270,7 @@ export class SchedulerCardEditor extends LitElement {
                 @change=${this._setDisplayOptionsSecondary}
                 ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY]
                   .flat()
-                  .includes('additional-tasks')}
+                  .includes("additional-tasks")}
               >
               </ha-checkbox>
             </ha-formfield>
@@ -278,7 +278,7 @@ export class SchedulerCardEditor extends LitElement {
         </div>
 
         <scheduler-settings-row>
-          <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
+          <span slot="heading">${localize("ui.panel.card_editor.fields.tags.heading", this.hass)}</span>
 
           <scheduler-combo-selector
             .hass=${this.hass}
@@ -304,14 +304,14 @@ export class SchedulerCardEditor extends LitElement {
   private _setTitle(ev: CustomEvent) {
     const value = (ev.target as HTMLInputElement).value;
     this.title = value;
-    if (value !== localize('ui.panel.common.title', this.hass) && value.length) this._updateConfig({ title: value });
+    if (value !== localize("ui.panel.common.title", this.hass) && value.length) this._updateConfig({ title: value });
     else this._updateConfig({ title: true });
   }
 
   private _setSortBy(ev: Event) {
     const value = (ev.target as HTMLInputElement).value;
     let config = [this._config?.sort_by || DEFAULT_SORT_BY].flat();
-    config = config.filter((e) => e == 'state');
+    config = config.filter((e) => e == "state");
     if (!config.includes(value)) config = [...config, value];
     this._updateConfig({ sort_by: config });
   }
@@ -333,10 +333,10 @@ export class SchedulerCardEditor extends LitElement {
     secondaryInfo = checked ? Array.from(new Set([...secondaryInfo, value])) : secondaryInfo.filter((e) => e !== value);
     secondaryInfo.sort((a, b) => {
       const ranking = {
-        'relative-time': 1,
-        time: secondaryInfo.includes('relative-time') ? 3 : 2,
-        days: secondaryInfo.includes('relative-time') ? 2 : 3,
-        'additional-tasks': 4,
+        "relative-time": 1,
+        time: secondaryInfo.includes("relative-time") ? 3 : 2,
+        days: secondaryInfo.includes("relative-time") ? 2 : 3,
+        "additional-tasks": 4,
       };
       const rankA = Object.keys(ranking).includes(a) ? ranking[a] : 5;
       const rankB = Object.keys(ranking).includes(b) ? ranking[b] : 5;
@@ -349,8 +349,8 @@ export class SchedulerCardEditor extends LitElement {
   }
 
   async _showIncludedEntitiesDialog(ev: Event) {
-    let domains = (this._config.include || []).filter((e) => !e.includes('.'));
-    let entities = (this._config.include || []).filter((e) => e.includes('.'));
+    let domains = (this._config.include || []).filter((e) => !e.includes("."));
+    let entities = (this._config.include || []).filter((e) => e.includes("."));
 
     const extraConfig = await loadConfigFromEntityRegistry(this.hass);
     let config: CardConfig = {
@@ -367,9 +367,9 @@ export class SchedulerCardEditor extends LitElement {
         cardConfig: config,
       };
 
-      fireEvent(ev.target as HTMLElement, 'show-dialog', {
-        dialogTag: 'dialog-select-entities',
-        dialogImport: () => import('./dialogs/dialog-select-entities'),
+      fireEvent(ev.target as HTMLElement, "show-dialog", {
+        dialogTag: "dialog-select-entities",
+        dialogImport: () => import("./dialogs/dialog-select-entities"),
         dialogParams: params,
       });
     }).then((res: { domains: string[]; entities: string[] } | null) => {
@@ -381,7 +381,7 @@ export class SchedulerCardEditor extends LitElement {
   private _updateConfig(changes: Partial<CardConfig>) {
     if (!this._config) return;
     this._config = { ...this._config, ...changes };
-    fireEvent(this, 'config-changed', { config: this._config });
+    fireEvent(this, "config-changed", { config: this._config });
   }
 
   static styles = css`

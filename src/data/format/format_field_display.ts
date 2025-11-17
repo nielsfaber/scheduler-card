@@ -1,9 +1,9 @@
-import { computeDomain, computeEntity } from '../../lib/entity';
-import { HomeAssistant } from '../../lib/types';
-import { hassLocalize } from '../../localize/hassLocalize';
-import { Action, CustomConfig } from '../../types';
-import { compareActions } from '../actions/compare_actions';
-import { parseCustomActions } from '../actions/parse_custom_actions';
+import { computeDomain, computeEntity } from "../../lib/entity";
+import { HomeAssistant } from "../../lib/types";
+import { hassLocalize } from "../../localize/hassLocalize";
+import { Action, CustomConfig } from "../../types";
+import { compareActions } from "../actions/compare_actions";
+import { parseCustomActions } from "../actions/parse_custom_actions";
 
 export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
   const domain = computeDomain(action.service);
@@ -19,7 +19,7 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
   )
     name = String(hass.services[domain][action.service].fields[field].name);
 
-  const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
+  const entityIds = ["script", "notify"].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
   let actionConfig = parseCustomActions(customize || {}, entityIds.length ? entityIds[0] : domain);
   if (actionConfig.length) {
     let res = actionConfig
@@ -33,7 +33,7 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
     if (res.length) return res[0];
   }
 
-  if (!name) name = field.replace(/_/g, ' ');
+  if (!name) name = field.replace(/_/g, " ");
 
   return name;
 };

@@ -1,17 +1,17 @@
-import { isDefined } from '../../lib/is_defined';
-import { NumberSelector } from '../../lib/selector';
-import { HomeAssistant } from '../../lib/types';
-import { Action, CustomConfig, Schedule, Timeslot } from '../../types';
-import { actionConfig } from '../actions/action_config';
-import { isSupportedSelector } from '../selectors/is_supported_selector';
-import { selectorConfig } from '../selectors/selector_config';
-import { computeTimestamp } from '../time/compute_timestamp';
+import { isDefined } from "../../lib/is_defined";
+import { NumberSelector } from "../../lib/selector";
+import { HomeAssistant } from "../../lib/types";
+import { Action, CustomConfig, Schedule, Timeslot } from "../../types";
+import { actionConfig } from "../actions/action_config";
+import { isSupportedSelector } from "../selectors/is_supported_selector";
+import { selectorConfig } from "../selectors/selector_config";
+import { computeTimestamp } from "../time/compute_timestamp";
 
 export enum ValidationError {
-  OverlappingTime = 'overlapping_time',
-  MissingTargetEntity = 'missing_target_entity',
-  MissingServiceParameter = 'missing_service_parameter',
-  MissingAction = 'missing_action',
+  OverlappingTime = "overlapping_time",
+  MissingTargetEntity = "missing_target_entity",
+  MissingServiceParameter = "missing_service_parameter",
+  MissingAction = "missing_action",
 }
 
 const validateTimebar = (slots: Timeslot[], hass: HomeAssistant) => {

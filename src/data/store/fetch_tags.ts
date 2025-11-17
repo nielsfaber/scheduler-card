@@ -1,4 +1,4 @@
-import { HomeAssistant } from '../../lib/types';
+import { HomeAssistant } from "../../lib/types";
 
 export interface TagEntry {
   name: string;
@@ -7,5 +7,5 @@ export interface TagEntry {
 
 export const fetchTags = (hass: HomeAssistant): Promise<TagEntry[]> =>
   hass.callWS({
-    type: 'scheduler/tags',
+    type: "scheduler/tags",
   });

@@ -1,18 +1,18 @@
-import { FrontendLocaleData, TimeFormat } from './types';
+import { FrontendLocaleData, TimeFormat } from "./types";
 
 export const useAmPm = (locale: FrontendLocaleData): boolean => {
   if (locale.time_format === TimeFormat.language || locale.time_format === TimeFormat.system) {
     const testLanguage = locale.time_format === TimeFormat.language ? locale.language : undefined;
-    const test = new Date('January 1, 2023 22:00:00').toLocaleString(testLanguage);
-    return test.includes('10');
+    const test = new Date("January 1, 2023 22:00:00").toLocaleString(testLanguage);
+    return test.includes("10");
   }
 
   return locale.time_format === TimeFormat.am_pm;
 };
 
 export enum AmPmFormat {
-  AM = 'AM',
-  PM = 'PM',
+  AM = "AM",
+  PM = "PM",
 }
 
 export const convertTo12Hour = (hours: number) => {

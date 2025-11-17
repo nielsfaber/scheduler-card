@@ -1,4 +1,4 @@
-import { roundTime } from './round_time';
+import { roundTime } from "./round_time";
 
 type OffsetType = {
   hours: number;

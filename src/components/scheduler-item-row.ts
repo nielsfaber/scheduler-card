@@ -1,17 +1,17 @@
-import { CSSResultGroup, LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators';
-import { CardConfig, Schedule } from '../types';
-import { computeActionIcon } from '../data/format/compute_action_icon';
-import { HomeAssistant } from '../lib/types';
-import { computeScheduleDisplay } from '../data/format/compute_schedule_display';
-import { unsafeHTML } from 'lit/directives/unsafe-html';
-import { computeEntityIcon } from '../data/format/compute_entity_icon';
-import { computeDomain } from '../lib/entity';
+import { CSSResultGroup, LitElement, css, html } from "lit";
+import { customElement, property } from "lit/decorators";
+import { CardConfig, Schedule } from "../types";
+import { computeActionIcon } from "../data/format/compute_action_icon";
+import { HomeAssistant } from "../lib/types";
+import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
+import { unsafeHTML } from "lit/directives/unsafe-html";
+import { computeEntityIcon } from "../data/format/compute_entity_icon";
+import { computeDomain } from "../lib/entity";
 
-import './scheduler-relative-time';
-import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from '../const';
+import "./scheduler-relative-time";
+import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from "../const";
 
-@customElement('scheduler-item-row')
+@customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
   @property() hass!: HomeAssistant;
   @property() schedule_id!: string;
@@ -22,25 +22,25 @@ export class SchedulerItemRow extends LitElement {
     try {
       const stateObj = this.hass.states[this.schedule.entity_id!];
       if (!stateObj) return html``;
-      const disabled = stateObj.state == 'off';
+      const disabled = stateObj.state == "off";
       const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
       let icon = computeActionIcon(nextAction, this.config.customize);
-      if (this.config.display_options?.icon == 'entity') {
+      if (this.config.display_options?.icon == "entity") {
         let entityId = [nextAction.target?.entity_id || []].flat().shift();
-        if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
+        if (["script", "notify"].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
         if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
       }
       const hasRemovedEntity = ![nextAction.target?.entity_id || []]
         .flat()
         .every((entity_id) => Object.keys(this.hass.states).includes(entity_id));
-      if (hasRemovedEntity) icon = 'mdi:help';
+      if (hasRemovedEntity) icon = "mdi:help";
 
       return html`
-        <ha-icon icon="${icon}" @click=${this._handleIconClick} class="${disabled ? 'disabled' : ''}"></ha-icon>
+        <ha-icon icon="${icon}" @click=${this._handleIconClick} class="${disabled ? "disabled" : ""}"></ha-icon>
 
         <div
-          class="info ${disabled ? 'disabled' : ''} ${hasRemovedEntity ? 'defective' : ''}"
+          class="info ${disabled ? "disabled" : ""} ${hasRemovedEntity ? "defective" : ""}"
           @click=${this._handleItemClick}
         >
           ${this.renderDisplayItem(this.config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY)}
@@ -63,13 +63,13 @@ export class SchedulerItemRow extends LitElement {
 
   private renderDisplayItem(displayItem: string | string[]) {
     const replacePreservedTags = (input: string) => {
-      const parts = input.split('<relative-time></relative-time>');
+      const parts = input.split("<relative-time></relative-time>");
       if (parts.length > 1) {
         const ts = this.schedule.timestamps![this.schedule.next_entries[0] || 0];
         return html`
-          ${parts[0] ? unsafeHTML(parts[0]) : ''}
+          ${parts[0] ? unsafeHTML(parts[0]) : ""}
           <scheduler-relative-time .hass=${this.hass} .datetime=${new Date(ts)}> </scheduler-relative-time>
-          ${parts[1] ? unsafeHTML(parts[1]) : ''}
+          ${parts[1] ? unsafeHTML(parts[1]) : ""}
         `;
       }
       const res = input.match(/^(<tag>[^<]*<\/tag>)+$/);
@@ -86,12 +86,12 @@ export class SchedulerItemRow extends LitElement {
   }
 
   private _handleItemClick(_ev: Event) {
-    const myEvent = new CustomEvent('editClick', { detail: { schedule_id: this.schedule_id } });
+    const myEvent = new CustomEvent("editClick", { detail: { schedule_id: this.schedule_id } });
     this.dispatchEvent(myEvent);
   }
 
   private _handleIconClick(_ev: Event) {
-    const myEvent = new CustomEvent('editClick', { detail: { schedule_id: this.schedule_id } });
+    const myEvent = new CustomEvent("editClick", { detail: { schedule_id: this.schedule_id } });
     this.dispatchEvent(myEvent);
   }
 
@@ -123,7 +123,7 @@ export class SchedulerItemRow extends LitElement {
         margin-inline-end: initial;
         min-width: 0;
       }
-      .flex ::slotted([slot='secondary']) {
+      .flex ::slotted([slot="secondary"]) {
         margin-left: 0;
         margin-inline-start: 0;
         margin-inline-end: initial;

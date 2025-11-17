@@ -1,8 +1,8 @@
-import { LitElement, html, TemplateResult, CSSResultGroup, css } from 'lit';
-import { property, customElement } from 'lit/decorators';
-import { HomeAssistant } from '../lib/types';
+import { LitElement, html, TemplateResult, CSSResultGroup, css } from "lit";
+import { property, customElement } from "lit/decorators";
+import { HomeAssistant } from "../lib/types";
 
-import './scheduler-chip';
+import "./scheduler-chip";
 
 interface ChipItem {
   name: string;
@@ -12,7 +12,7 @@ interface ChipItem {
   useStateIcon?: boolean;
 }
 
-@customElement('scheduler-chip-set')
+@customElement("scheduler-chip-set")
 export class SchedulerChipSet extends LitElement {
   @property({ attribute: false })
   hass!: HomeAssistant;
@@ -42,7 +42,7 @@ export class SchedulerChipSet extends LitElement {
   }
 
   private renderChipitem(item: ChipItem): TemplateResult {
-    const isInvalidEntity = item.useStateIcon && !Object.keys(this.hass.states).includes(item.value || '');
+    const isInvalidEntity = item.useStateIcon && !Object.keys(this.hass.states).includes(item.value || "");
     return html`
       <scheduler-chip
         .hass=${this.hass}
@@ -57,7 +57,7 @@ export class SchedulerChipSet extends LitElement {
         @click=${this._handleClick}
         @icon-clicked=${this._handleClick}
         ?disabled=${this.disabled}
-        style="${isInvalidEntity ? 'text-decoration: line-through' : ''}"
+        style="${isInvalidEntity ? "text-decoration: line-through" : ""}"
       >
         ${item.name}
       </scheduler-chip>
@@ -71,10 +71,10 @@ export class SchedulerChipSet extends LitElement {
       const active = ev.detail.active;
       if (this.value.includes(value) && !active) this.value = this.value.filter((e) => e != value);
       else if (!this.value.includes(value) && value) this.value = [...this.value, value];
-      const myEvent = new CustomEvent('value-changed', { detail: this.value });
+      const myEvent = new CustomEvent("value-changed", { detail: this.value });
       this.dispatchEvent(myEvent);
     } else {
-      const myEvent = new CustomEvent('value-changed', { detail: ev.detail.value });
+      const myEvent = new CustomEvent("value-changed", { detail: ev.detail.value });
       this.dispatchEvent(myEvent);
     }
   }

@@ -1,4 +1,4 @@
-import { Time, TimeMode } from '../../types';
+import { Time, TimeMode } from "../../types";
 
 export const addTimeOffset = (time: Time, offsetTime: { hours?: number; minutes?: number }) => {
   let offsetHours = offsetTime.hours || 0;

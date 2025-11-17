@@ -1,5 +1,5 @@
-import { deepCompare } from '../../lib/deep_compare';
-import { computeDomain } from '../../lib/entity';
+import { deepCompare } from "../../lib/deep_compare";
+import { computeDomain } from "../../lib/entity";
 import {
   Action,
   ConditionConfig,
@@ -10,7 +10,7 @@ import {
   TRepeatType,
   TWeekday,
   Timeslot,
-} from '../../types';
+} from "../../types";
 
 interface Dictionary<TValue> {
   [id: string]: TValue;
@@ -33,12 +33,12 @@ export interface LegacyTimeslot {
   start: string;
   stop?: string;
   conditions?: LegacyCondition[];
-  condition_type?: 'or' | 'and';
+  condition_type?: "or" | "and";
   track_conditions?: boolean;
   actions: ServiceCall[];
 }
 
-export type WeekdayType = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun' | 'workday' | 'weekend' | 'daily';
+export type WeekdayType = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun" | "workday" | "weekend" | "daily";
 
 export interface LegacySchedule {
   schedule_id?: string;
@@ -82,7 +82,7 @@ const parseTimeslot = (input: LegacyTimeslot): Timeslot => {
     stop: input.stop,
     actions: computeUniqueActions(input.actions.map(parseAction)),
     conditions: <ConditionConfig>{
-      type: input.condition_type == 'and' ? TConditionLogicType.And : TConditionLogicType.Or,
+      type: input.condition_type == "and" ? TConditionLogicType.And : TConditionLogicType.Or,
       items: input.conditions || [],
       track_changes: Boolean(input.track_conditions),
     },
@@ -90,23 +90,23 @@ const parseTimeslot = (input: LegacyTimeslot): Timeslot => {
 };
 const parseWeekdays = (input: WeekdayType): TWeekday => {
   switch (input) {
-    case 'mon':
+    case "mon":
       return TWeekday.Monday;
-    case 'tue':
+    case "tue":
       return TWeekday.Tuesday;
-    case 'wed':
+    case "wed":
       return TWeekday.Wednesday;
-    case 'thu':
+    case "thu":
       return TWeekday.Thursday;
-    case 'fri':
+    case "fri":
       return TWeekday.Friday;
-    case 'sat':
+    case "sat":
       return TWeekday.Saturday;
-    case 'sun':
+    case "sun":
       return TWeekday.Sunday;
-    case 'workday':
+    case "workday":
       return TWeekday.Workday;
-    case 'weekend':
+    case "weekend":
       return TWeekday.Weekend;
     default:
       return TWeekday.Daily;
@@ -115,7 +115,7 @@ const parseWeekdays = (input: WeekdayType): TWeekday => {
 
 export const convertLegacySchedule = (input: LegacySchedule): ScheduleStorageEntry => {
   return <ScheduleStorageEntry>{
-    ...Object.fromEntries(Object.entries(input).filter(([key]) => !['slots', 'weekdays', ''].includes(key))),
+    ...Object.fromEntries(Object.entries(input).filter(([key]) => !["slots", "weekdays", ""].includes(key))),
     entries: [
       {
         slots: input.timeslots.map(parseTimeslot),

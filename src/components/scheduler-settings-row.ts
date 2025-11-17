@@ -1,7 +1,7 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators";
 
-@customElement('scheduler-settings-row')
+@customElement("scheduler-settings-row")
 class SchedulerSettingsRow extends LitElement {
   @property({ type: Boolean }) showPrefix = false;
 
