@@ -62,7 +62,7 @@ class SchedulerCollapsibleSection extends LitElement {
         const scrollHeight = container.scrollHeight;
         container.style.height = `${scrollHeight}px`;
       } else {
-        container.style.height = `0px`;
+        container.style.height = "0px";
       }
     }
     super.attributeChangedCallback(name, oldval, newval);
