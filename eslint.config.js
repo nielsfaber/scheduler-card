@@ -1,12 +1,10 @@
 // @ts-check
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  prettierConfig,
   {
     files: ['src/**/*.ts'],
     rules: {
@@ -22,6 +20,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-function-type': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/triple-slash-reference': 'off',
       'no-unsafe-optional-chaining': 'off',
       'no-prototype-builtins': 'off',
       'no-case-declarations': 'off',
@@ -29,7 +29,17 @@ export default tseslint.config(
       'no-empty': 'off',
       'no-duplicate-case': 'off',
       'lit/no-native-attributes': 'off',
-      'quotes': ['error', 'double', { 'avoidEscape': true, 'allowTemplateLiterals': false }],
+      'quotes': ['error', 'single', { 'avoidEscape': true, 'allowTemplateLiterals': false }],
+      // Disable prettier conflicts
+      'prettier/prettier': 'off',
+      // Prevent unnecessary import path modifications
+      'import/extensions': 'off',
+      'import/no-unresolved': 'off',
+      // Disable rules that might auto-fix import paths
+      'node/file-extension-in-import': 'off',
+      'import/prefer-default-export': 'off',
+      // Preserve original import extensions - don't auto-remove .js
+      'import/no-useless-path-segments': 'off',
     },
     languageOptions: {
       parserOptions: {
