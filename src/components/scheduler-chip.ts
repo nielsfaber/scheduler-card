@@ -3,10 +3,8 @@ import { property, customElement } from 'lit/decorators.js';
 import { HomeAssistant } from '../lib/types';
 import { hassLocalize } from '../localize/hassLocalize';
 
-
 @customElement('scheduler-chip')
 export class SchedulerChip extends LitElement {
-
   @property({ attribute: false })
   hass!: HomeAssistant;
 
@@ -53,52 +51,42 @@ export class SchedulerChip extends LitElement {
     if (this.toggleable) {
       return html`
         <div class="icon">
-          <ha-icon
-            icon="mdi:check"
-          ></ha-icon>
+          <ha-icon icon="mdi:check"></ha-icon>
         </div>
       `;
     }
     if (this.useStateIcon) {
-      let stateObj = this.hass.states[this.value || ''];
+      const stateObj = this.hass.states[this.value || ''];
 
       return html`
-          <div class="icon filled">
-            ${stateObj
-          ? html`<ha-state-icon .stateObj=${stateObj} .hass=${this.hass}></ha-state-icon>`
-          : html`<ha-icon icon="mdi:help-circle-outline"></ha-icon>
-            `}
-          </div>
-        `;
-    }
-    return html`
         <div class="icon filled">
-          <ha-icon
-            .icon=${this.icon}
-          ></ha-icon>
+          ${stateObj
+            ? html`<ha-state-icon .stateObj=${stateObj} .hass=${this.hass}></ha-state-icon>`
+            : html`<ha-icon icon="mdi:help-circle-outline"></ha-icon> `}
         </div>
       `;
+    }
+    return html`
+      <div class="icon filled">
+        <ha-icon .icon=${this.icon}></ha-icon>
+      </div>
+    `;
   }
 
   private renderTrailingIcon() {
     const uniqueId = `icn_${Math.random().toString(36).substring(2, 9)}`;
     if (!this.removable && !this.badge) return nothing;
     if (this.badge) {
-      return html`
-        <div class="badge">
-          ${this.badge}
-        </div>
-      `;
+      return html` <div class="badge">${this.badge}</div> `;
     }
     return html`
-        <div class="trailing-icon" @click=${this._iconClick}>
-          <ha-icon icon="mdi:close" id="${uniqueId}"></ha-icon>
-          ${!this.disabled
-        ? html`<ha-tooltip for="${uniqueId}">${hassLocalize('ui.common.remove', this.hass)}</ha-tooltip>`
-        : nothing
-      }
-        </div>
-      `;
+      <div class="trailing-icon" @click=${this._iconClick}>
+        <ha-icon icon="mdi:close" id="${uniqueId}"></ha-icon>
+        ${!this.disabled
+          ? html`<ha-tooltip for="${uniqueId}">${hassLocalize('ui.common.remove', this.hass)}</ha-tooltip>`
+          : nothing}
+      </div>
+    `;
   }
 
   private _handleClick(ev: Event) {
@@ -109,15 +97,14 @@ export class SchedulerChip extends LitElement {
         detail: {
           active: this.active,
           value: this.value,
-        }
+        },
       });
       this.dispatchEvent(myEvent);
-    }
-    else {
+    } else {
       const myEvent = new CustomEvent('click', {
         detail: {
           value: this.value,
-        }
+        },
       });
       this.dispatchEvent(myEvent);
     }
@@ -130,7 +117,7 @@ export class SchedulerChip extends LitElement {
     const myEvent = new CustomEvent('icon-clicked', {
       detail: {
         value: this.value,
-      }
+      },
     });
     this.dispatchEvent(myEvent);
   }
@@ -233,13 +220,15 @@ export class SchedulerChip extends LitElement {
       .trailing-icon:active:before {
         opacity: 0.3;
       }
-      :host([disabled]) .trailing-icon:hover:before, :host([disabled]) .trailing-icon:active:before {
+      :host([disabled]) .trailing-icon:hover:before,
+      :host([disabled]) .trailing-icon:active:before {
         opacity: 0;
       }
       :host([disabled]) .trailing-icon {
         cursor: not-allowed;
       }
-      :host([selectable]) .chip, :host([toggleable]) .chip {
+      :host([selectable]) .chip,
+      :host([toggleable]) .chip {
         cursor: pointer;
       }
       .overlay {
@@ -251,29 +240,36 @@ export class SchedulerChip extends LitElement {
         z-index: -1;
         background: rgba(0, 0, 0, 0);
         border-radius: var(--chip-border-radius, 32px);
-        transition: background-color 0.1s ease-in-out, border 0.1s ease-in-out;
+        transition:
+          background-color 0.1s ease-in-out,
+          border 0.1s ease-in-out;
         border: 1px solid rgba(0, 0, 0, 0);
       }
-      :host([selectable]) .chip:hover .overlay, :host([toggleable]) .chip:hover .overlay {
+      :host([selectable]) .chip:hover .overlay,
+      :host([toggleable]) .chip:hover .overlay {
         border: 1px solid rgba(0, 0, 0, 0.05);
         background: rgba(0, 0, 0, 0.05);
       }
-      :host([selectable]) .chip:active .overlay, :host([toggleable]) .chip:active .overlay {
+      :host([selectable]) .chip:active .overlay,
+      :host([toggleable]) .chip:active .overlay {
         border: 1px solid rgba(0, 0, 0, 0.1);
         background: rgba(0, 0, 0, 0.1);
       }
-      :host([selectable]) .chip:hover .value, :host([toggleable]) .chip:hover .value {
+      :host([selectable]) .chip:hover .value,
+      :host([toggleable]) .chip:hover .value {
         opacity: 1;
       }
-      :host([active]):host([selectable]) .chip:hover .overlay, :host([active]):host([toggleable]) .chip:hover .overlay {
+      :host([active]):host([selectable]) .chip:hover .overlay,
+      :host([active]):host([toggleable]) .chip:hover .overlay {
         background: rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(0, 0, 0, 0);
       }
-      :host([active]):host([selectable]) .chip:active .overlay, :host([active]):host([toggleable]) .chip:active .overlay {
+      :host([active]):host([selectable]) .chip:active .overlay,
+      :host([active]):host([toggleable]) .chip:active .overlay {
         background: rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(0, 0, 0, 0);
       }
-      
+
       :host([toggleable]) .icon {
         width: 0px;
         transition: width 0.1s ease-in-out;

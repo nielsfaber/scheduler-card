@@ -77,9 +77,7 @@ export function localize(
   search = [search || []].flat();
   replace = [replace || []].flat();
   if (search.length && replace.length && translated) {
-
     for (let i = 0; i < (search as string[]).length; i++) {
-
       translated = translated.replace(String(search[i]), String(replace[i]));
       const res = translated.match(/\{if ([a-z]+) is ([^\}]+)\}\ ?([^\{]+)\ ?\{else\}\ ?([^\{]+)/i);
       if (res && String(search[i]).replace(/[\{\}']+/g, '') == res[1]) {

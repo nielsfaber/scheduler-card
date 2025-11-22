@@ -1,5 +1,3 @@
-
-
 export interface CardConfig {
   include?: string[];
   exclude?: string[];
@@ -25,17 +23,16 @@ export enum EditorMode {
   Scheme = 'scheme',
 }
 export interface ConditionConfig {
-  type: TConditionLogicType,
-  items: Condition[],
-  track_changes: boolean
-
+  type: TConditionLogicType;
+  items: Condition[];
+  track_changes: boolean;
 }
 
 export interface Timeslot {
   start: string;
   stop?: string;
   actions: Action[];
-  conditions: ConditionConfig
+  conditions: ConditionConfig;
 }
 
 export interface Schedule {
@@ -51,19 +48,19 @@ export interface Schedule {
   tags?: string[];
   enabled: boolean;
 }
-export type ScheduleStorageEntry = Schedule & { entity_id: string, schedule_id: string };
+export type ScheduleStorageEntry = Schedule & { entity_id: string; schedule_id: string };
 
 export interface ScheduleEntry {
   slots: Timeslot[];
-  weekdays: TWeekday[],
+  weekdays: TWeekday[];
 }
 
 export interface Action {
   service: string;
   service_data: Record<string, any>;
   target?: {
-    entity_id?: string[] | string
-  }
+    entity_id?: string[] | string;
+  };
 }
 
 export enum TWeekday {
@@ -107,7 +104,7 @@ export enum DisplayItem {
   Entity = 'entity',
   Action = 'action',
   Tags = 'tags',
-  Default = 'default'
+  Default = 'default',
 }
 
 // export enum SelectorType {
@@ -139,7 +136,6 @@ export enum DisplayItem {
 //   | SelectSelector
 //   | NumberSelector
 
-
 enum SchedulerEvent {
   ItemCreated = 'scheduler_item_created',
   ItemUpdated = 'scheduler_item_updated',
@@ -162,13 +158,13 @@ export enum TRepeatType {
 export enum TimeMode {
   Fixed = 'fixed',
   Sunrise = 'sunrise',
-  Sunset = 'sunset'
+  Sunset = 'sunset',
 }
 
 export type Time = {
-  mode: TimeMode,
-  hours: number,
-  minutes: number
+  mode: TimeMode;
+  hours: number;
+  minutes: number;
 };
 
 export type CustomConfig = Record<string, CustomEntityConfig>;
@@ -176,30 +172,32 @@ export type CustomConfig = Record<string, CustomEntityConfig>;
 export interface CustomEntityConfig {
   icon?: string;
   name?: string;
-  actions?: CustomActionConfig[],
-  exclude_actions?: string[]
-  states?: string[] | { min: number, max: number, unit?: string, step?: number };
+  actions?: CustomActionConfig[];
+  exclude_actions?: string[];
+  states?: string[] | { min: number; max: number; unit?: string; step?: number };
 }
 
-
-export type VariableConfig = {
-  name?: string;
-  options: {
-    value: string;
-    icon?: string;
-    name?: string;
-  }[]
-} | {
-  name?: string;
-  unit?: string;
-  min: number;
-  max: number;
-  step: number;
-  scale_factor: number;
-  optional: boolean;
-} | {
-  name?: string;
-};
+export type VariableConfig =
+  | {
+      name?: string;
+      options: {
+        value: string;
+        icon?: string;
+        name?: string;
+      }[];
+    }
+  | {
+      name?: string;
+      unit?: string;
+      min: number;
+      max: number;
+      step: number;
+      scale_factor: number;
+      optional: boolean;
+    }
+  | {
+      name?: string;
+    };
 
 export interface CustomActionConfig extends Action {
   name?: string;
@@ -208,7 +206,7 @@ export interface CustomActionConfig extends Action {
   service_data: Record<string, any>;
   variables?: Record<string, VariableConfig>;
   target?: {
-    entity_id?: string[] | string,
-    domain?: string,
-  }
+    entity_id?: string[] | string;
+    domain?: string;
+  };
 }

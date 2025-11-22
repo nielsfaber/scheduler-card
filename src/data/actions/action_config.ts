@@ -1,9 +1,8 @@
-import { computeDomain, computeEntity } from "../../lib/entity";
-import { Action, CustomConfig } from "../../types";
-import { ActionConfig, supportedActions } from "../actions/supported_actions";
-import { compareActions } from "./compare_actions";
-import { parseCustomActions } from "./parse_custom_actions";
-
+import { computeDomain, computeEntity } from '../../lib/entity';
+import { Action, CustomConfig } from '../../types';
+import { ActionConfig, supportedActions } from '../actions/supported_actions';
+import { compareActions } from './compare_actions';
+import { parseCustomActions } from './parse_custom_actions';
 
 export const actionConfig = (action: Action, customize?: CustomConfig): ActionConfig => {
   const domain = computeDomain(action.service);
@@ -14,8 +13,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
   if (Object.keys(supportedActions).includes(domain)) {
     if (Object.keys(supportedActions[domain]).includes(domainService)) {
       config = { ...config, ...supportedActions[domain][domainService] };
-    }
-    else if (Object.keys(supportedActions[domain]).includes('{entity_id}')) {
+    } else if (Object.keys(supportedActions[domain]).includes('{entity_id}')) {
       config = { ...config, ...supportedActions[domain]['{entity_id}'] };
     }
   }
@@ -30,12 +28,12 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
   const actionConfig = parseCustomActions(customize, [entity].flat().pop());
 
   if (actionConfig.length) {
-    actionConfig.forEach(customConfig => {
+    actionConfig.forEach((customConfig) => {
       const match = compareActions(customConfig, action);
       if (!match) return;
       config = {}; //start with empty config
-      Object.keys(customConfig.variables || {}).forEach(key => {
-        config = { ...config, fields: { ...config.fields || {}, [key]: {} } };
+      Object.keys(customConfig.variables || {}).forEach((key) => {
+        config = { ...config, fields: { ...(config.fields || {}), [key]: {} } };
       });
       config = {
         ...config,
@@ -43,8 +41,8 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
         icon: customConfig.icon || config.icon,
         target: customConfig.target || config.target,
       };
-    })
+    });
   }
 
   return config;
-}
+};

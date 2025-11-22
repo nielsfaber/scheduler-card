@@ -16,7 +16,7 @@ export type DialogSelectActionParams = {
   confirm: (res: Action) => void;
   domainFilter?: string[];
   entityFilter?: string[];
-  cardConfig: CardConfig
+  cardConfig: CardConfig;
 };
 
 @customElement('dialog-select-action')
@@ -25,8 +25,8 @@ export class DialogSelectAction extends LitElement {
 
   @state() private _params?: DialogSelectActionParams;
 
-  @state() private _search = "";
-  @state() private _filter = "";
+  @state() private _search = '';
+  @state() private _filter = '';
   timer: number = 0;
 
   @state() private _width?: number;
@@ -49,8 +49,8 @@ export class DialogSelectAction extends LitElement {
   }
 
   async willUpdate() {
-    (this.hass as any).loadBackendTranslation("title");
-    (this.hass as any).loadBackendTranslation("services");
+    (this.hass as any).loadBackendTranslation('title');
+    (this.hass as any).loadBackendTranslation('services');
   }
 
   render() {
@@ -67,31 +67,29 @@ export class DialogSelectAction extends LitElement {
         <div slot="heading">
           <ha-dialog-header>
             ${this._params.domainFilter !== undefined && !this.lockDomain
-        ? html`
-            <ha-icon-button
-              slot="navigationIcon"
-              .label=${hassLocalize('ui.common.back', this.hass)}
-              .path=${mdiChevronLeft}
-              @click=${this._clearDomain}
-            ></ha-icon-button>
-            `
-        : html`
-            <ha-icon-button
-              slot="navigationIcon"
-              dialogAction="cancel"
-              .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
-              .path=${mdiClose}
-            ></ha-icon-button>
-            `}
-            <span slot="title">
-              ${localize('ui.dialog.action_picker.title', this.hass)}
-            </span>
+              ? html`
+                  <ha-icon-button
+                    slot="navigationIcon"
+                    .label=${hassLocalize('ui.common.back', this.hass)}
+                    .path=${mdiChevronLeft}
+                    @click=${this._clearDomain}
+                  ></ha-icon-button>
+                `
+              : html`
+                  <ha-icon-button
+                    slot="navigationIcon"
+                    dialogAction="cancel"
+                    .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
+                    .path=${mdiClose}
+                  ></ha-icon-button>
+                `}
+            <span slot="title"> ${localize('ui.dialog.action_picker.title', this.hass)} </span>
           </ha-dialog-header>
 
           <ha-textfield
             dialogInitialFocus
-            .placeholder=${hassLocalize("ui.common.search", this.hass)}
-            aria-label=${hassLocalize("ui.common.search", this.hass)}
+            .placeholder=${hassLocalize('ui.common.search', this.hass)}
+            aria-label=${hassLocalize('ui.common.search', this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
@@ -99,10 +97,10 @@ export class DialogSelectAction extends LitElement {
           >
             <div class="trailing" slot="trailingIcon">
               ${this._search &&
-      html`
+              html`
                 <ha-icon-button
                   @click=${this._clearSearch}
-                  .label=${hassLocalize("ui.common.clear", this.hass)}
+                  .label=${hassLocalize('ui.common.clear', this.hass)}
                   .path=${mdiClose}
                   class="clear-button"
                 ></ha-icon-button>
@@ -111,12 +109,12 @@ export class DialogSelectAction extends LitElement {
             </div>
           </ha-textfield>
         </div>
-        
+
         <mwc-list
           style=${styleMap({
-        width: this._width ? `${this._width}px` : "auto",
-        height: this._height ? `${Math.min(468, this._height)}px` : "auto",
-      })}
+            width: this._width ? `${this._width}px` : 'auto',
+            height: this._height ? `${Math.min(468, this._height)}px` : 'auto',
+          })}
         >
           ${this._renderOptions()}
         </mwc-list>
@@ -126,8 +124,7 @@ export class DialogSelectAction extends LitElement {
 
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
-    const boundingRect =
-      this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
+    const boundingRect = this.shadowRoot!.querySelector('mwc-list')?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -161,90 +158,87 @@ export class DialogSelectAction extends LitElement {
     domains.sort((a, b) => sortByName(a.name, b.name));
 
     if (this._filter) {
-      domains = domains.filter(e => {
-        const tokens = this._filter.toLowerCase().trim().split(" ");
+      domains = domains.filter((e) => {
+        const tokens = this._filter.toLowerCase().trim().split(' ');
         return (
-          tokens.every(token => e.name.toLowerCase().includes(token)) ||
-          tokens.every(token => e.key.toLowerCase().includes(token))
-        )
-      })
+          tokens.every((token) => e.name.toLowerCase().includes(token)) ||
+          tokens.every((token) => e.key.toLowerCase().includes(token))
+        );
+      });
     }
 
-    let fillers: number[] = [];
-    for (var i = domains.length; i < 7; i++) {
+    const fillers: number[] = [];
+    for (let i = domains.length; i < 7; i++) {
       fillers.push(0);
     }
 
     if (!Object.keys(domains).length) {
       return html`
-          <mwc-list-item disabled>
-            ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </mwc-list-item>
-        `;
+        <mwc-list-item disabled> ${hassLocalize('ui.components.combo-box.no_match', this.hass)} </mwc-list-item>
+      `;
     }
     return html`
-      ${(Object.keys(domains)).map((key) => html`
-        <mwc-list-item
-          graphic="icon"
-          hasMeta
-          @click=${() => this._handleDomainClick(domains[key].key)}
-        >
-          <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
-          <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
-          <span>${domains[key].name}</span>
-        </mwc-list-item>`)
-      }
-        ${fillers.map(_e => html`
-        <mwc-list-item
-          graphic="icon"
-          hasMeta
-          noninteractive
-        >
-        </mwc-list-item>
-        `)}
-      `;
+      ${Object.keys(domains).map(
+        (key) =>
+          html` <mwc-list-item graphic="icon" hasMeta @click=${() => this._handleDomainClick(domains[key].key)}>
+            <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
+            <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
+            <span>${domains[key].name}</span>
+          </mwc-list-item>`
+      )}
+      ${fillers.map((_e) => html` <mwc-list-item graphic="icon" hasMeta noninteractive> </mwc-list-item> `)}
+    `;
   }
 
   _renderDomainActions() {
-    let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
+    let result = this._params!.domainFilter!.map((e) =>
+      computeActionsForDomain(this.hass, e, this._params!.cardConfig)
+    ).flat();
     if (this._params!.entityFilter?.length) {
-      result = result.filter(item => this._params!.entityFilter?.every(entity => {
-        const config = actionConfig(item.action, this._params!.cardConfig.customize);
-        const stateObj = this.hass.states[entity];
-        if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features)) return false;
-        else if (Object.keys(item.action.service_data).includes('entity_id') && item.action.service_data.entity_id != entity) return false;
-        else if (Object.keys(item.action.target || {}).includes('entity_id') && (item.action.target || {}).entity_id != entity) return false;
-        else return true;
-      }));
+      result = result.filter((item) =>
+        this._params!.entityFilter?.every((entity) => {
+          const config = actionConfig(item.action, this._params!.cardConfig.customize);
+          const stateObj = this.hass.states[entity];
+          if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features))
+            return false;
+          else if (
+            Object.keys(item.action.service_data).includes('entity_id') &&
+            item.action.service_data.entity_id != entity
+          )
+            return false;
+          else if (
+            Object.keys(item.action.target || {}).includes('entity_id') &&
+            (item.action.target || {}).entity_id != entity
+          )
+            return false;
+          else return true;
+        })
+      );
     }
     if (this._filter) {
-      result = result.filter(e => {
-        const tokens = this._filter.toLowerCase().trim().split(" ");
+      result = result.filter((e) => {
+        const tokens = this._filter.toLowerCase().trim().split(' ');
         return (
-          tokens.every(token => e.name.toLowerCase().includes(token)) ||
-          tokens.every(token => e.key.toLowerCase().includes(token))
-        )
-      })
+          tokens.every((token) => e.name.toLowerCase().includes(token)) ||
+          tokens.every((token) => e.key.toLowerCase().includes(token))
+        );
+      });
     }
 
     if (!Object.keys(result).length) {
       return html`
-          <mwc-list-item disabled>
-            ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </mwc-list-item>
-        `;
+        <mwc-list-item disabled> ${hassLocalize('ui.components.combo-box.no_match', this.hass)} </mwc-list-item>
+      `;
     }
-    return (Object.keys(result)).map((key) => html`
-        <mwc-list-item
-          graphic="icon"
-          @click=${() => this._handleActionClick(result[key])}
-          twoline
-        >
+    return Object.keys(result).map(
+      (key) => html`
+        <mwc-list-item graphic="icon" @click=${() => this._handleActionClick(result[key])} twoline>
           <ha-icon slot="graphic" icon="${result[key].icon}"></ha-icon>
           <span>${result[key].name}</span>
           <span slot="secondary">${result[key].description}</span>
         </mwc-list-item>
-    `);
+      `
+    );
   }
 
   _handleDomainClick(key: string) {
@@ -264,8 +258,8 @@ export class DialogSelectAction extends LitElement {
   }
 
   _clearSearch() {
-    this._search = "";
-    this._filter = "";
+    this._search = '';
+    this._filter = '';
   }
 
   static get styles(): CSSResultGroup {
