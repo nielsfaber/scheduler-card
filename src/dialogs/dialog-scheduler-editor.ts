@@ -22,6 +22,7 @@ import { isDefined } from "../lib/is_defined";
 import './scheduler-main-panel';
 import './scheduler-options-panel';
 import './generic-dialog';
+import { defaultSingleTimerConfig, defaultTimeSchemeConfig } from "../const";
 
 export type SchedulerDialogParams = {
   schedule: Schedule,
@@ -276,18 +277,26 @@ export class DialogSchedulerEditor extends LitElement {
 
     if (viewMode == EditorMode.Scheme) {
       this.viewMode = viewMode;
+      const isDefaultSchedule = deepCompare([...this.schedule.entries], [...defaultSingleTimerConfig.entries]);
+      if (isDefaultSchedule) this.schedule = { ...this.schedule, entries: [...defaultTimeSchemeConfig.entries] };
       return;
     }
     else if (viewMode == EditorMode.Single && !multipleActionsDefined) {
-      let schedule = {
-        ...this.schedule,
-        entries: this.schedule.entries.map(e => {
-          let idx = e.slots.findIndex(e => e.actions.length)
-          if (idx < 0) idx = Math.floor(e.slots.length / 2);
-          return <ScheduleEntry>{ ...e, slots: e.slots.map((e, i) => i == idx ? { ...e, stop: undefined } : null).filter(isDefined) };
-        })
+      const isDefaultSchedule = deepCompare([...this.schedule.entries], [...defaultTimeSchemeConfig.entries]);
+      if (isDefaultSchedule) {
+        this.schedule = { ...this.schedule, entries: [...defaultSingleTimerConfig.entries] };
       }
-      this.schedule = parseTimeBar(schedule, this.hass);
+      else {
+        let schedule = {
+          ...this.schedule,
+          entries: this.schedule.entries.map(e => {
+            let idx = e.slots.findIndex(e => e.actions.length)
+            if (idx < 0) idx = Math.floor(e.slots.length / 2);
+            return <ScheduleEntry>{ ...e, slots: e.slots.map((e, i) => i == idx ? { ...e, stop: undefined } : null).filter(isDefined) };
+          })
+        }
+        this.schedule = parseTimeBar(schedule, this.hass);
+      }
       this.viewMode = viewMode;
       return;
     }
