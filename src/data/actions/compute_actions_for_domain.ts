@@ -13,6 +13,7 @@ import { defaultSelectorValue } from "../selectors/default_selector_value";
 import { isDefined } from "../../lib/is_defined";
 import { entityConfig } from "./compute_action_domains";
 import { matchPattern } from "../../lib/patterns";
+import { entityIncludedByConfig } from "./entity_included_by_config";
 
 export interface actionItem {
   key: string,
@@ -29,9 +30,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
     let res = Object.keys(supportedActions[domain]).includes(action);
     if (!res && Object.keys(supportedActions[domain]).includes('{entity_id}')) {
       if (domain == 'script' && ['turn_on', 'turn_off', 'reload', 'toggle', 'test'].includes(action)) return false;
-      res = ((config.include || []).some(e => matchPattern(e, `${domain}.${action}`)) ||
-        Object.keys(config.customize || {}).some(e => matchPattern(e, `${domain}.${action}`))) &&
-        !(config.exclude || []).some(e => matchPattern(e, `${domain}.${action}`));
+      res = entityIncludedByConfig(`${domain}.${action}`, config);
     }
     return res;
   };

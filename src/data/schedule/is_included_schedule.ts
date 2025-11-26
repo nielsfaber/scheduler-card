@@ -1,6 +1,5 @@
-import { DEFAULT_INCLUDED_DOMAINS } from "../../const";
-import { matchPattern } from "../../lib/patterns";
 import { Schedule, CardConfig } from "../../types";
+import { entityIncludedByConfig } from "../actions/entity_included_by_config";
 
 
 export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
@@ -16,11 +15,7 @@ export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
     })
   });
 
-  if (![...new Set(entityList)].every(entityId =>
-    ((config.include || DEFAULT_INCLUDED_DOMAINS).some(e => matchPattern(e, entityId)) ||
-      Object.keys(config.customize || {}).some(e => matchPattern(e, entityId))) &&
-    !(config.exclude || []).some(e => matchPattern(e, entityId))
-  )) return false;
+  if (![...new Set(entityList)].every(entityId => entityIncludedByConfig(entityId, config))) return false;
 
   //filter items by tags
   const filterTags = [config.tags || []].flat();

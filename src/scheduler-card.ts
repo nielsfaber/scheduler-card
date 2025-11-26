@@ -21,6 +21,7 @@ import { isDefined } from "./lib/is_defined";
 import './scheduler-card-editor';
 import "./dialogs/dialog-scheduler-editor";
 import "./components/scheduler-item-row";
+import { entityIncludedByConfig } from "./data/actions/entity_included_by_config";
 
 @customElement('scheduler-card')
 export class SchedulerCard extends LitElement {
@@ -50,6 +51,9 @@ export class SchedulerCard extends LitElement {
 
     await loadConfigFromEntityRegistry(this.hass)
       .then(extraConfig => {
+        extraConfig = Object.fromEntries(
+          Object.entries(extraConfig).filter(([k]) => entityIncludedByConfig(k, this._config))
+        );
         this._config = {
           ...this._config,
           customize: { ...extraConfig, ...(this._config.customize || {}) }
