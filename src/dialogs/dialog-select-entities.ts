@@ -117,7 +117,8 @@ export class DialogSelectEntities extends LitElement {
     this.options = domains.map((item): domainsListItem => ({
       ...item,
       entities: computeEntitiesForDomain(item.key, this._params!.cardConfig.customize, this.hass)
-    }));
+    }))
+      .filter(e => e.entities.length);
   }
 
   shouldUpdate(changedProps: PropertyValues) {
@@ -236,12 +237,12 @@ export class DialogSelectEntities extends LitElement {
     }
   }
 
-  _toggleSelectDomain(ev: Event) {
+  _toggleSelectDomain(ev: Event, isSelected: boolean) {
     let listItem = ev.target as HTMLElement;
     while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const key = listItem.getAttribute("key") as string;
     const entitiesInDomain = this.options?.find(e => e.key == key)!.entities.map(e => e.key);
-    if (this._params!.domains.includes(key)) {
+    if (isSelected) {
       this._params = {
         ...this._params!,
         domains: this._params!.domains.filter(e => e != key),
@@ -338,6 +339,8 @@ export class DialogSelectEntities extends LitElement {
         ? entities.length
         : entities.filter((e: listItem) => this._params?.entities.includes(e.key)).length;
 
+      const isSelectedDomain = this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key));
+
       return html`
         <mwc-list-item
           graphic="icon"
@@ -350,10 +353,10 @@ export class DialogSelectEntities extends LitElement {
           <div slot="meta" class="meta">
             <ha-button
               appearance="plain"
-              @click=${this._toggleSelectDomain}
+              @click=${(ev: Event) => this._toggleSelectDomain(ev, isSelectedDomain)}
               size="small"
             >
-              ${this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key))
+              ${isSelectedDomain
           ? hassLocalize('ui.components.media-browser.file_management.deselect_all', this.hass)
           : hassLocalize('ui.components.subpage-data-table.select_all', this.hass)
         }

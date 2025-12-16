@@ -1,4 +1,5 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
+import { isDefined } from "../../lib/is_defined";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { Action, CustomConfig } from "../../types";
@@ -28,7 +29,7 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
       let variableConfig = (customConfig.variables || {})[field];
       return variableConfig.name;
     })
-      .filter(e => e !== undefined);
+      .filter(isDefined);
     if (res.length) return res[0];
   }
 

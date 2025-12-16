@@ -409,6 +409,14 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
         away_mode: {
         }
       }
-    }
+    },
+    turn_off: {
+      target: {},
+      supported_features: 8
+    },
+    turn_on: {
+      target: {},
+      supported_features: 8
+    },
   }
 };
