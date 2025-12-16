@@ -13,6 +13,8 @@ export const addTimeOffset = (time: Time, offsetTime: { hours?: number, minutes?
   let hours = time.hours;
   let minutes = time.minutes;
 
+  if (hours < 0 && minutes > 0) minutes = -minutes;
+
   hours += offsetHours;
   minutes += offsetMinutes;
 

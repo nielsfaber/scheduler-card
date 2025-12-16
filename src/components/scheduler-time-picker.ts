@@ -9,6 +9,7 @@ import { HomeAssistant } from "../lib/types";
 import { AmPmFormat, convertTo12Hour, convertTo24Hour, useAmPm } from "../lib/use_am_pm";
 import { fireEvent } from "../lib/fire_event";
 import { hassLocalize } from "../localize/hassLocalize";
+import { roundTime } from "../data/time/round_time";
 
 const MAX_OFFFSET_HOURS = 4;
 
@@ -179,7 +180,7 @@ export class SchedulerTimePicker extends LitElement {
           ${this.hass.states['sun.sun']
           ? html`
           <ha-button
-            appearance="${this.mode == TimeMode.Fixed ? 'plain' : 'filled'}"
+            appearance="${this.mode == TimeMode.Fixed ? 'plain' : 'accent'}"
             variant="${this.mode == TimeMode.Fixed ? 'neutral' : 'brand'}"
             @click=${_toggleTimeMode}
           >
@@ -221,10 +222,10 @@ export class SchedulerTimePicker extends LitElement {
       };
 
 
-      const _handleMenuAction = (ev: CustomEvent, options: TimeMode[]) => {
+      const _handleMenuAction = (ev: CustomEvent) => {
         const index = ev.detail.index;
-        options = options.filter(e => e != this.mode);
-        const newMode = options[index];
+        const items = (ev.target as any).items as HTMLElement[];
+        const newMode = items[index].id as TimeMode;
 
         const newTime = this._convertTimeMode(newMode);
         this.hours = newTime.hours;
@@ -241,7 +242,7 @@ export class SchedulerTimePicker extends LitElement {
 
       return html`
       <ha-button-menu
-        @action=${(ev: CustomEvent) => _handleMenuAction(ev, modeOptions)}
+        @action=${_handleMenuAction}
         @closed=${(ev: Event) => { ev.stopPropagation() }}
         fixed
         ?disabled=${this.disabled}
@@ -253,7 +254,7 @@ export class SchedulerTimePicker extends LitElement {
         >
         </ha-icon-button>
         ${modeOptions.map(e => html`
-        <mwc-list-item graphic="icon" ?noninteractive=${this.mode == e} ?disabled=${isDisabled(e)}>
+        <mwc-list-item graphic="icon" ?noninteractive=${this.mode == e} ?disabled=${isDisabled(e)} id="${e}">
           ${modeOptionLabels[e]}
           <ha-icon
             slot="graphic"
@@ -398,6 +399,7 @@ export class SchedulerTimePicker extends LitElement {
     let time: Time = { mode: this.mode, hours: this.hours, minutes: this.minutes };
 
     time = addTimeOffset(time, offset);
+    if (offset.minutes) time = roundTime(time, this.stepSize);
     if (this.mode != TimeMode.Fixed) time = limitOffset(time);
 
     this.hours = time.hours;
@@ -500,6 +502,8 @@ export class SchedulerTimePicker extends LitElement {
       flex-direction: row;
       flex-grow: 1;
       align-items: center;
+      flex-wrap: wrap;
+      align-content: center;
     }
     div.mode {
       display: flex;
@@ -539,10 +543,16 @@ export class SchedulerTimePicker extends LitElement {
     }
     ha-button {
       --ha-button-border-radius: 8px;
+      --button-color-fill-loud-hover: var(--ha-color-primary-50);
     }
     ha-button span.large {
       font-size: 16px;
       text-transform: uppercase;
+    }
+    @media all and (max-width: 450px), all and (max-height: 500px) {
+      ha-button {
+        --wa-form-control-padding-inline: 10px;
+      }
     }
   `;
 }
