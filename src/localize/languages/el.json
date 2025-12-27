@@ -1,0 +1,247 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} σε {value}",
+      "action_with_parameter": "{action} με {parameter}"
+    },
+    "climate": {
+      "set_temperature": "ορισμός θερμοκρασίας[ σε {temperature}]",
+      "set_temperature_hvac_mode_heat": "θέρμανση[ σε {temperature}]",
+      "set_temperature_hvac_mode_cool": "ψύξη[ σε {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "θέρμανση/ψύξη[ σε {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "θέρμανση/ψύξη[ σε {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "auto[ σε {temperature}]",
+      "set_hvac_mode": "ορισμός λειτουργίας[ σε {hvac_mode}]",
+      "set_preset_mode": "ορισμός προκαθορισμένης ρύθμισης[ σε {preset_mode}]",
+      "set_fan_mode": "όρισμός ανεμιστήρα[ σε {fan_mode}]",
+      "set_swing_mode": "ορισμός κατεύθυνσης[ σε {swing_mode}]"
+    },
+    "cover": {
+      "close_cover": "κλείσιμο",
+      "open_cover": "άνοιγμα",
+      "set_cover_position": "ορισμός θέσησ[ σε {position}]",
+      "set_cover_tilt_position": "ορισμός κλίσης[ σε {tilt_position}]"
+    },
+    "fan": {
+      "set_percentage": "ορισμός ταχύτητας[ σε {percentage}]",
+      "set_direction": "ορισμός κατεύθυνσης[ σε {direction}]",
+      "oscillate": "ορισμός ταλάντωσης[ σε {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "ορισμός υγρασίας[ σε {humidity}]",
+      "set_mode": "ορισμός λειτουργίας[ σε {mode}]"
+    },
+    "input_number": {
+      "set_value": "ορισμός τιμής[ σε {value}]"
+    },
+    "input_select": {
+      "select_option": "επιλογή παραμέτρου[ {option}]"
+    },
+    "select": {
+      "select_option": "επιλογή παραμέτρου[ {option}]"
+    },
+    "light": {
+      "turn_on": "άναμα[ με φωτεινότητα {brightness} ]"
+    },
+    "media_player": {
+      "select_source": "επιλογή πηγής[ {source}]"
+    },
+    "notify": {
+      "send_message": "αποστολή ειδοποίησης"
+    },
+    "script": {
+      "execute": "εκτέλεση"
+    },
+    "vacuum": {
+      "start_pause": "έναρξη / παύση"
+    },
+    "water_heater": {
+      "set_operation_mode": "ορισμός λειτουργίας[ σε {operation_mode}]",
+      "set_away_mode": "ορισμός λειτουργίας απουσίας"
+    }
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "ημερήσια",
+          "workdays": "εργάσιμες",
+          "weekend": "σαββατοκύριακο"
+        },
+        "day_types_long": {
+          "daily": "κάθε μέρα",
+          "workdays": "τις καθημερινές",
+          "weekend": "το σαββατοκύριακο"
+        },
+        "days": "ημέρες",
+        "tomorrow": "αύριο",
+        "repeated_days": "κάθε {days}",
+        "repeated_days_except": "κάθε μέρα εκτός {excludedDays}",
+        "days_range": "από {startDay} έως {endDay}",
+        "next_week_day": "επόμενη/-ο {weekday}"
+      },
+      "time": {
+        "absolute": "στις {time}",
+        "interval": "από {startTime} ως {endTime}",
+        "at_midnight": "τα μεσάνυχτα",
+        "at_noon": "το μεσημέρι",
+        "at_sun_event": "το {sunEvent}"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Ολοκλήρωση τροποποιήσεων",
+        "description": "Το πρόγραμμα που τροποποιήθηκε είναι απενεργοποιημένο, επιθυμείτε να το ενεργοποιήσετε;"
+      },
+      "confirm_delete": {
+        "title": "Αφαίρεση οντότητας",
+        "description": "Είστε σίγουροι ότι θέλετε να αφαιρεθεί αυτή η οντότητα;"
+      },
+      "confirm_migrate": {
+        "title": "Ενημέρωση προγράμματος",
+        "description": "Κάποιες ρυθμίσεις θα χαθούν από αυτή την αλλαγή. Θέλετε να συνεχίσετε;"
+      },
+      "weekday_picker": {
+        "title": "Επαναλαμβανόμενες ημέρες για το πρόγραμμα",
+        "choose": "Επιλογή ημερών..."
+      },
+      "entity_picker": {
+        "title": "Επιλογή οντοτήτων",
+        "choose": "Επιλογή...",
+        "no_results": "Δεν βρέθηκε οντότητα"
+      },
+      "action_picker": {
+        "title": "Επιλογή ενέργειας"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Χρονοπρογραμματισμός",
+        "new_schedule": "Νέο Πρόγραμμα",
+        "default_name": "Πρόγραμμα #{id}"
+      },
+      "overview": {
+        "no_entries": "Δεν βρέθηκαν καταχωρήσεις προς προβολή",
+        "backend_error": "Δεν είναι δυνατή η σύνδεη με το scheduler component. Πρέπει να εγκατασταθεί σαν integration πριν την χρήση αυτής της κάρτας.",
+        "excluded_items": "{number} {if number is 1} εξαιρούμενο αντικείμενο {else} εξαιρούμενα αντικείμενα",
+        "hide_excluded": "απόκρυψη εξαιρούμενων αντικειμένων",
+        "additional_tasks": "{number} επιπλέον {if number is 1} εργασία {else} εργασίες"
+      },
+      "editor": {
+        "repeated_days": "Επαναλαμβανόμενες ημέρες",
+        "start_time": "Ώρα έναρξης",
+        "stop_time": "Ώρα ολοκλήρωσης",
+        "action": "Ενέργεια",
+        "add_action": "Προσθήκη ενέργειας",
+        "select_timeslot": "Επιλογή μιας ώρας",
+        "toggle_single_mode": "Μεμονωμένη λειτουργία",
+        "toggle_scheme_mode": "Λειτουργία προγραμματισμού",
+        "validation_errors": {
+          "overlapping_time": "Το πρόγραμμα παρουσιάζει αλληλοεπικαλύψεις ώρας",
+          "missing_target_entity": "Μια ή περισσότερες ενέργειες δεν διαθέτουν οντότητα - στόχο",
+          "missing_service_parameter": "Μια ή περισσότερες ενέργειες δεν διαθέτουν μια απαιτούμενη ρύθμιση",
+          "missing_action": "Το πρόγραμμα δεν διαθέτει ενέργειες"
+        }
+      },
+      "options": {
+        "conditions": {
+          "header": "Συνθήκες",
+          "add_condition": "Προσθήκη συνθήκης",
+          "new_condition": "Νέα συνθήκη",
+          "types": {
+            "equal_to": "{entity} ισούται με {value}",
+            "unequal_to": "{entity} δεν ισούται με {value}",
+            "above": "{entity} είναι περισσότερο από {value}",
+            "below": "{entity} είναι λιγότερο από {value}"
+          },
+          "options": {
+            "logic_and": "Όλες οι συνθήκες πρέπει να αληθεύουν",
+            "logic_or": "Οποιαδήποτε συνθήκη πρέπει να αληθεύει",
+            "track_changes": "Επαναξιολόγηση όταν οι συνθήκες αλλάξουν"
+          }
+        },
+        "period": {
+          "header": "Περίοδος",
+          "start_date": "Από",
+          "end_date": "Έως"
+        },
+        "repeat_type": "συμπεριφορά μετά την ολοκλήρωση",
+        "tags": "Tags"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Οντότητες",
+          "other": "Λοιπά"
+        },
+        "fields": {
+          "title": {
+            "heading": "Τίτλος της κάρτας",
+            "options": {
+              "standard": "τυπικό",
+              "hidden": "κρυφό",
+              "custom": "προσαρμοσμένο"
+            },
+            "custom_title": "Προσαρμοσμενος τίτλος"
+          },
+          "discover_existing": {
+            "heading": "Προβολή όλων των προγραμμάτων",
+            "description": "Αυτό ρυθμίζει την παράμμετρο 'ανακάλυψη υπαρχόντων'. Τα ήδη δημιουργημένα προγράμματα θα προστεθούν αυτόματα στην κάρτα. "
+          },
+          "time_step": {
+            "heading": "Βήμα χρόνου",
+            "description": "Ανάλυση (σε λεπτά) για τη δημιουργία προγραμμάτων",
+            "unit_minutes": "λεπτά"
+          },
+          "default_editor": {
+            "heading": "Προεπιλεγμένος επεξεργαστής χρόνου",
+            "options": {
+              "single": "Λειτουργία μονής χρονικής περιόδου",
+              "scheme": "Λειτουργία χρονικού σχήματος"
+            }
+          },
+          "sort_by": {
+            "heading": "Επιλογές ταξινόμησης",
+            "description": "Σειρά με την οποία εμφανίζονται τα προγράμματα στην κάρτα",
+            "options": {
+              "relative_time": "Υπολειπόμενος χρόνος έως την επόμενη ενέργεια",
+              "title": "Εμφανιζόμενος τίτλος του προγράμματος",
+              "state": "Εμφάνιση των ενεργών προγραμμάτων στην κορυφή"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Προβαλλόμενη κύρια πληροφορία",
+            "description": "Ρυθμίστε ποια ετικέτα χρησιμοποιείται για τα προγράμματα στην επισκόπηση",
+            "options": {
+              "default": "Όνομα προγράμματος",
+              "entity_action": "Σύνοψη ενέργειας"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Προβαλλόμενη δευτερεύουσα πληροφορία",
+            "description": "Ρυθμίστε ποιες πρόσθετες ιδιότητες εμφανίζονται στην επισκόπηση",
+            "options": {
+              "relative_time": "Υπολειπόμενος χρόνος μέχρι την επόμενη ενέργεια",
+              "time": "Προγραμματισμένη ώρα για την επόμενη ενέργεια",
+              "days": "Επαναλαμβανόμενες ημέρες της εβδομάδας",
+              "additional_tasks": "Αριθμός πρόσθετων εργασιών"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Εμφάνιση διακόπτη κεφαλίδας",
+            "description": "Εμφάνιση διακόπτη στο επάνω μέρος της κάρτας για ενεργοποίηση/απενεργοποίηση όλων των οντοτήτων"
+          },
+          "tags": {
+            "heading": "Ετικέτες",
+            "description": "Χρησιμοποιήστε ετικέτες για να χωρίσετε τα προγράμματα μεταξύ πολλών καρτών"
+          },
+          "entities": {
+            "button_label": "Ρύθμιση συμπεριλαμβανόμενων οντοτήτων",
+            "heading": "Συμπεριλαμβανόμενες οντότητες",
+            "description": "Επιλέξτε τις οντότητες που θέλετε να ελέγχετε μέσω του χρονοπρογραμματιστή. Μπορείτε να κάνετε κλικ σε μια ομάδα για να την ανοίξετε. Λάβετε υπόψη ότι ορισμένες οντότητες (όπως αισθητήρες) μπορούν να χρησιμοποιηθούν μόνο για συνθήκες και όχι για ενέργειες.",
+            "included_number": "{number}/{total} επιλεγμένες"
+          }
+        }
+      }
+    }
+  }
+}
