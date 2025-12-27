@@ -1,5 +1,6 @@
 import * as cs from './languages/cs.json';
 import * as de from './languages/de.json';
+import * as el from './languages/el.json';
 import * as en from './languages/en.json';
 import * as es from './languages/es.json';
 import * as et from './languages/et.json';
@@ -28,6 +29,7 @@ import { HomeAssistant } from '../lib/types';
 const languages: any = {
   cs: cs,
   de: de,
+  el: el,
   en: en,
   es: es,
   et: et,
