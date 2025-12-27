@@ -172,7 +172,8 @@ export class DialogSelectWeekdays extends LitElement {
   }
 
   confirmClick() {
-    this._params!.confirm(this._params!.weekdays);
+    const input = Array.from(new Set(this._params!.weekdays));
+    this._params!.confirm(input);
   }
 
   cancelClick() {
