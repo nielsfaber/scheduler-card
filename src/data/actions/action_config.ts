@@ -1,4 +1,5 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
+import { isDefined } from "../../lib/is_defined";
 import { Action, CustomConfig } from "../../types";
 import { ActionConfig, supportedActions } from "../actions/supported_actions";
 import { compareActions } from "./compare_actions";
@@ -30,20 +31,21 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
   const actionConfig = parseCustomActions(customize, [entity].flat().pop());
 
   if (actionConfig.length) {
-    actionConfig.forEach(customConfig => {
+    let res = actionConfig.map(customConfig => {
       const match = compareActions(customConfig, action);
-      if (!match) return;
-      config = {}; //start with empty config
+      if (!match) return null;
+      let item: ActionConfig = {}; //start with empty config
       Object.keys(customConfig.variables || {}).forEach(key => {
-        config = { ...config, fields: { ...config.fields || {}, [key]: {} } };
+        item = { ...item, fields: { ...item.fields || {}, [key]: {} } };
       });
-      config = {
-        ...config,
+      return {
+        ...item,
         name: customConfig.name || config.name,
         icon: customConfig.icon || config.icon,
         target: customConfig.target || config.target,
       };
-    })
+    }).filter(isDefined);
+    if (res.length && !compareActions(config, action)) return res[0];
   }
 
   return config;

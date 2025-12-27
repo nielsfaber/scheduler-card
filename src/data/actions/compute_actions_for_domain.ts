@@ -105,6 +105,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
         let selector = parseCustomVariable(config);
         let defaultValue = defaultSelectorValue(selector);
         if (!isDefined(action.service_data[field]) && isDefined(defaultValue)) action = { ...action, service_data: { ...action.service_data, [field]: defaultValue } };
+        else if (!isDefined(action.service_data[field])) action = { ...action, service_data: { ...action.service_data, [field]: null } };
       });
     }
 

@@ -31,6 +31,7 @@ import { isDefined } from "../lib/is_defined";
 import { moveTimeslot } from "../data/schedule/move_timeslot";
 import { computeEntityDisplay } from "../data/format/compute_entity_display";
 import { DEFAULT_TIME_STEP } from "../const";
+import { HassEntity } from "home-assistant-js-websocket";
 
 import "../components/scheduler-timeslot-editor";
 import "../components/scheduler-time-picker";
@@ -40,7 +41,6 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
-import { HassEntity } from "home-assistant-js-websocket";
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {

@@ -3,16 +3,21 @@ import { computeDomain } from "../../lib/entity";
 import { isDefined } from "../../lib/is_defined";
 import { Action, CustomActionConfig } from "../../types";
 import { listSelector } from "../selectors/list_selector";
+import { ActionConfig } from "./supported_actions";
 
 
-export const compareActions = (actionA: CustomActionConfig, actionB: Action) => {
+export const compareActions = (actionA: CustomActionConfig | ActionConfig, actionB: Action) => {
 
-  if (actionA.service !== actionB.service) return false;
+  if (actionB.hasOwnProperty('service') && (actionA as CustomActionConfig).service !== actionB.service) return false;
 
-  const serviceDataA = actionA.service_data || {};
+  const serviceDataA = (actionA as CustomActionConfig).service_data || {};
   const serviceDataB = actionB.service_data || {};
 
-  const variablesA = actionA.variables || {};
+  const variablesA = actionA.hasOwnProperty('variables')
+    ? (actionA as CustomActionConfig).variables || {}
+    : actionA.hasOwnProperty('fields')
+      ? (actionA as ActionConfig).fields || {}
+      : {};
 
   let serviceArgs = [...new Set([...Object.keys(serviceDataA), ...Object.keys(serviceDataB), ...Object.keys(variablesA)])];
   serviceArgs = serviceArgs.filter(e => e != 'entity_id');
