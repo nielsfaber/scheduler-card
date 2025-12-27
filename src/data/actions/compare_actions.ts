@@ -8,7 +8,7 @@ import { ActionConfig } from "./supported_actions";
 
 export const compareActions = (actionA: CustomActionConfig | ActionConfig, actionB: Action) => {
 
-  if (actionB.hasOwnProperty('service') && (actionA as CustomActionConfig).service !== actionB.service) return false;
+  if (actionA.hasOwnProperty('service') && (actionA as CustomActionConfig).service !== actionB.service) return false;
 
   const serviceDataA = (actionA as CustomActionConfig).service_data || {};
   const serviceDataB = actionB.service_data || {};
