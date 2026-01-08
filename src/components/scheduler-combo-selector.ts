@@ -3,7 +3,6 @@ import { customElement, property } from "lit/decorators";
 import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
-import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
 import { hassLocalize } from "../localize/hassLocalize";
 import { roundFloat } from "../lib/round_float";
 import { isDefined } from "../lib/is_defined";
@@ -52,100 +51,46 @@ export class SchedulerComboSelector extends LitElement {
         if (!label) label = value;
         return label;
       }
-      const filteredItems = (): PickerComboBoxItem[] => {
 
-        const comboBoxOption = (option: string | SelectOption): PickerComboBoxItem => {
+      const prepareOptions = () => {
+        return config.options.map(option => {
           if (typeof option === 'object') {
             return {
-              id: option.value,
-              primary: computeItemLabel(option.label),
-              icon: option.icon
-            }
+              value: option.value,
+              label: computeItemLabel(option.label)
+            };
           }
-          else {
-            return {
-              id: option,
-              primary: computeItemLabel(option)
-            }
-          }
-        }
-        let options = [...config?.options].map(comboBoxOption);
+          return {
+            value: option,
+            label: computeItemLabel(option)
+          };
+        });
+      };
 
-        let selectedValue = [this.value || []].flat().map(String);
-        options = [...options, ...selectedValue.filter(e => !options.find(f => f.id == e)).map(comboBoxOption)];
-
-        if (Array.isArray(this.value)) options = options.filter(e => typeof e === 'object' ? !values.includes(e.id) : !values.includes(e));
-        return options;
-      }
-
-      const valueRenderer: PickerValueRenderer = (value: string) => {
-        let label = value;
-        let icon = '';
-        let match = config.options.find(e => typeof e === 'object' ? e.value === value : e === value);
-        if (match && typeof match === 'object') {
-          label = computeItemLabel(match.label);
-          icon = match.icon || icon;
-        }
-        else label = computeItemLabel(value);
-
-        if (icon) {
-          return html`
-            <ha-icon
-              slot="start"
-              .icon=${icon}
-              style="margin: 0 4px"
-            >
-            </ha-icon>
-            <span slot="headline">${label}</span>
-          `;
-        }
-        else {
-          return html`
-            <span slot="headline">${label}</span>
-          `;
+      const selectorConfig: SelectSelector = {
+        select: {
+          mode: 'dropdown',
+          ...config,
+          options: prepareOptions()
         }
       };
 
-      const rowRenderer = (item: PickerComboBoxItem) => {
-        if (item.icon) {
-          return html`
-            <ha-combo-box-item type="button" compact>
-              <ha-icon
-                slot="start"
-                .icon=${item.icon}
-              >
-              </ha-icon>
-              <span slot="headline">${item.primary}</span>
-            </ha-combo-box-item>
-          `;
-        }
-        else {
-          return html`
-            <ha-combo-box-item type="button" compact>
-              <span slot="headline">${item.primary}</span>
-            </ha-combo-box-item>
-          `;
-        }
+      const selectValueChanged = (ev: CustomEvent) => {
+        ev.stopPropagation();
+        this.value = ev.detail.value;
+        fireEvent(this, "value-changed", { value: this.value });
       }
 
       return html`
           <div class="select-wrapper">
-        ${config.multiple ? html`
-          <div class="chips">
-          ${renderChips()}
-          </div>
-        ` : ''}
-        <scheduler-picker
+        <ha-selector
           .hass=${this.hass}
-          ?allow-custom-value=${config.custom_value}
-          .getItems=${filteredItems}
-          .rowRenderer=${rowRenderer}
-          .valueRenderer=${valueRenderer}
-          @value-changed=${this._valueChanged}
-          .value=${!Array.isArray(this.value) ? this.value || "" : ""}
+          .selector=${selectorConfig}
+          @value-changed=${selectValueChanged}
+          .value=${this.value}
           ?disabled=${this.disabled}
         >
-        </scheduler-picker>
+        </ha-selector>
         </div>
       `;
     }

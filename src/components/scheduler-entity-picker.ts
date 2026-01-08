@@ -4,7 +4,7 @@ import { computeDomain, friendlyName } from "../lib/entity";
 import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
-import { PickerComboBoxItem, PickerValueRenderer } from "./scheduler-picker";
+import { PickerComboBoxItem } from "./scheduler-picker";
 import { mdiChevronDown, mdiChevronUp, mdiShape } from "@mdi/js";
 import { fetchItems } from "../data/store/fetch_items";
 import { CustomConfig } from "../types";
@@ -12,7 +12,6 @@ import { DEFAULT_INCLUDED_DOMAINS } from "../const";
 import { HassEntity } from "home-assistant-js-websocket";
 
 import './scheduler-chip-set';
-import './scheduler-picker';
 
 @customElement("scheduler-entity-picker")
 export class SchedulerEntityPicker extends LitElement {
@@ -31,8 +30,6 @@ export class SchedulerEntityPicker extends LitElement {
   disabled = false;
 
   filterFunc?: (stateObj: HassEntity) => boolean;
-
-  @state() multipleMode = false;
 
   @state() scheduleEntities: string[] = [];
 
@@ -62,142 +59,21 @@ export class SchedulerEntityPicker extends LitElement {
     }
   }
 
-  private _valueRenderer: PickerValueRenderer = (value: string | string[]) => {
-    if (Array.isArray(value)) value = value.length ? [...value].pop()! : "";
-    const entityId = value || "";
-
-    const stateObj = this.hass.states[entityId];
-
-    if (!stateObj) {
-      return html`
-        <ha-svg-icon
-          slot="start"
-          .path=${mdiShape}
-          style="margin: 0 4px"
-        ></ha-svg-icon>
-        <span slot="headline">${entityId}</span>
-      `;
-    }
-    const item = this._parseEntityItem(entityId);
-    return html`
-      ${item.icon
-        ? html`
-        <ha-icon
-          slot="start"
-          icon="${item.icon}"
-        ></ha-icon>
-       `
-        : html`
-      <state-badge
-        .hass=${this.hass}
-        .stateObj=${stateObj}
-        slot="start"
-        color="var(--icon-primary-color)"
-      ></state-badge>
-      `}
-      <span slot="headline">${item.primary}</span>
-      <span slot="supporting-text">${item.secondary}</span>
-    `;
-  };
-
   protected render(): TemplateResult {
     return html`
-      ${this.renderChips()}
-
-      ${!this.value?.length || this.multipleMode || !this.multiple ?
-        html`
-      <scheduler-picker
+      <ha-selector
         .hass=${this.hass}
-        allow-custom-value
-        .getItems=${this._filteredItems}
-        .rowRenderer=${this.rowRenderer}
-        .valueRenderer=${this._valueRenderer}
+        .selector=${{ entity: { include_entities: this._filteredItems().map(e => e.id), multiple: this.multiple } }}
         @value-changed=${this._valueChanged}
         ?disabled=${this.disabled}
-        .value=${this.multiple ? "" : this.value}
+        .value=${this.value}
       >
-      </scheduler-picker>
-      ` : nothing}
-    `;
-  }
-
-  private renderChips() {
-    if (!this.multiple) return nothing;
-
-    let items = (this.value || []).map(entityId => {
-      const item = this._parseEntityItem(entityId);
-      return {
-        name: item.primary,
-        value: entityId,
-        useStateIcon: item.icon ? false : true,
-        icon: item.icon
-      }
-    });
-
-    return html`
-      <div class="wrapper">
-      <scheduler-chip-set
-        .hass=${this.hass}
-        .items=${items}
-        removable
-        @value-changed=${this._removeClick}
-        ?disabled=${this.disabled}
-      >
-      </scheduler-chip-set>
-      <div class="column-right">
-      ${items.length ? html`
-      <ha-icon-button
-        @click=${(ev: InputEvent) => { this.multipleMode = !this.multipleMode; (ev.target as HTMLElement).blur() }}
-        .path=${this.multipleMode ? mdiChevronUp : mdiChevronDown}
-        slot="end"
-      ></ha-icon-button>
-      ` : nothing}
-      </div>
-      </div>
-      `;
-  }
-
-  rowRenderer = (item: PickerComboBoxItem) => {
-    const entityId = item.id || "";
-    const stateObj = this.hass.states[entityId];
-
-    return html`
-      <ha-combo-box-item type="button" compact>
-        ${item.icon ? html`
-          <ha-icon
-            slot="start"
-            icon="${item.icon}"
-          ></ha-icon>
-        ` : stateObj
-        ? html`
-          <state-badge
-            .hass=${this.hass}
-            .stateObj=${stateObj}
-            slot="start"
-            color="var(--icon-primary-color)"
-          ></state-badge>
-        `: html`
-          <ha-svg-icon
-            slot="start"
-            .path=${mdiShape}
-          ></ha-svg-icon>
-        `}
-        <span slot="headline">${item.primary}</span>
-        ${item.secondary
-        ? html`<span slot="supporting-text">${item.secondary}</span>`
-        : nothing}
-      </ha-combo-box-item>
+      </ha-selector>
     `;
   }
 
   private _valueChanged(ev: CustomEvent) {
-    let value = ev.detail.value;
-    const target = ev.currentTarget;
-    if (!value) return;
-    this.value = [...(this.value || []), value];
-    if (this.multiple) {
-      (target as any).value = "";
-    }
+    this.value = ev.detail.value;
     fireEvent(this, "value-changed", { value: this.value });
     ev.stopPropagation();
   }
@@ -225,9 +101,6 @@ export class SchedulerEntityPicker extends LitElement {
     let entityIds = Object.keys(this.hass.states);
     if (this.domain) {
       entityIds = entityIds.filter(e => computeDomain(e) == this.domain);
-    }
-    if (this.multiple) {
-      entityIds = entityIds.filter(e => !this.value?.includes(e));
     }
 
     if (this.config) {
