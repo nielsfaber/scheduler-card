@@ -1,0 +1,248 @@
+{
+  "services": {
+    "generic": {
+      "parameter_to_value": "{parameter} на {value}",
+      "action_with_parameter": "{action} с {parameter}"
+    },
+    "climate": {
+      "set_temperature": "задай температура[ на {temperature}]",
+      "set_temperature_hvac_mode_heat": "отопление[ на {temperature}]",
+      "set_temperature_hvac_mode_cool": "охлаждане[ на {temperature}]",
+      "set_temperature_hvac_mode_heat_cool": "отопление/охлаждане[ на {temperature}]",
+      "set_temperature_hvac_mode_heat_cool_range": "отопление/охлаждане[ на {target_temp_low} - {target_temp_high}]",
+      "set_temperature_hvac_mode_auto": "автоматично[ на {temperature}]",
+      "set_hvac_mode": "задай режим[ на {hvac_mode}]",
+      "set_preset_mode": "задай предварителна настройка[ на {preset_mode}]",
+      "set_fan_mode": "задай режим на вентилатор[ на {fan_mode}]",
+      "set_swing_mode": "задай режим на въртене[ на {swing_mode}]"
+    },
+    "cover": {
+      "close_cover": "затвори",
+      "open_cover": "отвори",
+      "set_cover_position": "задай позиция[ на {position}]",
+      "set_cover_tilt_position": "задай позиция на наклон[ на {tilt_position}]"
+    },
+    "fan": {
+      "set_percentage": "задай скорост[ на {percentage}]",
+      "set_direction": "задай посока[ на {direction}]",
+      "oscillate": "задай осцилация[ на {oscillate}]"
+    },
+    "humidifier": {
+      "set_humidity": "задай влажност[ на {humidity}]",
+      "set_mode": "задай режим[ на {mode}]"
+    },
+    "input_number": {
+      "set_value": "задай стойност[ на {value}]"
+    },
+    "input_select": {
+      "select_option": "избери опция[ {option}]"
+    },
+    "select": {
+      "select_option": "избери опция[ {option}]"
+    },
+    "light": {
+      "turn_on": "включи[ с {brightness} яркост]"
+    },
+    "media_player": {
+      "select_source": "избери източник[ {source}]"
+    },
+    "notify": {
+      "send_message": "изпрати известие"
+    },
+    "script": {
+      "execute": "изпълни"
+    },
+    "vacuum": {
+      "start_pause": "старт / пауза"
+    },
+    "water_heater": {
+      "set_operation_mode": "задай режим[ на {operation_mode}]",
+      "set_away_mode": "задай режим 'не съм вкъщи'"
+    }
+  },
+  "ui": {
+    "components": {
+      "date": {
+        "day_types_short": {
+          "daily": "дневно",
+          "workdays": "работни дни",
+          "weekend": "уикенд"
+        },
+        "day_types_long": {
+          "daily": "всеки ден",
+          "workdays": "в работни дни",
+          "weekend": "през уикенда"
+        },
+        "days": "дни",
+        "tomorrow": "утре",
+        "repeated_days": "всеки {days}",
+        "repeated_days_except": "всеки ден освен {excludedDays}",
+        "days_range": "от {startDay} до {endDay}",
+        "next_week_day": "следващ {weekday}"
+      },
+      "time": {
+        "absolute": "в {time}",
+        "interval": "от {startTime} до {endTime}",
+        "at_midnight": "в полунощ",
+        "at_noon": "на обяд",
+        "at_sun_event": "при {sunEvent}"
+      }
+    },
+    "dialog": {
+      "enable_schedule": {
+        "title": "Завърши промените",
+        "description": "Графикът, който сте променили, е деактивиран. Искате ли да го активирате?"
+      },
+      "confirm_delete": {
+        "title": "Премахни обект?",
+        "description": "Сигурни ли сте, че искате да премахнете този обект?"
+      },
+      "confirm_migrate": {
+        "title": "Актуализирай графика",
+        "description": "Някои настройки ще бъдат загубени при тази промяна. Искате ли да продължите?"
+      },
+      "weekday_picker": {
+        "title": "Повтарящи се дни за графика",
+        "choose": "Избери..."
+      },
+      "entity_picker": {
+        "title": "Изберете обекти",
+        "choose": "Избери...",
+        "no_results": "Няма намерени съвпадения"
+      },
+      "action_picker": {
+        "title": "Изберете действие"
+      }
+    },
+    "panel": {
+      "common": {
+        "title": "Планировчик",
+        "new_schedule": "Нов график",
+        "default_name": "График #{id}"
+      },
+      "overview": {
+        "no_entries": "Няма елементи за показване",
+        "backend_error": "Не може да се свърже с компонента за планиране. Той трябва да бъде инсталиран като интеграция, преди тази карта да може да се използва.",
+        "excluded_items": "{number} изключен {if number is 1} елемент {else} елемента",
+        "hide_excluded": "скрий изключените елементи",
+        "additional_tasks": "{number} още {if number is 1} задача {else} задачи"
+      },
+      "editor": {
+        "repeated_days": "Повтарящи се дни",
+        "start_time": "Начален час",
+        "stop_time": "Краен час",
+        "action": "Действие",
+        "add_action": "Добави действие",
+        "select_timeslot": "Изберете времеви слот",
+        "toggle_single_mode": "В единичен режим",
+        "toggle_scheme_mode": "В режим на схема",
+        "validation_errors": {
+          "overlapping_time": "Графикът има припокриващи се времеви слотове",
+          "missing_target_entity": "Едно или повече действия нямат целеви обект",
+          "missing_service_parameter": "Едно или повече действия нямат задължителна настройка",
+          "missing_action": "Графикът няма действия"
+        }
+      },
+      "options": {
+        "conditions": {
+          "header": "Условия",
+          "add_condition": "Добави условие",
+          "new_condition": "Нов условие",
+          "types": {
+            "equal_to": "{entity} е равно на {value}",
+            "unequal_to": "{entity} не е равно на {value}",
+            "above": "{entity} е над {value}",
+            "below": "{entity} е под {value}"
+          },
+          "options": {
+            "logic_and": "Всички условия трябва да са изпълнени",
+            "logic_or": "Поне едно условие трябва да е изпълнено",
+            "track_changes": "Преоценка при промяна на условията"
+          }
+        },
+        "period": {
+          "header": "Период",
+          "start_date": "От",
+          "end_date": "До"
+        },
+        "repeat_type": "поведение след завършване",
+        "tags": "Етикети"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Обекти",
+          "other": "Други"
+        },
+        "fields": {
+          "title": {
+            "heading": "Заглавие на картата",
+            "options": {
+              "standard": "стандартно",
+              "hidden": "скрито",
+              "custom": "персонализирано"
+            },
+            "custom_title": "Персонализирано заглавие"
+          },
+          "discover_existing": {
+            "heading": "Покажи всички графици",
+            "description": "Това задава параметъра 'discover existing'. Предварително създадени графици ще бъдат автоматично добавени към картата. "
+          },
+          "time_step": {
+            "heading": "Времева стъпка",
+            "description": "Резолюция (в минути) за създаване на графици",
+            "unit_minutes": "мин"
+          },
+          "default_editor": {
+            "heading": "Редактор по подразбиране",
+            "options": {
+              "single": "Режим на единичен график",
+              "scheme": "Режим на времева схема"
+            }
+          },
+          "sort_by": {
+            "heading": "Опции за сортиране",
+            "description": "Ред, в който се показват графиците в картата",
+            "options": {
+              "relative_time": "Оставащо време до следващото действие",
+              "title": "Показано заглавие на графика",
+              "state": "Покажи активните графици отгоре"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Показана основна информация",
+            "description": "Конфигурирайте кой етикет се използва за графиците в прегледа",
+            "options": {
+              "default": "Име на графика",
+              "entity_action": "Резюме на задачата"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Показана допълнителна информация",
+            "description": "Конфигурирайте какви допълнителни свойства са видими в прегледа",
+            "options": {
+              "relative_time": "Оставащо време до следващото действие",
+              "time": "Конфигуриран час за следващо действие",
+              "days": "Повтарящи се дни от седмицата",
+              "additional_tasks": "Брой допълнителни задачи"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Покажи превключвател в заглавието",
+            "description": "Покажи превключвател в горната част на картата за активиране/деактивиране на всички обекти"
+          },
+          "tags": {
+            "heading": "Етикети",
+            "description": "Използвайте етикети за разделяне на графиците между множество карти"
+          },
+          "entities": {
+            "button_label": "Конфигурирай включени обекти",
+            "heading": "Включени обекти",
+            "description": "Изберете обектите, които искате да контролирате чрез планировчика. Можете да кликнете на група, за да я отворите. Имайте предвид, че някои обекти (като сензори) могат да се използват само за условия, не и за действия.",
+            "included_number": "{number}/{total} избрани"
+          }
+        }
+      }
+    }
+  }
+}
+
