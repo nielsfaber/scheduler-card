@@ -1,5 +1,5 @@
 import { css, html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import { DialogSelectEntitiesParams } from "./dialogs/dialog-select-entities";
 import { HomeAssistant } from "./lib/types";
 import { localize } from "./localize/localize";
@@ -11,6 +11,7 @@ import { sortByName } from "./lib/sort";
 import { mdiArrowRight } from "@mdi/js";
 import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY, DEFAULT_SORT_BY, DEFAULT_TIME_STEP } from "./const";
 import { loadConfigFromEntityRegistry } from "./data/load_config_from_entity_registry";
+import { hassLocalize } from "./localize/hassLocalize";
 
 import './dialogs/dialog-select-entities';
 import "./components/scheduler-entity-picker";
@@ -32,7 +33,9 @@ export class SchedulerCardEditor extends LitElement {
   title: string = "";
 
   @property()
-  tagOptions: string[] = [];
+  tagOptions: string[] = []
+
+  @state() customTagValue: string = '';
 
   async firstUpdated() {
     this.title = typeof this._config.title == "string"
@@ -261,14 +264,44 @@ export class SchedulerCardEditor extends LitElement {
 
         <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
+          <div style="display: flex; flex-direction: column">
+            <scheduler-combo-selector
+              .hass=${this.hass}
+              .config=${tagSelector}
+              .value=${[this._config.tags || []].flat()}
+              @value-changed=${(ev: CustomEvent) => { this._updateConfig({ tags: ev.detail.value }) }}
+            >
+            </scheduler-combo-selector>
+              
+            <ha-button-menu
+              @closed=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
+              @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
+              @opened=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
+              fixed
+              menuCorner="END"
+              corner="BOTTOM_START"
+            >
+              <ha-button appearance="plain" slot="trigger">
+                <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+                ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+              </ha-button>
 
-          <scheduler-combo-selector
-            .hass=${this.hass}
-            .config=${tagSelector}
-            .value=${[this._config.tags || []].flat()}
-            @value-changed=${(ev: CustomEvent) => { this._updateConfig({ tags: ev.detail.value }) }}
-          >
-          </scheduler-combo-selector>
+              <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
+                <ha-textfield
+                  .value=${this.customTagValue}
+                  .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+                  @input=${(ev: Event) => { this.customTagValue = (ev.currentTarget as any).value }}
+                  .placeholder=""
+                ></ha-textfield> 
+                <ha-button
+                  appearance="plain"
+                  @click=${this._customTagConfirmClick}
+                >
+                  ${hassLocalize('ui.common.ok', this.hass)}
+                </ha-button>
+              </div>
+            </ha-button-menu>
+          </div>
         </scheduler-settings-row>
 
       </div>
@@ -359,6 +392,22 @@ export class SchedulerCardEditor extends LitElement {
         this._updateConfig({ include: [...res.domains, ...res.entities] })
       });
 
+  }
+
+  _customTagConfirmClick(ev: Event) {
+    let target = ev.target as HTMLElement;
+    target = target.parentElement as HTMLElement;
+    target = target.parentElement as HTMLElement;
+    const triggerBtn = target.querySelector("ha-button");
+    (triggerBtn as any).click();
+
+    let value = String(this.customTagValue).trim();
+    if (value.length) {
+      let tags = [this._config.tags || []].flat();
+      tags = [...new Set([...tags, value])];
+      this._updateConfig({ tags: tags });
+    }
+    this.customTagValue = "";
   }
 
   private _updateConfig(changes: Partial<CardConfig>) {

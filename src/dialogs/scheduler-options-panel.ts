@@ -2,7 +2,7 @@ import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { CardConfig, Condition, Schedule, ScheduleEntry, TConditionLogicType, TConditionMatchType, TRepeatType, Timeslot } from '../types';
 import { DialogSelectConditionParams } from './dialog-select-condition';
-import { mdiCog, mdiDotsVertical, mdiPencil } from '@mdi/js';
+import { mdiCheck, mdiCog, mdiDotsVertical, mdiPencil } from '@mdi/js';
 import { computeStatesForEntity } from '../data/compute_states_for_entity';
 import { computeEntityIcon } from '../data/format/compute_entity_icon';
 import { computeEntityDisplay } from '../data/format/compute_entity_display';
@@ -49,6 +49,8 @@ export class SchedulerOptionsPanel extends LitElement {
   @property()
   tags: string[] = [];
 
+  @state() customTagValue: String = '';
+
   async firstUpdated() {
     (await (window as any).loadCardHelpers()).importMoreInfoControl('input_datetime');
 
@@ -57,11 +59,11 @@ export class SchedulerOptionsPanel extends LitElement {
 
     const tagEntries = await fetchTags(this.hass!);
     const storedTags = tagEntries.map(e => e.name);
-    const configTags = [...(this.config.tags || [])].flat();
-    this.tags = [
+    const configTags = [this.config.tags || []].flat();
+    this.tags = [...new Set([
       ...storedTags,
       ...configTags.filter(e => !storedTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),
-    ];
+    ])];
   }
 
   shouldUpdate(changedProps: PropertyValues): boolean {
@@ -191,6 +193,36 @@ export class SchedulerOptionsPanel extends LitElement {
           @value-changed=${this.tagsUpdated}
         >
         </scheduler-combo-selector>
+
+        <ha-button-menu
+          @closed=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
+          @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
+          @opened=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
+          fixed
+          menuCorner="END"
+          corner="BOTTOM_START"
+        >
+          <ha-button appearance="plain" slot="trigger">
+            <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+            ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+          </ha-button>
+
+          <div style="display: flex; align-items: center; padding: 0px 2px 0px 8px">
+            <ha-textfield
+              .value=${this.customTagValue}
+              .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+              @input=${(ev: Event) => { this.customTagValue = (ev.currentTarget as any).value }}
+              @keydown=${(ev: KeyboardEvent) => { if (ev.key === 'Enter') this._customTagConfirmClick(ev) }}
+              .placeholder=""
+            ></ha-textfield> 
+            <ha-button
+              appearance="plain"
+              @click=${this._customTagConfirmClick}
+            >
+              ${hassLocalize('ui.common.ok', this.hass)}
+            </ha-button>
+          </div>
+        </ha-button-menu>
       </div>
 
       <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>
@@ -539,6 +571,24 @@ export class SchedulerOptionsPanel extends LitElement {
     value = value.map(e => e.trim());
     value = value.filter(e => !['none', 'disabled', 'enabled'].includes(e));
     this.schedule = { ...this.schedule, tags: value };
+  }
+
+  _customTagConfirmClick(ev: Event) {
+    let target = ev.target as HTMLElement;
+    target = target.parentElement as HTMLElement;
+    target = target.parentElement as HTMLElement;
+    const triggerBtn = target.querySelector("ha-button") as HTMLInputElement;
+    triggerBtn.click();
+    ev.preventDefault();
+
+    let value = String(this.customTagValue).trim();
+    if (value.length) {
+      let tags = this.schedule.tags || [];
+      tags = [...new Set([...tags, value])];
+      tags = tags.filter(e => !['none', 'disabled', 'enabled'].includes(e));
+      this.schedule = { ...this.schedule, tags: tags };
+    }
+    this.customTagValue = "";
   }
 
   setRepeatType(ev: Event) {
