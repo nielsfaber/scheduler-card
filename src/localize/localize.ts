@@ -1,3 +1,4 @@
+import * as bg from './languages/bg.json';
 import * as cs from './languages/cs.json';
 import * as de from './languages/de.json';
 import * as el from './languages/el.json';
@@ -27,6 +28,7 @@ import * as zh_Hans from './languages/zh-Hans.json';
 import { HomeAssistant } from '../lib/types';
 
 const languages: any = {
+  bg: bg,
   cs: cs,
   de: de,
   el: el,
