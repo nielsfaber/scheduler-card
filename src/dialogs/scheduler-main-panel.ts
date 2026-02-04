@@ -253,24 +253,23 @@ export class SchedulerMainPanel extends LitElement {
           <span>${capitalizeFirstLetter(heading)}</span>
         </div>
 
-        <ha-button-menu
+        <ha-dropdown
           slot="contextMenu" 
-          @action=${this._actionItemOptionsClick}
-          @closed=${(ev: Event) => { ev.stopPropagation() }}
-          @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
-          fixed
+          @wa-select=${this._actionItemOptionsClick}
+          @wa-after-hide=${(ev: Event) => { ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur() }}
+          placement="bottom-end"
         >
           <ha-icon-button slot="trigger" .path=${mdiDotsVertical}>
           </ha-icon-button>
-          <mwc-list-item graphic="icon">
+          <ha-dropdown-item value="change_type">
+            <ha-icon icon="mdi:pencil"></ha-icon>
             ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
-            <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
-          </mwc-list-item>
-          <mwc-list-item graphic="icon" class="warning">
+          </ha-dropdown-item>
+          <ha-dropdown-item variant="danger" value="delete">
+            <ha-icon icon="mdi:delete"></ha-icon>
             ${hassLocalize('ui.common.delete', this.hass)}
-            <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
-          </mwc-list-item>
-        </ha-button-menu>
+          </ha-dropdown-item>
+        </ha-dropdown>
 
         <div slot="content">
 
@@ -480,12 +479,12 @@ export class SchedulerMainPanel extends LitElement {
 
 
   _actionItemOptionsClick(ev: CustomEvent) {
-    const option = ev.detail.index;
+    const option: 'delete' | 'change_type' = ev.detail.item.value;
     switch (option) {
-      case 0:
+      case 'change_type':
         this._showActionDialog(ev);
         break;
-      case 1:
+      case 'delete':
         this._updateSlot({ actions: [] });
         break;
     }

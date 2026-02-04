@@ -273,13 +273,11 @@ export class SchedulerCardEditor extends LitElement {
             >
             </scheduler-combo-selector>
               
-            <ha-button-menu
-              @closed=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
+            <ha-dropdown
+              @wa-after-hide=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
               @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
-              @opened=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
-              fixed
-              menuCorner="END"
-              corner="BOTTOM_START"
+              @wa-after-show=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
+              placement="bottom-start"
             >
               <ha-button appearance="plain" slot="trigger">
                 <ha-icon slot="start" icon="mdi:plus"></ha-icon>
@@ -300,7 +298,7 @@ export class SchedulerCardEditor extends LitElement {
                   ${hassLocalize('ui.common.ok', this.hass)}
                 </ha-button>
               </div>
-            </ha-button-menu>
+            </ha-dropdown>
           </div>
         </scheduler-settings-row>
 
@@ -464,6 +462,9 @@ export class SchedulerCardEditor extends LitElement {
     }
     scheduler-combo-selector {
       min-width: 240px;
+    }
+    ha-dropdown {
+      display: block;
     }
   `;
 }

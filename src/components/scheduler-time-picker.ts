@@ -223,28 +223,19 @@ export class SchedulerTimePicker extends LitElement {
 
 
       const _handleMenuAction = (ev: CustomEvent) => {
-        const index = ev.detail.index;
-        const items = (ev.target as any).items as HTMLElement[];
-        const newMode = items[index].id as TimeMode;
-
+        const newMode: TimeMode = ev.detail.item.value;
+        if (this.mode == newMode) return;
         const newTime = this._convertTimeMode(newMode);
         this.hours = newTime.hours;
         this.minutes = newTime.minutes;
         this.mode = newMode;
-
-        ev.preventDefault();
-        const el = ev.target as HTMLElement;
-        setTimeout(() => {
-          (el.firstElementChild as HTMLElement).blur();
-        }, 50);
         this._valueChanged();
       }
 
       return html`
-      <ha-button-menu
-        @action=${_handleMenuAction}
-        @closed=${(ev: Event) => { ev.stopPropagation() }}
-        fixed
+      <ha-dropdown
+        @wa-select=${_handleMenuAction}
+        @wa-after-hide=${(ev: Event) => { ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur() }}
         ?disabled=${this.disabled}
       >
         <ha-icon-button
@@ -254,16 +245,18 @@ export class SchedulerTimePicker extends LitElement {
         >
         </ha-icon-button>
         ${modeOptions.map(e => html`
-        <mwc-list-item graphic="icon" ?noninteractive=${this.mode == e} ?disabled=${isDisabled(e)} id="${e}">
-          ${modeOptionLabels[e]}
+        <ha-dropdown-item
+          ?noninteractive=${this.mode == e}
+          ?disabled=${isDisabled(e) && this.mode != e}
+          value="${e}"
+        >
           <ha-icon
-            slot="graphic"
             icon="${modeOptionIcons[e]}"
           ></ha-icon>
-        </mwc-list-item>
-        
+          ${modeOptionLabels[e]}
+        </ha-dropdown-item>
         `)}
-      </ha-button-menu>
+      </ha-dropdown>
     `;
     }
   }
@@ -522,23 +515,23 @@ export class SchedulerTimePicker extends LitElement {
       align-self: center;
       white-space: nowrap;
     }
-    ha-button-menu {
+    ha-dropdown-menu {
       display: flex;
       align-items: flex-end;
       margin-right: 4px;
       padding-bottom: 4px;
     }
-    ha-button-menu ha-icon-button {
+    ha-dropdown-menu ha-icon-button {
       color: var(--secondary-text-color);
     }
-    mwc-list-item[disabled] ha-icon {
+    ha-dropdown-item[disabled] ha-icon {
       color: var(--disabled-text-color);
     }
-    mwc-list-item[noninteractive] {
+    ha-dropdown-item[noninteractive] {
       background-color: rgba(var(--rgb-primary-color), 0.12);
       color: var(--sidebar-selected-text-color);
     }
-    mwc-list-item[noninteractive] ha-icon {
+    ha-dropdown-item[noninteractive] ha-icon {
       color: var(--sidebar-selected-text-color);
     }
     ha-button {
