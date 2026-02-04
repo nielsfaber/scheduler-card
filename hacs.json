@@ -2,5 +2,5 @@
   "name": "Scheduler Card",
   "render_readme": true,
   "filename": "scheduler-card.js",
-  "homeassistant": "2026.1.0"
+  "homeassistant": "2026.2.0"
 }

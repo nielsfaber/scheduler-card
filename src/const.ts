@@ -1,6 +1,6 @@
 import { CardConfig, EditorMode, Schedule, TConditionLogicType, TRepeatType, TWeekday } from "./types";
 
-export const CARD_VERSION = 'v4.0.11';
+export const CARD_VERSION = 'v4.0.12';
 
 export const DEFAULT_TIME_STEP = 15;
 export const DEFAULT_SORT_BY = ['relative-time', 'state'];

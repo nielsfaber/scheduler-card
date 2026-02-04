@@ -988,13 +988,11 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
             >
             </scheduler-combo-selector>
               
-            <ha-button-menu
-              @closed=${e=>{e.stopPropagation(),e.target.querySelector("ha-button").blur()}}
+            <ha-dropdown
+              @wa-after-hide=${e=>{e.stopPropagation(),e.target.querySelector("ha-button").blur()}}
               @click=${e=>{e.preventDefault(),e.stopImmediatePropagation()}}
-              @opened=${e=>{e.target.querySelector("ha-textfield").focus()}}
-              fixed
-              menuCorner="END"
-              corner="BOTTOM_START"
+              @wa-after-show=${e=>{e.target.querySelector("ha-textfield").focus()}}
+              placement="bottom-start"
             >
               <ha-button appearance="plain" slot="trigger">
                 <ha-icon slot="start" icon="mdi:plus"></ha-icon>
@@ -1015,7 +1013,7 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
                   ${Xi("ui.common.ok",this.hass)}
                 </ha-button>
               </div>
-            </ha-button-menu>
+            </ha-dropdown>
           </div>
         </scheduler-settings-row>
 
@@ -1067,6 +1065,9 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
     }
     scheduler-combo-selector {
       min-width: 240px;
+    }
+    ha-dropdown {
+      display: block;
     }
   `,t([le({attribute:!1})],ha.prototype,"hass",void 0),t([le()],ha.prototype,"_config",void 0),t([le()],ha.prototype,"title",void 0),t([le()],ha.prototype,"tagOptions",void 0),t([ce()],ha.prototype,"customTagValue",void 0),ha=t([re("scheduler-card-editor")],ha);const ma=r`
   ha-dialog {
@@ -1448,10 +1449,9 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           `:R}
         </div>
       `}{let e=[be.Fixed,be.Sunrise,be.Sunset];const t={[be.Fixed]:Xi("ui.components.selectors.selector.types.time",this.hass),[be.Sunrise]:Xi("ui.panel.config.automation.editor.triggers.type.sun.sunrise",this.hass),[be.Sunset]:Xi("ui.panel.config.automation.editor.triggers.type.sun.sunset",this.hass)},i={[be.Fixed]:"mdi:clock-outline",[be.Sunrise]:"mdi:weather-sunset-up",[be.Sunset]:"mdi:weather-sunset-down"},s={[be.Fixed]:"M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z",[be.Sunrise]:"M3,12H7A5,5 0 0,1 12,7A5,5 0 0,1 17,12H21A1,1 0 0,1 22,13A1,1 0 0,1 21,14H3A1,1 0 0,1 2,13A1,1 0 0,1 3,12M15,12A3,3 0 0,0 12,9A3,3 0 0,0 9,12H15M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M12.71,16.3L15.82,19.41C16.21,19.8 16.21,20.43 15.82,20.82C15.43,21.21 14.8,21.21 14.41,20.82L12,18.41L9.59,20.82C9.2,21.21 8.57,21.21 8.18,20.82C7.79,20.43 7.79,19.8 8.18,19.41L11.29,16.3C11.5,16.1 11.74,16 12,16C12.26,16 12.5,16.1 12.71,16.3Z",[be.Sunset]:"M3,12H7A5,5 0 0,1 12,7A5,5 0 0,1 17,12H21A1,1 0 0,1 22,13A1,1 0 0,1 21,14H3A1,1 0 0,1 2,13A1,1 0 0,1 3,12M15,12A3,3 0 0,0 12,9A3,3 0 0,0 9,12H15M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M12.71,20.71L15.82,17.6C16.21,17.21 16.21,16.57 15.82,16.18C15.43,15.79 14.8,15.79 14.41,16.18L12,18.59L9.59,16.18C9.2,15.79 8.57,15.79 8.18,16.18C7.79,16.57 7.79,17.21 8.18,17.6L11.29,20.71C11.5,20.9 11.74,21 12,21C12.26,21 12.5,20.9 12.71,20.71Z"},a=e=>{if(e==be.Fixed)return!1;const t=this._convertTimeMode(e);return Math.abs(60*t.hours+t.minutes)>240};return q`
-      <ha-button-menu
-        @action=${e=>{const t=e.detail.index,i=e.target.items[t].id,s=this._convertTimeMode(i);this.hours=s.hours,this.minutes=s.minutes,this.mode=i,e.preventDefault();const a=e.target;setTimeout(()=>{a.firstElementChild.blur()},50),this._valueChanged()}}
-        @closed=${e=>{e.stopPropagation()}}
-        fixed
+      <ha-dropdown
+        @wa-select=${e=>{const t=e.detail.item.value;if(this.mode==t)return;const i=this._convertTimeMode(t);this.hours=i.hours,this.minutes=i.minutes,this.mode=t,this._valueChanged()}}
+        @wa-after-hide=${e=>{e.target.firstElementChild.blur()}}
         ?disabled=${this.disabled}
       >
         <ha-icon-button
@@ -1461,16 +1461,18 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         >
         </ha-icon-button>
         ${e.map(e=>q`
-        <mwc-list-item graphic="icon" ?noninteractive=${this.mode==e} ?disabled=${a(e)} id="${e}">
-          ${t[e]}
+        <ha-dropdown-item
+          ?noninteractive=${this.mode==e}
+          ?disabled=${a(e)&&this.mode!=e}
+          value="${e}"
+        >
           <ha-icon
-            slot="graphic"
             icon="${i[e]}"
           ></ha-icon>
-        </mwc-list-item>
-        
+          ${t[e]}
+        </ha-dropdown-item>
         `)}
-      </ha-button-menu>
+      </ha-dropdown>
     `}}_renderSuffix(){if(this.large){const e=()=>{let e=Le(this.hours).am_pm;const t=Le(this.hours).hours;this.hours=Pe(t,"AM"==e?Me.PM:Me.AM),this._valueChanged()},t=()=>{0!=this.hours?this.hours=-this.hours:this.minutes=-this.minutes,this._valueChanged()},i=()=>{this.mode=this.mode==be.Sunrise?be.Sunset:be.Sunrise,this._valueChanged()};return q`
         <div class="suffix">
         ${this.useAmPm&&this.mode==be.Fixed?q`
@@ -1592,23 +1594,23 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
       align-self: center;
       white-space: nowrap;
     }
-    ha-button-menu {
+    ha-dropdown-menu {
       display: flex;
       align-items: flex-end;
       margin-right: 4px;
       padding-bottom: 4px;
     }
-    ha-button-menu ha-icon-button {
+    ha-dropdown-menu ha-icon-button {
       color: var(--secondary-text-color);
     }
-    mwc-list-item[disabled] ha-icon {
+    ha-dropdown-item[disabled] ha-icon {
       color: var(--disabled-text-color);
     }
-    mwc-list-item[noninteractive] {
+    ha-dropdown-item[noninteractive] {
       background-color: rgba(var(--rgb-primary-color), 0.12);
       color: var(--sidebar-selected-text-color);
     }
-    mwc-list-item[noninteractive] ha-icon {
+    ha-dropdown-item[noninteractive] ha-icon {
       color: var(--sidebar-selected-text-color);
     }
     ha-button {
@@ -2028,24 +2030,23 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           <span>${Qi(c)}</span>
         </div>
 
-        <ha-button-menu
+        <ha-dropdown
           slot="contextMenu" 
-          @action=${this._actionItemOptionsClick}
-          @closed=${e=>{e.stopPropagation()}}
-          @click=${e=>{e.preventDefault(),e.stopImmediatePropagation()}}
-          fixed
+          @wa-select=${this._actionItemOptionsClick}
+          @wa-after-hide=${e=>{e.target.firstElementChild.blur()}}
+          placement="bottom-end"
         >
           <ha-icon-button slot="trigger" .path=${Ns}>
           </ha-icon-button>
-          <mwc-list-item graphic="icon">
+          <ha-dropdown-item value="change_type">
+            <ha-icon icon="mdi:pencil"></ha-icon>
             ${Xi("ui.panel.lovelace.editor.card.conditional.change_type",this.hass)}
-            <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
-          </mwc-list-item>
-          <mwc-list-item graphic="icon" class="warning">
+          </ha-dropdown-item>
+          <ha-dropdown-item variant="danger" value="delete">
+            <ha-icon icon="mdi:delete"></ha-icon>
             ${Xi("ui.common.delete",this.hass)}
-            <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
-          </mwc-list-item>
-        </ha-button-menu>
+          </ha-dropdown-item>
+        </ha-dropdown>
 
         <div slot="content">
 
@@ -2091,7 +2092,7 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           `})}
         </div>
       </scheduler-collapsible-section>
-    `}_selectField(e,t){const i=t.detail.value,s=Object.assign({},this.schedule.entries[this.selectedEntry].slots[this.selectedSlot]);let a=void 0!==i?Object.assign(Object.assign({},s.actions[0]),{service_data:Object.assign(Object.assign({},s.actions[0].service_data),{[e]:i})}):Object.assign(Object.assign({},s.actions[0]),{service_data:Object.fromEntries(Object.entries(s.actions[0].service_data).filter(([t])=>t!=e))});this._updateSlot({actions:[a]})}_toggleOptionalField(e,t,i){const s=e.target.checked,a=s?wa(i):void 0;s?this._selectField(t,new CustomEvent("value-changed",{detail:{value:Be(a)?a:null}})):this._selectField(t,new CustomEvent("value-changed",{detail:{value:void 0}}))}_selectEntity(e){const t=e.detail.value;t&&this.schedule.entries[this.selectedEntry].slots.forEach((e,i)=>{if(!e.actions.length)return;let s=Object.assign(Object.assign({},e.actions[0]),{target:{entity_id:t}});this._updateSlot({actions:[s]},i)})}_handleUpdate(e,t){this.selectedEntry=t,e.detail.hasOwnProperty("selectedSlot")?(this._updateSelectedSlot(e.detail.selectedSlot),this.selectedSlot=e.detail.selectedSlot):e.detail.hasOwnProperty("slots")&&this._updateEntry({slots:e.detail.slots})}_updateSelectedSlot(e){this.dispatchEvent(new CustomEvent("change",{detail:{selectedSlot:e}}))}_updateEntry(e){let t=Object.assign({},this.schedule.entries[this.selectedEntry]);t=Object.assign(Object.assign({},t),e),this.schedule=Object.assign(Object.assign({},this.schedule),{entries:Object.assign(this.schedule.entries,{[this.selectedEntry]:t})})}_updateSlot(e,t=this.selectedSlot){let i=Object.assign({},this.schedule.entries[this.selectedEntry].slots[t]);i=Object.assign(Object.assign({},i),e),this._updateEntry({slots:Object.assign(this.schedule.entries[this.selectedEntry].slots,{[t]:i})})}async _showWeekdayDialog(e,t){this.selectedEntry=t,await new Promise(i=>{const s={weekdays:[...this.schedule.entries[t].weekdays],cancel:()=>i(null),confirm:e=>i(e)};Es(e.target,"show-dialog",{dialogTag:"dialog-select-weekdays",dialogImport:()=>Promise.resolve().then((function(){return Da})),dialogParams:s})}).then(e=>{e&&this._updateEntry({weekdays:e})})}async _showActionDialog(e){let t=[],i=[];this.schedule.entries.forEach(e=>{e.slots.forEach(e=>{e.actions.forEach(e=>{var s,a;i=[...i,...[(null===(s=e.target)||void 0===s?void 0:s.entity_id)||[]].flat()],t=[...t,...[Wi(e.service),...[(null===(a=e.target)||void 0===a?void 0:a.entity_id)||[]].flat()].map(Wi)]})})}),t=[...new Set(t)],i=[...new Set(i)],await new Promise(s=>{const a={cancel:()=>s(null),confirm:e=>s(e),domainFilter:t.length?t:void 0,entityFilter:i.length?i:void 0,cardConfig:this.config};Es(e.target,"show-dialog",{dialogTag:"dialog-select-action",dialogImport:()=>Promise.resolve().then((function(){return Ia})),dialogParams:a})}).then(e=>{if(!e)return;Object.assign({},this.schedule.entries[this.selectedEntry].slots[this.selectedSlot]);const t=this.schedule.entries[this.selectedEntry].slots.find(e=>{var t;return e.actions.length?null===(t=e.actions[0].target)||void 0===t?void 0:t.entity_id:void 0});let i=Object.assign({},e);t&&i.target&&(i=Object.assign(Object.assign({},i),{target:t.actions[0].target})),this._updateSlot({actions:[i]})})}_actionItemOptionsClick(e){switch(e.detail.index){case 0:this._showActionDialog(e);break;case 1:this._updateSlot({actions:[]})}}_stopTimeChanged(e){let t=e.detail.value,[i,s]=za([...this.schedule.entries[this.selectedEntry].slots],Number(this.selectedSlot),{stop:t},this.hass);this._updateEntry({slots:i}),s!=this.selectedSlot&&this._updateSelectedSlot(s)}_startTimeChanged(e){let t=e.detail.value,[i,s]=za([...this.schedule.entries[this.selectedEntry].slots],Number(this.selectedSlot),{start:t},this.hass);this._updateEntry({slots:i}),s!=this.selectedSlot&&this._updateSelectedSlot(s)}_toggleStopTime(e){const t=e.target.checked,i=Number(this.selectedSlot);let s=[...this.schedule.entries[this.selectedEntry].slots];if(t){let e=i+1,t=s[e].start;s[i+1].actions.length||(t=s[i+1].stop,e=i+2),s=[...s.slice(0,i),Object.assign(Object.assign({},s[i]),{stop:t}),...s.slice(e)]}else{const e=ze(Ce(s[i].start),{minutes:1});Ae(s[i].stop,this.hass)-Ae(e,this.hass)!=0&&(s=[...s.slice(0,i+1),{start:Ne(e),stop:s[i].stop,actions:[],conditions:s[i].conditions},...s.slice(i+1)]),Object.assign(s,{[i]:Object.assign(Object.assign({},s[i]),{stop:void 0})})}this._updateEntry({slots:s})}_addTimeslot(e){null!==this.selectedEntry&&null!==this.selectedSlot&&(this.schedule=((e,t,i,s)=>{let a=[...e.entries[t].slots],o=Ce(a[i].start),n=void 0===a[i].stop?o:Ce(a[i].stop);if(n.mode!==be.Fixed||n.hours||n.minutes||(n=Object.assign(Object.assign({},n),{hours:24})),[be.Sunrise,be.Sunset].includes(o.mode)){const e=o.mode==be.Sunrise?s.states["sun.sun"].attributes.next_rising:s.states["sun.sun"].attributes.next_setting;let t=Ce(e);o=ze(t,{hours:o.hours,minutes:o.minutes})}const r=Ae(o,s),d=(Ae(n,s)-r)/2,l=Math.floor(d/3600),c=Math.round((d-3600*l)/60);let u=ze(o,{hours:l,minutes:c});return u=Se(u,15),a=[...a.slice(0,i),Object.assign(Object.assign({},a[i]),{stop:Ne(u)}),Object.assign(Object.assign({},a[i]),{start:Ne(u),stop:Ne(n),actions:[]}),...a.slice(i+1)],e=Object.assign(Object.assign({},e),{entries:Object.assign(e.entries,{[t]:Object.assign(Object.assign({},e.entries[t]),{slots:a})})})})(this.schedule,this.selectedEntry,this.selectedSlot,this.hass),e.target.blur())}_removeTimeslot(e){null!==this.selectedEntry&&null!==this.selectedSlot&&(this.schedule=((e,t,i)=>{let s=[...e.entries[t].slots];const a=i==s.length-1?i-1:i;return s=[...s.slice(0,a),Object.assign(Object.assign({},s[a+1]),{start:s[a].start,stop:s[a+1].stop}),...s.slice(a+2)],e=Object.assign(Object.assign({},e),{entries:Object.assign(e.entries,{[t]:Object.assign(Object.assign({},e.entries[t]),{slots:s})})})})(this.schedule,this.selectedEntry,this.selectedSlot),this.selectedSlot>=this.schedule.entries[this.selectedEntry].slots.length&&(this.selectedSlot=this.schedule.entries[this.selectedEntry].slots.length-1),e.target.blur())}static get styles(){return r`
+    `}_selectField(e,t){const i=t.detail.value,s=Object.assign({},this.schedule.entries[this.selectedEntry].slots[this.selectedSlot]);let a=void 0!==i?Object.assign(Object.assign({},s.actions[0]),{service_data:Object.assign(Object.assign({},s.actions[0].service_data),{[e]:i})}):Object.assign(Object.assign({},s.actions[0]),{service_data:Object.fromEntries(Object.entries(s.actions[0].service_data).filter(([t])=>t!=e))});this._updateSlot({actions:[a]})}_toggleOptionalField(e,t,i){const s=e.target.checked,a=s?wa(i):void 0;s?this._selectField(t,new CustomEvent("value-changed",{detail:{value:Be(a)?a:null}})):this._selectField(t,new CustomEvent("value-changed",{detail:{value:void 0}}))}_selectEntity(e){const t=e.detail.value;t&&this.schedule.entries[this.selectedEntry].slots.forEach((e,i)=>{if(!e.actions.length)return;let s=Object.assign(Object.assign({},e.actions[0]),{target:{entity_id:t}});this._updateSlot({actions:[s]},i)})}_handleUpdate(e,t){this.selectedEntry=t,e.detail.hasOwnProperty("selectedSlot")?(this._updateSelectedSlot(e.detail.selectedSlot),this.selectedSlot=e.detail.selectedSlot):e.detail.hasOwnProperty("slots")&&this._updateEntry({slots:e.detail.slots})}_updateSelectedSlot(e){this.dispatchEvent(new CustomEvent("change",{detail:{selectedSlot:e}}))}_updateEntry(e){let t=Object.assign({},this.schedule.entries[this.selectedEntry]);t=Object.assign(Object.assign({},t),e),this.schedule=Object.assign(Object.assign({},this.schedule),{entries:Object.assign(this.schedule.entries,{[this.selectedEntry]:t})})}_updateSlot(e,t=this.selectedSlot){let i=Object.assign({},this.schedule.entries[this.selectedEntry].slots[t]);i=Object.assign(Object.assign({},i),e),this._updateEntry({slots:Object.assign(this.schedule.entries[this.selectedEntry].slots,{[t]:i})})}async _showWeekdayDialog(e,t){this.selectedEntry=t,await new Promise(i=>{const s={weekdays:[...this.schedule.entries[t].weekdays],cancel:()=>i(null),confirm:e=>i(e)};Es(e.target,"show-dialog",{dialogTag:"dialog-select-weekdays",dialogImport:()=>Promise.resolve().then((function(){return Da})),dialogParams:s})}).then(e=>{e&&this._updateEntry({weekdays:e})})}async _showActionDialog(e){let t=[],i=[];this.schedule.entries.forEach(e=>{e.slots.forEach(e=>{e.actions.forEach(e=>{var s,a;i=[...i,...[(null===(s=e.target)||void 0===s?void 0:s.entity_id)||[]].flat()],t=[...t,...[Wi(e.service),...[(null===(a=e.target)||void 0===a?void 0:a.entity_id)||[]].flat()].map(Wi)]})})}),t=[...new Set(t)],i=[...new Set(i)],await new Promise(s=>{const a={cancel:()=>s(null),confirm:e=>s(e),domainFilter:t.length?t:void 0,entityFilter:i.length?i:void 0,cardConfig:this.config};Es(e.target,"show-dialog",{dialogTag:"dialog-select-action",dialogImport:()=>Promise.resolve().then((function(){return Ia})),dialogParams:a})}).then(e=>{if(!e)return;Object.assign({},this.schedule.entries[this.selectedEntry].slots[this.selectedSlot]);const t=this.schedule.entries[this.selectedEntry].slots.find(e=>{var t;return e.actions.length?null===(t=e.actions[0].target)||void 0===t?void 0:t.entity_id:void 0});let i=Object.assign({},e);t&&i.target&&(i=Object.assign(Object.assign({},i),{target:t.actions[0].target})),this._updateSlot({actions:[i]})})}_actionItemOptionsClick(e){switch(e.detail.item.value){case"change_type":this._showActionDialog(e);break;case"delete":this._updateSlot({actions:[]})}}_stopTimeChanged(e){let t=e.detail.value,[i,s]=za([...this.schedule.entries[this.selectedEntry].slots],Number(this.selectedSlot),{stop:t},this.hass);this._updateEntry({slots:i}),s!=this.selectedSlot&&this._updateSelectedSlot(s)}_startTimeChanged(e){let t=e.detail.value,[i,s]=za([...this.schedule.entries[this.selectedEntry].slots],Number(this.selectedSlot),{start:t},this.hass);this._updateEntry({slots:i}),s!=this.selectedSlot&&this._updateSelectedSlot(s)}_toggleStopTime(e){const t=e.target.checked,i=Number(this.selectedSlot);let s=[...this.schedule.entries[this.selectedEntry].slots];if(t){let e=i+1,t=s[e].start;s[i+1].actions.length||(t=s[i+1].stop,e=i+2),s=[...s.slice(0,i),Object.assign(Object.assign({},s[i]),{stop:t}),...s.slice(e)]}else{const e=ze(Ce(s[i].start),{minutes:1});Ae(s[i].stop,this.hass)-Ae(e,this.hass)!=0&&(s=[...s.slice(0,i+1),{start:Ne(e),stop:s[i].stop,actions:[],conditions:s[i].conditions},...s.slice(i+1)]),Object.assign(s,{[i]:Object.assign(Object.assign({},s[i]),{stop:void 0})})}this._updateEntry({slots:s})}_addTimeslot(e){null!==this.selectedEntry&&null!==this.selectedSlot&&(this.schedule=((e,t,i,s)=>{let a=[...e.entries[t].slots],o=Ce(a[i].start),n=void 0===a[i].stop?o:Ce(a[i].stop);if(n.mode!==be.Fixed||n.hours||n.minutes||(n=Object.assign(Object.assign({},n),{hours:24})),[be.Sunrise,be.Sunset].includes(o.mode)){const e=o.mode==be.Sunrise?s.states["sun.sun"].attributes.next_rising:s.states["sun.sun"].attributes.next_setting;let t=Ce(e);o=ze(t,{hours:o.hours,minutes:o.minutes})}const r=Ae(o,s),d=(Ae(n,s)-r)/2,l=Math.floor(d/3600),c=Math.round((d-3600*l)/60);let u=ze(o,{hours:l,minutes:c});return u=Se(u,15),a=[...a.slice(0,i),Object.assign(Object.assign({},a[i]),{stop:Ne(u)}),Object.assign(Object.assign({},a[i]),{start:Ne(u),stop:Ne(n),actions:[]}),...a.slice(i+1)],e=Object.assign(Object.assign({},e),{entries:Object.assign(e.entries,{[t]:Object.assign(Object.assign({},e.entries[t]),{slots:a})})})})(this.schedule,this.selectedEntry,this.selectedSlot,this.hass),e.target.blur())}_removeTimeslot(e){null!==this.selectedEntry&&null!==this.selectedSlot&&(this.schedule=((e,t,i)=>{let s=[...e.entries[t].slots];const a=i==s.length-1?i-1:i;return s=[...s.slice(0,a),Object.assign(Object.assign({},s[a+1]),{start:s[a].start,stop:s[a+1].stop}),...s.slice(a+2)],e=Object.assign(Object.assign({},e),{entries:Object.assign(e.entries,{[t]:Object.assign(Object.assign({},e.entries[t]),{slots:s})})})})(this.schedule,this.selectedEntry,this.selectedSlot),this.selectedSlot>=this.schedule.entries[this.selectedEntry].slots.length&&(this.selectedSlot=this.schedule.entries[this.selectedEntry].slots.length-1),e.target.blur())}static get styles(){return r`
   :host {
     position: relative;
   }
@@ -2228,33 +2229,44 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
       <div class="header first">
         <span>${Ui("ui.panel.options.conditions.header",this.hass)}:</span>
         ${this.schedule.entries[0].slots[0].conditions.items.length?q`
-        <ha-button-menu
-          @action=${this._conditionConfigOptionsClick}
-          @closed=${e=>{e.stopPropagation()}}
-          @click=${e=>{e.preventDefault(),e.stopImmediatePropagation()}}
-          fixed
-          menuCorner="END"
-          corner="BOTTOM_END"
+        <ha-dropdown
+          @wa-select=${this._conditionConfigOptionsClick}
+          @wa-after-hide=${e=>{e.target.firstElementChild.blur()}}
+          placement="bottom-end"
         >
           <ha-icon-button
             slot="trigger"
             .path=${"M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"}
           >
           </ha-icon-button>
-          <mwc-list-item graphic="icon" ?disabled=${this.schedule.entries[0].slots[0].conditions.items.length<2}>
-            ${this.schedule.entries[0].slots[0].conditions.type==_e.Or?q`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`:""}
+          <ha-dropdown-item
+            ?disabled=${this.schedule.entries[0].slots[0].conditions.items.length<2}
+            value="or"
+          >
+            <ha-icon
+              icon="mdi:check"
+              style="${this.schedule.entries[0].slots[0].conditions.type==_e.Or?"":"visibility: hidden"}"
+            ></ha-icon>
             ${Ui("ui.panel.options.conditions.options.logic_or",this.hass)}
-          </mwc-list-item>
-          <mwc-list-item graphic="icon" ?disabled=${this.schedule.entries[0].slots[0].conditions.items.length<2}>
-            ${this.schedule.entries[0].slots[0].conditions.type==_e.And?q`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`:""}
+          </ha-dropdown-item>
+          <ha-dropdown-item
+            ?disabled=${this.schedule.entries[0].slots[0].conditions.items.length<2}
+            value="and"
+          >
+            <ha-icon
+              icon="mdi:check"
+              style="${this.schedule.entries[0].slots[0].conditions.type==_e.And?"":"visibility: hidden"}"
+            ></ha-icon>
             ${Ui("ui.panel.options.conditions.options.logic_and",this.hass)}
-          </mwc-list-item>
-          <mwc-list-item graphic="icon">
-
-            ${this.schedule.entries[0].slots[0].conditions.track_changes?q`<ha-icon icon="mdi:check" slot="graphic"></ha-icon>`:""}
+          </ha-dropdown-item>
+          <ha-dropdown-item value="track_changes">
+            <ha-icon 
+              icon="mdi:check" 
+              style="${this.schedule.entries[0].slots[0].conditions.track_changes?"":"visibility: hidden"}"
+            ></ha-icon>
             ${Ui("ui.panel.options.conditions.options.track_changes",this.hass)}
-          </mwc-list-item>
-        </ha-button-menu>
+          </ha-dropdown-item>
+        </ha-dropdown>
         `:""}
         </div>
         <scheduler-collapsible-group
@@ -2321,13 +2333,11 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         >
         </scheduler-combo-selector>
 
-        <ha-button-menu
-          @closed=${e=>{e.stopPropagation(),e.target.querySelector("ha-button").blur()}}
+        <ha-dropdown
+          @wa-after-hide=${e=>{e.stopPropagation(),e.target.querySelector("ha-button").blur()}}
           @click=${e=>{e.preventDefault(),e.stopImmediatePropagation()}}
-          @opened=${e=>{e.target.querySelector("ha-textfield").focus()}}
-          fixed
-          menuCorner="END"
-          corner="BOTTOM_START"
+          @wa-after-show=${e=>{e.target.querySelector("ha-textfield").focus()}}
+          placement="bottom-start"
         >
           <ha-button appearance="plain" slot="trigger">
             <ha-icon slot="start" icon="mdi:plus"></ha-icon>
@@ -2349,7 +2359,7 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
               ${Xi("ui.common.ok",this.hass)}
             </ha-button>
           </div>
-        </ha-button-menu>
+        </ha-dropdown>
       </div>
 
       <span class="header">${Ui("ui.panel.options.repeat_type",this.hass)}:</span>
@@ -2388,13 +2398,11 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           ${Qi(Ui(d[e.match_type],this.hass,["{entity}","{value}"],[Os(e.entity_id,this.hass,this.config.customize)||"",null!==(i=ds(e.value,o,this.hass))&&void 0!==i?i:""]))}
           `:Ui("ui.panel.options.conditions.add_condition",this.hass)}
         </div>
-        <ha-button-menu
-          slot="contextMenu" 
-          @action=${e=>this._conditionItemOptionsClick(e,t)}
-          @closed=${e=>{e.stopPropagation()}}
-          @click=${e=>{e.preventDefault(),e.stopImmediatePropagation()}}
-          fixed
+        <ha-dropdown
+          slot="contextMenu"
+          @wa-select=${e=>this._conditionItemOptionsClick(e,t)}
           ?disabled=${!this.conditionValid&&this.conditionIdx!==t&&-1!=this.conditionIdx}
+          placement="bottom-end"
         >
           <ha-icon-button
             slot="trigger"
@@ -2402,15 +2410,15 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
             ?disabled=${!this.conditionValid&&this.conditionIdx!==t&&-1!=this.conditionIdx}
           >
           </ha-icon-button>
-          <mwc-list-item graphic="icon">
+          <ha-dropdown-item value="change_type">
+            <ha-icon icon="mdi:pencil"></ha-icon>
             ${Xi("ui.panel.lovelace.editor.card.conditional.change_type",this.hass)}
-            <ha-icon slot="graphic" icon="mdi:pencil"></ha-icon>
-          </mwc-list-item>
-          <mwc-list-item graphic="icon" class="warning">
+          </ha-dropdown-item>
+          <ha-dropdown-item variant="danger" value="delete">
+            <ha-icon icon="mdi:delete"></ha-icon>
             ${Xi("ui.common.delete",this.hass)}
-            <ha-icon slot="graphic" icon="mdi:delete"></ha-icon>
-          </mwc-list-item>
-        </ha-button-menu>
+          </ha-dropdown-item>
+        </ha-dropdown>
 
         <div slot="content">
 
@@ -2432,20 +2440,22 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         <scheduler-settings-row>
           <span slot="heading">
             ${Qi(Ui(d[this.conditionIdx==t?this.selectedMatchType:e.match_type],this.hass,["{entity}","{value}"],["",""]))}
-            <ha-button-menu
-              @action=${e=>this._selectMatchType(e,n)}
-              @closed=${e=>{e.stopPropagation()}}
-              fixed
+            <ha-dropdown
+              @wa-select=${this._selectMatchType}
+              @wa-after-hide=${e=>{e.target.firstElementChild.blur()}}
             >
               <ha-icon-button slot="trigger" .path=${Is}>
               </ha-icon-button>
               ${n.map(i=>q`
-                <mwc-list-item graphic="icon" ?noninteractive=${this.conditionIdx==t?this.selectedMatchType==i:e.match_type==i}>
+                <ha-dropdown-item 
+                  ?noninteractive=${this.conditionIdx==t?this.selectedMatchType==i:e.match_type==i}
+                  value="${i}"
+                >
+                  <ha-icon icon="${r[i]}"></ha-icon>
                   ${Qi(Ui(d[i],this.hass,["{entity}","{value}"],["",""]))}
-                  <ha-icon slot="graphic" icon="${r[i]}"></ha-icon>
-                </mwc-list-item>
+                </ha-dropdown-item>
               `)}
-            </ha-button-menu>
+            </ha-dropdown>
           </span>
           <scheduler-combo-selector
             .hass=${this.hass}
@@ -2457,21 +2467,18 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         </scheduler-settings-row>
         </div>
       </scheduler-collapsible-section>
-    `})}_updateActiveCondition(e){const t=e.detail.item;if(t<0)return void(this.conditionIdx=-1);if(t===this.conditionIdx)return;this.conditionIdx=t;const i=this.schedule.entries[0].slots[0].conditions.items[t];this.selectedEntity=i?i.entity_id:void 0,this.selectedMatchType=i?i.match_type:void 0,this.conditionValue=i?i.value:void 0}_conditionItemOptionsClick(e,t){switch(e.detail.index){case 0:this._showConditionDialog(e).then(e=>{e&&(this.conditionIdx=t,this.selectedDomain=e,this.selectedEntity=void 0,this.selectedMatchType=void 0,this.conditionValue=void 0,this.conditionValid=!1)});break;case 1:const i=this.schedule.entries[0].slots[0].conditions.items.filter((e,i)=>i!==t),s=e=>Object.assign(e,{conditions:Object.assign(Object.assign({},e.conditions),{items:i})}),a=e=>Object.assign(e,{slots:e.slots.map(s)});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(a)}),t===this.conditionIdx?this.conditionIdx=-1:void 0!==this.conditionIdx&&t<this.conditionIdx&&(this.conditionIdx=this.conditionIdx-1),this.conditionValid=!0}}_selectMatchType(e,t){const i=e.detail.index;t=t.filter(e=>e!=this.selectedMatchType),this.selectedMatchType=t[i],e.preventDefault();const s=e.target;setTimeout(()=>{s.firstElementChild.blur()},50),this._validateCondition()}_conditionValueChanged(e){this.conditionValue=e.detail.value,this._validateCondition()}async _showConditionDialog(e){return new Promise(t=>{const i={cancel:()=>t(null),confirm:e=>t(e),domain:void 0,cardConfig:this.config};Es(e.target,"show-dialog",{dialogTag:"dialog-select-condition",dialogImport:()=>Promise.resolve().then((function(){return Za})),dialogParams:i})})}_selectEntity(e){const t=e.detail.value;if(this.selectedEntity=t?t.pop():void 0,this.selectedEntity){const e=Ys(this.selectedEntity,this.hass,this.config.customize),t=e&&e.hasOwnProperty("number")?[ge.Above,ge.Below]:[ge.Equal,ge.Unequal];this.selectedMatchType&&t.includes(this.selectedMatchType)||(this.selectedMatchType=t[0])}this._validateCondition()}_validateCondition(){if(this.conditionValid=!1,!this.selectedEntity||!Be(this.conditionValue)||!this.selectedMatchType||void 0===this.conditionIdx)return;const e=Ys(this.selectedEntity,this.hass,this.config.customize);if(!Ua(this.conditionValue,e))return;this.conditionValid=!0;const t={entity_id:this.selectedEntity,match_type:this.selectedMatchType,value:this.conditionValue,attribute:"state"},i=Object.assign(this.schedule.entries[0].slots[0].conditions.items,{[this.conditionIdx]:t}),s=e=>Object.assign(e,{conditions:Object.assign(Object.assign({},e.conditions),{items:i})});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(e=>Object.assign(e,{slots:e.slots.map(s)}))})}_conditionAddClick(e){this._showConditionDialog(e).then(e=>{e&&(this.conditionIdx=this.schedule.entries[0].slots[0].conditions.items.length,this.selectedDomain=e,this.selectedEntity=void 0,this.selectedMatchType=void 0,this.conditionValue=void 0,this.conditionValid=!1)})}_conditionConfigOptionsClick(e){let t=Object.assign({},this.schedule.entries[0].slots[0].conditions);switch(e.detail.index){case 0:if(t.type==_e.Or)return;t=Object.assign(Object.assign({},t),{type:_e.Or});break;case 1:if(t.type==_e.And)return;t=Object.assign(Object.assign({},t),{type:_e.And});break;case 2:const e=!this.schedule.entries[0].slots[0].conditions.track_changes;t=Object.assign(Object.assign({},t),{track_changes:e})}const i=e=>Object.assign(e,{conditions:t});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(e=>Object.assign(e,{slots:e.slots.map(i)}))})}_setStartDate(e){const t=String(e.detail.value);if(!t)return;Fa(t)>Fa(this.endDate)&&(this.schedule=Object.assign(Object.assign({},this.schedule),{end_date:t}),this.endDate=t),this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t}),this.startDate=t}_setEndDate(e){const t=String(e.detail.value);if(!t)return;Fa(this.startDate)>Fa(t)&&(this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t}),this.startDate=t),this.schedule=Object.assign(Object.assign({},this.schedule),{end_date:t}),this.endDate=t}toggleEnableDateRange(e){const t=e.target.checked;this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t?this.startDate:void 0,end_date:t?this.endDate:void 0,repeat_type:t?this.schedule.repeat_type==fe.Repeat?fe.Pause:this.schedule.repeat_type:this.schedule.repeat_type==fe.Pause?fe.Repeat:this.schedule.repeat_type})}updateName(e){const t=e.target.value;this.schedule=Object.assign(Object.assign({},this.schedule),{name:t.trim()})}tagsUpdated(e){let t=e.detail.value;t=t.map(e=>e.trim()),t=t.filter(e=>!["none","disabled","enabled"].includes(e)),this.schedule=Object.assign(Object.assign({},this.schedule),{tags:t})}_customTagConfirmClick(e){let t=e.target;t=t.parentElement,t=t.parentElement;t.querySelector("ha-button").click(),e.preventDefault();let i=String(this.customTagValue).trim();if(i.length){let e=this.schedule.tags||[];e=[...new Set([...e,i])],e=e.filter(e=>!["none","disabled","enabled"].includes(e)),this.schedule=Object.assign(Object.assign({},this.schedule),{tags:e})}this.customTagValue=""}setRepeatType(e){const t=e.target.getAttribute("value");this.schedule=Object.assign(Object.assign({},this.schedule),{repeat_type:t})}static get styles(){return r`
+    `})}_updateActiveCondition(e){const t=e.detail.item;if(t<0)return void(this.conditionIdx=-1);if(t===this.conditionIdx)return;this.conditionIdx=t;const i=this.schedule.entries[0].slots[0].conditions.items[t];this.selectedEntity=i?i.entity_id:void 0,this.selectedMatchType=i?i.match_type:void 0,this.conditionValue=i?i.value:void 0}_conditionItemOptionsClick(e,t){switch(e.detail.item.value){case"change_type":this._showConditionDialog(e).then(e=>{e&&(this.conditionIdx=t,this.selectedDomain=e,this.selectedEntity=void 0,this.selectedMatchType=void 0,this.conditionValue=void 0,this.conditionValid=!1)});break;case"delete":const i=this.schedule.entries[0].slots[0].conditions.items.filter((e,i)=>i!==t),s=e=>Object.assign(e,{conditions:Object.assign(Object.assign({},e.conditions),{items:i})}),a=e=>Object.assign(e,{slots:e.slots.map(s)});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(a)}),t===this.conditionIdx?this.conditionIdx=-1:void 0!==this.conditionIdx&&t<this.conditionIdx&&(this.conditionIdx=this.conditionIdx-1),this.conditionValid=!0}}_selectMatchType(e){const t=e.detail.item.value;this.selectedMatchType=t,this._validateCondition()}_conditionValueChanged(e){this.conditionValue=e.detail.value,this._validateCondition()}async _showConditionDialog(e){return new Promise(t=>{const i={cancel:()=>t(null),confirm:e=>t(e),domain:void 0,cardConfig:this.config};Es(e.target,"show-dialog",{dialogTag:"dialog-select-condition",dialogImport:()=>Promise.resolve().then((function(){return Za})),dialogParams:i})})}_selectEntity(e){const t=e.detail.value;if(this.selectedEntity=t?t.pop():void 0,this.selectedEntity){const e=Ys(this.selectedEntity,this.hass,this.config.customize),t=e&&e.hasOwnProperty("number")?[ge.Above,ge.Below]:[ge.Equal,ge.Unequal];this.selectedMatchType&&t.includes(this.selectedMatchType)||(this.selectedMatchType=t[0])}this._validateCondition()}_validateCondition(){if(this.conditionValid=!1,!this.selectedEntity||!Be(this.conditionValue)||!this.selectedMatchType||void 0===this.conditionIdx)return;const e=Ys(this.selectedEntity,this.hass,this.config.customize);if(!Ua(this.conditionValue,e))return;this.conditionValid=!0;const t={entity_id:this.selectedEntity,match_type:this.selectedMatchType,value:this.conditionValue,attribute:"state"},i=Object.assign(this.schedule.entries[0].slots[0].conditions.items,{[this.conditionIdx]:t}),s=e=>Object.assign(e,{conditions:Object.assign(Object.assign({},e.conditions),{items:i})});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(e=>Object.assign(e,{slots:e.slots.map(s)}))})}_conditionAddClick(e){this._showConditionDialog(e).then(e=>{e&&(this.conditionIdx=this.schedule.entries[0].slots[0].conditions.items.length,this.selectedDomain=e,this.selectedEntity=void 0,this.selectedMatchType=void 0,this.conditionValue=void 0,this.conditionValid=!1)})}_conditionConfigOptionsClick(e){let t=Object.assign({},this.schedule.entries[0].slots[0].conditions);switch(e.detail.item.value){case"or":if(t.type==_e.Or)return;t=Object.assign(Object.assign({},t),{type:_e.Or});break;case"and":if(t.type==_e.And)return;t=Object.assign(Object.assign({},t),{type:_e.And});break;case"track_changes":const e=!this.schedule.entries[0].slots[0].conditions.track_changes;t=Object.assign(Object.assign({},t),{track_changes:e})}const i=e=>Object.assign(e,{conditions:t});this.schedule=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(e=>Object.assign(e,{slots:e.slots.map(i)}))})}_setStartDate(e){const t=String(e.detail.value);if(!t)return;Fa(t)>Fa(this.endDate)&&(this.schedule=Object.assign(Object.assign({},this.schedule),{end_date:t}),this.endDate=t),this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t}),this.startDate=t}_setEndDate(e){const t=String(e.detail.value);if(!t)return;Fa(this.startDate)>Fa(t)&&(this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t}),this.startDate=t),this.schedule=Object.assign(Object.assign({},this.schedule),{end_date:t}),this.endDate=t}toggleEnableDateRange(e){const t=e.target.checked;this.schedule=Object.assign(Object.assign({},this.schedule),{start_date:t?this.startDate:void 0,end_date:t?this.endDate:void 0,repeat_type:t?this.schedule.repeat_type==fe.Repeat?fe.Pause:this.schedule.repeat_type:this.schedule.repeat_type==fe.Pause?fe.Repeat:this.schedule.repeat_type})}updateName(e){const t=e.target.value;this.schedule=Object.assign(Object.assign({},this.schedule),{name:t.trim()})}tagsUpdated(e){let t=e.detail.value;t=t.map(e=>e.trim()),t=t.filter(e=>!["none","disabled","enabled"].includes(e)),this.schedule=Object.assign(Object.assign({},this.schedule),{tags:t})}_customTagConfirmClick(e){let t=e.target;t=t.parentElement,t=t.parentElement;t.querySelector("ha-button").click(),e.preventDefault();let i=String(this.customTagValue).trim();if(i.length){let e=this.schedule.tags||[];e=[...new Set([...e,i])],e=e.filter(e=>!["none","disabled","enabled"].includes(e)),this.schedule=Object.assign(Object.assign({},this.schedule),{tags:e})}this.customTagValue=""}setRepeatType(e){const t=e.target.getAttribute("value");this.schedule=Object.assign(Object.assign({},this.schedule),{repeat_type:t})}static get styles(){return r`
       ha-icon-button {
         align-self: center;
       }
-      mwc-list-item.warning, mwc-list-item.warning ha-icon {
-        color: var(--error-color);
-      }
-      mwc-list-item[disabled] ha-icon {
+      ha-dropdown-item[disabled] ha-icon {
         color: var(--disabled-text-color);
       }
-      mwc-list-item[noninteractive] {
+      ha-dropdown-item[noninteractive] {
         background-color: rgba(var(--rgb-primary-color), 0.12);
         color: var(--sidebar-selected-text-color);
       }
-      mwc-list-item[noninteractive] ha-icon {
+      ha-dropdown-item[noninteractive] ha-icon {
         color: var(--sidebar-selected-text-color);
       }
       div.period {
@@ -2498,7 +2505,7 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
       .header > * {
         display: flex;
       }
-      .header ha-button-menu {
+      .header ha-dropdown {
         margin-bottom: -10px;
       }
     `}};t([le({attribute:!1})],Ka.prototype,"hass",void 0),t([le({attribute:!1})],Ka.prototype,"config",void 0),t([ce()],Ka.prototype,"schedule",void 0),t([ce()],Ka.prototype,"conditionIdx",void 0),t([ce()],Ka.prototype,"selectedDomain",void 0),t([ce()],Ka.prototype,"selectedEntity",void 0),t([ce()],Ka.prototype,"selectedMatchType",void 0),t([ce()],Ka.prototype,"conditionValue",void 0),t([ce()],Ka.prototype,"conditionValid",void 0),t([ce()],Ka.prototype,"startDate",void 0),t([ce()],Ka.prototype,"endDate",void 0),t([le()],Ka.prototype,"tags",void 0),t([ce()],Ka.prototype,"customTagValue",void 0),Ka=t([re("scheduler-options-panel")],Ka);let Ga=class extends oe{async showDialog(e){this._params=e,await this.updateComplete}async closeDialog(){this._params&&this._params.cancel(),this._params=void 0}render(){return this._params?q`
@@ -2880,4 +2887,4 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
     .card-actions, .card-actions > * { 
       display: flex;
     }
-  `,t([le({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([le()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.11".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
+  `,t([le({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([le()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.12".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
