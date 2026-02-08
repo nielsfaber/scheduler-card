@@ -35,7 +35,11 @@ export const EditorDialogStyles = css`
     ha-dialog {
       --mdc-dialog-min-width: 580px;
       --mdc-dialog-max-width: 580px;
+      --dialog-surface-margin-top: 40px;
       --mdc-dialog-max-height: calc(100% - 72px);
+    }
+    ha-dialog {
+      --vertical-align-dialog: flex-start;
     }
     :host([large]) ha-dialog {
       --mdc-dialog-min-width: 90vw;
