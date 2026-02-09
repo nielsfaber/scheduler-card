@@ -285,7 +285,7 @@ export class SchedulerComboSelector extends LitElement {
         text-align: end;
       }
       div.slider-wrapper ha-textfield {
-        --ha-textfield-input-width: 40px;
+        --ha-textfield-input-width: 100px;
       }
       div.select-wrapper {
         display: flex;
