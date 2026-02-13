@@ -103,14 +103,11 @@ export class SchedulerComboSelector extends LitElement {
       const _selectValueChanged = (ev: InputEvent) => {
         ev.stopPropagation();
         const value = (ev.target as HTMLInputElement).value;
-        if (value == NONE) {
+        if (value == NONE || Array.isArray(this.value)) {
           (ev.target as any).select(-1);
           ev.preventDefault();
           setTimeout(() => { (ev.target as any).blur() }, 50);
-          return;
-        }
-        else if (Array.isArray(this.value)) {
-          (ev.target as any).select(-1);
+          if (value == NONE) return;
         }
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
       }
