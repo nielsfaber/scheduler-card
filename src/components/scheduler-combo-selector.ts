@@ -109,6 +109,9 @@ export class SchedulerComboSelector extends LitElement {
           setTimeout(() => { (ev.target as any).blur() }, 50);
           return;
         }
+        else if (Array.isArray(this.value)) {
+          (ev.target as any).select(-1);
+        }
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
       }
 
@@ -309,7 +312,6 @@ export class SchedulerComboSelector extends LitElement {
       let value = (ev as CustomEvent).detail.value;
       if (!value) return;
       this.value = [...this.value, value];
-      (ev.target as any).value = "";
     }
     else if ((ev as CustomEvent).detail) {
       let value = (ev as CustomEvent).detail.value;
