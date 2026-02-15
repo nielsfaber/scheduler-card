@@ -75,7 +75,7 @@
         },
         "days": "天",
         "tomorrow": "明天",
-        "repeated_days": "每 {days} 天",
+        "repeated_days": "每 {days}",
         "repeated_days_except": "每天，除了 {excludedDays}",
         "days_range": "从 {startDay} 至 {endDay}",
         "next_week_day": "下{weekday}"
@@ -102,7 +102,7 @@
         "description": "此操作将丢失某些设置。 你想继续吗？"
       },
       "weekday_picker": {
-        "title": "重复",
+        "title": "重复周期",
         "choose": "选择..."
       },
       "entity_picker": {
@@ -123,7 +123,7 @@
       "overview": {
         "no_entries": "无事项",
         "backend_error": "计划任务组件关联失败。使用本卡片前，需先安装计划任务组件（Scheduler component）集成.",
-        "excluded_items": "其他 {number}项{if number is 1}任务{else}任务",
+        "excluded_items": "其他{number}项{if number is 1}任务{else}任务",
         "hide_excluded": "隐藏其他任务",
         "additional_tasks": "另有{number}项{if number is 1}任务{else}任务"
       },
@@ -188,12 +188,12 @@
             "description": "这将设置‘发现已有任务(discover existing)’参数。已创建的任务会自动添加到卡片中。 "
           },
           "time_step": {
-            "heading": "时间步长",
+            "heading": "时间调整步长",
             "description": "创建计划任务时，时间选择器每次点击增加或减少的分钟数",
             "unit_minutes": "分钟"
           },
           "default_editor": {
-            "heading": "默认时间编辑器",
+            "heading": "新建任务默认模式",
             "options": {
               "single": "单次任务模式",
               "scheme": "时间方案模式"
@@ -217,7 +217,7 @@
             }
           },
           "display_format_secondary": {
-            "heading": "显示次要信息",
+            "heading": "显示的次要信息",
             "description": "设置卡片中显示任务的次要信息",
             "options": {
               "relative_time": "下次执行的剩余时间",
@@ -227,7 +227,7 @@
             }
           },
           "show_header_toggle": {
-            "heading": "显示标题切换",
+            "heading": "显示标题开关",
             "description": "在卡片顶部显示切换开关，用于启用/禁用所有实体"
           },
           "tags": {
