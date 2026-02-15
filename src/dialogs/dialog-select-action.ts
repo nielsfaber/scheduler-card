@@ -1,6 +1,6 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { mdiChevronLeft, mdiClose } from '@mdi/js';
+import { mdiChevronLeft, mdiClose, mdiDotsVertical } from '@mdi/js';
 import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
 import { actionItem as domainsActionItem, computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
@@ -10,6 +10,7 @@ import { HomeAssistant } from '../lib/types';
 import { Action, CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
 import { actionConfig } from '../data/actions/action_config';
+import { isDefined } from '../lib/is_defined';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -33,10 +34,12 @@ export class DialogSelectAction extends LitElement {
   @state() private _height?: number;
 
   @state() lockDomain = false;
+  @state() showAll = false;
 
   public async showDialog(params: DialogSelectActionParams): Promise<void> {
     this._params = params;
-    if (params.domainFilter) this.lockDomain = true;
+    this.lockDomain = params.domainFilter !== undefined;
+    this.showAll = false;
     await this.updateComplete;
   }
 
@@ -86,6 +89,23 @@ export class DialogSelectAction extends LitElement {
             <span slot="title">
               ${localize('ui.dialog.action_picker.title', this.hass)}
             </span>
+            ${!this.lockDomain && isDefined(this._params.cardConfig.include) ? html`
+            <ha-dropdown
+              placement="bottom-end"
+              slot="actionItems"
+              @wa-after-hide=${(ev: Event) => { ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur() }}
+            >
+              <ha-icon-button slot="trigger" .label=${this.hass.localize('ui.common.menu')} .path=${mdiDotsVertical}>
+              </ha-icon-button>
+              <ha-dropdown-item @click=${this._toggleShowAll}>
+                <ha-icon
+                  icon="mdi:check"
+                  style="${this.showAll ? '' : 'visibility: hidden'}"
+                ></ha-icon>
+                ${localize('ui.dialog.action_picker.show_all', this.hass)}
+              </ha-dropdown-item>
+            </ha-dropdown>`
+        : ''}
           </ha-dialog-header>
 
           <ha-textfield
@@ -146,7 +166,9 @@ export class DialogSelectAction extends LitElement {
       return this._renderDomainActions();
     }
 
-    const domains = computeActionDomains(this.hass, this._params!.cardConfig);
+    let cardConfig = { ...this._params?.cardConfig };
+    if (this.showAll) cardConfig = { ...cardConfig, include: undefined, exclude: undefined };
+    const domains = computeActionDomains(this.hass, cardConfig);
 
     if (domains.length === 1) {
       // force single domain into domainFilter to render actions directly
@@ -206,7 +228,9 @@ export class DialogSelectAction extends LitElement {
   }
 
   _renderDomainActions() {
-    let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, this._params!.cardConfig)).flat();
+    let cardConfig = { ...this._params?.cardConfig };
+    if (this.showAll) cardConfig = { ...cardConfig, include: undefined, exclude: undefined };
+    let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, cardConfig)).flat();
     if (this._params!.entityFilter?.length) {
       result = result.filter(item => this._params!.entityFilter?.every(entity => {
         const config = actionConfig(item.action, this._params!.cardConfig.customize);
@@ -266,6 +290,15 @@ export class DialogSelectAction extends LitElement {
   _clearSearch() {
     this._search = "";
     this._filter = "";
+  }
+
+  _toggleShowAll() {
+    if (this.showAll) {
+      this.showAll = false;
+    } else {
+      this.showAll = true;
+      if (!this.lockDomain) this._clearDomain();
+    }
   }
 
   static get styles(): CSSResultGroup {

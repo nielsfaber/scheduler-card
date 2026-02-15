@@ -111,7 +111,8 @@
         "no_results": "No se encontraron artículos coincidentes"
       },
       "action_picker": {
-        "title": "Elija Acción"
+        "title": "Elija Acción",
+        "show_all": "Mostrar todas las entidades admitidas"
       }
     },
     "panel": {

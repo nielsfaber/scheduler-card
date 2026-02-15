@@ -111,7 +111,8 @@
         "no_results": "Geen overeenkomstige items gevonden"
       },
       "action_picker": {
-        "title": "Kies actie"
+        "title": "Kies actie",
+        "show_all": "Toon alle ondersteunde entiteiten"
       }
     },
     "panel": {

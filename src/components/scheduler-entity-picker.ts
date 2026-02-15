@@ -9,9 +9,10 @@ import { fetchItems } from "../data/store/fetch_items";
 import { CustomConfig } from "../types";
 import { DEFAULT_INCLUDED_DOMAINS } from "../const";
 import { HassEntity } from "home-assistant-js-websocket";
+import { hassLocalize } from "../localize/hassLocalize";
+import { entityIncludedByConfig } from "../data/actions/entity_included_by_config";
 
 import './scheduler-chip-set';
-import { hassLocalize } from "../localize/hassLocalize";
 
 interface PickerComboBoxItem {
   id: string;
@@ -51,6 +52,13 @@ export class SchedulerEntityPicker extends LitElement {
     this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(
       ([, val]) => val.entity_id
     );
+    if (this.domain && this.config && !entityIncludedByConfig(this.domain, this.config)) {
+      this.config = {
+        ...this.config,
+        include: [...(this.config.include || []), this.domain],
+        exclude: [...(this.config.exclude || []).filter(e => !e.startsWith(this.domain!))]
+      };
+    }
     this._autoSelectIfSingleEntity();
   }
 

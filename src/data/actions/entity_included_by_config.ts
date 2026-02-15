@@ -1,10 +1,12 @@
 import { DEFAULT_INCLUDED_DOMAINS } from "../../const";
 import { computeDomain } from "../../lib/entity";
 import { matchPattern } from "../../lib/patterns";
-import { CardConfig } from "../../types";
+import { CustomConfig } from "../../types";
 
-
-export const entityIncludedByConfig = (entityOrDomain: string, config: CardConfig) => {
+export const entityIncludedByConfig = (
+  entityOrDomain: string,
+  config: { include?: string[], exclude?: string[], customize?: CustomConfig }
+) => {
   return entityOrDomain.includes('.')
     ? ((config.include || DEFAULT_INCLUDED_DOMAINS).some(e => matchPattern(e, entityOrDomain)) ||
       Object.keys(config.customize || {}).some(e => matchPattern(e, entityOrDomain))) &&

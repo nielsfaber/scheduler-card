@@ -111,7 +111,8 @@
         "no_results": "Inga matchande objekt hittades"
       },
       "action_picker": {
-        "title": "Välj åtgärd"
+        "title": "Välj åtgärd",
+        "show_all": "Visa alla enheter som stöds"
       }
     },
     "panel": {

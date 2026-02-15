@@ -111,7 +111,8 @@
         "no_results": "Keine passenden Elemente gefunden"
       },
       "action_picker": {
-        "title": "Aktion auswählen"
+        "title": "Aktion auswählen",
+        "show_all": "Alle unterstützten Entitäten anzeigen"
       }
     },
     "panel": {

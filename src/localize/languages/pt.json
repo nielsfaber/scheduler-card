@@ -111,7 +111,8 @@
         "no_results": "Sem resultados"
       },
       "action_picker": {
-        "title": "Escolha a acção"
+        "title": "Escolha a acção",
+        "show_all": "Mostrar todas as entidades suportadas"
       }
     },
     "panel": {

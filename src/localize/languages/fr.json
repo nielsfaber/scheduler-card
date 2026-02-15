@@ -111,7 +111,8 @@
         "no_results": "Aucune entité trouvée"
       },
       "action_picker": {
-        "title": "Choisir une action"
+        "title": "Choisir une action",
+        "show_all": "Afficher toutes les entités prises en charge"
       }
     },
     "panel": {

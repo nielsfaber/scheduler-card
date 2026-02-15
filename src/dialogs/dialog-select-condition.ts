@@ -1,6 +1,6 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
-import { mdiClose } from '@mdi/js';
+import { mdiClose, mdiDotsVertical } from '@mdi/js';
 import { sortByName } from '../lib/sort';
 import { computeConditionDomains } from '../data/compute_condition_domains';
 import { localize } from '../localize/localize';
@@ -8,6 +8,7 @@ import { HomeAssistant } from '../lib/types';
 import { styleMap } from 'lit/directives/style-map';
 import { CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
+import { isDefined } from '../lib/is_defined';
 
 export type DialogSelectConditionParams = {
   cancel: () => void;
@@ -28,9 +29,11 @@ export class DialogSelectCondition extends LitElement {
 
   @state() private _width?: number;
   @state() private _height?: number;
+  @state() showAll = false;
 
   public async showDialog(params: DialogSelectConditionParams): Promise<void> {
     this._params = params;
+    this.showAll = false;
     await this.updateComplete;
   }
 
@@ -69,6 +72,23 @@ export class DialogSelectCondition extends LitElement {
             <span slot="title">
               ${localize('ui.panel.options.conditions.add_condition', this.hass)}
             </span>
+            ${!isDefined(this._params.domain) ? html`
+            <ha-dropdown
+              placement="bottom-end"
+              slot="actionItems"
+              @wa-after-hide=${(ev: Event) => { ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur() }}
+            >
+              <ha-icon-button slot="trigger" .label=${this.hass.localize('ui.common.menu')} .path=${mdiDotsVertical}>
+              </ha-icon-button>
+              <ha-dropdown-item @click=${this._toggleShowAll}>
+                <ha-icon
+                  icon="mdi:check"
+                  style="${this.showAll ? '' : 'visibility: hidden'}"
+                ></ha-icon>
+                ${localize('ui.dialog.action_picker.show_all', this.hass)}
+              </ha-dropdown-item>
+            </ha-dropdown>`
+        : ''}
           </ha-dialog-header>
 
           <ha-textfield
@@ -131,7 +151,10 @@ export class DialogSelectCondition extends LitElement {
 
   _renderOptions() {
     //if (!this._params?.domain) {
-    let domains = computeConditionDomains(this.hass, this._params!.cardConfig!);
+
+    let cardConfig = { ...this._params?.cardConfig };
+    if (this.showAll) cardConfig = { ...cardConfig, include: undefined, exclude: undefined };
+    let domains = computeConditionDomains(this.hass, cardConfig);
 
     domains.sort((a, b) => sortByName(a.name, b.name));
 
@@ -162,6 +185,15 @@ export class DialogSelectCondition extends LitElement {
     this._params!.confirm(key);
     this._params = undefined;
     this._clearSearch();
+  }
+
+
+  _toggleShowAll() {
+    if (this.showAll) {
+      this.showAll = false;
+    } else {
+      this.showAll = true;
+    }
   }
 
   static get styles(): CSSResultGroup {

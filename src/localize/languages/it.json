@@ -111,7 +111,8 @@
         "no_results": "Nessun elemento corrispondente trovato"
       },
       "action_picker": {
-        "title": "Scegli azione"
+        "title": "Scegli azione",
+        "show_all": "Mostra tutte le entità supportate"
       }
     },
     "panel": {

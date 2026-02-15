@@ -111,7 +111,8 @@
         "no_results": "未找到匹配项"
       },
       "action_picker": {
-        "title": "选择动作"
+        "title": "选择动作",
+        "show_all": "显示所有受支持的实体"
       }
     },
     "panel": {

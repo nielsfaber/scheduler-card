@@ -111,7 +111,8 @@
         "no_results": "No matching items found"
       },
       "action_picker": {
-        "title": "Choose action"
+        "title": "Choose action",
+        "show_all": "Show all supported entities"
       }
     },
     "panel": {

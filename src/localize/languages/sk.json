@@ -111,7 +111,8 @@
         "no_results": "Žiadne vyhovujúce položky neboli nájdené"
       },
       "action_picker": {
-        "title": "Vyberte akciu"
+        "title": "Vyberte akciu",
+        "show_all": "Zobraziť všetky podporované entity"
       }
     },
     "panel": {

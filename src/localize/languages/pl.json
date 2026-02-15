@@ -111,7 +111,8 @@
         "no_results": "Nie znaleziono pasujących elementów"
       },
       "action_picker": {
-        "title": "Wybierz akcję"
+        "title": "Wybierz akcję",
+        "show_all": "Pokaż wszystkie obsługiwane jednostki"
       }
     },
     "panel": {
