@@ -146,7 +146,7 @@ export class SchedulerChip extends LitElement {
         height: var(--chip-height, 32px);
         background: none;
         user-select: none;
-        z-index: 1;
+        z-index: 0;
         align-items: center;
         justify-content: center;
       }
