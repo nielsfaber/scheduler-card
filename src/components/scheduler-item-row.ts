@@ -23,7 +23,7 @@ export class SchedulerItemRow extends LitElement {
     try {
       const stateObj = this.hass.states[this.schedule.entity_id!];
       if (!stateObj) return html``;
-      const disabled = stateObj.state == 'off';
+      const disabled = ['off', 'completed'].includes(stateObj.state);
       const nextAction = this.schedule.entries[0].slots[this.schedule.next_entries[0] || 0].actions[0];
 
       let icon = computeActionIcon(nextAction, this.config.customize);
@@ -52,10 +52,11 @@ export class SchedulerItemRow extends LitElement {
         </div>
       </div>
       <div class="state">
-        <ha-entity-toggle
-          .hass=${this.hass}
-          .stateObj=${stateObj}
-        ></ha-entity-toggle>
+        <ha-switch
+          ?checked=${['on', 'triggered'].includes(stateObj.state || '')}
+          ?disabled=${stateObj.state == 'completed'}
+          @click=${this._toggleEnableDisable}
+        ></ha-switch>
       </div>
 
     `;
@@ -112,6 +113,12 @@ export class SchedulerItemRow extends LitElement {
   private _handleIconClick(_ev: Event) {
     const myEvent = new CustomEvent('editClick', { detail: { schedule_id: this.schedule_id } });
     this.dispatchEvent(myEvent);
+  }
+
+  private _toggleEnableDisable(ev: Event) {
+    ev.stopPropagation();
+    const checked = !(ev.target as HTMLInputElement).checked;
+    this.hass.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this.schedule.entity_id });
   }
 
 
