@@ -64,6 +64,7 @@ const weekdayList = [
 // 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday.
 
 export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' | 'long', hass: HomeAssistant) => {
+  let output: string = '';
   const startOfWeek = computeStartOfWeek(hass);
   const rotateArray = (arr: any[], k: number) => arr.concat(arr).slice(k, k + arr.length);
   let weekdayListOrdered = rotateArray(weekdayList, startOfWeek);
@@ -79,44 +80,46 @@ export const formatWeekdayDisplay = (weekdays: TWeekday[], formatType: 'short' |
   const longestSequence = Math.max(...seq);
 
   if (weekdayNums.length) {
-
+    if (weekdays.length > weekdayNums.length) {
+      output += weekdays.filter(e => !weekdayListOrdered.includes(e)).map(e => computeDayDisplay(e, formatType, hass)).join(', ');
+      output += ', ';
+    }
     if (weekdayNums.length == 6) {
       const missing = [0, 1, 2, 3, 4, 5, 6].filter(e => !weekdayNums.includes(e));
       const missingDay = computeDayDisplay(weekdayListOrdered[missing.pop()!], formatType, hass);
-      return localize(
+      output += localize(
         'ui.components.date.repeated_days_except',
         hass,
         '{excludedDays}',
         missingDay
-      )
-    }
-
-    const dayNames = weekdayNums.map(e => computeDayDisplay(weekdayListOrdered[e], formatType, hass));
-
-    if (weekdayNums.length >= 3 && longestSequence >= 3) {
-      const start = seq.reduce((obj, e, i) => (e == longestSequence ? i : obj), 0);
-
-      dayNames.splice(
-        start,
-        longestSequence,
-        localize(
-          'ui.components.date.days_range',
-          hass,
-          ['{startDay}', '{endDay}'],
-          [dayNames[start], dayNames[start + longestSequence - 1]]
-        )
       );
     }
+    else {
+      const dayNames = weekdayNums.map(e => computeDayDisplay(weekdayListOrdered[e], formatType, hass));
+      if (weekdayNums.length >= 3 && longestSequence >= 3) {
+        const start = seq.reduce((obj, e, i) => (e == longestSequence ? i : obj), 0);
 
-    const daysString =
-      dayNames.length > 1
-        ? `${dayNames.slice(0, -1).join(', ')} ${hassLocalize('ui.common.and', hass)} ${dayNames.pop()}`
-        : `${dayNames.pop()}`;
+        dayNames.splice(
+          start,
+          longestSequence,
+          localize(
+            'ui.components.date.days_range',
+            hass,
+            ['{startDay}', '{endDay}'],
+            [dayNames[start], dayNames[start + longestSequence - 1]]
+          )
+        );
+      }
+      const daysString =
+        dayNames.length > 1
+          ? `${dayNames.slice(0, -1).join(', ')} ${hassLocalize('ui.common.and', hass)} ${dayNames.pop()}`
+          : `${dayNames.pop()}`;
 
-    return weekdayNums.length >= 3 && longestSequence >= 3
-      ? daysString
-      : localize('ui.components.date.repeated_days', hass, '{days}', daysString);
+      output += weekdayNums.length >= 3 && longestSequence >= 3
+        ? daysString
+        : localize('ui.components.date.repeated_days', hass, '{days}', daysString);
+    }
+    return output;
   };
-
   return weekdays.map(e => computeDayDisplay(e, formatType, hass)).join(', ');
 }

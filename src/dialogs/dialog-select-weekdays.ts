@@ -25,14 +25,14 @@ export class DialogSelectWeekdays extends LitElement {
 
   @state() weekdayTypeCustomSelected: boolean = false;
 
-  selectedWeekdays: TWeekday[] = [];
+  @state() selectedWeekdays: TWeekday[] = [];
 
   public async showDialog(params: DialogSelectWeekdayParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
 
     this.selectedWeekdays = this._params.weekdays.filter(e => ![TWeekday.Daily, TWeekday.Weekend, TWeekday.Workday].includes(e));
-    this.weekdayTypeCustomSelected = this.selectedWeekdays.length > 0;
+    this.weekdayTypeCustomSelected = this.selectedWeekdays.length > 0 && this._params.weekdays.length == this.selectedWeekdays.length;
   }
 
   public async closeDialog() {
@@ -117,7 +117,7 @@ export class DialogSelectWeekdays extends LitElement {
     }
 
     const isSelectedOption = (item: string) => {
-      if (item == WeekdayTypeCustom) return this._params?.weekdays.every(e => ![TWeekday.Daily, TWeekday.Weekend, TWeekday.Workday].includes(e));
+      if (item == WeekdayTypeCustom) return this._params?.weekdays.some(e => ![TWeekday.Daily, TWeekday.Weekend, TWeekday.Workday].includes(e));
       return this._params?.weekdays.includes(item as TWeekday);
     }
 
@@ -135,9 +135,8 @@ export class DialogSelectWeekdays extends LitElement {
         }
           ${key == WeekdayTypeCustom
           ? html`
-          
             ${capitalizeFirstLetter(localize('ui.dialog.weekday_picker.choose', this.hass))}
-            ${isSelectedOption(key) ? html`<span class="badge">${this.selectedWeekdays.length}</span>` : ''}
+            ${this.selectedWeekdays.length ? html`<span class="badge">${this.selectedWeekdays.length}</span>` : ''}
             `
           : capitalizeFirstLetter(computeDayDisplay(key as TWeekday, 'long', this.hass))
         }
@@ -158,7 +157,8 @@ export class DialogSelectWeekdays extends LitElement {
       this.weekdayTypeCustomSelected = true;
     }
     else if ([TWeekday.Daily, TWeekday.Weekend, TWeekday.Workday].includes(option)) {
-      weekdays = [option];
+      if (!weekdays.includes(option)) weekdays = [option];
+      else if (weekdays.length > 1) weekdays = weekdays.filter(e => e != option);
       this.weekdayTypeCustomSelected = false;
     }
     else if (weekdays.includes(option)) {
@@ -168,6 +168,7 @@ export class DialogSelectWeekdays extends LitElement {
       weekdays = [...weekdays, option];
     }
     this._params = Object.assign(this._params!, { weekdays: weekdays });
+    (ev.target as HTMLInputElement).blur();
     this.requestUpdate();
   }
 
