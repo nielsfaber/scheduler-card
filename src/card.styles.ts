@@ -51,15 +51,13 @@ export const EditorDialogStyles = css`
     right: 0px;
   }
   .buttons {
-      box-sizing: border-box;
-      display: flex;
-      padding: 16px 24px;
-      justify-content: space-between;
-      background-color: var(--mdc-theme-surface, #fff);
-      border-top: 1px solid var(--divider-color);
-      position: sticky;
-      bottom: 0px;
-    }
+    box-sizing: border-box;
+    display: flex;
+    padding: 16px 24px;
+    justify-content: space-between;
+    background-color: var(--mdc-theme-surface, #fff);
+    border-top: 1px solid var(--divider-color);
+  }
   .content {
     padding: 0px 24px 16px 24px;
   }
