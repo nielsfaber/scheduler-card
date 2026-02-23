@@ -19,7 +19,7 @@ export const numericSelector = (input: NumericSelectorConfig): NumberSelector =>
     cfg = { ...cfg, number: { ...cfg.number, min: Number(input.min) } };
   if (Object.keys(input).includes('max') && !isNaN(Number(input.max)))
     cfg = { ...cfg, number: { ...cfg.number, max: Number(input.max) } };
-  if (Object.keys(input).includes('step') && !isNaN(Number(input.step)))
+  if (Object.keys(input).includes('step') && !isNaN(Number(input.step)) && input.step > 0)
     cfg = { ...cfg, number: { ...cfg.number, step: Number(input.step) } };
   if (Object.keys(input).includes('mode') && ['box', 'slider'].includes(input.mode))
     cfg = { ...cfg, number: { ...cfg.number, mode: input.mode } };
