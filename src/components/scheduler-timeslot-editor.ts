@@ -400,8 +400,8 @@ export class SchedulerTimeslotEditor extends LitElement {
       }
       .handle ha-icon-button {
         --mdc-icon-button-size: 36px;
-        margin-top: -6px;
-        margin-left: -6px;
+        margin-top: -12px;
+        margin-left: -12px;
       }
       .handle.center span {
         margin-right: -2px;
