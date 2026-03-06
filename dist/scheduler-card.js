@@ -1188,7 +1188,7 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
       <div class="time-bar">
         ${this.renderTimebar()}
       </div>
-    `}renderTimebar(){const e=parseFloat(getComputedStyle(this).getPropertyValue("width")),t=[1,2,3,4,6,8,12],i=De(this.hass.locale),s=i?130:100;let a=Math.ceil(24/(e/s));for(;!t.includes(a);)a++;const o=[0,...Array.from(Array(24/a-1).keys()).map(e=>(e+1)*a),24];return o.map((e,t)=>{let s=a/24*100;s=Math.floor(100*s)/100;let n={mode:be.Fixed,hours:e,minutes:0};return 0==t?q`
+    `}renderTimebar(){const e=parseFloat(getComputedStyle(this).getPropertyValue("width")),t=[1,2,3,4,6,8,12],i=De(this.hass.locale),s=i?130:100;let a=Math.ceil(24/(e/s));for(a>t[-1]&&(a=t[-1]);!t.includes(a);)a++;const o=[0,...Array.from(Array(24/a-1).keys()).map(e=>(e+1)*a),24];return o.map((e,t)=>{let s=a/24*100;s=Math.floor(100*s)/100;let n={mode:be.Fixed,hours:e,minutes:0};return 0==t?q`
         <span class="left" style=${Zs({width:s/2+"%"})}>${Ne(n,{seconds:!1,am_pm:i})}</span>
       `:t==o.length-1?q`
         <span class="right" style=${Zs({width:s/2+"%"})}>${Ne(n,{seconds:!1,am_pm:i})}</span>
