@@ -26,25 +26,29 @@ export class SchedulerTimeslotEditor extends LitElement {
 
   @state() selectedSlot: number | null = null;
 
-  timeout = 0;
+  @state() private _width = 0;
+
+  private _resizeObserver?: ResizeObserver;
 
   @property({ type: Boolean })
   large = false;
 
-  constructor() {
-    super();
-    this.handleResize = this.handleResize.bind(this);
+  connectedCallback() {
+    super.connectedCallback();
+    this._resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        if (width !== this._width) {
+          this._width = width;
+        }
+      }
+    });
+    this._resizeObserver.observe(this);
   }
 
-  handleResize(_event: any) {
-    clearTimeout(this.timeout);
-    this.timeout = window.setTimeout(() => {
-      this.requestUpdate();
-    }, 50);
-  }
-
-  firstUpdated() {
-    //window.addEventListener('resize', this.handleResize);
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._resizeObserver?.disconnect();
   }
 
   render() {
@@ -59,13 +63,17 @@ export class SchedulerTimeslotEditor extends LitElement {
   }
 
   renderTimebar() {
-    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const fullWidth = this._width;
     const allowedStepSizes = [1, 2, 3, 4, 6, 8, 12];
 
     const amPm = useAmPm(this.hass.locale);
 
     const segmentWidth = amPm ? 130 : 100;
+    if (!fullWidth) return html``;
     let stepSize = Math.ceil(24 / (fullWidth / segmentWidth));
+    if (stepSize > allowedStepSizes[allowedStepSizes.length - 1]) {
+      stepSize = allowedStepSizes[allowedStepSizes.length - 1];
+    }
     while (!allowedStepSizes.includes(stepSize)) stepSize++;
 
     const nums = [0, ...Array.from(Array(24 / stepSize - 1).keys()).map(e => (e + 1) * stepSize), 24];
@@ -103,7 +111,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       const width = (ts_stop - ts_start) / SEC_PER_DAY * 100;
       const actionText = slot.actions.length ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true) : '';
 
-      const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+      const fullWidth = this._width;
       const textWidth = actionText.length * 5 + 10;
       const leftMargin = i > 0 ? 15 : 0;
       const rightMargin = i < (slots.length - 1) ? 15 : 0;
@@ -150,7 +158,7 @@ export class SchedulerTimeslotEditor extends LitElement {
   }
 
   computeSlotWidths() {
-    const fullWidth = parseFloat(getComputedStyle(this).getPropertyValue('width'));
+    const fullWidth = this._width;
 
     const slots = this.schedule!.slots;
 
