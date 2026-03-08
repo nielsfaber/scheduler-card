@@ -83,20 +83,20 @@ export class SchedulerComboSelector extends LitElement {
 
       const renderOptions = () => {
         if (!options.length) return html`
-          <ha-list-item .value=${NONE}>
+          <mwc-list-item value=${NONE}>
             ${this.hass.localize("ui.components.combo-box.no_match")}
-          </ha-list-item>
+          </mwc-list-item>
         `;
 
         const useIcons = options.some(e => e.icon);
         return options.map(option => html`
-          <ha-list-item
-            .value=${option.id}
-            .graphic=${useIcons ? 'icon' : ''}
+          <mwc-list-item
+            value=${option.id}
+            graphic=${useIcons ? 'icon' : nothing}
           >
             ${option.icon ? html`<ha-icon slot="graphic" .icon=${option.icon}></ha-icon>` : nothing}
             <span>${option.primary}</span>
-          </ha-list-item>
+          </mwc-list-item>
         `);
       }
 
