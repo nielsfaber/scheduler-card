@@ -3,9 +3,6 @@ import { css } from "lit";
 
 export const EditorDialogStyles = css`
   ha-dialog {
-    --mdc-dialog-min-width: 400px;
-    --mdc-dialog-max-width: 600px;
-    --mdc-dialog-max-width: min(600px, 95vw);
     --justify-action-buttons: space-between;
     --dialog-container-padding: var(--safe-area-inset-top, 0)
       var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
@@ -16,12 +13,6 @@ export const EditorDialogStyles = css`
   /* make dialog fullscreen on small screens */
   @media all and (max-width: 450px), all and (max-height: 500px) {
     ha-dialog {
-      --mdc-dialog-min-width: 100vw;
-      --mdc-dialog-max-width: 100vw;
-      --mdc-dialog-min-height: 100vh;
-      --mdc-dialog-min-height: 100svh;
-      --mdc-dialog-max-height: 100vh;
-      --mdc-dialog-max-height: 100svh;
       --dialog-container-padding: 0px;
       --dialog-surface-padding: var(--safe-area-inset-top, 0)
         var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
@@ -30,25 +21,11 @@ export const EditorDialogStyles = css`
       --ha-dialog-border-radius: var(--ha-border-radius-square);
     }
   }
-
   @media all and (min-width: 600px) and (min-height: 501px) {
     ha-dialog {
-      --mdc-dialog-min-width: 580px;
-      --mdc-dialog-max-width: 580px;
       --dialog-surface-margin-top: 40px;
-      --mdc-dialog-max-height: calc(100% - 72px);
-    }
-    ha-dialog {
       --vertical-align-dialog: flex-start;
     }
-    :host([large]) ha-dialog {
-      --mdc-dialog-min-width: 90vw;
-      --mdc-dialog-max-width: 90vw;
-    }
-  }
-  .config-button {
-    position: absolute;
-    right: 0px;
   }
   .buttons {
     box-sizing: border-box;
@@ -61,7 +38,6 @@ export const EditorDialogStyles = css`
   .content {
     padding: 0px 24px 16px 24px;
   }
-
 `;
 
 export const styles = css`

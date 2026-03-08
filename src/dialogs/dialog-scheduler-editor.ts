@@ -90,13 +90,18 @@ export class DialogSchedulerEditor extends LitElement {
   render() {
     if (!this._params) return html``;
     return html`
-      <ha-dialog open @closed=${this.closeDialog} .heading=${true} hideActions scrimClickAction="">
-        <ha-dialog-header slot="heading">
+      <ha-dialog
+        open
+        @closed=${this.closeDialog}
+        width="${this.large ? 'full' : 'medium'}"
+        prevent-scrim-close
+      >
+        <ha-dialog-header slot="header">
           ${this._panel == "main"
         ? html`
           <ha-icon-button
             slot="navigationIcon"
-            dialogAction="cancel"
+            data-dialog="close"
             .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
@@ -116,15 +121,14 @@ export class DialogSchedulerEditor extends LitElement {
           ></ha-icon-button>
           `
       }
-          <span slot="title" @click=${() => this.large = !this.large}>
+          <div slot="title" @click=${() => this.large = !this.large}>
             ${this._params.editItem
         ? this.schedule.name
           ? this.schedule?.name
           : localize('ui.panel.common.default_name', this.hass, '{id}', this._params.editItem)
         : localize('ui.panel.common.new_schedule', this.hass)
       }
-          </span>
-
+          </div>
         </ha-dialog-header>
 
         <div class="content">
@@ -155,15 +159,14 @@ export class DialogSchedulerEditor extends LitElement {
       }
         </div>
 
-
-        <div class="buttons">
-          <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger" ?disabled=${!this.schedule.entity_id}>
-            ${hassLocalize('ui.common.delete', this.hass)}
-          </ha-button>
-          <ha-button appearance="plain" @click=${this._handleSaveClick}>
-            ${hassLocalize('ui.common.save', this.hass)}
-          </ha-button>
-        </div>
+          <div class="buttons" slot="footer">
+            <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger" ?disabled=${!this.schedule.entity_id}>
+              ${hassLocalize('ui.common.delete', this.hass)}
+            </ha-button>
+            <ha-button appearance="plain" @click=${this._handleSaveClick}>
+              ${hassLocalize('ui.common.save', this.hass)}
+            </ha-button>
+          </div>
       </ha-dialog>
     `;
   }

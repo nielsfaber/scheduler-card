@@ -135,29 +135,35 @@ export class DialogSelectEntities extends LitElement {
     this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(([, val]) => val.entity_id);
   }
 
+  async willUpdate() {
+    if (!this._width || !this._height) {
+      const boundingRect =
+        this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+      this._width = boundingRect?.width;
+      this._height = boundingRect?.height;
+    }
+  }
+
   render() {
     if (!this._params) return html``;
 
     return html`
       <ha-dialog
         open
-        .heading=${true}
-        @opened=${this._opened}
         @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-        hideActions
+        @wa-after-show=${this._opened}
       >
-        <div slot="heading">
+        <div slot="header">
           <ha-dialog-header>
             <ha-icon-button
               slot="navigationIcon"
-              dialogAction="cancel"
+              data-dialog="close"
               .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
-            <span slot="title">
+            <div slot="title">
               ${localize('ui.dialog.entity_picker.title', this.hass)}
-            </span>
+            </div>
           </ha-dialog-header>
 
           <ha-textfield
@@ -184,14 +190,14 @@ export class DialogSelectEntities extends LitElement {
           </ha-textfield>
         </div>
         
-        <mwc-list
+        <ha-list
           style=${styleMap({
-        width: this._width ? `${this._width}px` : "auto",
+        minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </mwc-list>
+        </ha-list>
       </ha-dialog>
     `;
   }
@@ -199,7 +205,7 @@ export class DialogSelectEntities extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -220,7 +226,7 @@ export class DialogSelectEntities extends LitElement {
 
   _toggleSelectEntity(ev: Event) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const checkbox = listItem.querySelector("ha-checkbox") as HTMLInputElement;
     const key = listItem.getAttribute("key") as string;
     if (this._params!.entities.includes(key)) {
@@ -239,7 +245,7 @@ export class DialogSelectEntities extends LitElement {
 
   _toggleSelectDomain(ev: Event, isSelected: boolean) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const key = listItem.getAttribute("key") as string;
     const entitiesInDomain = this.options?.find(e => e.key == key)!.entities.map(e => e.key);
     if (isSelected) {
@@ -259,10 +265,10 @@ export class DialogSelectEntities extends LitElement {
   }
 
   closeGroupByKey(key: string) {
-    const menu = this.shadowRoot!.querySelector("mwc-list") as HTMLElement;
+    const menu = this.shadowRoot!.querySelector("ha-list") as HTMLElement;
     menu.childNodes.forEach(e => {
       if (e.nodeType != Node.ELEMENT_NODE) return;
-      if ((e as HTMLElement).tagName != 'MWC-LIST-ITEM') return;
+      if ((e as HTMLElement).tagName != 'HA-LIST-ITEM') return;
       if ((e as HTMLElement).getAttribute("key") == key) {
         const listItem = e as HTMLElement;
         const container = listItem.nextElementSibling as HTMLElement;
@@ -276,7 +282,7 @@ export class DialogSelectEntities extends LitElement {
 
   async _toggleExpandGroup(ev: Event) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'MWC-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const button = listItem.querySelector("ha-icon-button") as HTMLElement;
     const key = listItem.getAttribute("key") as string;
     if (!this.expandedGroups.includes(key)) {
@@ -323,9 +329,9 @@ export class DialogSelectEntities extends LitElement {
 
     if (!filteredOptions.length) {
       return html`
-        <mwc-list-item disabled>
+        <ha-list-item disabled>
           ${hassLocalize('ui.components.entity.entity-picker.no_match', this.hass)}
-        </mwc-list-item>
+        </ha-list-item>
       `;
     }
 
@@ -342,7 +348,7 @@ export class DialogSelectEntities extends LitElement {
       const isSelectedDomain = this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key));
 
       return html`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           twoline
           hasMeta
@@ -365,12 +371,12 @@ export class DialogSelectEntities extends LitElement {
           </div>
           <span>${filteredOptions[key].name}</span>
           <span slot="secondary">${localize('ui.panel.card_editor.fields.entities.included_number', this.hass, ['{number}', '{total}'], [numIncludedEntities, entities.length])}</span>
-        </mwc-list-item>
+        </ha-list-item>
         ${this.expandedGroups.includes(domain) || filterApplied ? html`
         <div class="group ${filterApplied ? 'open' : ''}">
           <li role="divider"></li>
         ${entities.map(e => html`
-          <mwc-list-item
+          <ha-list-item
             graphic="icon"
             twoline
             hasMeta
@@ -389,7 +395,7 @@ export class DialogSelectEntities extends LitElement {
 
             <span>${e.name}</span>
             <span slot="secondary">${e.key}</span>
-          </mwc-list-item>
+          </ha-list-item>
         `)}
           <li role="divider"></li>
         </div>
@@ -402,32 +408,30 @@ export class DialogSelectEntities extends LitElement {
     return css`
       ha-dialog {
         --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 550px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 500px;
-        }
+        --ha-dialog-width-md: 480px;
       }
       ha-textfield {
         display: block;
         margin: 0 16px;
       }
-      mwc-list-item {
+      ha-list {
+        min-height: 300px;
+      }
+      ha-list-item {
         --mdc-ripple-hover-opacity: 0.04;
         --mdc-ripple-focus-opacity: 0.04;
         --mdc-ripple-press-opacity: 0.12;
         --mdc-list-item-meta-size: 180px;
       }
-      mwc-list-item.nested {
+      ha-list-item.nested {
         --mdc-list-item-meta-size: 48px;
         --mdc-list-side-padding: 32px;
       }
-      mwc-list-item.nested ha-icon {
+      ha-list-item.nested ha-icon {
         display: flex;
         justify-content: flex-end;
       }
-      mwc-list-item ha-checkbox, mwc-list-item ha-icon-button, mwc-list-item ha-button {
+      ha-list-item ha-checkbox, ha-list-item ha-icon-button, ha-list-item ha-button {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -441,10 +445,10 @@ export class DialogSelectEntities extends LitElement {
       div.group.open {
         height: auto;
       }
-      mwc-list-item .chevron {
+      ha-list-item .chevron {
         transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
       }
-      mwc-list-item .chevron.expanded {
+      ha-list-item .chevron.expanded {
         transform: rotate(180deg);
       }
       div.group li {

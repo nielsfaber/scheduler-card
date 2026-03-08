@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector, StringSelector } from "../lib/selector";
 import { HomeAssistant } from "../lib/types";
 import { fireEvent } from "../lib/fire_event";
@@ -83,52 +83,83 @@ export class SchedulerComboSelector extends LitElement {
 
       const renderOptions = () => {
         if (!options.length) return html`
-          <ha-list-item .value=${NONE}>
+          <ha-dropdown-item .value=${NONE}>
             ${this.hass.localize("ui.components.combo-box.no_match")}
-          </ha-list-item>
+          </ha-dropdown-item>
         `;
 
         const useIcons = options.some(e => e.icon);
         return options.map(option => html`
-          <ha-list-item
+          <ha-dropdown-item
             .value=${option.id}
-            .graphic=${useIcons ? 'icon' : ''}
           >
-            ${option.icon ? html`<ha-icon slot="graphic" .icon=${option.icon}></ha-icon>` : nothing}
+            ${option.icon ? html`<ha-icon slot="icon" .icon=${option.icon}></ha-icon>` : nothing}
             <span>${option.primary}</span>
-          </ha-list-item>
+          </ha-dropdown-item>
         `);
       }
 
-      const _selectValueChanged = (ev: InputEvent) => {
-        ev.stopPropagation();
-        const value = (ev.target as HTMLInputElement).value;
+      const _handleShow = (ev: Event) => {
+        let dropdown = ev.target as HTMLElement;
+        let picker = dropdown.querySelector('ha-picker-field') as HTMLElement;
+        this.style.setProperty("--select-menu-width", `${picker.offsetWidth}px`);
+        dropdown.classList.add("opened");
+      }
+
+      const _handleHide = (ev: Event) => {
+        let dropdown = ev.target as HTMLElement;
+        dropdown.classList.remove("opened");
+      }
+
+      const _handleSelect = (ev: CustomEvent) => {
+        const value = ev.detail.item.value;
         if (value == NONE || Array.isArray(this.value)) {
-          (ev.target as any).select(-1);
-          ev.preventDefault();
-          setTimeout(() => { (ev.target as any).blur() }, 50);
+          (ev.target as any).value = undefined;
           if (value == NONE) return;
         }
         this._valueChanged(new CustomEvent('value-changed', { detail: { value: value } }));
       }
 
+      const _clearValue = () => {
+        this._valueChanged(new CustomEvent('value-changed', { detail: { value: undefined } }));
+      }
+
+      const selectedOption = isDefined(this.value) && !Array.isArray(this.value)
+        ? options.find(e => e.id === this.value)
+        : undefined;
+
+      const value = selectedOption
+        ? selectedOption.primary || selectedOption.id
+        : isDefined(this.value) && !Array.isArray(this.value)
+          ? this.value
+          : undefined;
+
       return html`
-          <div class="select-wrapper">
+        <div class="select-wrapper">
           ${config.multiple ? html`
-            <div class="chips">
-            ${renderChips()}
-            </div>
+          <div class="chips">
+          ${renderChips()}
+          </div>
           ` : ''}
-          <ha-select
-            .value=${!Array.isArray(this.value) ? this.value || "" : ""}
-            .disabled=${this.disabled}
-            @selected=${_selectValueChanged}
-            @closed=${(ev: Event) => { ev.stopPropagation() }}
-            fixedMenuPosition
-            naturalMenuWidth
+          <ha-dropdown
+            placement="bottom"
+            @wa-select=${_handleSelect}
+            @wa-show=${_handleShow}
+            @wa-hide=${_handleHide}
           >
+            <ha-picker-field
+              slot="trigger"
+              type="button"
+              compact
+              @clear=${_clearValue}
+              .disabled=${this.disabled}
+              .hideClearIcon=${this.disabled || !isDefined(this.value) || (Array.isArray(this.value) && !this.value.length)}
+              .value=${value}
+              .icon=${selectedOption?.icon}
+            >
+            </ha-picker-field>
             ${renderOptions()}
-          </ha-select>
+          </ha-dropdown>
         </div>
       `;
     }
@@ -299,6 +330,9 @@ export class SchedulerComboSelector extends LitElement {
       div.textfield-wrapper ha-textfield {
         display: flex;
         width: 100%;
+      }
+      ha-dropdown::part(menu) {
+        min-width: var(--select-menu-width);
       }
   `;
 

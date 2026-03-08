@@ -610,7 +610,7 @@ export class SchedulerMainPanel extends LitElement {
   mwc-checkbox {
     align-self: center;
   }
-  mwc-list-item.warning, mwc-list-item.warning ha-icon {
+  ha-list-item.warning, ha-list-item.warning ha-icon {
     color: var(--error-color);
   }
     `;

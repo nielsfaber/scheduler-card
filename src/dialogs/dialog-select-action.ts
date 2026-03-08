@@ -1,4 +1,4 @@
-import { LitElement, html, css, CSSResultGroup } from 'lit';
+import { LitElement, html, css, CSSResultGroup, PropertyValues } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { mdiChevronLeft, mdiClose, mdiDotsVertical } from '@mdi/js';
 import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
@@ -61,13 +61,10 @@ export class DialogSelectAction extends LitElement {
     return html`
       <ha-dialog
         open
-        .heading=${true}
-        @opened=${this._opened}
         @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-        hideActions
+        @wa-after-show=${this._opened}
       >
-        <div slot="heading">
+        <div slot="header">
           <ha-dialog-header>
             ${this._params.domainFilter !== undefined && !this.lockDomain
         ? html`
@@ -81,14 +78,14 @@ export class DialogSelectAction extends LitElement {
         : html`
             <ha-icon-button
               slot="navigationIcon"
-              dialogAction="cancel"
+               data-dialog="close"
               .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
             `}
-            <span slot="title">
+            <div slot="title">
               ${localize('ui.dialog.action_picker.title', this.hass)}
-            </span>
+            </div>
             ${!this.lockDomain && isDefined(this._params.cardConfig.include) ? html`
             <ha-dropdown
               placement="bottom-end"
@@ -132,14 +129,14 @@ export class DialogSelectAction extends LitElement {
           </ha-textfield>
         </div>
         
-        <mwc-list
+        <ha-list
           style=${styleMap({
-        width: this._width ? `${this._width}px` : "auto",
+        minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </mwc-list>
+        </ha-list>
       </ha-dialog>
     `;
   }
@@ -147,7 +144,7 @@ export class DialogSelectAction extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("mwc-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -199,14 +196,14 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(domains).length) {
       return html`
-          <mwc-list-item disabled>
+          <ha-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </mwc-list-item>
+          </ha-list-item>
         `;
     }
     return html`
       ${(Object.keys(domains)).map((key) => html`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           hasMeta
           @click=${() => this._handleDomainClick(domains[key].key)}
@@ -214,15 +211,15 @@ export class DialogSelectAction extends LitElement {
           <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
           <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
           <span>${domains[key].name}</span>
-        </mwc-list-item>`)
+        </ha-list-item>`)
       }
         ${fillers.map(_e => html`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           hasMeta
           noninteractive
         >
-        </mwc-list-item>
+        </ha-list-item>
         `)}
       `;
   }
@@ -253,13 +250,13 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(result).length) {
       return html`
-          <mwc-list-item disabled>
+          <ha-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </mwc-list-item>
+          </ha-list-item>
         `;
     }
     return (Object.keys(result)).map((key) => html`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           @click=${() => this._handleActionClick(result[key])}
           twoline
@@ -267,7 +264,7 @@ export class DialogSelectAction extends LitElement {
           <ha-icon slot="graphic" icon="${result[key].icon}"></ha-icon>
           <span>${result[key].name}</span>
           <span slot="secondary">${result[key].description}</span>
-        </mwc-list-item>
+        </ha-list-item>
     `);
   }
 
@@ -305,16 +302,17 @@ export class DialogSelectAction extends LitElement {
     return css`
       ha-dialog {
         --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 550px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 500px;
-        }
+        --ha-dialog-width-md: 480px;
       }
       ha-textfield {
         display: block;
         margin: 0 16px;
+      }
+      ha-list {
+        min-height: 300px;
+      }
+      ha-list-item:not([twoline]) {
+        height: 56px;
       }
     `;
   }

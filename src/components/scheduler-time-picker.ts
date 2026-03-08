@@ -322,8 +322,8 @@ export class SchedulerTimePicker extends LitElement {
           @selected=${this._amPmChanged}
           @closed=${(ev: Event) => { ev.stopPropagation() }}
         >
-          <mwc-list-item value="AM">AM</mwc-list-item>
-          <mwc-list-item value="PM">PM</mwc-list-item>
+          <ha-dropdown-item value="AM">AM</ha-dropdown-item>
+          <ha-dropdown-item value="PM">PM</ha-dropdown-item>
         </ha-select>
       `;
     }
@@ -379,8 +379,8 @@ export class SchedulerTimePicker extends LitElement {
     this._valueChanged();
   }
 
-  private _amPmChanged(ev: InputEvent) {
-    const value = (ev.target as HTMLInputElement).value;
+  private _amPmChanged(ev: CustomEvent) {
+    const value = ev.detail.value;
     const oldValue = convertTo12Hour(this.hours).am_pm;
     if (oldValue == value) return;
     const hours12 = convertTo12Hour(this.hours).hours;
@@ -507,7 +507,7 @@ export class SchedulerTimePicker extends LitElement {
     }
     ha-select {
       --mdc-shape-small: 0;
-      width: 85px;
+      width: 90px;
     }
     .label {
       display: flex;

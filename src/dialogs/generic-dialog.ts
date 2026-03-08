@@ -32,37 +32,48 @@ export class GenericDialog extends LitElement {
   render() {
     if (!this._params) return html``;
     return html`
-      <ha-dialog open .heading=${true} @closed=${this.closeDialog} @close-dialog=${this.closeDialog}>
-        <ha-dialog-header slot="heading">
+      <ha-dialog
+        open
+        @closed=${this.closeDialog}
+        width="small"
+      >
+        <ha-dialog-header slot="header">
           <ha-icon-button
             slot="navigationIcon"
-            dialogAction="cancel"
+            data-dialog="close"
             .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
-          <span slot="title">
+          <div slot="title">
             ${this._params.title}
-          </span>
+          </div>
         </ha-dialog-header>
         <div class="wrapper">
           ${this._params.description}
         </div>
 
-        ${this._params.secondaryButtonLabel
+        <ha-dialog-footer slot="footer">
+          ${this._params.secondaryButtonLabel
         ? html`
-          <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-            ${this._params.secondaryButtonLabel}
-          </ha-button>
-            `
+            <ha-button
+              appearance="plain"
+              slot="secondaryAction"
+              @click=${this.cancelClick}
+              data-dialog="close"
+            >
+              ${this._params.secondaryButtonLabel}
+            </ha-button>
+              `
         : ''}
-        <ha-button
-          appearance="accent"
-          slot="primaryAction"
-          @click=${this.confirmClick}
-          dialogAction="close"
-        >
-          ${this._params.primaryButtonLabel}
-        </ha-button>
+          <ha-button
+            appearance="accent"
+            slot="primaryAction"
+            @click=${this.confirmClick}
+            data-dialog="close"
+          >
+            ${this._params.primaryButtonLabel}
+          </ha-button>
+        </ha-dialog-footer>
       </ha-dialog>
     `;
   }
@@ -73,30 +84,5 @@ export class GenericDialog extends LitElement {
 
   cancelClick() {
     this._params!.cancel();
-  }
-
-  static get styles(): CSSResultGroup {
-    return css`
-      div.wrapper {
-        color: var(--primary-text-color);
-      }
-      ha-dialog {
-        --mdc-dialog-min-width: 400px;
-        --mdc-dialog-max-width: 600px;
-        --mdc-dialog-max-width: min(600px, 95vw);
-      }
-      @media all and (max-width: 450px), all and (max-height: 500px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 100vw;
-          --mdc-dialog-max-width: 100vw;
-          --mdc-dialog-min-height: 100vh;
-          --mdc-dialog-min-height: 100svh;
-          --mdc-dialog-max-height: 100vh;
-          --mdc-dialog-max-height: 100svh;
-          --vertical-align-dialog: flex-end;
-          --ha-dialog-border-radius: var(--ha-border-radius-square);
-        }
-      }
-    `;
   }
 }
