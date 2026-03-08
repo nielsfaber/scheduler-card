@@ -51,26 +51,23 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const Zs=Bs(class extends Ws{constructor(e){var t;if(super(e),e.type!==Fs||"style"!==e.name||(null===(t=e.strings)||void 0===t?void 0:t.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(e){return Object.keys(e).reduce((t,i)=>{const s=e[i];return null==s?t:t+`${i=i.includes("-")?i:i.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`},"")}update(e,[t]){const{style:i}=e.element;if(void 0===this.ht){this.ht=new Set;for(const e in t)this.ht.add(e);return this.render(t)}this.ht.forEach(e=>{null==t[e]&&(this.ht.delete(e),e.includes("-")?i.removeProperty(e):i[e]="")});for(const e in t){const s=t[e];if(null!=s){this.ht.add(e);const t="string"==typeof s&&s.endsWith(" !important");e.includes("-")||t?i.setProperty(e,t?s.slice(0,-11):s,t?"important":""):i[e]=s}}return V}}),Ks={alarm_control_panel:{disarmed:"mdi:lock-open-variant-outline",armed_away:"mdi:exit-run",armed_home:"mdi:home-outline",armed_night:"mdi:power-sleep",armed_custom_bypass:"mdi:security",armed_vacation:"mdi:shield-airplane",triggered:"mdi:alarm-light-outline"},binary_sensor:{battery:{on:"mdi:battery-outline",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery"},cold:{on:"mdi:snowflake",off:"mdi:thermometer"},connectivity:{on:"mdi:server-network",off:"mdi:server-network-off"},door:{on:"mdi:door-open",off:"mdi:door-closed"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},power:{on:"mdi:power-plug",off:"mdi:power-plug-off"},gas:{on:"mdi:alert-circle",off:"mdi:check-circle"},problem:{on:"mdi:alert-circle",off:"mdi:check-circle"},safety:{on:"mdi:alert-circle",off:"mdi:check-circle"},tamper:{on:"mdi:alert-circle",off:"mdi:check-circle"},smoke:{on:"mdi:smoke",off:"mdi:check-circle"},heat:{on:"mdi:fire",off:"mdi:thermometer"},light:{on:"mdi:brightness-7",off:"mdi:brightness-5"},lock:{on:"mdi:lock-open",off:"mdi:lock"},moisture:{on:"mdi:water",off:"mdi:water-off"},motion:{on:"mdi:run",off:"mdi:walk"},occupancy:{on:"mdi:home",off:"mdi:home-outline"},opening:{on:"mdi:square-outline",off:"mdi:square"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},presence:{on:"mdi:home",off:"mdi:home-outline"},running:{on:"mdi:play",off:"mdi:stop"},sound:{on:"mdi:music-note",off:"mdi:music-note-off"},update:{on:"mdi:package-up",off:"mdi:package"},vibration:{on:"mdi:vibrate",off:"mdi:crop-portrait"},window:{on:"mdi:window-open",off:"mdi:window-closed"},_:{on:"mdi:checkbox-marked-circle",off:"mdi:radiobox-blank"}},calendar:{on:"mdi:flash",off:"mdi:flash-off"},cover:{garage:{closed:"mdi:garage",open:"mdi:garage-open"},door:{closed:"mdi:door-closed",open:"mdi:door-open"},blind:{closed:"mdi:blinds",open:"mdi:blinds-open"},window:{closed:"mdi:window-closed",open:"mdi:window-open"},_:{closed:"mdi:window-shutter",open:"mdi:window-shutter-open"}},climate:{off:"mdi:power-off",heat:"mdi:fire",cool:"mdi:snowflake",heat_cool:"mdi:thermometer",auto:"mdi:autorenew",dry:"mdi:water-percent",fan_only:"mdi:fan"},device_tracker:{home:"mdi:home-outline",not_home:"mdi:exit-run"},fan:{on:"mdi:power",off:"mdi:power-off"},humidifier:{on:"mdi:power",off:"mdi:power-off"},input_boolean:{on:"mdi:flash",off:"mdi:flash-off"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},lawn_mower:{mowing:"mdi:play",paused:"mdi:pause",docked:"mdi:home-import-outline"},lock:{unlocked:"mdi:lock-open-variant-outline",locked:"mdi:lock-outline"},person:{home:"mdi:home-outline",not_home:"mdi:exit-run"},sun:{below_horizon:"mdi:weather-sunny-off",above_horizon:"mdi:weather-sunny"},switch:{on:"mdi:flash",off:"mdi:flash-off"},timer:{active:"mdi:play",paused:"mdi:pause",idle:"mdi:sleep"},valve:{open:"mdi:valve-open",closed:"mdi:valve-closed"},water_heater:{off:"mdi:power-off",eco:"mdi:leaf",electric:"mdi:lightning-bolt",gas:"mdi:fire",heat_pump:"mdi:hvac",high_demand:"mdi:water-plus-outline",performance:"mdi:rocket-launch-outline"}},Gs=(e,t,i)=>{const s=Wi(e);if(!Object.keys(Ks).includes(s))return;let a=Ks[s];if("object"==typeof Object.values(a)[0]){const t=i.states[e],s=null==t?void 0:t.attributes.device_class;a=s&&Object.keys(a).includes(s)?a[s]:a._}return Object.keys(a).includes(t)?a[t]:void 0},Js=["alarm_control_panel","binary_sensor","climate","calendar","cover","device_tracker","fan","humidifier","input_boolean","input_number","input_select","lawn_mower","light","lock","number","person","proximity","select","sensor","sun","switch","timer","valve","water_heater"],Ys=(e,t,i)=>{let s=((e,t)=>{const i=Object.keys(t.states).includes(e)?t.states[e]:void 0,s=Wi(e),a=(null==i?void 0:i.attributes)||{},o=i=>null==i?void 0:i.map(i=>Object({value:i,icon:Gs(e,i,t)}));switch(s){case"alarm_control_panel":let e=["disarmed","triggered"];return 2&(a.supported_features||0)&&(e=[...e,"armed_away"]),1&(a.supported_features||0)&&(e=[...e,"armed_home"]),4&(a.supported_features||0)&&(e=[...e,"armed_night"]),16&(a.supported_features||0)&&(e=[...e,"armed_custom_bypass"]),32&(a.supported_features||0)&&(e=[...e,"armed_vacation"]),ss({options:o(e),translation_key:"component.alarm_control_panel.entity_component._.state.${value}"});case"binary_sensor":return ss({options:o(["on","off"]),translation_key:"component.binary_sensor.entity_component.${deviceClass}.state.${value}"});case"climate":return ss({options:o(a.hvac_modes),translation_key:"component.climate.entity_component._.state.${value}"});case"calendar":case"fan":case"humidifier":case"input_boolean":case"light":case"switch":return ss({options:o(["on","off"]),translation_key:"component.switch.entity_component._.state.${value}"});case"cover":return ss({options:o(["open","closed"]),translation_key:"component.cover.entity_component._.state.${value}"});case"device_tracker":return ss({options:o(["home","not_home"]),translation_key:"component.device_tracker.entity_component._.state.${value}"});case"input_number":case"number":return ls({min:a.min,max:a.max,step:a.step,mode:a.mode,unit:a.unit_of_measurement});case"input_select":case"select":return ss({options:a.options});case"lawn_mower":return ss({options:o(["mowing","paused","docked"]),translation_key:"component.lawn_mower.entity_component._.state.${value}"});case"lock":return ss({options:o(["locked","unlocked"]),translation_key:"component.lock.entity_component._.state.${value}"});case"person":const s=Object.keys(t.states).filter(e=>"zone"==Wi(e)).map(Bi);return ss({options:[...new Set(["home","not_home",...s])]});case"proximity":return ls({mode:"box",unit:a.unit_of_measurement});case"sensor":return!isNaN(Number(null==i?void 0:i.state))||Be(a.unit_of_measurement)?ls({mode:"box",unit:a.unit_of_measurement,min:"%"==a.unit_of_measurement?0:void 0,max:"%"==a.unit_of_measurement?100:void 0}):{text:{}};case"sun":return ss({options:o(["above_horizon","below_horizon"]),translation_key:"component.sun.entity_component._.state.${value}"});case"timer":return ss({options:o(["active","paused","idle"]),translation_key:"component.timer.entity_component._.state.${value}"});case"valve":return ss({options:o(["open","closed"]),translation_key:"component.valve.entity_component._.state.${value}"});case"water_heater":case"climate":return ss({options:o(a.operation_list),translation_key:"component.climate.entity_component._.state.${value}"});default:return{text:{}}}})(e,t),a=Object.keys(i||{}).filter(t=>Ki(t,Wi(e))||Ki(t,e)).filter(e=>Object.keys(i[e]).includes("states")).sort((e,t)=>e.length-t.length).map(e=>i[e].states).shift();return a&&(Array.isArray(a)?s=ss({options:a}):"object"==typeof a&&"min"in a&&"max"in a&&(s=ls(a))),s},Qs=(e,t)=>{let i=Object.keys(e.states).map(e=>Wi(e)).reduce((e,t)=>e.includes(t)?e:[...e,t],[]).filter(e=>((e,t)=>{let i=Js.includes(e);return!i&&t?Object.keys(t).map(Wi).includes(e):i})(e,t.customize||{}));return i=i.filter(e=>Gi(e,t)),i.map(t=>({key:t,name:Xi(`component.${t}.title`,e,!1)||t.replace(/_/g," "),description:"",icon:Rs(t)}))},Xs=(e,t,i)=>{let s=Object.entries(t||{}).filter(([t,i])=>Ki(t,e)&&i.icon).map(([e,t])=>t);if(s.length)return s.map(e=>{return(t=e.icon).match(/^[a-z]+\:[a-zA-Z\-]+$/)?t:"mdi:"+t;var t}).shift();if(!Object.keys(i.states).includes(e))return"mdi:help";const a=i.states[e];if(a.attributes.icon)return a.attributes.icon;const o=Wi(e);return Rs(o)},ea=(e,t,i)=>{if(["script","notify"].includes(e)){let s=Object.keys(i.services[e]);"script"==e&&(s=s.filter(e=>!["turn_on","turn_off","reload","toggle","test"].includes(e)));let a=s.map(s=>({key:`${e}.${s}`,name:Os(`${e}.${s}`,i,t),description:"",icon:Xs(`${e}.${s}`,t,i)}));return a.sort((e,t)=>Yi(e.name,t.name)),a}{let s=Object.keys(i.states).filter(t=>Wi(t)==e).map(e=>{var s;return{key:e,name:Zi(e,null===(s=i.states[e])||void 0===s?void 0:s.attributes),description:"",icon:Xs(e,t,i)}});return s.sort((e,t)=>Yi(e.name,t.name)),s}},ta=(e,t)=>t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t));let ia=class extends oe{constructor(){super(...arguments),this._search="",this._filter="",this.timer=0,this.expandedGroups=[],this.scheduleEntities=[]}async showDialog(e){this._params=e,this.loadOptions(),await this.updateComplete}async closeDialog(){this._params&&this._params.confirm({domains:this._params.domains,entities:this._params.entities}),this._params=void 0,this._clearSearch(),this._height=void 0,this._width=void 0}loadOptions(){if(!this._params)return;let e=(e=>{let t=Hs(e,{include:["*"]}),i=Qs(e,{include:["*"]});return i=i.filter(e=>!t.map(e=>e.key).includes(e.key)),t=[...t,...i],t.sort((e,t)=>Yi(e.name,t.name)),t})(this.hass);this.options=e.map(e=>Object.assign(Object.assign({},e),{entities:ea(e.key,this._params.cardConfig.customize,this.hass)})).filter(e=>e.entities.length)}shouldUpdate(e){return!!(e.has("_params")||e.has("expandedGroups")||e.has("_filter")||e.has("scheduleEntities"))}async firstUpdated(){this.scheduleEntities=Object.entries(await Oe(this.hass)).map(([,e])=>e.entity_id)}render(){return this._params?q`
+     */const Zs=Bs(class extends Ws{constructor(e){var t;if(super(e),e.type!==Fs||"style"!==e.name||(null===(t=e.strings)||void 0===t?void 0:t.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(e){return Object.keys(e).reduce((t,i)=>{const s=e[i];return null==s?t:t+`${i=i.includes("-")?i:i.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`},"")}update(e,[t]){const{style:i}=e.element;if(void 0===this.ht){this.ht=new Set;for(const e in t)this.ht.add(e);return this.render(t)}this.ht.forEach(e=>{null==t[e]&&(this.ht.delete(e),e.includes("-")?i.removeProperty(e):i[e]="")});for(const e in t){const s=t[e];if(null!=s){this.ht.add(e);const t="string"==typeof s&&s.endsWith(" !important");e.includes("-")||t?i.setProperty(e,t?s.slice(0,-11):s,t?"important":""):i[e]=s}}return V}}),Ks={alarm_control_panel:{disarmed:"mdi:lock-open-variant-outline",armed_away:"mdi:exit-run",armed_home:"mdi:home-outline",armed_night:"mdi:power-sleep",armed_custom_bypass:"mdi:security",armed_vacation:"mdi:shield-airplane",triggered:"mdi:alarm-light-outline"},binary_sensor:{battery:{on:"mdi:battery-outline",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery"},cold:{on:"mdi:snowflake",off:"mdi:thermometer"},connectivity:{on:"mdi:server-network",off:"mdi:server-network-off"},door:{on:"mdi:door-open",off:"mdi:door-closed"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},power:{on:"mdi:power-plug",off:"mdi:power-plug-off"},gas:{on:"mdi:alert-circle",off:"mdi:check-circle"},problem:{on:"mdi:alert-circle",off:"mdi:check-circle"},safety:{on:"mdi:alert-circle",off:"mdi:check-circle"},tamper:{on:"mdi:alert-circle",off:"mdi:check-circle"},smoke:{on:"mdi:smoke",off:"mdi:check-circle"},heat:{on:"mdi:fire",off:"mdi:thermometer"},light:{on:"mdi:brightness-7",off:"mdi:brightness-5"},lock:{on:"mdi:lock-open",off:"mdi:lock"},moisture:{on:"mdi:water",off:"mdi:water-off"},motion:{on:"mdi:run",off:"mdi:walk"},occupancy:{on:"mdi:home",off:"mdi:home-outline"},opening:{on:"mdi:square-outline",off:"mdi:square"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},presence:{on:"mdi:home",off:"mdi:home-outline"},running:{on:"mdi:play",off:"mdi:stop"},sound:{on:"mdi:music-note",off:"mdi:music-note-off"},update:{on:"mdi:package-up",off:"mdi:package"},vibration:{on:"mdi:vibrate",off:"mdi:crop-portrait"},window:{on:"mdi:window-open",off:"mdi:window-closed"},_:{on:"mdi:checkbox-marked-circle",off:"mdi:radiobox-blank"}},calendar:{on:"mdi:flash",off:"mdi:flash-off"},cover:{garage:{closed:"mdi:garage",open:"mdi:garage-open"},door:{closed:"mdi:door-closed",open:"mdi:door-open"},blind:{closed:"mdi:blinds",open:"mdi:blinds-open"},window:{closed:"mdi:window-closed",open:"mdi:window-open"},_:{closed:"mdi:window-shutter",open:"mdi:window-shutter-open"}},climate:{off:"mdi:power-off",heat:"mdi:fire",cool:"mdi:snowflake",heat_cool:"mdi:thermometer",auto:"mdi:autorenew",dry:"mdi:water-percent",fan_only:"mdi:fan"},device_tracker:{home:"mdi:home-outline",not_home:"mdi:exit-run"},fan:{on:"mdi:power",off:"mdi:power-off"},humidifier:{on:"mdi:power",off:"mdi:power-off"},input_boolean:{on:"mdi:flash",off:"mdi:flash-off"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},lawn_mower:{mowing:"mdi:play",paused:"mdi:pause",docked:"mdi:home-import-outline"},lock:{unlocked:"mdi:lock-open-variant-outline",locked:"mdi:lock-outline"},person:{home:"mdi:home-outline",not_home:"mdi:exit-run"},sun:{below_horizon:"mdi:weather-sunny-off",above_horizon:"mdi:weather-sunny"},switch:{on:"mdi:flash",off:"mdi:flash-off"},timer:{active:"mdi:play",paused:"mdi:pause",idle:"mdi:sleep"},valve:{open:"mdi:valve-open",closed:"mdi:valve-closed"},water_heater:{off:"mdi:power-off",eco:"mdi:leaf",electric:"mdi:lightning-bolt",gas:"mdi:fire",heat_pump:"mdi:hvac",high_demand:"mdi:water-plus-outline",performance:"mdi:rocket-launch-outline"}},Gs=(e,t,i)=>{const s=Wi(e);if(!Object.keys(Ks).includes(s))return;let a=Ks[s];if("object"==typeof Object.values(a)[0]){const t=i.states[e],s=null==t?void 0:t.attributes.device_class;a=s&&Object.keys(a).includes(s)?a[s]:a._}return Object.keys(a).includes(t)?a[t]:void 0},Js=["alarm_control_panel","binary_sensor","climate","calendar","cover","device_tracker","fan","humidifier","input_boolean","input_number","input_select","lawn_mower","light","lock","number","person","proximity","select","sensor","sun","switch","timer","valve","water_heater"],Ys=(e,t,i)=>{let s=((e,t)=>{const i=Object.keys(t.states).includes(e)?t.states[e]:void 0,s=Wi(e),a=(null==i?void 0:i.attributes)||{},o=i=>null==i?void 0:i.map(i=>Object({value:i,icon:Gs(e,i,t)}));switch(s){case"alarm_control_panel":let e=["disarmed","triggered"];return 2&(a.supported_features||0)&&(e=[...e,"armed_away"]),1&(a.supported_features||0)&&(e=[...e,"armed_home"]),4&(a.supported_features||0)&&(e=[...e,"armed_night"]),16&(a.supported_features||0)&&(e=[...e,"armed_custom_bypass"]),32&(a.supported_features||0)&&(e=[...e,"armed_vacation"]),ss({options:o(e),translation_key:"component.alarm_control_panel.entity_component._.state.${value}"});case"binary_sensor":return ss({options:o(["on","off"]),translation_key:"component.binary_sensor.entity_component.${deviceClass}.state.${value}"});case"climate":return ss({options:o(a.hvac_modes),translation_key:"component.climate.entity_component._.state.${value}"});case"calendar":case"fan":case"humidifier":case"input_boolean":case"light":case"switch":return ss({options:o(["on","off"]),translation_key:"component.switch.entity_component._.state.${value}"});case"cover":return ss({options:o(["open","closed"]),translation_key:"component.cover.entity_component._.state.${value}"});case"device_tracker":return ss({options:o(["home","not_home"]),translation_key:"component.device_tracker.entity_component._.state.${value}"});case"input_number":case"number":return ls({min:a.min,max:a.max,step:a.step,mode:a.mode,unit:a.unit_of_measurement});case"input_select":case"select":return ss({options:a.options});case"lawn_mower":return ss({options:o(["mowing","paused","docked"]),translation_key:"component.lawn_mower.entity_component._.state.${value}"});case"lock":return ss({options:o(["locked","unlocked"]),translation_key:"component.lock.entity_component._.state.${value}"});case"person":const s=Object.keys(t.states).filter(e=>"zone"==Wi(e)).map(Bi);return ss({options:[...new Set(["home","not_home",...s])]});case"proximity":return ls({mode:"box",unit:a.unit_of_measurement});case"sensor":return!isNaN(Number(null==i?void 0:i.state))||Be(a.unit_of_measurement)?ls({mode:"box",unit:a.unit_of_measurement,min:"%"==a.unit_of_measurement?0:void 0,max:"%"==a.unit_of_measurement?100:void 0}):{text:{}};case"sun":return ss({options:o(["above_horizon","below_horizon"]),translation_key:"component.sun.entity_component._.state.${value}"});case"timer":return ss({options:o(["active","paused","idle"]),translation_key:"component.timer.entity_component._.state.${value}"});case"valve":return ss({options:o(["open","closed"]),translation_key:"component.valve.entity_component._.state.${value}"});case"water_heater":case"climate":return ss({options:o(a.operation_list),translation_key:"component.climate.entity_component._.state.${value}"});default:return{text:{}}}})(e,t),a=Object.keys(i||{}).filter(t=>Ki(t,Wi(e))||Ki(t,e)).filter(e=>Object.keys(i[e]).includes("states")).sort((e,t)=>e.length-t.length).map(e=>i[e].states).shift();return a&&(Array.isArray(a)?s=ss({options:a}):"object"==typeof a&&"min"in a&&"max"in a&&(s=ls(a))),s},Qs=(e,t)=>{let i=Object.keys(e.states).map(e=>Wi(e)).reduce((e,t)=>e.includes(t)?e:[...e,t],[]).filter(e=>((e,t)=>{let i=Js.includes(e);return!i&&t?Object.keys(t).map(Wi).includes(e):i})(e,t.customize||{}));return i=i.filter(e=>Gi(e,t)),i.map(t=>({key:t,name:Xi(`component.${t}.title`,e,!1)||t.replace(/_/g," "),description:"",icon:Rs(t)}))},Xs=(e,t,i)=>{let s=Object.entries(t||{}).filter(([t,i])=>Ki(t,e)&&i.icon).map(([e,t])=>t);if(s.length)return s.map(e=>{return(t=e.icon).match(/^[a-z]+\:[a-zA-Z\-]+$/)?t:"mdi:"+t;var t}).shift();if(!Object.keys(i.states).includes(e))return"mdi:help";const a=i.states[e];if(a.attributes.icon)return a.attributes.icon;const o=Wi(e);return Rs(o)},ea=(e,t,i)=>{if(["script","notify"].includes(e)){let s=Object.keys(i.services[e]);"script"==e&&(s=s.filter(e=>!["turn_on","turn_off","reload","toggle","test"].includes(e)));let a=s.map(s=>({key:`${e}.${s}`,name:Os(`${e}.${s}`,i,t),description:"",icon:Xs(`${e}.${s}`,t,i)}));return a.sort((e,t)=>Yi(e.name,t.name)),a}{let s=Object.keys(i.states).filter(t=>Wi(t)==e).map(e=>{var s;return{key:e,name:Zi(e,null===(s=i.states[e])||void 0===s?void 0:s.attributes),description:"",icon:Xs(e,t,i)}});return s.sort((e,t)=>Yi(e.name,t.name)),s}},ta=(e,t)=>t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t));let ia=class extends oe{constructor(){super(...arguments),this._search="",this._filter="",this.timer=0,this.expandedGroups=[],this.scheduleEntities=[]}async showDialog(e){this._params=e,this.loadOptions(),await this.updateComplete}async closeDialog(){this._params&&this._params.confirm({domains:this._params.domains,entities:this._params.entities}),this._params=void 0,this._clearSearch(),this._height=void 0,this._width=void 0}loadOptions(){if(!this._params)return;let e=(e=>{let t=Hs(e,{include:["*"]}),i=Qs(e,{include:["*"]});return i=i.filter(e=>!t.map(e=>e.key).includes(e.key)),t=[...t,...i],t.sort((e,t)=>Yi(e.name,t.name)),t})(this.hass);this.options=e.map(e=>Object.assign(Object.assign({},e),{entities:ea(e.key,this._params.cardConfig.customize,this.hass)})).filter(e=>e.entities.length)}shouldUpdate(e){return!!(e.has("_params")||e.has("expandedGroups")||e.has("_filter")||e.has("scheduleEntities"))}async firstUpdated(){this.scheduleEntities=Object.entries(await Oe(this.hass)).map(([,e])=>e.entity_id)}async willUpdate(){var e;if(!this._width||!this._height){const t=null===(e=this.shadowRoot.querySelector("ha-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}}render(){return this._params?q`
       <ha-dialog
         open
-        .heading=${!0}
-        @opened=${this._opened}
         @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-        hideActions
+        @wa-after-show=${this._opened}
       >
-        <div slot="heading">
+        <div slot="header">
           <ha-dialog-header>
             <ha-icon-button
               slot="navigationIcon"
-              dialogAction="cancel"
+              data-dialog="close"
               .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
               .path=${Ps}
             ></ha-icon-button>
-            <span slot="title">
+            <div slot="title">
               ${Ui("ui.dialog.entity_picker.title",this.hass)}
-            </span>
+            </div>
           </ha-dialog-header>
 
           <ha-textfield
@@ -96,14 +93,14 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
           </ha-textfield>
         </div>
         
-        <mwc-list
-          style=${Zs({width:this._width?this._width+"px":"auto",height:this._height?Math.min(468,this._height)+"px":"auto"})}
+        <ha-list
+          style=${Zs({minWidth:this._width+"px",height:this._height?Math.min(468,this._height)+"px":"auto"})}
         >
           ${this._renderOptions()}
-        </mwc-list>
+        </ha-list>
       </ha-dialog>
-    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("mwc-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_clearSearch(){this._search="",this._filter=""}_toggleSelectEntity(e){let t=e.target;for(;"MWC-LIST-ITEM"!=t.tagName;)t=t.parentElement;t.querySelector("ha-checkbox");const i=t.getAttribute("key");this._params.entities.includes(i)?this._params=Object.assign(Object.assign({},this._params),{entities:this._params.entities.filter(e=>e!=i)}):this._params=Object.assign(Object.assign({},this._params),{entities:[...this._params.entities,i]})}_toggleSelectDomain(e,t){var i;let s=e.target;for(;"MWC-LIST-ITEM"!=s.tagName;)s=s.parentElement;const a=s.getAttribute("key"),o=null===(i=this.options)||void 0===i?void 0:i.find(e=>e.key==a).entities.map(e=>e.key);this._params=t?Object.assign(Object.assign({},this._params),{domains:this._params.domains.filter(e=>e!=a),entities:this._params.entities.filter(e=>!(null==o?void 0:o.includes(e)))}):Object.assign(Object.assign({},this._params),{domains:[...this._params.domains,a]}),e.stopPropagation()}closeGroupByKey(e){this.shadowRoot.querySelector("mwc-list").childNodes.forEach(t=>{if(t.nodeType==Node.ELEMENT_NODE&&"MWC-LIST-ITEM"==t.tagName&&t.getAttribute("key")==e){const e=t,i=e.nextElementSibling,s=e.querySelector("ha-icon-button");i.style.height="0px",e.removeAttribute("expanded"),s.classList.remove("expanded")}})}async _toggleExpandGroup(e){let t=e.target;for(;"MWC-LIST-ITEM"!=t.tagName;)t=t.parentElement;const i=t.querySelector("ha-icon-button"),s=t.getAttribute("key");this.expandedGroups.includes(s)||(this.expandedGroups.forEach(e=>this.closeGroupByKey(e)),this.expandedGroups=[s],await this.requestUpdate());const a=t.nextElementSibling,o=a.scrollHeight;t.hasAttribute("expanded")?(t.removeAttribute("expanded"),i.classList.remove("expanded"),a.style.height="0px",setTimeout(()=>{this.expandedGroups=this.expandedGroups.filter(e=>e!=s)},300)):(t.setAttribute("expanded","true"),i.classList.add("expanded"),a.style.height=o+"px")}_renderOptions(){if(!this.options)return;let e=[...this.options];const t=this._filter&&this._filter.trim().length;if(t){const t=this._filter.toLowerCase().trim().split(" ");e=e.map(e=>ta(e,t)||(e=Object.assign(Object.assign({},e),{entities:(e.entities||[]).filter(e=>ta(e,t))})).entities.length?e:void 0).filter(e=>void 0!==e)}return e.length?Object.keys(e).map(i=>{var s,a;const o=e[i].key,n=null===(s=this._params)||void 0===s?void 0:s.domains.includes(o);let r=[...e[i].entities];"switch"==o&&(r=r.filter(e=>!this.scheduleEntities.includes(e.key)));const d=n?r.length:r.filter(e=>{var t;return null===(t=this._params)||void 0===t?void 0:t.entities.includes(e.key)}).length,l=(null===(a=this._params)||void 0===a?void 0:a.domains.includes(o))||e[i].entities.every(e=>{var t;return null===(t=this._params)||void 0===t?void 0:t.entities.includes(e.key)});return q`
-        <mwc-list-item
+    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("ha-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_clearSearch(){this._search="",this._filter=""}_toggleSelectEntity(e){let t=e.target;for(;"HA-LIST-ITEM"!=t.tagName;)t=t.parentElement;t.querySelector("ha-checkbox");const i=t.getAttribute("key");this._params.entities.includes(i)?this._params=Object.assign(Object.assign({},this._params),{entities:this._params.entities.filter(e=>e!=i)}):this._params=Object.assign(Object.assign({},this._params),{entities:[...this._params.entities,i]})}_toggleSelectDomain(e,t){var i;let s=e.target;for(;"HA-LIST-ITEM"!=s.tagName;)s=s.parentElement;const a=s.getAttribute("key"),o=null===(i=this.options)||void 0===i?void 0:i.find(e=>e.key==a).entities.map(e=>e.key);this._params=t?Object.assign(Object.assign({},this._params),{domains:this._params.domains.filter(e=>e!=a),entities:this._params.entities.filter(e=>!(null==o?void 0:o.includes(e)))}):Object.assign(Object.assign({},this._params),{domains:[...this._params.domains,a]}),e.stopPropagation()}closeGroupByKey(e){this.shadowRoot.querySelector("ha-list").childNodes.forEach(t=>{if(t.nodeType==Node.ELEMENT_NODE&&"HA-LIST-ITEM"==t.tagName&&t.getAttribute("key")==e){const e=t,i=e.nextElementSibling,s=e.querySelector("ha-icon-button");i.style.height="0px",e.removeAttribute("expanded"),s.classList.remove("expanded")}})}async _toggleExpandGroup(e){let t=e.target;for(;"HA-LIST-ITEM"!=t.tagName;)t=t.parentElement;const i=t.querySelector("ha-icon-button"),s=t.getAttribute("key");this.expandedGroups.includes(s)||(this.expandedGroups.forEach(e=>this.closeGroupByKey(e)),this.expandedGroups=[s],await this.requestUpdate());const a=t.nextElementSibling,o=a.scrollHeight;t.hasAttribute("expanded")?(t.removeAttribute("expanded"),i.classList.remove("expanded"),a.style.height="0px",setTimeout(()=>{this.expandedGroups=this.expandedGroups.filter(e=>e!=s)},300)):(t.setAttribute("expanded","true"),i.classList.add("expanded"),a.style.height=o+"px")}_renderOptions(){if(!this.options)return;let e=[...this.options];const t=this._filter&&this._filter.trim().length;if(t){const t=this._filter.toLowerCase().trim().split(" ");e=e.map(e=>ta(e,t)||(e=Object.assign(Object.assign({},e),{entities:(e.entities||[]).filter(e=>ta(e,t))})).entities.length?e:void 0).filter(e=>void 0!==e)}return e.length?Object.keys(e).map(i=>{var s,a;const o=e[i].key,n=null===(s=this._params)||void 0===s?void 0:s.domains.includes(o);let r=[...e[i].entities];"switch"==o&&(r=r.filter(e=>!this.scheduleEntities.includes(e.key)));const d=n?r.length:r.filter(e=>{var t;return null===(t=this._params)||void 0===t?void 0:t.entities.includes(e.key)}).length,l=(null===(a=this._params)||void 0===a?void 0:a.domains.includes(o))||e[i].entities.every(e=>{var t;return null===(t=this._params)||void 0===t?void 0:t.entities.includes(e.key)});return q`
+        <ha-list-item
           graphic="icon"
           twoline
           hasMeta
@@ -123,12 +120,12 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
           </div>
           <span>${e[i].name}</span>
           <span slot="secondary">${Ui("ui.panel.card_editor.fields.entities.included_number",this.hass,["{number}","{total}"],[d,r.length])}</span>
-        </mwc-list-item>
+        </ha-list-item>
         ${this.expandedGroups.includes(o)||t?q`
         <div class="group ${t?"open":""}">
           <li role="divider"></li>
         ${r.map(e=>{var t,i;return q`
-          <mwc-list-item
+          <ha-list-item
             graphic="icon"
             twoline
             hasMeta
@@ -144,44 +141,42 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
 
             <span>${e.name}</span>
             <span slot="secondary">${e.key}</span>
-          </mwc-list-item>
+          </ha-list-item>
         `})}
           <li role="divider"></li>
         </div>
       `:""}
       `}):q`
-        <mwc-list-item disabled>
+        <ha-list-item disabled>
           ${Xi("ui.components.entity.entity-picker.no_match",this.hass)}
-        </mwc-list-item>
+        </ha-list-item>
       `}static get styles(){return r`
       ha-dialog {
         --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 550px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 500px;
-        }
+        --ha-dialog-width-md: 480px;
       }
       ha-textfield {
         display: block;
         margin: 0 16px;
       }
-      mwc-list-item {
+      ha-list {
+        min-height: 300px;
+      }
+      ha-list-item {
         --mdc-ripple-hover-opacity: 0.04;
         --mdc-ripple-focus-opacity: 0.04;
         --mdc-ripple-press-opacity: 0.12;
         --mdc-list-item-meta-size: 180px;
       }
-      mwc-list-item.nested {
+      ha-list-item.nested {
         --mdc-list-item-meta-size: 48px;
         --mdc-list-side-padding: 32px;
       }
-      mwc-list-item.nested ha-icon {
+      ha-list-item.nested ha-icon {
         display: flex;
         justify-content: flex-end;
       }
-      mwc-list-item ha-checkbox, mwc-list-item ha-icon-button, mwc-list-item ha-button {
+      ha-list-item ha-checkbox, ha-list-item ha-icon-button, ha-list-item ha-button {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -195,10 +190,10 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
       div.group.open {
         height: auto;
       }
-      mwc-list-item .chevron {
+      ha-list-item .chevron {
         transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
       }
-      mwc-list-item .chevron.expanded {
+      ha-list-item .chevron.expanded {
         transform: rotate(180deg);
       }
       div.group li {
@@ -667,34 +662,42 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
           @value-changed=${i}
         >
         </scheduler-chip-set>`},a=e=>{var t;let i=null===(t=this.config.select)||void 0===t?void 0:t.translation_key,s="";return i&&(s=Xi(i.replace("${value}",e),this.hass,!1)),s||(s=e),s},o=e=>"object"==typeof e?{id:e.value,primary:a(e.label),icon:e.icon}:{id:e,primary:a(e)};let n=[...null==e?void 0:e.options].map(o),r=[this.value||[]].flat().map(String);n=[...n,...r.filter(e=>!n.find(t=>t.id==e)).map(o)],Array.isArray(this.value)&&(n=n.filter(e=>"object"==typeof e?!t.includes(e.id):!t.includes(e)));const d=()=>{if(!n.length)return q`
-          <ha-list-item .value=${ca}>
+          <ha-dropdown-item .value=${ca}>
             ${this.hass.localize("ui.components.combo-box.no_match")}
-          </ha-list-item>
-        `;const e=n.some(e=>e.icon);return n.map(t=>q`
-          <ha-list-item
-            .value=${t.id}
-            .graphic=${e?"icon":""}
+          </ha-dropdown-item>
+        `;n.some(e=>e.icon);return n.map(e=>q`
+          <ha-dropdown-item
+            .value=${e.id}
           >
-            ${t.icon?q`<ha-icon slot="graphic" .icon=${t.icon}></ha-icon>`:R}
-            <span>${t.primary}</span>
-          </ha-list-item>
-        `)},l=e=>{e.stopPropagation();const t=e.target.value;(t!=ca&&!Array.isArray(this.value)||(e.target.select(-1),e.preventDefault(),setTimeout(()=>{e.target.blur()},50),t!=ca))&&this._valueChanged(new CustomEvent("value-changed",{detail:{value:t}}))};return q`
-          <div class="select-wrapper">
+            ${e.icon?q`<ha-icon slot="icon" .icon=${e.icon}></ha-icon>`:R}
+            <span>${e.primary}</span>
+          </ha-dropdown-item>
+        `)},l=e=>{let t=e.target,i=t.querySelector("ha-picker-field");this.style.setProperty("--select-menu-width",i.offsetWidth+"px"),t.classList.add("opened")},c=e=>{e.target.classList.remove("opened")},u=e=>{const t=e.detail.item.value;(t!=ca&&!Array.isArray(this.value)||(e.target.value=void 0,t!=ca))&&this._valueChanged(new CustomEvent("value-changed",{detail:{value:t}}))},h=()=>{this._valueChanged(new CustomEvent("value-changed",{detail:{value:void 0}}))},m=Be(this.value)&&!Array.isArray(this.value)?n.find(e=>e.id===this.value):void 0,p=m?m.primary||m.id:Be(this.value)&&!Array.isArray(this.value)?this.value:void 0;return q`
+        <div class="select-wrapper">
           ${e.multiple?q`
-            <div class="chips">
-            ${s()}
-            </div>
+          <div class="chips">
+          ${s()}
+          </div>
           `:""}
-          <ha-select
-            .value=${Array.isArray(this.value)?"":this.value||""}
-            .disabled=${this.disabled}
-            @selected=${l}
-            @closed=${e=>{e.stopPropagation()}}
-            fixedMenuPosition
-            naturalMenuWidth
+          <ha-dropdown
+            placement="bottom"
+            @wa-select=${u}
+            @wa-show=${l}
+            @wa-hide=${c}
           >
+            <ha-picker-field
+              slot="trigger"
+              type="button"
+              compact
+              @clear=${h}
+              .disabled=${this.disabled}
+              .hideClearIcon=${this.disabled||!Be(this.value)||Array.isArray(this.value)&&!this.value.length}
+              .value=${p}
+              .icon=${null==m?void 0:m.icon}
+            >
+            </ha-picker-field>
             ${d()}
-          </ha-select>
+          </ha-dropdown>
         </div>
       `}if(this.config.number){const t=this.config.number,i="box"==t.mode||!Be(t.min)||!Be(t.max);let s=this.value;i||"number"==typeof s||(s=t.min),"number"==typeof t.scale_factor&&(s=Number(s)/t.scale_factor),"number"==typeof(null==t?void 0:t.step)&&(s=Math.round(Number(s)/t.step)*t.step),Be(s)&&(s=rs(Number(s)));const a=e=>{let i=Number(e.target.value);"number"==typeof t.scale_factor&&(i*=t.scale_factor),"number"==typeof(null==t?void 0:t.step)&&(i=Math.round(i/t.step)*t.step),i=rs(i),this._valueChanged(new CustomEvent("value-changed",{detail:{value:i}})),e.stopPropagation()},o=e=>{e.stopPropagation();let t=e.target.value;const i=""===t||isNaN(Number(t))?void 0:Number(t);this._valueChanged(new CustomEvent("value-changed",{detail:{value:i}}))},n=(e,i)=>{let s=t.step&&Number(t.step)%1==0?null!==e.match(/^-?\d+$/):null!==e.match(/^[+-]?\d+([.,]\d+)?$/);return s&&Be(t.min)&&(s=Number(e)>=t.min),s&&Be(t.max)&&(s=Number(e)<=t.max),{valid:s,customError:!s}};return q`
         <div class="slider-wrapper">
@@ -783,6 +786,9 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
       div.textfield-wrapper ha-textfield {
         display: flex;
         width: 100%;
+      }
+      ha-dropdown::part(menu) {
+        min-width: var(--select-menu-width);
       }
   `,t([le({attribute:!1})],ua.prototype,"hass",void 0),t([le({attribute:!1})],ua.prototype,"config",void 0),t([le()],ua.prototype,"value",void 0),t([le({type:Boolean})],ua.prototype,"disabled",void 0),ua=t([re("scheduler-combo-selector")],ua);let ha=class extends oe{constructor(){super(...arguments),this._config={},this.title="",this.tagOptions=[],this.customTagValue=""}setConfig(e){this._config=Object.assign({},e)}async firstUpdated(){this.title="string"==typeof this._config.title?this._config.title:"";const e=(await Ds(this.hass)).map(e=>e.name);e.sort(Yi),this.tagOptions=e}render(){var e,t,i,s,a,o;const n={number:{min:0,max:30,step:1,unit_of_measurement:Ui("ui.panel.card_editor.fields.time_step.unit_minutes",this.hass)}},r={select:{options:this.tagOptions,multiple:!0,custom_value:!0}};return q`
       <div class="card-config">
@@ -1071,9 +1077,6 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
     }
   `,t([le({attribute:!1})],ha.prototype,"hass",void 0),t([le()],ha.prototype,"_config",void 0),t([le()],ha.prototype,"title",void 0),t([le()],ha.prototype,"tagOptions",void 0),t([ce()],ha.prototype,"customTagValue",void 0),ha=t([re("scheduler-card-editor")],ha);const ma=r`
   ha-dialog {
-    --mdc-dialog-min-width: 400px;
-    --mdc-dialog-max-width: 600px;
-    --mdc-dialog-max-width: min(600px, 95vw);
     --justify-action-buttons: space-between;
     --dialog-container-padding: var(--safe-area-inset-top, 0)
       var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
@@ -1084,12 +1087,6 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
   /* make dialog fullscreen on small screens */
   @media all and (max-width: 450px), all and (max-height: 500px) {
     ha-dialog {
-      --mdc-dialog-min-width: 100vw;
-      --mdc-dialog-max-width: 100vw;
-      --mdc-dialog-min-height: 100vh;
-      --mdc-dialog-min-height: 100svh;
-      --mdc-dialog-max-height: 100vh;
-      --mdc-dialog-max-height: 100svh;
       --dialog-container-padding: 0px;
       --dialog-surface-padding: var(--safe-area-inset-top, 0)
         var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
@@ -1098,25 +1095,11 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
       --ha-dialog-border-radius: var(--ha-border-radius-square);
     }
   }
-
   @media all and (min-width: 600px) and (min-height: 501px) {
     ha-dialog {
-      --mdc-dialog-min-width: 580px;
-      --mdc-dialog-max-width: 580px;
       --dialog-surface-margin-top: 40px;
-      --mdc-dialog-max-height: calc(100% - 72px);
-    }
-    ha-dialog {
       --vertical-align-dialog: flex-start;
     }
-    :host([large]) ha-dialog {
-      --mdc-dialog-min-width: 90vw;
-      --mdc-dialog-max-width: 90vw;
-    }
-  }
-  .config-button {
-    position: absolute;
-    right: 0px;
   }
   .buttons {
     box-sizing: border-box;
@@ -1129,7 +1112,6 @@ var ue;null===(ue=window.HTMLSlotElement)||void 0===ue||ue.prototype.assignedEle
   .content {
     padding: 0px 24px 16px 24px;
   }
-
 `,pa=(r`
   .error {
     color: red;
@@ -1499,10 +1481,10 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           @selected=${this._amPmChanged}
           @closed=${e=>{e.stopPropagation()}}
         >
-          <mwc-list-item value="AM">AM</mwc-list-item>
-          <mwc-list-item value="PM">PM</mwc-list-item>
+          <ha-dropdown-item value="AM">AM</ha-dropdown-item>
+          <ha-dropdown-item value="PM">PM</ha-dropdown-item>
         </ha-select>
-      `:R}_convertTimeMode(e){const t=this.hass.states["sun.sun"].attributes.next_rising,i=this.hass.states["sun.sun"].attributes.next_setting;if(e&&e!=be.Fixed||this.mode==be.Fixed){const s=Sa({hours:this.hours,minutes:this.minutes},t),a=Sa({hours:this.hours,minutes:this.minutes},i),o=60*s.hours+s.minutes,n=60*a.hours+a.minutes;let r=e||(Math.abs(o)<=Math.abs(n)?be.Sunrise:be.Sunset),d=r==be.Sunrise?s:a;return{mode:r,hours:d.hours,minutes:d.minutes}}{let e=this.mode==be.Sunrise?Ce(t):Ce(i);return e=ze(e,{hours:this.hours,minutes:this.minutes}),{mode:be.Fixed,hours:e.hours,minutes:e.minutes}}}_hoursChanged(e){let t=Number(e.target.value);if(this.useAmPm){const e=Le(this.hours).am_pm;t=Pe(t,e)}this.hours=t,this._valueChanged()}_minutesChanged(e){const t=Number(e.target.value);this.minutes=t,this._valueChanged()}_amPmChanged(e){const t=e.target.value;if(Le(this.hours).am_pm==t)return;const i=Le(this.hours).hours;this.hours=Pe(i,"AM"==t?Me.AM:Me.PM),this._valueChanged()}_addTimeOffset(e){let t={mode:this.mode,hours:this.hours,minutes:this.minutes};t=ze(t,e),e.minutes&&(t=Se(t,this.stepSize)),this.mode!=be.Fixed&&(t=Aa(t)),this.hours=t.hours,this.minutes=t.minutes,this._valueChanged()}_valueChanged(){const e={mode:this.mode,hours:this.hours,minutes:this.minutes};Es(this,"value-changed",{value:e})}_onFocus(e){e.currentTarget.select()}formatHours(){const e=this.hours<0||this.minutes<0;let t=this.useAmPm&&this.mode==be.Fixed?Le(this.hours).hours:this.hours;return e&&!this.large?"-"+Math.abs(t).toFixed():this.mode==be.Fixed||this.large?this.large?Math.abs(t):t.toFixed():"+"+Math.abs(t).toFixed()}formatMinutes(){return Math.abs(this.minutes).toString().padStart(2,"0")}};Ea.styles=r`
+      `:R}_convertTimeMode(e){const t=this.hass.states["sun.sun"].attributes.next_rising,i=this.hass.states["sun.sun"].attributes.next_setting;if(e&&e!=be.Fixed||this.mode==be.Fixed){const s=Sa({hours:this.hours,minutes:this.minutes},t),a=Sa({hours:this.hours,minutes:this.minutes},i),o=60*s.hours+s.minutes,n=60*a.hours+a.minutes;let r=e||(Math.abs(o)<=Math.abs(n)?be.Sunrise:be.Sunset),d=r==be.Sunrise?s:a;return{mode:r,hours:d.hours,minutes:d.minutes}}{let e=this.mode==be.Sunrise?Ce(t):Ce(i);return e=ze(e,{hours:this.hours,minutes:this.minutes}),{mode:be.Fixed,hours:e.hours,minutes:e.minutes}}}_hoursChanged(e){let t=Number(e.target.value);if(this.useAmPm){const e=Le(this.hours).am_pm;t=Pe(t,e)}this.hours=t,this._valueChanged()}_minutesChanged(e){const t=Number(e.target.value);this.minutes=t,this._valueChanged()}_amPmChanged(e){const t=e.detail.value;if(Le(this.hours).am_pm==t)return;const i=Le(this.hours).hours;this.hours=Pe(i,"AM"==t?Me.AM:Me.PM),this._valueChanged()}_addTimeOffset(e){let t={mode:this.mode,hours:this.hours,minutes:this.minutes};t=ze(t,e),e.minutes&&(t=Se(t,this.stepSize)),this.mode!=be.Fixed&&(t=Aa(t)),this.hours=t.hours,this.minutes=t.minutes,this._valueChanged()}_valueChanged(){const e={mode:this.mode,hours:this.hours,minutes:this.minutes};Es(this,"value-changed",{value:e})}_onFocus(e){e.currentTarget.select()}formatHours(){const e=this.hours<0||this.minutes<0;let t=this.useAmPm&&this.mode==be.Fixed?Le(this.hours).hours:this.hours;return e&&!this.large?"-"+Math.abs(t).toFixed():this.mode==be.Fixed||this.large?this.large?Math.abs(t):t.toFixed():"+"+Math.abs(t).toFixed()}formatMinutes(){return Math.abs(this.minutes).toString().padStart(2,"0")}};Ea.styles=r`
     :host {
       display: flex;
       flex-direction: row;
@@ -1581,7 +1563,7 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
     }
     ha-select {
       --mdc-shape-small: 0;
-      width: 85px;
+      width: 90px;
     }
     .label {
       display: flex;
@@ -1622,8 +1604,12 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
       }
     }
   `,t([le({attribute:!1})],Ea.prototype,"hass",void 0),t([ce()],Ea.prototype,"hours",void 0),t([ce()],Ea.prototype,"minutes",void 0),t([ce()],Ea.prototype,"mode",void 0),t([le({type:Boolean})],Ea.prototype,"autoValidate",void 0),t([le({type:Boolean})],Ea.prototype,"required",void 0),t([le({type:Boolean})],Ea.prototype,"disabled",void 0),t([le({type:String})],Ea.prototype,"label",void 0),t([le({type:Boolean})],Ea.prototype,"useAmPm",void 0),t([le({type:Boolean})],Ea.prototype,"large",void 0),t([le({attribute:!1})],Ea.prototype,"stepSize",void 0),Ea=t([re("scheduler-time-picker")],Ea);let Ta=class extends oe{constructor(){super(...arguments),this.weekdayTypeCustomSelected=!1,this.selectedWeekdays=[]}async showDialog(e){this._params=e,await this.updateComplete,this.selectedWeekdays=this._params.weekdays.filter(e=>![pe.Daily,pe.Weekend,pe.Workday].includes(e)),this.weekdayTypeCustomSelected=this.selectedWeekdays.length>0&&this._params.weekdays.length==this.selectedWeekdays.length}async closeDialog(){this._params&&this._params.cancel(),this._params=void 0}render(){return this._params?q`
-      <ha-dialog open .heading=${!0} @closed=${this.closeDialog} @close-dialog=${this.closeDialog}>
-        <ha-dialog-header slot="heading">
+      <ha-dialog
+        open
+        @closed=${this.closeDialog}
+        width="small"
+      >
+        <ha-dialog-header slot="header">
           ${this.weekdayTypeCustomSelected?q`
           <ha-icon-button
             slot="navigationIcon"
@@ -1634,36 +1620,43 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
             `:q`
           <ha-icon-button
             slot="navigationIcon"
-            dialogAction="cancel"
+            data-dialog="close"
             .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
             .path=${Ps}
           ></ha-icon-button>
           `};
-          <span slot="title">
+          <div slot="title">
               ${Ui("ui.dialog.weekday_picker.title",this.hass)}
-          </span>
+          </div>
         </ha-dialog-header>
         <div class="wrapper">
-          <mwc-list>
+          <ha-list>
           ${this._renderWeekdayOptions()}
-          </mwc-list>
+          </ha-list>
         </div>
 
-        <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-          ${Xi("ui.common.cancel",this.hass)}
-        </ha-button>
-        <ha-button
-          appearance="accent"
-          slot="primaryAction"
-          @click=${this.confirmClick}
-          dialogAction="close"
-          ?disabled=${!this._params.weekdays.length}
-        >
-          ${Xi("ui.common.ok",this.hass)}
-        </ha-button>
+        <ha-dialog-footer slot="footer">
+          <ha-button
+            appearance="plain"
+            slot="secondaryAction"
+            @click=${this.cancelClick}
+            data-dialog="close"
+          >
+            ${Xi("ui.common.cancel",this.hass)}
+          </ha-button>
+          <ha-button
+            appearance="accent"
+            slot="primaryAction"
+            @click=${this.confirmClick}
+            data-dialog="close"
+            ?disabled=${!this._params.weekdays.length}
+          >
+            ${Xi("ui.common.ok",this.hass)}
+          </ha-button>
+        </ha-dialog-footer>
       </ha-dialog>
     `:q``}_renderWeekdayOptions(){let e=[];if(this.weekdayTypeCustomSelected){e=[pe.Sunday,pe.Monday,pe.Tuesday,pe.Wednesday,pe.Thursday,pe.Friday,pe.Saturday];e=((e,t)=>e.concat(e).slice(t,t+e.length))(e,xs(this.hass))}else e=[pe.Daily,pe.Workday,pe.Weekend,"Custom"];const t=e=>{var t,i;return"Custom"==e?null===(t=this._params)||void 0===t?void 0:t.weekdays.some(e=>![pe.Daily,pe.Weekend,pe.Workday].includes(e)):null===(i=this._params)||void 0===i?void 0:i.weekdays.includes(e)};return e.map(e=>q`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           @click=${this._toggleSelectOption}
           option="${e}"
@@ -1676,30 +1669,19 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
             `:Qi(ws(e,"long",this.hass))}
 
           ${"Custom"==e?q`<ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>`:""}
-        </mwc-list-item>
+        </ha-list-item>
     `)}_toggleSelectOption(e){const t=e.target.getAttribute("option");let i=[...this._params.weekdays];"Custom"==t?(i=this.selectedWeekdays,this.weekdayTypeCustomSelected=!0):[pe.Daily,pe.Weekend,pe.Workday].includes(t)?(i.includes(t)?i.length>1&&(i=i.filter(e=>e!=t)):i=[t],this.weekdayTypeCustomSelected=!1):i=i.includes(t)?i.filter(e=>e!=t):[...i,t],this._params=Object.assign(this._params,{weekdays:i}),e.target.blur(),this.requestUpdate()}confirmClick(){const e=Array.from(new Set(this._params.weekdays));this._params.confirm(e)}cancelClick(){this._params.cancel()}backClick(){this.weekdayTypeCustomSelected=!1,this.selectedWeekdays=this._params.weekdays.filter(e=>![pe.Daily,pe.Weekend,pe.Workday].includes(e))}static get styles(){return r`
-      ha-dialog {
-        --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 350px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 300px;
-        }
-      }
       div.wrapper {
         color: var(--primary-text-color);
         padding: 0px 12px;
       }
-      mwc-list {
+      ha-list {
         --mdc-list-vertical-padding: 0px;
       }
-
-      mwc-list-item[disabled] {
+      ha-list-item[disabled] {
         color: var(--disabled-text-color);
       }
-
-      mwc-list-item.nested {
+      ha-list-item.nested {
         --mdc-list-side-padding: 36px;
       }
       .badge {
@@ -1718,18 +1700,15 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
     `}};t([le({attribute:!1})],Ta.prototype,"hass",void 0),t([ce()],Ta.prototype,"_params",void 0),t([ce()],Ta.prototype,"weekdayTypeCustomSelected",void 0),t([ce()],Ta.prototype,"selectedWeekdays",void 0),Ta=t([re("dialog-select-weekdays")],Ta);var Da=Object.freeze({__proto__:null,get DialogSelectWeekdays(){return Ta}});const Ma=(e,t)=>((e,t)=>e<t?-1:e>t?1:0)(e.toLowerCase(),t.toLowerCase()),La=(e,t,i)=>{const s=Object.keys(e.services).includes(t)?Object.keys(e.services[t]).filter(e=>{if(!Object.keys(ts).includes(t))return!1;let s=Object.keys(ts[t]).includes(e);if(!s&&Object.keys(ts[t]).includes("{entity_id}")){if("script"==t&&["turn_on","turn_off","reload","toggle","test"].includes(e))return!1;s=Gi(`${t}.${e}`,i)}return s}):[],a=t=>Xi(`component.${t}.title`,e,!1)||t.replace(/_/g," "),o=s=>{const o=Xi(`component.${t}.services.${s}.name`,e,!1)||!!e.services[t]&&!!e.services[t][s]&&e.services[t][s].name||s.replace(/_/g," ");return"script"==t?Object.keys(i.customize||{}).includes(`${t}.${s}`)&&Be(i.customize[`${t}.${s}`].name)?i.customize[`${t}.${s}`].name:o:`${a(t)}: ${o}`},n=i=>{let s=Xi(`component.${t}.services.${i}.description`,e,!1);return s||(s=e.services[t][i].description),s||"script"!=t||(s=Xi(`component.${t}.services.turn_on.description`,e,!1)),s};let r=s.map(s=>{return{key:s,name:o(s),description:n(s),icon:(a=s,"script"==t&&Object.keys(i.customize||{}).includes(`${t}.${a}`)&&Be(i.customize[`${t}.${a}`].icon)?i.customize[`${t}.${a}`].icon:Object.keys(cs).includes(t)&&Object.keys(cs[t].services).includes(a)?cs[t].services[a]:Rs(t)),action:{service:s.includes(".")?s:`${t}.${s}`,service_data:{},target:e.services[t][s].target?{}:void 0}};var a}),d=(l=i.customize||{},c=t,Object.keys(l).filter(e=>{var t;return null===(t=l[e].exclude_actions)||void 0===t?void 0:t.length}).filter(e=>!c||!c.includes(".")&&Ki(Wi(e),c)||Ki(e,c)).map(e=>l[e].exclude_actions).flat().filter(Be));var l,c;return d.length&&(r=r.filter(t=>!d.some(s=>Ma(Bi(t.action.service),s)>0||Ma(fs(t.action,e,i.customize),s)>0))),os(i.customize||{},t).forEach(e=>{let i=e.service;for(;r.find(e=>e.key==i);)i+="_2";e.variables&&Object.entries(e.variables).forEach(([t,i])=>{let s=ps(i),a=wa(s);!Be(e.service_data[t])&&Be(a)?e=Object.assign(Object.assign({},e),{service_data:Object.assign(Object.assign({},e.service_data),{[t]:a})}):Be(e.service_data[t])||(e=Object.assign(Object.assign({},e),{service_data:Object.assign(Object.assign({},e.service_data),{[t]:null})}))}),r.push({key:i,name:`${a(t)}: ${Pa(e.name||o(Bi(e.service)))}`,description:Pa(e.name||""),icon:e.icon||Rs(t),action:{service:e.service.includes(".")?e.service:`${t}.${e.service}`,service_data:e.service_data||{},target:e.target?e.target:void 0,name:e.name,icon:e.icon}})}),r},Pa=e=>{if(null!==/<.+?>/g.exec(e)){e=(new DOMParser).parseFromString(e,"text/html").body.textContent||""}let t;for(;t=/\[([^\]]+)\]/.exec(e);)e=e.replace(t[0],"");for(;t=/\{([^\}]+)\}/.exec(e);)e=e.replace(t[0],"");return e};let Na=class extends oe{constructor(){super(...arguments),this._search="",this._filter="",this.timer=0,this.lockDomain=!1,this.showAll=!1}async showDialog(e){this._params=e,this.lockDomain=void 0!==e.domainFilter,this.showAll=!1,await this.updateComplete}async closeDialog(){this._params&&this._params.cancel(),this._params=void 0,this._clearSearch(),this._height=void 0,this._width=void 0}async willUpdate(){this.hass.loadBackendTranslation("title"),this.hass.loadBackendTranslation("services")}render(){return this._params?q`
       <ha-dialog
         open
-        .heading=${!0}
-        @opened=${this._opened}
         @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-        hideActions
+        @wa-after-show=${this._opened}
       >
-        <div slot="heading">
+        <div slot="header">
           <ha-dialog-header>
             ${void 0===this._params.domainFilter||this.lockDomain?q`
             <ha-icon-button
               slot="navigationIcon"
-              dialogAction="cancel"
+               data-dialog="close"
               .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
               .path=${Ps}
             ></ha-icon-button>
@@ -1741,9 +1720,9 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
               @click=${this._clearDomain}
             ></ha-icon-button>
             `}
-            <span slot="title">
+            <div slot="title">
               ${Ui("ui.dialog.action_picker.title",this.hass)}
-            </span>
+            </div>
             ${!this.lockDomain&&Be(this._params.cardConfig.include)?q`
             <ha-dropdown
               placement="bottom-end"
@@ -1785,15 +1764,15 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           </ha-textfield>
         </div>
         
-        <mwc-list
-          style=${Zs({width:this._width?this._width+"px":"auto",height:this._height?Math.min(468,this._height)+"px":"auto"})}
+        <ha-list
+          style=${Zs({minWidth:this._width+"px",height:this._height?Math.min(468,this._height)+"px":"auto"})}
         >
           ${this._renderOptions()}
-        </mwc-list>
+        </ha-list>
       </ha-dialog>
-    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("mwc-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_renderOptions(){var e,t;if(null===(e=this._params)||void 0===e?void 0:e.domainFilter)return this._renderDomainActions();let i=Object.assign({},null===(t=this._params)||void 0===t?void 0:t.cardConfig);this.showAll&&(i=Object.assign(Object.assign({},i),{include:void 0,exclude:void 0}));const s=Hs(this.hass,i);return 1===s.length?(this._params=Object.assign(Object.assign({},this._params),{domainFilter:[s[0].key]}),this._renderDomainActions()):this._renderDomainList(s)}_renderDomainList(e){e.sort((e,t)=>Yi(e.name,t.name)),this._filter&&(e=e.filter(e=>{const t=this._filter.toLowerCase().trim().split(" ");return t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t))}));let t=[];for(var i=e.length;i<7;i++)t.push(0);return Object.keys(e).length?q`
+    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("ha-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_renderOptions(){var e,t;if(null===(e=this._params)||void 0===e?void 0:e.domainFilter)return this._renderDomainActions();let i=Object.assign({},null===(t=this._params)||void 0===t?void 0:t.cardConfig);this.showAll&&(i=Object.assign(Object.assign({},i),{include:void 0,exclude:void 0}));const s=Hs(this.hass,i);return 1===s.length?(this._params=Object.assign(Object.assign({},this._params),{domainFilter:[s[0].key]}),this._renderDomainActions()):this._renderDomainList(s)}_renderDomainList(e){e.sort((e,t)=>Yi(e.name,t.name)),this._filter&&(e=e.filter(e=>{const t=this._filter.toLowerCase().trim().split(" ");return t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t))}));let t=[];for(var i=e.length;i<7;i++)t.push(0);return Object.keys(e).length?q`
       ${Object.keys(e).map(t=>q`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           hasMeta
           @click=${()=>this._handleDomainClick(e[t].key)}
@@ -1801,21 +1780,21 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           <ha-icon slot="graphic" icon="${e[t].icon}"></ha-icon>
           <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
           <span>${e[t].name}</span>
-        </mwc-list-item>`)}
+        </ha-list-item>`)}
         ${t.map(e=>q`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           hasMeta
           noninteractive
         >
-        </mwc-list-item>
+        </ha-list-item>
         `)}
       `:q`
-          <mwc-list-item disabled>
+          <ha-list-item disabled>
             ${Xi("ui.components.combo-box.no_match",this.hass)}
-          </mwc-list-item>
+          </ha-list-item>
         `}_renderDomainActions(){var e,t;let i=Object.assign({},null===(e=this._params)||void 0===e?void 0:e.cardConfig);this.showAll&&(i=Object.assign(Object.assign({},i),{include:void 0,exclude:void 0}));let s=this._params.domainFilter.map(e=>La(this.hass,e,i)).flat();return(null===(t=this._params.entityFilter)||void 0===t?void 0:t.length)&&(s=s.filter(e=>{var t;return null===(t=this._params.entityFilter)||void 0===t?void 0:t.every(t=>{const i=ns(e.action,this._params.cardConfig.customize),s=this.hass.states[t];return!(i.supported_features&&!((s.attributes.supported_features||0)&i.supported_features))&&((!Object.keys(e.action.service_data).includes("entity_id")||e.action.service_data.entity_id==t)&&(!Object.keys(e.action.target||{}).includes("entity_id")||(e.action.target||{}).entity_id==t))})})),this._filter&&(s=s.filter(e=>{const t=this._filter.toLowerCase().trim().split(" ");return t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t))})),Object.keys(s).length?Object.keys(s).map(e=>q`
-        <mwc-list-item
+        <ha-list-item
           graphic="icon"
           @click=${()=>this._handleActionClick(s[e])}
           twoline
@@ -1823,24 +1802,25 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           <ha-icon slot="graphic" icon="${s[e].icon}"></ha-icon>
           <span>${s[e].name}</span>
           <span slot="secondary">${s[e].description}</span>
-        </mwc-list-item>
+        </ha-list-item>
     `):q`
-          <mwc-list-item disabled>
+          <ha-list-item disabled>
             ${Xi("ui.components.combo-box.no_match",this.hass)}
-          </mwc-list-item>
+          </ha-list-item>
         `}_handleDomainClick(e){this._params=Object.assign(Object.assign({},this._params),{domainFilter:[e]}),this._clearSearch()}_clearDomain(){this._params=Object.assign(Object.assign({},this._params),{domainFilter:void 0}),this._clearSearch()}_handleActionClick(e){this._params.confirm(e.action),this._params=void 0,this._clearSearch()}_clearSearch(){this._search="",this._filter=""}_toggleShowAll(){this.showAll?this.showAll=!1:(this.showAll=!0,this.lockDomain||this._clearDomain())}static get styles(){return r`
       ha-dialog {
         --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 550px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 500px;
-        }
+        --ha-dialog-width-md: 480px;
       }
       ha-textfield {
         display: block;
         margin: 0 16px;
+      }
+      ha-list {
+        min-height: 300px;
+      }
+      ha-list-item:not([twoline]) {
+        height: 56px;
       }
     `}};t([le({attribute:!1})],Na.prototype,"hass",void 0),t([ce()],Na.prototype,"_params",void 0),t([ce()],Na.prototype,"_search",void 0),t([ce()],Na.prototype,"_filter",void 0),t([ce()],Na.prototype,"_width",void 0),t([ce()],Na.prototype,"_height",void 0),t([ce()],Na.prototype,"lockDomain",void 0),t([ce()],Na.prototype,"showAll",void 0),Na=t([re("dialog-select-action")],Na);var Ia=Object.freeze({__proto__:null,get DialogSelectAction(){return Na}});let qa=class extends oe{constructor(){super(...arguments),this.showPrefix=!1}render(){return q`
       ${this.showPrefix?q`
@@ -2159,29 +2139,26 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
   mwc-checkbox {
     align-self: center;
   }
-  mwc-list-item.warning, mwc-list-item.warning ha-icon {
+  ha-list-item.warning, ha-list-item.warning ha-icon {
     color: var(--error-color);
   }
     `}};t([le({attribute:!1})],Va.prototype,"hass",void 0),t([le({attribute:!1})],Va.prototype,"config",void 0),t([le({attribute:!1})],Va.prototype,"viewMode",void 0),t([le({attribute:!1})],Va.prototype,"selectedSlot",void 0),t([le({type:Boolean})],Va.prototype,"large",void 0),t([ce()],Va.prototype,"schedule",void 0),t([ce()],Va.prototype,"selectedEntry",void 0),Va=t([re("scheduler-main-panel")],Va);const Ra=["January","February","March","April","May","June","July","August","September","October","November","December"];function Ha(e){return e.toISOString().split("T")[0]}function Fa(e){let t=new Date;const i=(e||"").match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})/);null!==i&&t.setFullYear(Number(i[1]),Number(i[2])-1,Number(i[3]));const s=(e||"").match(/([0-9]{2}):([0-9]{2})(:([0-9]{2}))?$/);return null!==s&&t.setHours(Number(s[1]),Number(s[2]),s.length>4?Number(s[4]):t.getSeconds()),t}const Ua=(e,t)=>"select"in t&&null!==t.select?((e,t)=>{var i;return((null===(i=t.select)||void 0===i?void 0:i.options)||[]).some(t=>"object"==typeof t?t.value==e:t==e)})(String(e),t):"number"in t&&null!==t.number?((e,t)=>{var i,s;return!isNaN(e)&&(!(void 0!==(null===(i=t.number)||void 0===i?void 0:i.min)&&e<t.number.min)&&!(void 0!==(null===(s=t.number)||void 0===s?void 0:s.max)&&e>t.number.max))})(Number(e),t):!("text"in t)||null===t.text||String(e).length>0,Ba=e=>null==e||Array.isArray(e)?e:[e];let Wa=class extends oe{constructor(){super(...arguments),this._search="",this._filter="",this.timer=0,this.showAll=!1}async showDialog(e){this._params=e,this.showAll=!1,await this.updateComplete}async closeDialog(){this._params&&this._params.cancel(),this._params=void 0,this._clearSearch(),this._height=void 0,this._width=void 0}async willUpdate(){this.hass.loadBackendTranslation("title")}render(){return this._params?q`
       <ha-dialog
         open
-        .heading=${!0}
-        @opened=${this._opened}
         @closed=${this.closeDialog}
-        @close-dialog=${this.closeDialog}
-        hideActions
+        @wa-after-show=${this._opened}
       >
-        <div slot="heading">
+        <div slot="header">
           <ha-dialog-header>
             <ha-icon-button
               slot="navigationIcon"
-              dialogAction="cancel"
+              data-dialog="close"
               .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
               .path=${Ps}
             ></ha-icon-button>
-            <span slot="title">
+            <div slot="title">
               ${Ui("ui.panel.options.conditions.add_condition",this.hass)}
-            </span>
+            </div>
             ${Be(this._params.domain)?"":q`
             <ha-dropdown
               placement="bottom-end"
@@ -2223,33 +2200,34 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
           </ha-textfield>
         </div>
 
-        <mwc-list
-          style=${Zs({width:this._width?this._width+"px":"auto",height:this._height?Math.min(468,this._height)+"px":"auto"})}
+        <ha-list
+          style=${Zs({minWidth:this._width+"px",height:this._height?Math.min(468,this._height)+"px":"auto"})}
         >
           ${this._renderOptions()}
-        </mwc-list>
+        </ha-list>
       </ha-dialog>
-    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("mwc-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_clearSearch(){this._search="",this._filter=""}_renderOptions(){var e;let t=Object.assign({},null===(e=this._params)||void 0===e?void 0:e.cardConfig);this.showAll&&(t=Object.assign(Object.assign({},t),{include:void 0,exclude:void 0}));let i=Qs(this.hass,t);return i.sort((e,t)=>Yi(e.name,t.name)),this._filter&&(i=i.filter(e=>{const t=this._filter.toLowerCase().trim().split(" ");return t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t))})),Object.keys(i).map(e=>q`
-        <mwc-list-item
+    `:q``}_opened(){var e;const t=null===(e=this.shadowRoot.querySelector("ha-list"))||void 0===e?void 0:e.getBoundingClientRect();this._width=null==t?void 0:t.width,this._height=null==t?void 0:t.height}_handleSearchChange(e){const t=e.currentTarget.value;this._search=t,clearTimeout(this.timer),this.timer=window.setTimeout(()=>{this._filter=this._search},100)}_clearSearch(){this._search="",this._filter=""}_renderOptions(){var e;let t=Object.assign({},null===(e=this._params)||void 0===e?void 0:e.cardConfig);this.showAll&&(t=Object.assign(Object.assign({},t),{include:void 0,exclude:void 0}));let i=Qs(this.hass,t);return i.sort((e,t)=>Yi(e.name,t.name)),this._filter&&(i=i.filter(e=>{const t=this._filter.toLowerCase().trim().split(" ");return t.every(t=>e.name.toLowerCase().includes(t))||t.every(t=>e.key.toLowerCase().includes(t))})),Object.keys(i).map(e=>q`
+        <ha-list-item
           graphic="icon"
           @click=${()=>this._handleDomainClick(i[e].key)}
         >
           <ha-icon slot="graphic" icon="${i[e].icon}"></ha-icon>
           <span>${i[e].name}</span>
-        </mwc-list-item>
+        </ha-list-item>
     `)}_handleDomainClick(e){this._params=Object.assign(Object.assign({},this._params),{domain:e}),this._params.confirm(e),this._params=void 0,this._clearSearch()}_toggleShowAll(){this.showAll?this.showAll=!1:this.showAll=!0}static get styles(){return r`
       ha-dialog {
         --dialog-content-padding: 0;
-        --mdc-dialog-max-height: 60vh;
-      }
-      @media all and (min-width: 550px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 500px;
-        }
+        --ha-dialog-width-md: 480px;
       }
       ha-textfield {
         display: block;
         margin: 0 16px;
+      }
+      ha-list {
+        min-height: 300px;
+      }
+      ha-list-item:not([twoline]) {
+        height: 56px;
       }
     `}};t([le({attribute:!1})],Wa.prototype,"hass",void 0),t([ce()],Wa.prototype,"_params",void 0),t([ce()],Wa.prototype,"_search",void 0),t([ce()],Wa.prototype,"_filter",void 0),t([ce()],Wa.prototype,"_width",void 0),t([ce()],Wa.prototype,"_height",void 0),t([ce()],Wa.prototype,"showAll",void 0),Wa=t([re("dialog-select-condition")],Wa);var Za=Object.freeze({__proto__:null,get DialogSelectCondition(){return Wa}});let Ka=class extends oe{constructor(){super(...arguments),this.conditionIdx=-1,this.conditionValid=!0,this.startDate="",this.endDate="",this.tags=[],this.customTagValue=""}async firstUpdated(){var e,t;(await window.loadCardHelpers()).importMoreInfoControl("input_datetime"),this.startDate=(null===(e=this.schedule)||void 0===e?void 0:e.start_date)||Ha(new Date),this.endDate=(null===(t=this.schedule)||void 0===t?void 0:t.end_date)||Ha(new Date);const i=(await Ds(this.hass)).map(e=>e.name),s=[this.config.tags||[]].flat();this.tags=[...new Set([...i,...s.filter(e=>!i.includes(e)&&!["none","disabled","enabled"].includes(e))])]}shouldUpdate(e){return e.get("schedule")&&this.dispatchEvent(new CustomEvent("change",{detail:{schedule:this.schedule}})),!0}render(){const e={select:{options:this.tags,multiple:!0,custom_value:!0}};return q`
       <div class="header first">
@@ -2535,64 +2513,59 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         margin-bottom: -10px;
       }
     `}};t([le({attribute:!1})],Ka.prototype,"hass",void 0),t([le({attribute:!1})],Ka.prototype,"config",void 0),t([ce()],Ka.prototype,"schedule",void 0),t([ce()],Ka.prototype,"conditionIdx",void 0),t([ce()],Ka.prototype,"selectedDomain",void 0),t([ce()],Ka.prototype,"selectedEntity",void 0),t([ce()],Ka.prototype,"selectedMatchType",void 0),t([ce()],Ka.prototype,"conditionValue",void 0),t([ce()],Ka.prototype,"conditionValid",void 0),t([ce()],Ka.prototype,"startDate",void 0),t([ce()],Ka.prototype,"endDate",void 0),t([le()],Ka.prototype,"tags",void 0),t([ce()],Ka.prototype,"customTagValue",void 0),Ka=t([re("scheduler-options-panel")],Ka);let Ga=class extends oe{async showDialog(e){this._params=e,await this.updateComplete}async closeDialog(){this._params&&this._params.cancel(),this._params=void 0}render(){return this._params?q`
-      <ha-dialog open .heading=${!0} @closed=${this.closeDialog} @close-dialog=${this.closeDialog}>
-        <ha-dialog-header slot="heading">
+      <ha-dialog
+        open
+        @closed=${this.closeDialog}
+        width="small"
+      >
+        <ha-dialog-header slot="header">
           <ha-icon-button
             slot="navigationIcon"
-            dialogAction="cancel"
+            data-dialog="close"
             .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
             .path=${Ps}
           ></ha-icon-button>
-          <span slot="title">
+          <div slot="title">
             ${this._params.title}
-          </span>
+          </div>
         </ha-dialog-header>
         <div class="wrapper">
           ${this._params.description}
         </div>
 
-        ${this._params.secondaryButtonLabel?q`
-          <ha-button appearance="plain" slot="primaryAction" @click=${this.cancelClick} dialogAction="close">
-            ${this._params.secondaryButtonLabel}
+        <ha-dialog-footer slot="footer">
+          ${this._params.secondaryButtonLabel?q`
+            <ha-button
+              appearance="plain"
+              slot="secondaryAction"
+              @click=${this.cancelClick}
+              data-dialog="close"
+            >
+              ${this._params.secondaryButtonLabel}
+            </ha-button>
+              `:""}
+          <ha-button
+            appearance="accent"
+            slot="primaryAction"
+            @click=${this.confirmClick}
+            data-dialog="close"
+          >
+            ${this._params.primaryButtonLabel}
           </ha-button>
-            `:""}
-        <ha-button
-          appearance="accent"
-          slot="primaryAction"
-          @click=${this.confirmClick}
-          dialogAction="close"
-        >
-          ${this._params.primaryButtonLabel}
-        </ha-button>
+        </ha-dialog-footer>
       </ha-dialog>
-    `:q``}confirmClick(){this._params.confirm()}cancelClick(){this._params.cancel()}static get styles(){return r`
-      div.wrapper {
-        color: var(--primary-text-color);
-      }
-      ha-dialog {
-        --mdc-dialog-min-width: 400px;
-        --mdc-dialog-max-width: 600px;
-        --mdc-dialog-max-width: min(600px, 95vw);
-      }
-      @media all and (max-width: 450px), all and (max-height: 500px) {
-        ha-dialog {
-          --mdc-dialog-min-width: 100vw;
-          --mdc-dialog-max-width: 100vw;
-          --mdc-dialog-min-height: 100vh;
-          --mdc-dialog-min-height: 100svh;
-          --mdc-dialog-max-height: 100vh;
-          --mdc-dialog-max-height: 100svh;
-          --vertical-align-dialog: flex-end;
-          --ha-dialog-border-radius: var(--ha-border-radius-square);
-        }
-      }
-    `}};t([le({attribute:!1})],Ga.prototype,"hass",void 0),t([ce()],Ga.prototype,"_params",void 0),Ga=t([re("scheduler-generic-dialog")],Ga);var Ja=Object.freeze({__proto__:null,get GenericDialog(){return Ga}});let Ya=class extends oe{constructor(){super(...arguments),this.large=!1,this.selectedEntry=0,this.selectedSlot=null,this._panel="main",this._viewMode=me.Single}set viewMode(e){if(this._viewMode=e,e==me.Single){let e=this.schedule.entries[this.selectedEntry].slots.findIndex(e=>e.actions.length);this.selectedSlot=e>=0?e:1}}shouldUpdate(e){return 1!=e.size||!e.has("hass")||!Be(this.hass)}async showDialog(e){var t;this._params=e,this.schedule=e.schedule,this._panel="main",this.large=!1;const i=this.schedule.entries[this.selectedEntry].slots.filter(e=>e.actions.length&&Be(e.stop)).length>0||this.schedule.entries[this.selectedEntry].slots.filter(e=>e.actions.length).length>1||this.schedule.entries[this.selectedEntry].slots.length>3;let s=this.schedule.entries[this.selectedEntry].slots.findIndex(e=>e.actions.length);this.selectedSlot=s>=0?s:null,this.viewMode=i?me.Scheme:(null===(t=this._params)||void 0===t?void 0:t.cardConfig.default_editor)||me.Single,await this.updateComplete}async closeDialog(){this._params=void 0}willUpdate(){this.hass.loadBackendTranslation("config")}render(){var e;return this._params?q`
-      <ha-dialog open @closed=${this.closeDialog} .heading=${!0} hideActions scrimClickAction="">
-        <ha-dialog-header slot="heading">
+    `:q``}confirmClick(){this._params.confirm()}cancelClick(){this._params.cancel()}};t([le({attribute:!1})],Ga.prototype,"hass",void 0),t([ce()],Ga.prototype,"_params",void 0),Ga=t([re("scheduler-generic-dialog")],Ga);var Ja=Object.freeze({__proto__:null,get GenericDialog(){return Ga}});let Ya=class extends oe{constructor(){super(...arguments),this.large=!1,this.selectedEntry=0,this.selectedSlot=null,this._panel="main",this._viewMode=me.Single}set viewMode(e){if(this._viewMode=e,e==me.Single){let e=this.schedule.entries[this.selectedEntry].slots.findIndex(e=>e.actions.length);this.selectedSlot=e>=0?e:1}}shouldUpdate(e){return 1!=e.size||!e.has("hass")||!Be(this.hass)}async showDialog(e){var t;this._params=e,this.schedule=e.schedule,this._panel="main",this.large=!1;const i=this.schedule.entries[this.selectedEntry].slots.filter(e=>e.actions.length&&Be(e.stop)).length>0||this.schedule.entries[this.selectedEntry].slots.filter(e=>e.actions.length).length>1||this.schedule.entries[this.selectedEntry].slots.length>3;let s=this.schedule.entries[this.selectedEntry].slots.findIndex(e=>e.actions.length);this.selectedSlot=s>=0?s:null,this.viewMode=i?me.Scheme:(null===(t=this._params)||void 0===t?void 0:t.cardConfig.default_editor)||me.Single,await this.updateComplete}async closeDialog(){this._params=void 0}willUpdate(){this.hass.loadBackendTranslation("config")}render(){var e;return this._params?q`
+      <ha-dialog
+        open
+        @closed=${this.closeDialog}
+        width="${this.large?"full":"medium"}"
+        prevent-scrim-close
+      >
+        <ha-dialog-header slot="header">
           ${"main"==this._panel?q`
           <ha-icon-button
             slot="navigationIcon"
-            dialogAction="cancel"
+            data-dialog="close"
             .label=${Xi("ui.dialogs.more_info_control.dismiss",this.hass)}
             .path=${Ps}
           ></ha-icon-button>
@@ -2610,10 +2583,9 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
             @click=${()=>{this._panel="main"}}
           ></ha-icon-button>
           `}
-          <span slot="title" @click=${()=>this.large=!this.large}>
+          <div slot="title" @click=${()=>this.large=!this.large}>
             ${this._params.editItem?this.schedule.name?null===(e=this.schedule)||void 0===e?void 0:e.name:Ui("ui.panel.common.default_name",this.hass,"{id}",this._params.editItem):Ui("ui.panel.common.new_schedule",this.hass)}
-          </span>
-
+          </div>
         </ha-dialog-header>
 
         <div class="content">
@@ -2641,15 +2613,14 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
         `}
         </div>
 
-
-        <div class="buttons">
-          <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger" ?disabled=${!this.schedule.entity_id}>
-            ${Xi("ui.common.delete",this.hass)}
-          </ha-button>
-          <ha-button appearance="plain" @click=${this._handleSaveClick}>
-            ${Xi("ui.common.save",this.hass)}
-          </ha-button>
-        </div>
+          <div class="buttons" slot="footer">
+            <ha-button appearance="plain" @click=${this._handleDeleteClick} variant="danger" ?disabled=${!this.schedule.entity_id}>
+              ${Xi("ui.common.delete",this.hass)}
+            </ha-button>
+            <ha-button appearance="plain" @click=${this._handleSaveClick}>
+              ${Xi("ui.common.save",this.hass)}
+            </ha-button>
+          </div>
       </ha-dialog>
     `:q``}_updateSchedule(e){let t=Object.keys(e.detail);if(t.includes("schedule")){let t=e.detail.schedule;this.schedule=t}t.includes("selectedSlot")&&(this.selectedSlot=e.detail.selectedSlot)}async _handleSaveClick(e){const t=ga(this.schedule,this.hass,this._params.cardConfig.customize);if(t)await new Promise(i=>{const s={cancel:()=>i(!1),confirm:()=>i(!0),title:Xi("state_badge.default.error",this.hass),description:Ui("ui.panel.editor.validation_errors."+t,this.hass),primaryButtonLabel:Xi("ui.common.ok",this.hass)};Es(e.target,"show-dialog",{dialogTag:"scheduler-generic-dialog",dialogImport:()=>Promise.resolve().then((function(){return Ja})),dialogParams:s})});else if(this.schedule.schedule_id){const t=Ie(await As(this.hass,this.schedule.schedule_id),this.hass);if(he(this.schedule,t))return void this.closeDialog();if(!t.enabled){await new Promise(t=>{const i={title:Ui("ui.dialog.enable_schedule.title",this.hass),description:Ui("ui.dialog.enable_schedule.description",this.hass),primaryButtonLabel:Xi("ui.common.yes",this.hass),secondaryButtonLabel:Xi("ui.common.no",this.hass),cancel:()=>{t(!1)},confirm:()=>{t(!0)}};Es(e.target,"show-dialog",{dialogTag:"scheduler-generic-dialog",dialogImport:()=>Promise.resolve().then((function(){return Ja})),dialogParams:i})})&&this.hass.callService("switch","turn_on",{entity_id:t.entity_id})}((e,t)=>{const i=va(t);return e.callApi("POST","scheduler/edit",i)})(this.hass,this.schedule).catch(e=>ka(e,this,this.hass)).then(()=>{this.closeDialog()})}else((e,t)=>{const i=va(t);return e.callApi("POST","scheduler/add",i)})(this.hass,this.schedule).catch(e=>ka(e,this,this.hass)).then(()=>{this.closeDialog()})}async _handleDeleteClick(e){await new Promise(t=>{const i={cancel:()=>t(!1),confirm:()=>t(!0),title:Ui("ui.dialog.confirm_delete.title",this.hass),description:Ui("ui.dialog.confirm_delete.description",this.hass),primaryButtonLabel:Xi("ui.common.ok",this.hass),secondaryButtonLabel:Xi("ui.common.cancel",this.hass)};Es(e.target,"show-dialog",{dialogTag:"scheduler-generic-dialog",dialogImport:()=>Promise.resolve().then((function(){return Ja})),dialogParams:i})}).then(e=>{var t,i;e&&(t=this.hass,i=this._params.editItem,t.callApi("POST","scheduler/remove",{schedule_id:i})).catch(e=>ka(e,this,this.hass)).then(()=>{this.closeDialog()})})}_setViewMode(e){let t=e.detail;const i=this.schedule.entries[this.selectedEntry].slots.filter(e=>e.actions.length).length>1;if(t!=me.Scheme)if(t!=me.Single||i)new Promise(t=>{const i={title:Ui("ui.dialog.confirm_migrate.title",this.hass),description:Ui("ui.dialog.confirm_migrate.description",this.hass),primaryButtonLabel:this.hass.localize("ui.common.yes"),secondaryButtonLabel:this.hass.localize("ui.common.no"),cancel:()=>{t(!1)},confirm:()=>{t(!0)}};Es(e.target,"show-dialog",{dialogTag:"scheduler-generic-dialog",dialogImport:()=>Promise.resolve().then((function(){return Ja})),dialogParams:i})}).then(e=>{e&&(this.schedule=(e=>{const t=e=>{let t=e.findIndex(e=>e.actions.length);t<0&&(t=Math.floor(e.length/2));let i=Object.assign(Object.assign({},e[t]),{stop:void 0});const s=i.conditions,a=i.start;return e=[{start:"00:00:00",stop:a,actions:[],conditions:s},i,{start:Ne(ze(Ce(a),{minutes:1})),stop:"00:00:00",actions:[],conditions:s}]};return e=Object.assign(Object.assign({},e),{entries:e.entries.map(e=>Object(Object.assign(Object.assign({},e),{slots:t(e.slots)})))})})(this.schedule),this.viewMode=t)});else{if(he([...this.schedule.entries],[...Fe.entries]))this.schedule=Object.assign(Object.assign({},this.schedule),{entries:[...Ue.entries]});else{let e=Object.assign(Object.assign({},this.schedule),{entries:this.schedule.entries.map(e=>{let t=e.slots.findIndex(e=>e.actions.length);return t<0&&(t=Math.floor(e.slots.length/2)),Object.assign(Object.assign({},e),{slots:e.slots.map((e,i)=>i==t?Object.assign(Object.assign({},e),{stop:void 0}):null).filter(Be)})})});this.schedule=Ie(e,this.hass)}this.viewMode=t}else{this.viewMode=t;he([...this.schedule.entries],[...Ue.entries])&&(this.schedule=Object.assign(Object.assign({},this.schedule),{entries:[...Fe.entries]}))}}};Ya.styles=ma,t([le({attribute:!1})],Ya.prototype,"hass",void 0),t([ce()],Ya.prototype,"_params",void 0),t([le({type:Boolean,reflect:!0})],Ya.prototype,"large",void 0),t([ce()],Ya.prototype,"schedule",void 0),t([ce()],Ya.prototype,"selectedEntry",void 0),t([ce()],Ya.prototype,"selectedSlot",void 0),t([ce()],Ya.prototype,"_panel",void 0),t([ce()],Ya.prototype,"_viewMode",void 0),Ya=t([re("dialog-scheduler-editor")],Ya);var Qa=Object.freeze({__proto__:null,get DialogSchedulerEditor(){return Ya}});
 /**
@@ -2914,4 +2885,4 @@ function(e){return(({finisher:e,descriptor:t})=>(i,s)=>{var a;if(void 0===s){con
     .card-actions, .card-actions > * { 
       display: flex;
     }
-  `,t([le({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([le()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.14".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
+  `,t([le({attribute:!1})],e.SchedulerCard.prototype,"hass",void 0),t([le()],e.SchedulerCard.prototype,"_config",void 0),t([ce()],e.SchedulerCard.prototype,"schedules",void 0),t([ce()],e.SchedulerCard.prototype,"showDiscovered",void 0),e.SchedulerCard=t([re("scheduler-card")],e.SchedulerCard),window.customCards=window.customCards||[],window.customCards.push({type:"scheduler-card",name:"Scheduler Card",description:"Card to manage schedule entities made with scheduler-component."}),console.info("%c  SCHEDULER-CARD  \n%c  Version: "+"v4.0.15".padEnd(7," "),"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray")}({});
