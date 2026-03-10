@@ -71,7 +71,12 @@ export const parseTimeBar = (schedule: Schedule, hass: HomeAssistant): Schedule 
         //move timeslot if it is overlapping with previous
         slots = Object.assign(slots, { [i]: { ...slot, start: startTime } });
       }
-      startTime = slot.stop || slot.start;
+      // For checkpoint slots (no stop), advance by 1 minute so the trailing filler
+      // doesn't start at the same position as the checkpoint itself, which would
+      // create the appearance of an extra bar when toggling between modes.
+      startTime = slot.stop !== undefined
+        ? slot.stop
+        : timeToString(addTimeOffset(parseTimeString(slot.start), { minutes: 1 }));
     }
     const endOfDay = 24 * 3600;
 

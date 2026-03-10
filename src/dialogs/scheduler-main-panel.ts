@@ -158,6 +158,7 @@ export class SchedulerMainPanel extends LitElement {
       `;
     }
     const slot = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot];
+    const isLastSlot = this.selectedSlot === this.schedule.entries[this.selectedEntry!].slots.length - 1;
     let endTime = slot.stop;
     if (!endTime && (this.selectedSlot < this.schedule.entries[this.selectedEntry].slots.length - 1))
       endTime = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot + 1].start;
@@ -180,16 +181,18 @@ export class SchedulerMainPanel extends LitElement {
         <div class="column">
 
           <div style="display: flex; flex-direction: row">
+          ${!isLastSlot ? html`
           <mwc-checkbox
             ?checked=${slot.stop !== undefined}
             @change=${this._toggleStopTime}
           >
           </mwc-checkbox>
+          ` : ''}
 
           <scheduler-time-picker
             .hass=${this.hass}
             label="${localize('ui.panel.editor.stop_time', this.hass)}:"
-            ?disabled=${slot.stop === undefined || this.selectedSlot == (this.schedule.entries[this.selectedEntry!].slots.length - 1)}
+            ?disabled=${slot.stop === undefined || isLastSlot}
             .time=${endTime}
             @value-changed=${this._stopTimeChanged}
             ?useAmPm=${useAmPm(this.hass.locale)}
