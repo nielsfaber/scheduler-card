@@ -179,26 +179,15 @@ export class SchedulerMainPanel extends LitElement {
           </scheduler-time-picker>
         </div>
         <div class="column">
-
-          <div style="display: flex; flex-direction: row">
-          ${!isLastSlot ? html`
-          <mwc-checkbox
-            ?checked=${slot.stop !== undefined}
-            @change=${this._toggleStopTime}
-          >
-          </mwc-checkbox>
-          ` : ''}
-
           <scheduler-time-picker
             .hass=${this.hass}
             label="${localize('ui.panel.editor.stop_time', this.hass)}:"
-            ?disabled=${slot.stop === undefined || isLastSlot}
+            ?disabled=${isLastSlot}
             .time=${endTime}
             @value-changed=${this._stopTimeChanged}
             ?useAmPm=${useAmPm(this.hass.locale)}
           >
           </scheduler-time-picker>
-          </div>
         </div>
       </div>`
         : ''}
@@ -504,37 +493,6 @@ export class SchedulerMainPanel extends LitElement {
     if (slotIdxOut != this.selectedSlot) this._updateSelectedSlot(slotIdxOut);
   }
 
-  _toggleStopTime(ev: Event) {
-    const checked = (ev.target as HTMLInputElement).checked;
-    const slotIdx = Number(this.selectedSlot);
-    let slots = [... this.schedule.entries[this.selectedEntry!].slots];
-    if (checked) {
-      let nextSlot = slotIdx + 1;
-      let stopTime = slots[nextSlot].start;
-      // A "filler" slot is an empty slot that was placed directly after the checkpoint
-      // (either by parseTimeBar starting at checkpoint.start, or previously inserted
-      // starting at checkpoint.start + 1 min).  Absorb it back into the current slot.
-      const isFillerSlot =
-        !slots[slotIdx + 1].actions.length &&
-        computeTimestamp(slots[slotIdx + 1].start, this.hass) <=
-          computeTimestamp(slots[slotIdx].start, this.hass) + 60;
-      if (isFillerSlot && slots[slotIdx + 1].stop !== undefined) {
-        stopTime = slots[slotIdx + 1].stop!;
-        nextSlot = slotIdx + 2;
-      }
-      slots = [
-        ...slots.slice(0, slotIdx),
-        { ...slots[slotIdx], stop: stopTime },
-        ...slots.slice(nextSlot)
-      ];
-    } else {
-      // Simply remove the stop time.  The timeslot editor will visually span the
-      // checkpoint to the next slot's start, so no filler slot needs to be inserted.
-      slots = Object.assign([...slots], { [slotIdx]: <Timeslot>{ ...slots[slotIdx], stop: undefined } });
-    }
-    this._updateEntry({ slots: slots });
-  }
-
   _addTimeslot(ev: Event) {
     if (this.selectedEntry === null || this.selectedSlot === null) return;
     this.schedule = insertTimeslot(this.schedule, this.selectedEntry, this.selectedSlot, this.hass);
@@ -602,9 +560,6 @@ export class SchedulerMainPanel extends LitElement {
   }
   scheduler-collapsible-section .header span {
     flex: 1;
-  }
-  mwc-checkbox {
-    align-self: center;
   }
   ha-list-item.warning, ha-list-item.warning ha-icon {
     color: var(--error-color);
