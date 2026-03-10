@@ -12,14 +12,11 @@ import { DialogSelectActionParams } from "./dialog-select-action";
 import { DialogSelectWeekdayParams } from "./dialog-select-weekdays";
 
 import { computeDomain } from "../lib/entity";
-import { timeToString } from "../data/time/time_to_string";
-import { parseTimeString } from "../data/time/parse_time_string";
-import { addTimeOffset } from "../data/time/add_time_offset";
+import { computeTimestamp } from "../data/time/compute_timestamp";
 import { HomeAssistant } from "../lib/types";
 import { localize } from "../localize/localize";
 import { insertTimeslot } from "../data/schedule/insert_timeslot";
 import { removeTimeslot } from "../data/schedule/remove_timeslot";
-import { computeTimestamp } from "../data/time/compute_timestamp";
 import { formatFieldDisplay } from "../data/format/format_field_display";
 import { formatActionDisplay } from "../data/format/format_action_display";
 import { computeActionIcon } from "../data/format/compute_action_icon";
@@ -511,7 +508,14 @@ export class SchedulerMainPanel extends LitElement {
     if (checked) {
       let nextSlot = slotIdx + 1;
       let stopTime = slots[nextSlot].start;
-      if (!slots[slotIdx + 1].actions.length) {
+      // A "filler" slot is an empty slot that was placed directly after the checkpoint
+      // (either by parseTimeBar starting at checkpoint.start, or previously inserted
+      // starting at checkpoint.start + 1 min).  Absorb it back into the current slot.
+      const isFillerSlot =
+        !slots[slotIdx + 1].actions.length &&
+        computeTimestamp(slots[slotIdx + 1].start, this.hass) <=
+          computeTimestamp(slots[slotIdx].start, this.hass) + 60;
+      if (isFillerSlot && slots[slotIdx + 1].stop !== undefined) {
         stopTime = slots[slotIdx + 1].stop!;
         nextSlot = slotIdx + 2;
       }
@@ -521,20 +525,9 @@ export class SchedulerMainPanel extends LitElement {
         ...slots.slice(nextSlot)
       ];
     } else {
-      const stopTime = addTimeOffset(parseTimeString(slots[slotIdx].start), { minutes: 1 });
-      if ((computeTimestamp(slots[slotIdx].stop!, this.hass) - computeTimestamp(stopTime, this.hass)) != 0) {
-        slots = [ //insert empty slot after current slot to fill gap
-          ...slots.slice(0, slotIdx + 1),
-          {
-            start: timeToString(stopTime),
-            stop: slots[slotIdx].stop,
-            actions: [],
-            conditions: slots[slotIdx].conditions
-          },
-          ...slots.slice(slotIdx + 1)
-        ];
-      }
-      Object.assign(slots, { [slotIdx]: <Timeslot>{ ...slots[slotIdx], stop: undefined } });
+      // Simply remove the stop time.  The timeslot editor will visually span the
+      // checkpoint to the next slot's start, so no filler slot needs to be inserted.
+      slots = Object.assign([...slots], { [slotIdx]: <Timeslot>{ ...slots[slotIdx], stop: undefined } });
     }
     this._updateEntry({ slots: slots });
   }

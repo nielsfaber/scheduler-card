@@ -101,18 +101,12 @@ export class SchedulerTimeslotEditor extends LitElement {
     const slotWidths = this.computeSlotWidths();
 
     return slots.map((slot, i) => {
-      let ts_start = computeTimestamp(slot.start, this.hass);
-      let ts_stop = computeTimestamp(slot.stop || slot.start, this.hass);
-      if (!ts_stop && ts_start) ts_stop = SEC_PER_DAY;
-
-      const width = (ts_stop - ts_start) / SEC_PER_DAY * 100;
       const actionText = slot.actions.length ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true) : '';
 
-      const fullWidth = this._width;
       const textWidth = actionText.length * 5 + 10;
       const leftMargin = i > 0 ? 15 : 0;
       const rightMargin = i < (slots.length - 1) ? 15 : 0;
-      const slotWidth = width * fullWidth / 100 - leftMargin - rightMargin;
+      const slotWidth = slotWidths[i] - leftMargin - rightMargin;
       const nextSlot = slots[i + 1];
 
       return html`
@@ -159,24 +153,45 @@ export class SchedulerTimeslotEditor extends LitElement {
 
     const slots = this.schedule!.slots;
 
-    let availableWidth = fullWidth - (slots.length - 1) * 3;
+    const totalWidth = fullWidth - (slots.length - 1) * 3;
 
-    const widthPct = slots.map(e => {
-      let ts_start = computeTimestamp(e.start, this.hass);
-      let ts_stop = computeTimestamp(e.stop || e.start, this.hass);
-      if (!ts_stop && ts_start) ts_stop = SEC_PER_DAY;
+    const widthPct = slots.map((e, i) => {
+      const ts_start = computeTimestamp(e.start, this.hass);
+      let ts_stop: number;
+      if (e.stop !== undefined) {
+        ts_stop = computeTimestamp(e.stop, this.hass);
+        if (!ts_stop && ts_start) ts_stop = SEC_PER_DAY;
+      } else {
+        // Slot without a stop time: visually span to the next slot's start
+        const nextSlot = slots[i + 1];
+        ts_stop = nextSlot
+          ? (computeTimestamp(nextSlot.start, this.hass) || SEC_PER_DAY)
+          : SEC_PER_DAY;
+      }
       return (ts_stop - ts_start) / SEC_PER_DAY;
     });
 
     const minWidth = 5;
-    const minPct = Math.round(minWidth / availableWidth * 100) / 100;
+    const minPct = Math.round(minWidth / totalWidth * 100) / 100;
+    const smallSlotCount = widthPct.filter(e => e < minPct).length;
+    const availableWidth = totalWidth - smallSlotCount * minWidth;
 
-    availableWidth = availableWidth - widthPct.filter(e => e < minPct).length * minWidth;
-
-    let remainingWidth = availableWidth;
-    let slotWidths = widthPct.map(e => {
-      let width = (e < minPct) ? minWidth : Math.round(e * availableWidth);
+    // remainingWidth starts at totalWidth so that small-slot minWidths are
+    // drawn from the same pool as large slots, preventing a visual gap.
+    let remainingWidth = totalWidth;
+    const slotWidths = widthPct.map((e, idx) => {
+      const isLast = idx === widthPct.length - 1;
+      let width: number;
+      if (e < minPct) {
+        width = minWidth;
+      } else if (isLast) {
+        // Last large slot absorbs any rounding remainder so the bar is always full-width.
+        width = remainingWidth;
+      } else {
+        width = Math.round(e * availableWidth);
+      }
       if (width > remainingWidth) width = remainingWidth;
+      if (width < 0) width = 0;
       remainingWidth -= width;
       return width;
     });
