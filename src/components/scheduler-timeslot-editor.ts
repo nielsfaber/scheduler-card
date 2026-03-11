@@ -1,5 +1,5 @@
 import { LitElement, html, css, CSSResultGroup } from 'lit';
-import { property, customElement, state, eventOptions } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { CardConfig, ScheduleEntry, Time, TimeMode } from '../types';
 import { mdiUnfoldMoreVertical } from '@mdi/js';
@@ -13,6 +13,7 @@ import { HomeAssistant } from '../lib/types';
 import { computeTimeOffset } from '../data/time/compute_time_offset';
 import { useAmPm } from '../lib/use_am_pm';
 import { addTimeOffset } from '../data/time/add_time_offset';
+import { DEFAULT_TIME_STEP } from '../const';
 
 const SEC_PER_DAY = 24 * 3600;
 
@@ -172,28 +173,13 @@ export class SchedulerTimeslotEditor extends LitElement {
     });
 
     const minWidth = 5;
-    const minPct = Math.round(minWidth / totalWidth * 100) / 100;
+    const minPct = minWidth / totalWidth;
     const smallSlotCount = widthPct.filter(e => e < minPct).length;
     const availableWidth = totalWidth - smallSlotCount * minWidth;
 
-    // remainingWidth starts at totalWidth so that small-slot minWidths are
-    // drawn from the same pool as large slots, preventing a visual gap.
-    let remainingWidth = totalWidth;
-    const slotWidths = widthPct.map((e, idx) => {
-      const isLast = idx === widthPct.length - 1;
-      let width: number;
-      if (e < minPct) {
-        width = minWidth;
-      } else if (isLast) {
-        // Last large slot absorbs any rounding remainder so the bar is always full-width.
-        width = remainingWidth;
-      } else {
-        width = Math.round(e * availableWidth);
-      }
-      if (width > remainingWidth) width = remainingWidth;
-      if (width < 0) width = 0;
-      remainingWidth -= width;
-      return width;
+    const slotWidths = widthPct.map(e => {
+      if (e < minPct) return minWidth;
+      return e * availableWidth;
     });
 
     return slotWidths;
@@ -209,8 +195,9 @@ export class SchedulerTimeslotEditor extends LitElement {
     ev.stopPropagation();
   }
 
-  @eventOptions({ passive: true })
   _handleDragStart(ev: MouseEvent | TouchEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
 
     let el = ev.target as HTMLElement;
     while (el.tagName !== 'DIV') el = el.parentElement as HTMLElement;
@@ -219,13 +206,16 @@ export class SchedulerTimeslotEditor extends LitElement {
     const trackBounds = trackElement.getBoundingClientRect();
 
     const slotIdx = Number(el.getAttribute("idx"));
-    let ts_min = slotIdx > 0
-      ? computeTimestamp(this.schedule!.slots[slotIdx - 1].stop || this.schedule!.slots[slotIdx - 1].start, this.hass) + 15 * 60
-      : 15 * 60;
+    const stepSize = this.config.time_step || DEFAULT_TIME_STEP;
+    const stepSec = stepSize * 60;
 
-    let ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 1].stop || this.schedule!.slots[slotIdx + 1].start, this.hass) || SEC_PER_DAY) - 15 * 60;
+    let ts_min = slotIdx > 0
+      ? computeTimestamp(this.schedule!.slots[slotIdx - 1].stop || this.schedule!.slots[slotIdx - 1].start, this.hass) + stepSec
+      : stepSec;
+
+    let ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 1].stop || this.schedule!.slots[slotIdx + 1].start, this.hass) || SEC_PER_DAY) - stepSec;
     if (this.schedule!.slots[slotIdx + 1].stop === undefined) {
-      ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start, this.hass) || SEC_PER_DAY) - 15 * 60;
+      ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start, this.hass) || SEC_PER_DAY) - stepSec;
     }
 
     const timeInputMode = parseTimeString(this.schedule!.slots[slotIdx + 1].start).mode;
@@ -239,6 +229,7 @@ export class SchedulerTimeslotEditor extends LitElement {
     }
 
     let mouseMoveHandler = (ev: MouseEvent | TouchEvent) => {
+      ev.preventDefault();
 
       let mouseX;
 
@@ -252,6 +243,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       if (mouseX < 0) mouseX = 0;
 
       let ts = Math.round((mouseX / trackBounds.width) * SEC_PER_DAY);
+
       if (ts < ts_min) ts = ts_min;
       else if (ts > ts_max) ts = ts_max;
 
@@ -268,7 +260,7 @@ export class SchedulerTimeslotEditor extends LitElement {
         const offset = computeTimeOffset(time, referenceTime);
         time = { mode: timeInputMode, hours: offset.hours, minutes: offset.minutes };
       }
-      time = roundTime(time, 15);
+      time = roundTime(time, stepSize);
 
       const timeStr = timeToString(time);
 
@@ -283,11 +275,16 @@ export class SchedulerTimeslotEditor extends LitElement {
           [slotIdx + 2]: { ...slots[slotIdx + 2], start: timeStrNext },
         });
       }
+
       this.schedule = { ...this.schedule!, slots: slots };
       const myEvent = new CustomEvent('update', { detail: { slots: slots } });
       this.dispatchEvent(myEvent);
     }
 
+
+    const dragStartHandler = (ev: Event) => {
+      ev.preventDefault();
+    };
 
     const mouseUpHandler = () => {
       window.removeEventListener('mousemove', mouseMoveHandler);
@@ -295,6 +292,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       window.removeEventListener('mouseup', mouseUpHandler);
       window.removeEventListener('touchend', mouseUpHandler);
       window.removeEventListener('blur', mouseUpHandler);
+      window.removeEventListener('dragstart', dragStartHandler);
       mouseMoveHandler = () => {
         /**/
       };
@@ -303,6 +301,7 @@ export class SchedulerTimeslotEditor extends LitElement {
     window.addEventListener('mouseup', mouseUpHandler);
     window.addEventListener('touchend', mouseUpHandler);
     window.addEventListener('blur', mouseUpHandler);
+    window.addEventListener('dragstart', dragStartHandler);
     window.addEventListener('mousemove', mouseMoveHandler);
     window.addEventListener('touchmove', mouseMoveHandler);
   }
