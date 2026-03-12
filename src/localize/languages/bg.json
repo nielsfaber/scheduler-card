@@ -231,6 +231,10 @@
             "heading": "Покажи превключвател в заглавието",
             "description": "Покажи превключвател в горната част на картата за активиране/деактивиране на всички обекти"
           },
+          "show_toggle_switches": {
+            "heading": "Show toggle switches",
+            "description": "Show toggle switch for each individual schedule in the card"
+          },
           "tags": {
             "heading": "Етикети",
             "description": "Използвайте етикети за разделяне на графиците между множество карти"

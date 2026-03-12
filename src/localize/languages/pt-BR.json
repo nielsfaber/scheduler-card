@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "definir a posição de inclinação[ para {tilt_position}]"
     },
     "fan": {
-      "set_speed": "definir velocidade[ para {speed}]",
+      "set_percentage": "set speed[ to {percentage}]",
       "set_direction": "definir direção[ para {direction}]",
       "oscillate": "definir oscilação[ para {oscillate}]"
     },
@@ -168,6 +168,84 @@
         },
         "repeat_type": "comportamento após a conclusão",
         "tags": "Tags"
+      },
+      "card_editor": {
+        "tabs": {
+          "entities": "Entities",
+          "other": "Other"
+        },
+        "fields": {
+          "title": {
+            "heading": "Title of the card",
+            "options": {
+              "standard": "standard",
+              "hidden": "hidden",
+              "custom": "custom"
+            },
+            "custom_title": "Custom title"
+          },
+          "discover_existing": {
+            "heading": "Show all schedules",
+            "description": "This sets the 'discover existing' parameter. Previously created schedules will be automatically added to the card. "
+          },
+          "time_step": {
+            "heading": "Time step",
+            "description": "Resolution (in minutes) for creating schedules",
+            "unit_minutes": "min"
+          },
+          "default_editor": {
+            "heading": "Default time editor",
+            "options": {
+              "single": "Single schedule mode",
+              "scheme": "Time scheme mode"
+            }
+          },
+          "sort_by": {
+            "heading": "Sorting options",
+            "description": "Order in which the schedules appear in the card",
+            "options": {
+              "relative_time": "Time remaining until next action",
+              "title": "Displayed title of the schedule",
+              "state": "Show active schedules on top"
+            }
+          },
+          "display_format_primary": {
+            "heading": "Displayed primary info",
+            "description": "Configure which label is used for schedules in the overview",
+            "options": {
+              "default": "Schedule name",
+              "entity_action": "Summary of task"
+            }
+          },
+          "display_format_secondary": {
+            "heading": "Displayed secondary info",
+            "description": "Configure what additional properties are visible in the overview",
+            "options": {
+              "relative_time": "Time remaining until next action",
+              "time": "Configured time for next action",
+              "days": "Repeated days of the week",
+              "additional_tasks": "Number of additional tasks"
+            }
+          },
+          "show_header_toggle": {
+            "heading": "Show header toggle",
+            "description": "Show toggle switch at the top of the card for enabling/disabling all entities"
+          },
+          "show_toggle_switches": {
+            "heading": "Show toggle switches",
+            "description": "Show toggle switch for each individual schedule in the card"
+          },
+          "tags": {
+            "heading": "Tags",
+            "description": "Use tags to divide schedules between multiple cards"
+          },
+          "entities": {
+            "button_label": "Configure included entities",
+            "heading": "Included entities",
+            "description": "Select the entities that you want to control using the scheduler. You can click on a group to open it. Note that some entities (such as sensors) can only be used for conditions, not for actions.",
+            "included_number": "{number}/{total} selected"
+          }
+        }
       }
     }
   }

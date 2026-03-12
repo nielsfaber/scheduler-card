@@ -231,6 +231,10 @@
             "heading": "Εμφάνιση διακόπτη κεφαλίδας",
             "description": "Εμφάνιση διακόπτη στο επάνω μέρος της κάρτας για ενεργοποίηση/απενεργοποίηση όλων των οντοτήτων"
           },
+          "show_toggle_switches": {
+            "heading": "Show toggle switches",
+            "description": "Show toggle switch for each individual schedule in the card"
+          },
           "tags": {
             "heading": "Ετικέτες",
             "description": "Χρησιμοποιήστε ετικέτες για να χωρίσετε τα προγράμματα μεταξύ πολλών καρτών"

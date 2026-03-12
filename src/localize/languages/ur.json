@@ -231,6 +231,10 @@
             "heading": "ہیڈر ٹوگل دکھائیں",
             "description": "کارڈ کے اوپر تمام اینٹیٹیز کو فعال/غیر فعال کرنے کے لیے سوئچ دکھائیں"
           },
+          "show_toggle_switches": {
+            "heading": "Show toggle switches",
+            "description": "Show toggle switch for each individual schedule in the card"
+          },
           "tags": {
             "heading": "ٹیگز",
             "description": "شیڈولز کو مختلف کارڈز میں تقسیم کرنے کے لیے ٹیگز استعمال کریں"
