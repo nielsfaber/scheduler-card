@@ -115,6 +115,16 @@ export class SchedulerCardEditor extends LitElement {
             ></ha-switch>
           </ha-formfield>
         </div>
+        <div class="column">
+          <ha-formfield label="${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}">
+            <ha-switch
+              ?checked=${this._config.show_toggle_switches !== false}
+              @change=${(ev: Event) => {
+        this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
+      }}
+            ></ha-switch>
+          </ha-formfield>
+        </div>
         </div>
 
         <scheduler-settings-row>

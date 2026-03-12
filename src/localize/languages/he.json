@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "קבע הטיה[ ל {tilt_position}]"
     },
     "fan": {
-      "set_speed": "קבע מהירות[ ל {speed}]",
+      "set_percentage": "set speed[ to {percentage}]",
       "set_direction": "קבע כיוון[ ל {direction}]",
       "oscillate": "קבע תנודת תריס[ ל {oscillate}]"
     },
@@ -230,6 +230,10 @@
           "show_header_toggle": {
             "heading": "הצג מתג בכותרת",
             "description": "הצג מתג הפעלה/כיבוי בראש הכרטיס להפעלה/השבתה של כל הישויות"
+          },
+          "show_toggle_switches": {
+            "heading": "הצג מתגים",
+            "description": "הצג מתג עבור כל לוח זמנים בודד בכרטיס"
           },
           "tags": {
             "heading": "תגיות",
