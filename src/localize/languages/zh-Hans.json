@@ -232,8 +232,8 @@
             "description": "在卡片顶部显示切换开关，用于启用/禁用所有实体"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "显示切换开关",
+            "description": "为卡片中的每个单独计划显示切换开关"
           },
           "tags": {
             "heading": "标签",

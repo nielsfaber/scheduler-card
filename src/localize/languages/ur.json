@@ -232,8 +232,8 @@
             "description": "کارڈ کے اوپر تمام اینٹیٹیز کو فعال/غیر فعال کرنے کے لیے سوئچ دکھائیں"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "ٹوگل سوئچز دکھائیں",
+            "description": "کارڈ میں ہر انفرادی شیڈول کے لیے ٹوگل سوئچ دکھائیں"
           },
           "tags": {
             "heading": "ٹیگز",

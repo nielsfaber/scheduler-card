@@ -232,8 +232,8 @@
             "description": "Rādīt pārslēgšanas slēdzi kartes augšdaļā, lai iespējotu/atspējotu visas vienības"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "Rādīt pārslēgšanas slēdžus",
+            "description": "Rādīt pārslēgšanas slēdzi katram atsevišķam grafikam kartē"
           },
           "tags": {
             "heading": "Tagi",

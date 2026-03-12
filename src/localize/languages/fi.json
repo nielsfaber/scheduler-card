@@ -232,8 +232,8 @@
             "description": "Näytä kytkin kortin yläreunassa usean ajastuksen päälle/pois kytkemiseen"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "Näytä kytkimet",
+            "description": "Näytä kytkin jokaiselle yksittäiselle ajastukselle kortissa"
           },
           "tags": {
             "heading": "Tunniste",

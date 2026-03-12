@@ -232,8 +232,8 @@
             "description": "Visa växlingsknappen högst upp på kortet för att aktivera/inaktivera alla enheter"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "Visa växlingsknappar",
+            "description": "Visa växlingsknappen för varje enskilt schema i kortet"
           },
           "tags": {
             "heading": "Taggar",

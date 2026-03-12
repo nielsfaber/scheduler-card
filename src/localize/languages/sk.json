@@ -232,8 +232,8 @@
             "description": "Zobraziť prepínač v hornej časti karty na povolenie/zakázanie všetkých entít"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "Zobraziť prepínače",
+            "description": "Zobraziť prepínač pre každý jednotlivý harmonogram na karte"
           },
           "tags": {
             "heading": "Štítky",

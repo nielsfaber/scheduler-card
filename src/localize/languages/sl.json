@@ -232,8 +232,8 @@
             "description": "Na vrhu prikaže stikalo, s katerim lahko omogočite/izključite vse entitete naenkrat"
           },
           "show_toggle_switches": {
-            "heading": "Show toggle switches",
-            "description": "Show toggle switch for each individual schedule in the card"
+            "heading": "Prikaži stikala",
+            "description": "Prikaži stikalo za vsak posamezen urnik na kartici"
           },
           "tags": {
             "heading": "Tag-i",
