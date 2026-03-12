@@ -231,6 +231,10 @@
             "heading": "Show header toggle",
             "description": "Show toggle switch at the top of the card for enabling/disabling all entities"
           },
+          "show_toggle_switches": {
+            "heading": "Show toggle switches",
+            "description": "Show toggle switch for each individual schedule in the card"
+          },
           "tags": {
             "heading": "Tags",
             "description": "Use tags to divide schedules between multiple cards"

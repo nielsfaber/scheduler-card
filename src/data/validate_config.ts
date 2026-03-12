@@ -40,6 +40,10 @@ export const validateConfig = (config: any) => {
     errors.push(`'show_add_button' must be a boolean`);
   }
 
+  if (hasKey(config, 'show_toggle_switches') && !isTypeBoolean(config.show_toggle_switches)) {
+    errors.push(`'show_toggle_switches' must be a boolean`);
+  }
+
   if (hasKey(config, 'display_options')) {
     if (!isTypeObject(config.display_options)) {
       errors.push(`'display_options' must be a struct`);

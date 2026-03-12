@@ -6,6 +6,7 @@ export interface CardConfig {
   discover_existing?: boolean;
   title?: boolean | string;
   show_header_toggle?: boolean;
+  show_toggle_switches?: boolean;
   default_editor?: EditorMode;
   time_step?: number;
   display_options?: {
