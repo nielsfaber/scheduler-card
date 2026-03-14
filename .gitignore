@@ -7,4 +7,4 @@ README.html
 stats.html
 dist/
 !dist/scheduler-card.js
-.history
+.history__pycache__/
