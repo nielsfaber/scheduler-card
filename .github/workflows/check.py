@@ -57,6 +57,16 @@ def cross_validate(english_value, other_language_value, other_language, key_name
     elif isinstance(english_value, dict):
         for name, item in english_value.items():
             cross_validate(item, other_language_value.get(name), other_language, name)
+        # Warn about keys present in the translation but absent from English.
+        # These are obsolete and should be removed by the cleanup-translations workflow.
+        for name in other_language_value:
+            if name not in english_value:
+                print(
+                    "🟡 In" + Style.BRIGHT + Fore.YELLOW,
+                    f"{this_lang}" + Style.RESET_ALL,
+                    f"key {Fore.YELLOW + name + Fore.WHITE} does not exist in English"
+                    " and should be removed.",
+                )
 
 
 # The thing

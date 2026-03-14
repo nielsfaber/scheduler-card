@@ -1,4 +1,8 @@
 name: Cleanup Translations
+# Mutating counterpart to validate.yaml. Runs weekly (and on demand) to
+# remove obsolete keys and reorder translation files to match en.json, then
+# opens a PR for manual review. Once that PR is merged the validate workflow
+# will be green again.
 
 on:
   # Run weekly on Monday at 00:00 UTC
