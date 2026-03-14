@@ -193,8 +193,8 @@ def main() -> int:
         "",
         "---\n",
         "### Translation Progress\n",
-        f"Reference: **en.json** — {total_en_keys} keys\n",
-        "| File | Keys | Progress |",
+        f"Reference: **en.json** — {total_en_keys} translations\n",
+        "| File | Translations | Progress |",
         "| --- | --- | --- |",
     ]
     for code, count, pct in sorted(all_stats, key=lambda x: x[0]):
