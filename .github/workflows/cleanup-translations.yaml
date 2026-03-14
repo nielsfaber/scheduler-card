@@ -1,0 +1,70 @@
+name: Cleanup Translations
+# Mutating counterpart to validate.yaml. Runs weekly (and on demand) to
+# remove obsolete keys and reorder translation files to match en.json, then
+# opens a PR for manual review. Once that PR is merged the validate workflow
+# will be green again.
+
+on:
+  # Run weekly on Monday at 00:00 UTC
+  schedule:
+    - cron: "0 0 * * 1"
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run translation cleanup
+        id: cleanup
+        run: python3 scripts/cleanup_translations.py
+
+      - name: Close existing automated PR
+        if: steps.cleanup.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing_prs=$(gh pr list --repo "${{ github.repository }}" --head "automated/cleanup-translations" --state open --json number --jq '.[].number')
+          for pr_number in $existing_prs; do
+            echo "Closing existing PR #$pr_number"
+            gh pr close "$pr_number" --repo "${{ github.repository }}" --comment "Superseded by a newer automated update."
+          done
+
+      - name: Create Pull Request
+        if: steps.cleanup.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync translation files with en.json (remove obsolete keys, reorder)"
+          title: "chore: sync translation files with en.json (remove obsolete keys, reorder)"
+          body: ${{ steps.cleanup.outputs.summary }}
+          branch: automated/cleanup-translations
+          delete-branch: true
+          add-paths: |
+            src/localize/languages/*.json
+          labels: |
+            translations
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.cleanup.outputs.changed }}" == "true" ]; then
+            echo "✅ Changes detected - PR created"
+          else
+            echo "✅ No changes detected - translation files are up to date"
+          fi
