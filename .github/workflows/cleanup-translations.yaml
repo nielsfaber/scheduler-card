@@ -51,8 +51,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: remove obsolete translation keys"
-          title: "chore: remove obsolete translation keys"
+          commit-message: "chore: sync translation files with en.json (remove obsolete keys, reorder)"
+          title: "chore: sync translation files with en.json (remove obsolete keys, reorder)"
           body: ${{ steps.cleanup.outputs.summary }}
           branch: automated/cleanup-translations
           delete-branch: true
