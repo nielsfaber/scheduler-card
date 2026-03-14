@@ -23,6 +23,7 @@
       "set_cover_tilt_position": "régler les volets[ à {tilt_position}]"
     },
     "fan": {
+      "set_speed": "ajuster la vitesse[ à {speed}]",
       "set_direction": "ajuster l'orientation[ vers {direction}]",
       "oscillate": "ajuster l'oscillation[ à {oscillate}]"
     },
