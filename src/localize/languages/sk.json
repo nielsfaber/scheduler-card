@@ -231,6 +231,10 @@
             "heading": "Zobraziť prepínač hlavičky",
             "description": "Zobraziť prepínač v hornej časti karty na povolenie/zakázanie všetkých entít"
           },
+          "show_toggle_switches": {
+            "heading": "Zobraziť prepínače",
+            "description": "Zobraziť prepínač pre každý jednotlivý harmonogram na karte"
+          },
           "tags": {
             "heading": "Štítky",
             "description": "Použite štítky na rozdelenie plánov medzi viacero kariet"

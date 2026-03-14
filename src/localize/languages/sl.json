@@ -231,6 +231,10 @@
             "heading": "Prikaži glavo",
             "description": "Na vrhu prikaže stikalo, s katerim lahko omogočite/izključite vse entitete naenkrat"
           },
+          "show_toggle_switches": {
+            "heading": "Prikaži stikala",
+            "description": "Prikaži stikalo za vsak posamezen urnik na kartici"
+          },
           "tags": {
             "heading": "Tag-i",
             "description": "Uporabite tag-e za ločevanje urnikov med več karticami"

@@ -52,11 +52,13 @@ export class SchedulerItemRow extends LitElement {
         </div>
       </div>
       <div class="state">
-        <ha-switch
-          ?checked=${['on', 'triggered'].includes(stateObj.state || '')}
-          ?disabled=${stateObj.state == 'completed'}
-          @click=${this._toggleEnableDisable}
-        ></ha-switch>
+        ${this.config.show_toggle_switches !== false
+          ? html`<ha-switch
+              ?checked=${['on', 'triggered'].includes(stateObj.state || '')}
+              ?disabled=${stateObj.state == 'completed'}
+              @click=${this._toggleEnableDisable}
+            ></ha-switch>`
+          : ''}
       </div>
 
     `;

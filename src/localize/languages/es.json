@@ -231,6 +231,10 @@
             "heading": "Mostrar el interruptor del encabezado",
             "description": "Muestra el interruptor en la parte alta de la tarjeta para habilitar/desabilitar todas las entidades Show toggle switch at the top of the card for enabling/disabling all entities"
           },
+          "show_toggle_switches": {
+            "heading": "Mostrar interruptores",
+            "description": "Mostrar el interruptor para cada programación individual en la tarjeta"
+          },
           "tags": {
             "heading": "Etiquetas",
             "description": "Use etiquetas para dividir los horarios entre múltiples tarjetas"

@@ -231,6 +231,10 @@
             "heading": "Visa rubrikväxling",
             "description": "Visa växlingsknappen högst upp på kortet för att aktivera/inaktivera alla enheter"
           },
+          "show_toggle_switches": {
+            "heading": "Visa växlingsknappar",
+            "description": "Visa växlingsknappen för varje enskilt schema i kortet"
+          },
           "tags": {
             "heading": "Taggar",
             "description": "Använd taggar för att dela upp scheman mellan flera kort"

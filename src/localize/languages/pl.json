@@ -231,6 +231,10 @@
             "heading": "Pokaż przełącznik w nagłówku",
             "description": "Pokaż przełącznik w nagłówku karty do włączania/wyłączania wszystkich encji"
           },
+          "show_toggle_switches": {
+            "heading": "Pokaż przełączniki",
+            "description": "Pokaż przełącznik dla każdego harmonogramu w karcie"
+          },
           "tags": {
             "heading": "Tagi",
             "description": "Używaj tagów do podziału harmonogramów pomiędzy wieloma kartami"

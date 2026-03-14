@@ -231,6 +231,10 @@
             "heading": "Rādīt galvenes pārslēgšanu",
             "description": "Rādīt pārslēgšanas slēdzi kartes augšdaļā, lai iespējotu/atspējotu visas vienības"
           },
+          "show_toggle_switches": {
+            "heading": "Rādīt pārslēgšanas slēdžus",
+            "description": "Rādīt pārslēgšanas slēdzi katram atsevišķam grafikam kartē"
+          },
           "tags": {
             "heading": "Tagi",
             "description": "Izmantojiet tagus, lai sadalītu grafikus starp vairākām kartēm"

@@ -231,6 +231,10 @@
             "heading": "Hoofdschakelaar weergeven",
             "description": "Schakelaar weergeven bovenin de kaart om alle schema's te (de)activeren"
           },
+          "show_toggle_switches": {
+            "heading": "Schakelknoppen weergeven",
+            "description": "Schakelknop weergeven voor elk individueel schema in de kaart"
+          },
           "tags": {
             "heading": "Tags",
             "description": "Tags kunnen gebruikt worden om schema's te verdelen over meerdere kaarten"

@@ -231,6 +231,10 @@
             "heading": "Näytä otsikkokytkin",
             "description": "Näytä kytkin kortin yläreunassa usean ajastuksen päälle/pois kytkemiseen"
           },
+          "show_toggle_switches": {
+            "heading": "Näytä kytkimet",
+            "description": "Näytä kytkin jokaiselle yksittäiselle ajastukselle kortissa"
+          },
           "tags": {
             "heading": "Tunniste",
             "description": "Käytä tunnisteita ajastusten jakamiseen korttien välillä"

@@ -231,6 +231,10 @@
             "heading": "显示标题开关",
             "description": "在卡片顶部显示切换开关，用于启用/禁用所有实体"
           },
+          "show_toggle_switches": {
+            "heading": "显示切换开关",
+            "description": "为卡片中的每个单独计划显示切换开关"
+          },
           "tags": {
             "heading": "标签",
             "description": "使用标签可将不同的计划任务分配到多个卡片中"
