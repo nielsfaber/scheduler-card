@@ -24,36 +24,6 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LANGUAGES_DIR = os.path.join(REPO_ROOT, "src", "localize", "languages")
 ENGLISH_FILE = os.path.join(LANGUAGES_DIR, "en.json")
 
-# Human-readable names for language codes.
-LANG_NAMES: dict[str, str] = {
-    "bg": "Bulgarian",
-    "cs": "Czech",
-    "de": "German",
-    "el": "Greek",
-    "en": "English",
-    "es": "Spanish",
-    "et": "Estonian",
-    "fi": "Finnish",
-    "fr": "French",
-    "he": "Hebrew",
-    "hu": "Hungarian",
-    "it": "Italian",
-    "lv": "Latvian",
-    "nl": "Dutch",
-    "no": "Norwegian",
-    "pl": "Polish",
-    "pt": "Portuguese",
-    "pt-BR": "Portuguese (Brazil)",
-    "ro": "Romanian",
-    "ru": "Russian",
-    "sk": "Slovak",
-    "sl": "Slovenian",
-    "sv": "Swedish",
-    "uk": "Ukrainian",
-    "ur": "Urdu",
-    "zh-Hans": "Chinese (Simplified)",
-}
-
 
 def load_json(path: str) -> dict:
     with open(path, encoding="utf-8") as f:
@@ -120,10 +90,6 @@ def serialize(d: dict) -> str:
     return json.dumps(d, ensure_ascii=False, indent=2) + "\n"
 
 
-def lang_name(code: str) -> str:
-    return LANG_NAMES.get(code, code)
-
-
 def progress_bar(pct: float, width: int = 10) -> str:
     filled = round(pct / 100 * width)
     return "█" * filled + "░" * (width - filled)
@@ -141,14 +107,14 @@ def main() -> int:
     files = sorted(glob.glob(pattern))
 
     file_changes: list[dict] = []
-    all_stats: list[tuple[str, str, int, float]] = []  # (code, name, count, pct)
+    all_stats: list[tuple[str, int, float]] = []  # (code, count, pct)
 
     for filepath in files:
         filename = os.path.basename(filepath)
         code = filename[:-5]  # strip ".json"
 
         if filename == "en.json":
-            all_stats.append((code, lang_name(code), total_en_keys, 100.0))
+            all_stats.append((code, total_en_keys, 100.0))
             continue
 
         try:
@@ -160,7 +126,7 @@ def main() -> int:
         cleaned, keys_removed = cleanup(reference, original)
         trans_count = count_leaf_keys(cleaned)
         pct = (trans_count / total_en_keys * 100) if total_en_keys else 0.0
-        all_stats.append((code, lang_name(code), trans_count, pct))
+        all_stats.append((code, trans_count, pct))
 
         original_serialized = serialize(original)
         cleaned_serialized = serialize(cleaned)
@@ -188,7 +154,6 @@ def main() -> int:
             {
                 "filename": filename,
                 "code": code,
-                "name": lang_name(code),
                 "keys_removed": keys_removed,
                 "reordered": reordered,
                 "trans_count": trans_count,
@@ -213,8 +178,8 @@ def main() -> int:
         "translation files to match the English reference (`en.json`).\n",
         "---\n",
         "### Changes\n",
-        "| File | Language | Changes |",
-        "| --- | --- | --- |",
+        "| File | Changes |",
+        "| --- | --- |",
     ]
     for c in file_changes:
         parts = []
@@ -222,19 +187,19 @@ def main() -> int:
             parts.append(f"{c['keys_removed']} key(s) removed")
         if c["reordered"]:
             parts.append("keys reordered")
-        lines.append(f"| `{c['filename']}` | {c['name']} | {', '.join(parts)} |")
+        lines.append(f"| `{c['filename']}` | {', '.join(parts)} |")
 
     lines += [
         "",
         "---\n",
         "### Translation Progress\n",
         f"Reference: **en.json** — {total_en_keys} keys\n",
-        "| Language | Code | Keys | Progress |",
-        "| --- | --- | --- | --- |",
+        "| File | Keys | Progress |",
+        "| --- | --- | --- |",
     ]
-    for code, name, count, pct in sorted(all_stats, key=lambda x: x[1]):
+    for code, count, pct in sorted(all_stats, key=lambda x: x[0]):
         bar = progress_bar(pct)
-        lines.append(f"| {name} | `{code}` | {count}/{total_en_keys} | {bar} {pct:.1f}% |")
+        lines.append(f"| `{code}.json` | {count}/{total_en_keys} | {bar} {pct:.1f}% |")
 
     lines.append("\n---\n\n*This PR was automatically created by the cleanup-translations workflow*")
 
