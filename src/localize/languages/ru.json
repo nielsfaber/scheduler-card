@@ -23,7 +23,6 @@
       "set_cover_tilt_position": "установить наклон[ {tilt_position}]"
     },
     "fan": {
-      "set_speed": "установить скорость[ {speed}]",
       "set_direction": "установить направление[ {direction}]",
       "oscillate": "установить колебание[ {oscillate}]"
     },

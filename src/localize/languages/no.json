@@ -23,7 +23,6 @@
       "set_cover_tilt_position": "sett vippestilling[ til {tilt_position}]"
     },
     "fan": {
-      "set_speed": "sett hastighet[ til {speed}]",
       "set_direction": "sett retning[ til {direction}]",
       "oscillate": "sett svingning[ til {oscillate}]"
     },

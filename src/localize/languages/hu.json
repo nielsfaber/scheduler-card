@@ -23,7 +23,6 @@
       "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
-      "set_speed": "set speed[ to {speed}]",
       "set_direction": "set direction[ to {direction}]",
       "oscillate": "set oscillation[ to {oscillate}]"
     },
