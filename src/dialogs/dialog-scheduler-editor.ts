@@ -281,7 +281,29 @@ export class DialogSchedulerEditor extends LitElement {
     if (viewMode == EditorMode.Scheme) {
       this.viewMode = viewMode;
       const isDefaultSchedule = deepCompare([...this.schedule.entries], [...defaultSingleTimerConfig.entries]);
-      if (isDefaultSchedule) this.schedule = { ...this.schedule, entries: [...defaultTimeSchemeConfig.entries] };
+      if (isDefaultSchedule) {
+        this.schedule = { ...this.schedule, entries: [...defaultTimeSchemeConfig.entries] };
+      } else {
+        // Convert any checkpoint slots (stop === undefined, used by single-timer mode) to
+        // duration slots so they display correctly in the scheme editor, which no longer
+        // has a checkbox to toggle checkpoint mode.
+        const hasCheckpoints = this.schedule.entries.some(e => e.slots.some(s => s.stop === undefined));
+        if (hasCheckpoints) {
+          this.schedule = {
+            ...this.schedule,
+            entries: this.schedule.entries.map(entry => ({
+              ...entry,
+              slots: entry.slots.map((slot, idx, arr) => {
+                if (slot.stop !== undefined) return slot;
+                // Use next slot's start as stop; fall back to '00:00:00' which,
+                // when used as a stop time, is treated as the end of the 24-hour day.
+                const nextSlot = arr[idx + 1];
+                return { ...slot, stop: nextSlot ? nextSlot.start : '00:00:00' };
+              })
+            }))
+          };
+        }
+      }
       return;
     }
     else if (viewMode == EditorMode.Single && !multipleActionsDefined) {
