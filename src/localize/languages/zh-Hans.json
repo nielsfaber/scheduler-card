@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "设置倾斜位置[ 为 {tilt_position}]"
     },
     "fan": {
-      "set_speed": "设定风速[ 为 {speed}]",
+      "set_percentage": "设定风速[ 为 {speed}]",
       "set_direction": "设定方向[ 为 {direction}]",
       "oscillate": "设置摇摆[ 为 {oscillate}]"
     },

@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "establecer inclinación[ a {tilt_position}]"
     },
     "fan": {
-      "set_speed": "establecer velocidad[ a {speed}]",
+      "set_percentage": "establecer velocidad[ a {speed}]",
       "set_direction": "establecer dirección[ a {direction}]",
       "oscillate": "establecer oscilación[ a {oscillate}]"
     },

@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "sea ribide kalle [ asendisse {tilt_position}]"
     },
     "fan": {
-      "set_speed": "vali kiirus[ @ {speed}]",
+      "set_percentage": "vali kiirus[ @ {speed}]",
       "set_direction": "vali suund[ @ {direction}]",
       "oscillate": "vali hajutus[ @ {oscillate}]"
     },

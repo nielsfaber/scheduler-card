@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "uzstādīt slīpuma stāvokli[ uz {tilt_position}]"
     },
     "fan": {
-      "set_speed": "iestatīt ātrumu[ uz {speed}]",
+      "set_percentage": "iestatīt ātrumu[ uz {speed}]",
       "set_direction": "iestatīt virzienu[ uz {direction}]",
       "oscillate": "iestatīt oscilāciju[ uz {oscillate}]"
     },

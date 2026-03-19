@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "aseta kallistus[ {tilt_position}]"
     },
     "fan": {
-      "set_speed": "aseta nopeus[ {speed}]",
+      "set_percentage": "aseta nopeus[ {speed}]",
       "set_direction": "asenta suunta[ {direction}]",
       "oscillate": "aseta pyörimisnopeus[ {oscillate}]"
     },

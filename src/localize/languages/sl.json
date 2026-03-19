@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "nastavi naklon[ na {tilt_position}]"
     },
     "fan": {
-      "set_speed": "nastavi hitrost[ na {speed}]",
+      "set_percentage": "nastavi hitrost[ na {speed}]",
       "set_direction": "nastavi smer[ na {direction}]",
       "oscillate": "nastavi obračanje[ na {oscillate}]"
     },

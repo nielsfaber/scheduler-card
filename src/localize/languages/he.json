@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "קבע הטיה[ ל {tilt_position}]"
     },
     "fan": {
-      "set_speed": "קבע מהירות[ ל {speed}]",
+      "set_percentage": "קבע מהירות[ ל {speed}]",
       "set_direction": "קבע כיוון[ ל {direction}]",
       "oscillate": "קבע תנודת תריס[ ל {oscillate}]"
     },

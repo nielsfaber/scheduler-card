@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
-      "set_speed": "setare viteză[ la {speed}]",
+      "set_percentage": "setare viteză[ la {speed}]",
       "set_direction": "setare direcție[ la {direction}]",
       "oscillate": "setare oscilare[ la {oscillate}]"
     },

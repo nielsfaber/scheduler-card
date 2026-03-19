@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "set tilt position[ to {tilt_position}]"
     },
     "fan": {
-      "set_speed": "встановити швидкість[ to {speed}]",
+      "set_percentage": "встановити швидкість[ to {speed}]",
       "set_direction": "встановити напрямок[ to {direction}]",
       "oscillate": "встановити коливання[ to {oscillate}]"
     },

@@ -23,7 +23,7 @@
       "set_cover_tilt_position": "nastaviť naklonenie[ na {tilt_position}]"
     },
     "fan": {
-      "set_speed": "nastaviť rýchlosť[ na {speed}]",
+      "set_percentage": "nastaviť rýchlosť[ na {speed}]",
       "set_direction": "nastaviť smer[ na {direction}]",
       "oscillate": "nastaviť osciláciu[ na {oscillate}]"
     },
