@@ -8,3 +8,4 @@ stats.html
 dist/
 !dist/scheduler-card.js
 .history
+__pycache__/

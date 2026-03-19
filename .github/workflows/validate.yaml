@@ -1,4 +1,9 @@
 name: Validate
+# Read-only CI check. Validates that all translation files are structurally
+# correct (valid JSON, no type mismatches, no keys absent from or extra compared
+# to en.json). Does NOT modify any files.
+# Run the cleanup-translations workflow to auto-fix issues and open a PR;
+# after that PR is merged this workflow will be green again.
 
 on:
   push:
