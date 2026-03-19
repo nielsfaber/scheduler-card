@@ -3,9 +3,10 @@
 Cleanup translation files based on en.json.
 
 For every translation file (non-English) this script will:
+  - Add keys that exist in en.json but are missing in the translation file,
+    using the English value as a fallback.
   - Remove keys that no longer exist in the English reference (en.json).
   - Reorder keys so the file structure always matches en.json.
-  - Never add new keys (missing translations are left to human translators).
 
 When running inside GitHub Actions (GITHUB_OUTPUT env var is set) the script
 sets two step outputs:
@@ -30,35 +31,44 @@ def load_json(path: str) -> dict:
         return json.load(f)
 
 
-def cleanup(reference: dict, translation: dict) -> tuple[dict, int]:
-    """Return *(cleaned, removed_count)*.
+def cleanup(reference: dict, translation: dict) -> tuple[dict, int, int]:
+    """Return *(cleaned, removed_count, added_count)*.
 
-    *cleaned* contains only keys that exist in *reference*, ordered exactly
-    like *reference*.  *removed_count* is the number of keys discarded from
-    *translation*.
+    *cleaned* contains all keys from *reference*, ordered exactly like
+    *reference*.  Keys missing in *translation* are added using the English
+    value as a fallback.  *removed_count* is the number of keys discarded from
+    *translation*.  *added_count* is the number of leaf keys added as English
+    fallback.
     """
     cleaned: dict = {}
     removed = 0
+    added = 0
 
     for key, ref_value in reference.items():
         if key not in translation:
-            continue  # missing key – leave for human translators
-        trans_value = translation[key]
-        if isinstance(ref_value, dict):
-            if isinstance(trans_value, dict):
-                sub_cleaned, sub_removed = cleanup(ref_value, trans_value)
-                cleaned[key] = sub_cleaned
-                removed += sub_removed
-            else:
-                removed += 1  # type mismatch – discard
+            # missing key – add English value as fallback
+            cleaned[key] = ref_value
+            added += count_leaf_keys(ref_value) if isinstance(ref_value, dict) else 1
         else:
-            cleaned[key] = trans_value
+            trans_value = translation[key]
+            if isinstance(ref_value, dict):
+                if isinstance(trans_value, dict):
+                    sub_cleaned, sub_removed, sub_added = cleanup(ref_value, trans_value)
+                    cleaned[key] = sub_cleaned
+                    removed += sub_removed
+                    added += sub_added
+                else:
+                    removed += 1  # type mismatch – discard translation value
+                    cleaned[key] = ref_value  # replace with English subtree
+                    added += count_leaf_keys(ref_value)
+            else:
+                cleaned[key] = trans_value
 
     for key in translation:
         if key not in reference:
             removed += 1  # obsolete key
 
-    return cleaned, removed
+    return cleaned, removed, added
 
 
 def filter_to_reference_keys(reference: dict, translation: dict) -> dict:
@@ -72,6 +82,23 @@ def filter_to_reference_keys(reference: dict, translation: dict) -> dict:
             result[key] = filter_to_reference_keys(ref_value, trans_value)
         elif not isinstance(ref_value, dict) and not isinstance(trans_value, dict):
             result[key] = trans_value
+    return result
+
+
+def reorder_to_reference(reference: dict, data: dict) -> dict:
+    """Return *data* with keys reordered to match *reference* order.
+
+    Only keys present in both *reference* and *data* are included.
+    Used to detect reordering independently of any added keys.
+    """
+    result: dict = {}
+    for key in reference:
+        if key not in data:
+            continue
+        if isinstance(reference[key], dict) and isinstance(data[key], dict):
+            result[key] = reorder_to_reference(reference[key], data[key])
+        else:
+            result[key] = data[key]
     return result
 
 
@@ -123,8 +150,8 @@ def main() -> int:
             print(f"  SKIP {filename}: invalid JSON – {exc}")
             continue
 
-        cleaned, keys_removed = cleanup(reference, original)
-        trans_count = count_leaf_keys(cleaned)
+        cleaned, keys_removed, keys_added = cleanup(reference, original)
+        trans_count = count_leaf_keys(cleaned) - keys_added  # actual translations only
         pct = (trans_count / total_en_keys * 100) if total_en_keys else 0.0
         all_stats.append((code, trans_count, pct))
 
@@ -135,14 +162,17 @@ def main() -> int:
             print(f"  {filename}: OK")
             continue
 
-        # Detect reordering: same keys after filtering, but different order.
+        # Detect reordering: compare existing keys in translation order vs reference order.
+        # Use reorder_to_reference so that newly added keys don't cause a false positive.
         filtered_original = filter_to_reference_keys(reference, original)
-        reordered = serialize(filtered_original) != serialize(cleaned)
+        reordered = serialize(filtered_original) != serialize(reorder_to_reference(reference, filtered_original))
 
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(cleaned_serialized)
 
         parts: list[str] = []
+        if keys_added:
+            parts.append(f"{keys_added} missing key(s) added")
         if keys_removed:
             parts.append(f"{keys_removed} obsolete key(s) removed")
         if reordered:
@@ -155,6 +185,7 @@ def main() -> int:
                 "filename": filename,
                 "code": code,
                 "keys_removed": keys_removed,
+                "keys_added": keys_added,
                 "reordered": reordered,
                 "trans_count": trans_count,
                 "pct": pct,
@@ -174,7 +205,8 @@ def main() -> int:
     # Build PR description
     lines: list[str] = [
         "## Translation Cleanup\n",
-        "This automated PR removes obsolete translation keys and reorders "
+        "This automated PR adds missing translation keys (using English as a fallback), "
+        "removes obsolete translation keys, and reorders "
         "translation files to match the English reference (`en.json`).\n",
         "---\n",
         "### Changes\n",
@@ -183,6 +215,8 @@ def main() -> int:
     ]
     for c in file_changes:
         parts = []
+        if c["keys_added"]:
+            parts.append(f"{c['keys_added']} key(s) added")
         if c["keys_removed"]:
             parts.append(f"{c['keys_removed']} key(s) removed")
         if c["reordered"]:
