@@ -32,7 +32,26 @@ export const SUPPORTED_CONDITION_DOMAINS = [
   'switch',
   'timer',
   'valve',
+  'weather',
   'water_heater'
+]
+
+const WEATHER_CONDITION_STATES = [
+  'clear-night',
+  'cloudy',
+  'exceptional',
+  'fog',
+  'hail',
+  'lightning',
+  'lightning-rainy',
+  'partlycloudy',
+  'pouring',
+  'rainy',
+  'snowy',
+  'snowy-rainy',
+  'sunny',
+  'windy',
+  'windy-variant',
 ]
 
 const standardStatesForEntity = (entityId: string, hass: HomeAssistant) => {
@@ -101,6 +120,8 @@ const standardStatesForEntity = (entityId: string, hass: HomeAssistant) => {
       return listSelector({ options: computeStateIcons(['active', 'paused', 'idle']), translation_key: 'component.timer.entity_component._.state.${value}' });
     case 'valve':
       return listSelector({ options: computeStateIcons(['open', 'closed']), translation_key: 'component.valve.entity_component._.state.${value}' });
+    case 'weather':
+      return listSelector({ options: computeStateIcons(WEATHER_CONDITION_STATES), translation_key: 'component.weather.entity_component._.state.${value}' });
     case 'water_heater':
     case 'climate':
       return listSelector({ options: computeStateIcons(attr.operation_list), translation_key: 'component.climate.entity_component._.state.${value}' });
