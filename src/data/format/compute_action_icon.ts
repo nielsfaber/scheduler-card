@@ -1,6 +1,7 @@
 import { Action, CustomConfig } from "../../types";
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { serviceIcons } from "./service_icons";
+import { HomeAssistant } from "../../lib/types";
 import { actionConfig } from "../actions/action_config";
 
 const FALLBACK_ICON = 'mdi:flash';
@@ -10,8 +11,8 @@ const checkIconPrefix = (icon: string) => {
   return `mdi:${icon}`;
 }
 
-export const computeActionIcon = (action: Action, customize?: CustomConfig): string => {
-  const config = actionConfig(action, customize);
+export const computeActionIcon = (action: Action, hass: HomeAssistant, customize?: CustomConfig): string => {
+  const config = actionConfig(action, hass, customize);
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 

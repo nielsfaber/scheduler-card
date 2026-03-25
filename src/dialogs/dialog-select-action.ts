@@ -230,7 +230,7 @@ export class DialogSelectAction extends LitElement {
     let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, cardConfig)).flat();
     if (this._params!.entityFilter?.length) {
       result = result.filter(item => this._params!.entityFilter?.every(entity => {
-        const config = actionConfig(item.action, this._params!.cardConfig.customize);
+        const config = actionConfig(item.action, this.hass, this._params!.cardConfig.customize);
         const stateObj = this.hass.states[entity];
         if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features)) return false;
         else if (Object.keys(item.action.service_data).includes('entity_id') && item.action.service_data.entity_id != entity) return false;

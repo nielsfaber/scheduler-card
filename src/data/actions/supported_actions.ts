@@ -1,3 +1,4 @@
+import { Selector } from "../../lib/selector";
 
 export type ActionConfig = {
   supported_features?: number,
@@ -5,7 +6,8 @@ export type ActionConfig = {
   fields?: {
     [key: string]: {
       supported_features?: number,
-      optional?: boolean
+      optional?: boolean,
+      selector?: Selector 
     }
   },
   target?: {

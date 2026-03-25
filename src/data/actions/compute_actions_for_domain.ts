@@ -74,17 +74,24 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
       : domainIcon(domain);
   }
 
-  let actionList = services.map((e): actionItem => ({
-    key: e,
-    name: serviceName(e),
-    description: serviceDescription(e),
-    icon: serviceIcon(e),
-    action: <Action>{
-      service: e.includes('.') ? e : `${domain}.${e}`,
-      service_data: {},
-      target: hass.services[domain][e].target ? {} : undefined
+  let actionList = services.map((e): actionItem => {
+    const service = e.includes('.') ? e : `${domain}.${e}`;
+    let service_data = {};
+    if (config.customize && config.customize[service] && config.customize[service].service_data) {
+      service_data = { ...config.customize[service].service_data };
     }
-  }));
+    return {
+      key: e,
+      name: serviceName(e),
+      description: serviceDescription(e),
+      icon: serviceIcon(e),
+      action: <Action>{
+        service: service,
+        service_data: service_data,
+        target: hass.services[domain][e].target ? {} : undefined
+      }
+    }
+  });
 
   //get excluded actions for entity
   let excludedActions = parseExcludedActions(config.customize || {}, domain);

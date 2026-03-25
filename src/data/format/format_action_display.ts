@@ -26,14 +26,14 @@ const translationKeyOverlap = (key: string, action: Action): number => {
 };
 
 export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false, eraseHtmlTags = false) => {
-  const config = actionConfig(action, customize);
+  const config = actionConfig(action, hass, customize);
 
   let actionDisplay = config.name || '';
   let attributes: Record<string, any> = Object.fromEntries(
     Object.entries(action.service_data)
       .filter(([_, value]) => isDefined(value))
       .map(([field, value]) => {
-        const selector = selectorConfig(action.service, action.target?.entity_id, field, hass, customize);
+        const selector = selectorConfig(action, field, hass, customize);
         if (!selector) return [field, null];
         return [field, formatSelectorDisplay(value, selector, hass)];
       })

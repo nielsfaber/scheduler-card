@@ -180,6 +180,7 @@ export interface CustomEntityConfig {
   actions?: CustomActionConfig[],
   exclude_actions?: string[]
   states?: string[] | { min: number, max: number, unit?: string, step?: number };
+  service_data?: Record<string, any>;
 }
 
 

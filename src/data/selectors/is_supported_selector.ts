@@ -8,12 +8,17 @@ import { computeDomain } from "../../lib/entity";
 export const isSupportedSelector = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig): boolean => {
   const service = action.service;
   const entityId = action.target?.entity_id;
-  const config = actionConfig(action, customize);
+  const config = actionConfig(action, hass, customize);
 
   if (!config || !config.fields || !Object.keys(config.fields).includes(field)) return false;
   const fieldConfig = config.fields[field];
 
-  if (selectorConfig(service, entityId, field, hass, customize) === null) return false;
+
+  if (selectorConfig(action, field, hass, customize) === null) return false;
+
+  if (customize && customize[service] && customize[service].service_data && Object.keys(customize[service].service_data!).includes(field)) {
+    return false;
+  }
 
   if (Object.keys(action.service_data || {}).includes(field)) {
     //allow modifying a previously set parameter 

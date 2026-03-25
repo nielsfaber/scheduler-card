@@ -2,14 +2,22 @@ import { BooleanSelector, NumberSelector, SelectOption, SelectSelector, Selector
 import { listSelector, parseListSelectorOption } from "./list_selector";
 import { numericSelector } from "./numeric_selector";
 import { HomeAssistant } from "../../lib/types";
-import { computeDomain } from "../../lib/entity";
-import { CustomConfig, VariableConfig } from "../../types";
+import { computeDomain, computeEntity } from "../../lib/entity";
+import { Action, CustomConfig, VariableConfig } from "../../types";
 import { parseCustomActions } from "../actions/parse_custom_actions";
 import { isDefined } from "../../lib/is_defined";
 import { serviceIcons } from "../format/service_icons";
+import { actionConfig } from "../actions/action_config";
 
-export const selectorConfig = (service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
+export const selectorConfig = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig): Selector | null => {
+  const { service, target } = action;
+  const entityId = target?.entity_id;
   const domain = computeDomain(service);
+
+  const config = actionConfig(action, hass, customize);
+  if (config?.fields?.[field]?.selector) {
+    return config.fields[field].selector as Selector;
+  }
   const entityIds = ['script', 'notify'].includes(domain) ? [service] : [entityId || []].flat();
   let loadedCfg = entityIds.map(e => selectorConfigFromEntity(e, field, hass));
   let selector: Selector | null = mergeSelectors(loadedCfg);
@@ -17,7 +25,16 @@ export const selectorConfig = (service: string, entityId: string | string[] | un
   let customCfg = entityIds.map(e => selectorConfigFromCustomConfig(service, e, field, customize));
   let customSelector: Selector | null = mergeSelectors(customCfg);
 
-  return customSelector || selector;
+  const result = customSelector || selector;
+
+  if (result === null && domain === 'script') {
+    const domainService = computeEntity(service);
+    if (hass?.services?.script?.[domainService]?.fields?.[field]) {
+      return { text: {} };
+    }
+  }
+
+  return result;
 }
 
 const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAssistant): Selector | null => {
