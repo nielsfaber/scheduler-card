@@ -521,6 +521,27 @@ Now the list of options become visible when you set up the action:
 ![action variable example](https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/action_variable_list_example.png?raw=true)
 
 
+#### Script fields support
+
+If a script defines input fields, these will automatically be detected and shown in the UI when creating a schedule. This allows you to provide the required parameters directly when configuring the action.
+
+Alternatively, you can predefine some or all of these fields in the card configuration using `customize`.
+
+<u>Example:</u>
+
+```yaml
+customize:
+  script.reminder:
+    service_data:
+      entity: media_player.your_device
+      message: test
+```
+When fields are defined in `service_data`:
+- They will be automatically applied when the action is executed
+- They will not be requested or editable in the UI
+
+:warning: **Note:** If only a subset of fields is defined in service_data, the remaining fields will still be shown in the UI and must be provided there.
+
 #### Conditions
 
 If you want to use a specific entity as a condition in a schedule, this can be configured by defining it in `customize` as well.
