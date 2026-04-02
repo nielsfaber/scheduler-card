@@ -5,7 +5,7 @@ import { sortByName } from '../lib/sort';
 import { computeConditionDomains } from '../data/compute_condition_domains';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
-import { styleMap } from 'lit/directives/style-map';
+import { styleMap } from 'lit/directives/style-map.js';
 import { CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
 import { isDefined } from '../lib/is_defined';

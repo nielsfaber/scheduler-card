@@ -1,10 +1,10 @@
 import { CSSResultGroup, LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { CardConfig, Schedule } from "../types";
 import { computeActionIcon } from "../data/format/compute_action_icon";
 import { HomeAssistant } from "../lib/types";
 import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
-import { unsafeHTML } from 'lit/directives/unsafe-html';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { computeEntityIcon } from "../data/format/compute_entity_icon";
 import { computeDomain } from "../lib/entity";
 

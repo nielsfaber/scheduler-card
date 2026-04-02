@@ -56,7 +56,7 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
 
   const serviceDescription = (service: string) => {
     let description = hassLocalize(`component.${domain}.services.${service}.description`, hass, false);
-    if (!description) description = hass.services[domain][service].description;
+    if (!description) description = hass.services[domain][service].description || '';
     if (!description && domain == 'script') description = hassLocalize(`component.${domain}.services.turn_on.description`, hass, false);
     return description;
   }

@@ -1,6 +1,6 @@
 import { mdiClockOutline, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from "@mdi/js";
 import { css, html, LitElement, nothing, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { computeTimeOffset } from "../data/time/compute_time_offset";
 import { parseTimeString } from "../data/time/parse_time_string";
 import { Time, TimeMode } from "../types";

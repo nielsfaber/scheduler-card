@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { computeDomain, friendlyName } from "../lib/entity";
 import { matchPattern } from "../lib/patterns";
 import { HomeAssistant } from "../lib/types";

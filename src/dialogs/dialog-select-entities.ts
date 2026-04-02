@@ -3,7 +3,7 @@ import { property, customElement, state } from 'lit/decorators.js';
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
-import { styleMap } from 'lit/directives/style-map';
+import { styleMap } from 'lit/directives/style-map.js';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { computeConditionDomains } from '../data/compute_condition_domains';

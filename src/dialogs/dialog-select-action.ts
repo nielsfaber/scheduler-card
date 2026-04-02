@@ -4,7 +4,7 @@ import { mdiChevronLeft, mdiClose, mdiDotsVertical } from '@mdi/js';
 import { actionItem, computeActionsForDomain } from '../data/actions/compute_actions_for_domain';
 import { actionItem as domainsActionItem, computeActionDomains } from '../data/actions/compute_action_domains';
 import { sortByName } from '../lib/sort';
-import { styleMap } from 'lit/directives/style-map';
+import { styleMap } from 'lit/directives/style-map.js';
 import { localize } from '../localize/localize';
 import { HomeAssistant } from '../lib/types';
 import { Action, CardConfig } from '../types';

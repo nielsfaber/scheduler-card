@@ -1,6 +1,6 @@
 import { mdiChevronLeft, mdiChevronRight, mdiDotsVertical, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
 import { actionConfig } from "../data/actions/action_config";
 import { formatWeekdayDisplay } from "../data/days";
