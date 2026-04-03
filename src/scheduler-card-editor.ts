@@ -85,12 +85,12 @@ export class SchedulerCardEditor extends LitElement {
           </ha-checkbox>
           <span slot="heading">${localize('ui.panel.card_editor.fields.title.heading', this.hass)}</span>
 
-          <ha-textfield
+          <ha-input
             .value=${this.title}
             @input=${this._setTitle}
             .placeholder=${localize('ui.panel.common.title', this.hass)}
             ?disabled=${this._config.title === false}
-          ></ha-textfield>
+          ></ha-input>
 
         </scheduler-settings-row>
 
@@ -274,7 +274,7 @@ export class SchedulerCardEditor extends LitElement {
 
         <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
-          <div style="display: flex; flex-direction: column">
+          <div style="display: flex; flex: 1; flex-direction: column">
             <scheduler-combo-selector
               .hass=${this.hass}
               .config=${tagSelector}
@@ -286,7 +286,7 @@ export class SchedulerCardEditor extends LitElement {
             <ha-dropdown
               @wa-after-hide=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
               @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
-              @wa-after-show=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
+              @wa-after-show=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-input") as HTMLInputElement).focus() }}
               placement="bottom-start"
             >
               <ha-button appearance="plain" slot="trigger">
@@ -295,12 +295,12 @@ export class SchedulerCardEditor extends LitElement {
               </ha-button>
 
               <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
-                <ha-textfield
+                <ha-input
                   .value=${this.customTagValue}
                   .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
                   @input=${(ev: Event) => { this.customTagValue = (ev.currentTarget as any).value }}
                   .placeholder=""
-                ></ha-textfield> 
+                ></ha-input> 
                 <ha-button
                   appearance="plain"
                   @click=${this._customTagConfirmClick}
@@ -455,7 +455,7 @@ export class SchedulerCardEditor extends LitElement {
       text-overflow: ellipsis;
     }
 
-    ha-textfield {
+    ha-input {
       width: 100%;
     }
     div.two-columns {

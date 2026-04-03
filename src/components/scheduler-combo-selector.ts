@@ -210,7 +210,7 @@ export class SchedulerComboSelector extends LitElement {
         <div class="slider-wrapper">
         ${boxMode
           ? html`
-        <ha-textfield
+        <ha-input
           .inputMode=${config.step && Number(config.step) % 1 == 0 ? "numeric" : "decimal"}
           .min=${config.min}
           .max=${config.max}
@@ -224,7 +224,7 @@ export class SchedulerComboSelector extends LitElement {
           .validityTransform=${validateBoxInput}
           @input=${boxValueChanged}
         >
-        </ha-textfield>
+        </ha-input>
         `
           : html`
         <ha-slider
@@ -244,12 +244,12 @@ export class SchedulerComboSelector extends LitElement {
       const config = (this.config as StringSelector).text!;
       return html`
         <div class="textfield-wrapper">
-          <ha-textfield
+          <ha-input
             .value=${this.value || ""}
             @input=${this._valueChanged}
             .placeholder=""
             ?disabled=${this.disabled}
-          ></ha-textfield> 
+          ></ha-input> 
         </div>     
       `
     }
@@ -315,8 +315,8 @@ export class SchedulerComboSelector extends LitElement {
         min-width: 45px;
         text-align: end;
       }
-      div.slider-wrapper ha-textfield {
-        --ha-textfield-input-width: 100px;
+      div.slider-wrapper ha-input {
+        --ha-input-input-width: 100px;
       }
       div.select-wrapper {
         display: flex;
@@ -327,7 +327,7 @@ export class SchedulerComboSelector extends LitElement {
         display: flex;
         width: 100%;
       }
-      div.textfield-wrapper ha-textfield {
+      div.textfield-wrapper ha-input {
         display: flex;
         width: 100%;
       }
