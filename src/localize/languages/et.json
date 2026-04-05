@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Lülita sisse",
+      "turn_off": "Lülita välja",
       "parameter_to_value": "{parameter} {value} jaoks",
       "action_with_parameter": "{action} väärtusega {parameter}"
     },

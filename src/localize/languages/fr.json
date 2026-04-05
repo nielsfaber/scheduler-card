@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Allumer",
+      "turn_off": "Éteindre",
       "parameter_to_value": "{parameter} vers {value}",
       "action_with_parameter": "{action} avec {parameter}"
     },

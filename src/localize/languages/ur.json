@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "پر سوئچ کریں",
+      "turn_off": "بند کر دیں",
       "parameter_to_value": "{parameter} کو {value} پر سیٹ کریں",
       "action_with_parameter": "{parameter} کے ساتھ {action}"
     },

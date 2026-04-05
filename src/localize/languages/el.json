@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Ενεργοποίηση",
+      "turn_off": "Απενεργοποίηση",
       "parameter_to_value": "{parameter} σε {value}",
       "action_with_parameter": "{action} με {parameter}"
     },
