@@ -1,11 +1,10 @@
-import { HomeAssistant } from "../../lib/types";
-import { Schedule, TimeMode } from "../../types";
-import { addTimeOffset } from "../time/add_time_offset";
-import { computeTimestamp } from "../time/compute_timestamp";
-import { parseTimeString } from "../time/parse_time_string";
-import { roundTime } from "../time/round_time";
-import { timeToString } from "../time/time_to_string";
-
+import { HomeAssistant } from '../../lib/types';
+import { Schedule, TimeMode } from '../../types';
+import { addTimeOffset } from '../time/add_time_offset';
+import { computeTimestamp } from '../time/compute_timestamp';
+import { parseTimeString } from '../time/parse_time_string';
+import { roundTime } from '../time/round_time';
+import { timeToString } from '../time/time_to_string';
 
 export const insertTimeslot = (schedule: Schedule, entry: number, slotIdx: number, hass: HomeAssistant): Schedule => {
   let slots = [...schedule.entries[entry].slots];
@@ -20,9 +19,10 @@ export const insertTimeslot = (schedule: Schedule, entry: number, slotIdx: numbe
 
   //convert start time to fixed time if needed
   if ([TimeMode.Sunrise, TimeMode.Sunset].includes(startTime.mode)) {
-    const referenceTime = startTime.mode == TimeMode.Sunrise
-      ? hass.states['sun.sun'].attributes['next_rising']
-      : hass.states['sun.sun'].attributes['next_setting'];
+    const referenceTime =
+      startTime.mode == TimeMode.Sunrise
+        ? hass.states['sun.sun'].attributes['next_rising']
+        : hass.states['sun.sun'].attributes['next_setting'];
 
     let refTime = parseTimeString(referenceTime);
     startTime = addTimeOffset(refTime, { hours: startTime.hours, minutes: startTime.minutes });
@@ -52,12 +52,9 @@ export const insertTimeslot = (schedule: Schedule, entry: number, slotIdx: numbe
 
   schedule = {
     ...schedule,
-    entries: Object.assign(
-      schedule.entries,
-      {
-        [entry]: { ...schedule.entries[entry], slots: slots }
-      }
-    )
-  }
+    entries: Object.assign(schedule.entries, {
+      [entry]: { ...schedule.entries[entry], slots: slots },
+    }),
+  };
   return schedule;
 };

@@ -1,19 +1,18 @@
-import { CSSResultGroup, LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators";
-import { CardConfig, Schedule } from "../types";
-import { computeActionIcon } from "../data/format/compute_action_icon";
-import { HomeAssistant } from "../lib/types";
-import { computeScheduleDisplay } from "../data/format/compute_schedule_display";
+import { CSSResultGroup, LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators';
+import { CardConfig, Schedule } from '../types';
+import { computeActionIcon } from '../data/format/compute_action_icon';
+import { HomeAssistant } from '../lib/types';
+import { computeScheduleDisplay } from '../data/format/compute_schedule_display';
 import { unsafeHTML } from 'lit/directives/unsafe-html';
-import { computeEntityIcon } from "../data/format/compute_entity_icon";
-import { computeDomain } from "../lib/entity";
+import { computeEntityIcon } from '../data/format/compute_entity_icon';
+import { computeDomain } from '../lib/entity';
 
 import './scheduler-relative-time';
-import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from "../const";
+import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from '../const';
 
-@customElement("scheduler-item-row")
+@customElement('scheduler-item-row')
 export class SchedulerItemRow extends LitElement {
-
   @property() hass!: HomeAssistant;
   @property() schedule_id!: string;
   @property() schedule!: Schedule;
@@ -32,43 +31,37 @@ export class SchedulerItemRow extends LitElement {
         if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
         if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
       }
-      const hasRemovedEntity = !([nextAction.target?.entity_id || []].flat()).every(entity_id => Object.keys(this.hass.states).includes(entity_id));
+      const hasRemovedEntity = ![nextAction.target?.entity_id || []]
+        .flat()
+        .every((entity_id) => Object.keys(this.hass.states).includes(entity_id));
       if (hasRemovedEntity) icon = 'mdi:help';
 
       return html`
-      <ha-icon
-        icon="${icon}"
-        @click=${this._handleIconClick}
-        class="${disabled ? 'disabled' : ''}"
-      ></ha-icon>
+        <ha-icon icon="${icon}" @click=${this._handleIconClick} class="${disabled ? 'disabled' : ''}"></ha-icon>
 
-      <div
-        class="info ${disabled ? 'disabled' : ''} ${hasRemovedEntity ? 'defective' : ''}"
-        @click=${this._handleItemClick}
-      >
-        ${this.renderDisplayItem(this.config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY)}
-        <div class="secondary">
-        ${this.renderDisplayItem(this.config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY)}
+        <div
+          class="info ${disabled ? 'disabled' : ''} ${hasRemovedEntity ? 'defective' : ''}"
+          @click=${this._handleItemClick}
+        >
+          ${this.renderDisplayItem(this.config.display_options?.primary_info || DEFAULT_PRIMARY_INFO_DISPLAY)}
+          <div class="secondary">
+            ${this.renderDisplayItem(this.config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY)}
+          </div>
         </div>
-      </div>
-      <div class="state">
-        ${this.config.show_toggle_switches !== false
-          ? html`<ha-switch
-              ?checked=${['on', 'triggered'].includes(stateObj.state || '')}
-              ?disabled=${stateObj.state == 'completed'}
-              @click=${this._toggleEnableDisable}
-            ></ha-switch>`
-          : ''}
-      </div>
-
-    `;
+        <div class="state">
+          ${this.config.show_toggle_switches !== false
+            ? html`<ha-switch
+                ?checked=${['on', 'triggered'].includes(stateObj.state || '')}
+                ?disabled=${stateObj.state == 'completed'}
+                @click=${this._toggleEnableDisable}
+              ></ha-switch>`
+            : ''}
+        </div>
+      `;
     } catch (e) {
       return html`
         <hui-warning .hass=${this.hass} @click=${this._handleItemClick}>
-          <span style="white-space: normal">
-            Failed to display schedule ${this.schedule.entity_id}.
-            Reason: ${e}
-          </span>
+          <span style="white-space: normal"> Failed to display schedule ${this.schedule.entity_id}. Reason: ${e} </span>
         </hui-warning>
       `;
     }
@@ -81,30 +74,21 @@ export class SchedulerItemRow extends LitElement {
         const ts = this.schedule.timestamps![this.schedule.next_entries[0] || 0];
         return html`
           ${parts[0] ? unsafeHTML(parts[0]) : ''}
-          <scheduler-relative-time
-            .hass=${this.hass}
-            .datetime=${new Date(ts)}
-          >
-          </scheduler-relative-time>
+          <scheduler-relative-time .hass=${this.hass} .datetime=${new Date(ts)}> </scheduler-relative-time>
           ${parts[1] ? unsafeHTML(parts[1]) : ''}
         `;
       }
       const res = input.match(/^(<tag>[^<]*<\/tag>)+$/);
       if (res !== null) {
-        let tags = input.split(/<tag>([^<]*)<\/tag>/).filter(e => e);
-        return html`
-          <div class="tags">
-            ${tags?.map(e => html`<span class="tag">${e}</span>`)}
-          </div>`;
+        const tags = input.split(/<tag>([^<]*)<\/tag>/).filter((e) => e);
+        return html` <div class="tags">${tags?.map((e) => html`<span class="tag">${e}</span>`)}</div>`;
       }
       return unsafeHTML(input);
     };
 
     return computeScheduleDisplay(this.schedule, displayItem, this.hass, this.config.customize)
-      .filter(e => e.length)
-      .map(e =>
-        html`${replacePreservedTags(e)}<br/>`
-      );
+      .filter((e) => e.length)
+      .map((e) => html`${replacePreservedTags(e)}<br />`);
   }
 
   private _handleItemClick(_ev: Event) {
@@ -122,7 +106,6 @@ export class SchedulerItemRow extends LitElement {
     const checked = !(ev.target as HTMLInputElement).checked;
     this.hass.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: this.schedule.entity_id });
   }
-
 
   static get styles(): CSSResultGroup {
     return css`
@@ -153,7 +136,7 @@ export class SchedulerItemRow extends LitElement {
         margin-inline-end: initial;
         min-width: 0;
       }
-      .flex ::slotted([slot="secondary"]) {
+      .flex ::slotted([slot='secondary']) {
         margin-left: 0;
         margin-inline-start: 0;
         margin-inline-end: initial;
@@ -195,7 +178,7 @@ export class SchedulerItemRow extends LitElement {
       span.tag {
         height: 28px;
         border-radius: 14px;
-        background: rgba(var(--rgb-primary-color), 0.40);
+        background: rgba(var(--rgb-primary-color), 0.4);
         color: var(--primary-text-color);
         line-height: 1.25rem;
         font-size: 0.875rem;

@@ -27,27 +27,28 @@
     "home-assistant-js-websocket": "^8.0.1",
     "lit": "^2.7.4",
     "rollup": "^4.52.4",
-    "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-ignore": "^1.0.10",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
-    "rollup-plugin-terser": "^5.1.2",
-    "rollup-plugin-uglify": "^6.0.3",
     "rollup-plugin-visualizer": "^4.2.0",
     "typescript": "4.9.5"
   },
   "devDependencies": {
+    "@parcel/transformer-inline-string": "^2.8.3",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^28.0.8",
+    "@rollup/plugin-dynamic-import-vars": "^2.1.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@parcel/transformer-inline-string": "^2.8.3",
-    "@rollup/plugin-dynamic-import-vars": "^2.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
     "parcel": "^2.8.3",
+    "prettier": "^3.8.1",
     "tslib": "^2.8.1"
   }
 }

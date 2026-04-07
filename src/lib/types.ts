@@ -6,8 +6,7 @@ import {
   MessageBase,
   HassServices,
   HassServiceTarget,
-} from "home-assistant-js-websocket";
-
+} from 'home-assistant-js-websocket';
 
 export interface ServiceCallRequest {
   domain: string;
@@ -18,9 +17,9 @@ export interface ServiceCallRequest {
 
 export interface Theme {
   // Incomplete
-  "primary-color": string;
-  "text-primary-color": string;
-  "accent-color": string;
+  'primary-color': string;
+  'text-primary-color': string;
+  'accent-color': string;
 }
 
 export interface Themes {
@@ -41,19 +40,19 @@ export interface Panels {
 }
 
 export enum NumberFormat {
-  language = "language",
-  system = "system",
-  comma_decimal = "comma_decimal",
-  decimal_comma = "decimal_comma",
-  space_comma = "space_comma",
-  none = "none",
+  language = 'language',
+  system = 'system',
+  comma_decimal = 'comma_decimal',
+  decimal_comma = 'decimal_comma',
+  space_comma = 'space_comma',
+  none = 'none',
 }
 
 export enum TimeFormat {
-  language = "language",
-  system = "system",
-  am_pm = "12",
-  twenty_four = "24",
+  language = 'language',
+  system = 'system',
+  am_pm = '12',
+  twenty_four = '24',
 }
 
 export interface FrontendLocaleData {
@@ -117,20 +116,17 @@ export interface HomeAssistant {
   moreInfoEntityId: string;
   user: CurrentUser;
   callService: (
-    domain: ServiceCallRequest["domain"],
-    service: ServiceCallRequest["service"],
-    serviceData?: ServiceCallRequest["serviceData"],
-    target?: ServiceCallRequest["target"]
+    domain: ServiceCallRequest['domain'],
+    service: ServiceCallRequest['service'],
+    serviceData?: ServiceCallRequest['serviceData'],
+    target?: ServiceCallRequest['target']
   ) => Promise<void>;
   callApi: <T>(
-    method: "GET" | "POST" | "PUT" | "DELETE",
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
     parameters?: { [key: string]: any }
   ) => Promise<T>;
-  fetchWithAuth: (
-    path: string,
-    init?: { [key: string]: any }
-  ) => Promise<Response>;
+  fetchWithAuth: (path: string, init?: { [key: string]: any }) => Promise<Response>;
   sendWS: (msg: MessageBase) => Promise<void>;
   callWS: <T>(msg: MessageBase) => Promise<T>;
 }

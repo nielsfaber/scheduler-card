@@ -17,7 +17,6 @@ import { DEFAULT_TIME_STEP } from '../const';
 
 const SEC_PER_DAY = 24 * 3600;
 
-
 @customElement('scheduler-timeslot-editor')
 export class SchedulerTimeslotEditor extends LitElement {
   public hass!: HomeAssistant;
@@ -36,7 +35,7 @@ export class SchedulerTimeslotEditor extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._resizeObserver = new ResizeObserver(entries => {
+    this._resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         if (width !== this._width) {
@@ -54,12 +53,8 @@ export class SchedulerTimeslotEditor extends LitElement {
 
   render() {
     return html`
-      <div class="bar">
-        ${this.renderTimeslots()}
-      </div>
-      <div class="time-bar">
-        ${this.renderTimebar()}
-      </div>
+      <div class="bar">${this.renderTimeslots()}</div>
+      <div class="time-bar">${this.renderTimebar()}</div>
     `;
   }
 
@@ -74,25 +69,31 @@ export class SchedulerTimeslotEditor extends LitElement {
     let stepSize = Math.ceil(24 / (fullWidth / segmentWidth));
     while (!allowedStepSizes.includes(stepSize)) stepSize++;
 
-    const nums = [0, ...Array.from(Array(24 / stepSize - 1).keys()).map(e => (e + 1) * stepSize), 24];
+    const nums = [0, ...Array.from(Array(24 / stepSize - 1).keys()).map((e) => (e + 1) * stepSize), 24];
 
     return nums.map((e, i) => {
       let w = (stepSize / 24) * 100;
       w = Math.floor(w * 100) / 100;
 
-      let time: Time = { mode: TimeMode.Fixed, hours: e, minutes: 0 };
+      const time: Time = { mode: TimeMode.Fixed, hours: e, minutes: 0 };
       //if (e == 24) time = { ...time, hours: 23, minutes: 59 };
 
-      if (i == 0) return html`
-        <span class="left" style=${styleMap({ width: `${w / 2}%` })}>${timeToString(time, { seconds: false, am_pm: amPm })}</span>
-      `
-
-      else if (i == (nums.length - 1)) return html`
-        <span class="right" style=${styleMap({ width: `${w / 2}%` })}>${timeToString(time, { seconds: false, am_pm: amPm })}</span>
-      `
-      else return html`
-        <span style=${styleMap({ width: `${w}%` })}>${timeToString(time, { seconds: false, am_pm: amPm })}</span>
-      `;
+      if (i == 0)
+        return html`
+          <span class="left" style=${styleMap({ width: `${w / 2}%` })}
+            >${timeToString(time, { seconds: false, am_pm: amPm })}</span
+          >
+        `;
+      else if (i == nums.length - 1)
+        return html`
+          <span class="right" style=${styleMap({ width: `${w / 2}%` })}
+            >${timeToString(time, { seconds: false, am_pm: amPm })}</span
+          >
+        `;
+      else
+        return html`
+          <span style=${styleMap({ width: `${w}%` })}>${timeToString(time, { seconds: false, am_pm: amPm })}</span>
+        `;
     });
   }
 
@@ -102,49 +103,57 @@ export class SchedulerTimeslotEditor extends LitElement {
     const slotWidths = this.computeSlotWidths();
 
     return slots.map((slot, i) => {
-      const actionText = slot.actions.length ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true) : '';
+      const actionText = slot.actions.length
+        ? formatActionDisplay(slot.actions[0], this.hass, this.config.customize, true, true)
+        : '';
 
       const textWidth = actionText.length * 5 + 10;
       const leftMargin = i > 0 ? 15 : 0;
-      const rightMargin = i < (slots.length - 1) ? 15 : 0;
+      const rightMargin = i < slots.length - 1 ? 15 : 0;
       const slotWidth = slotWidths[i] - leftMargin - rightMargin;
       const nextSlot = slots[i + 1];
 
       return html`
         <div
-          class="slot ${this.selectedSlot == i ? 'selected' : ''} ${slot.actions.length ? '' : 'empty'} ${slot.stop === undefined ? 'short' : ''}"
+          class="slot ${this.selectedSlot == i ? 'selected' : ''} ${slot.actions.length ? '' : 'empty'} ${slot.stop ===
+          undefined
+            ? 'short'
+            : ''}"
           style="${styleMap({ width: `${slotWidths[i]}px` })}"
           @click=${this._toggleSelectTimeslot}
           idx="${i}"
         >
-          ${slot.stop || 1 == 1 ? '' : html`
-            <div
-              class="marker"
-              @click=${this._toggleSelectTimeslot}
-              idx="${i}"
-            >
-            </div>`}
+          ${slot.stop || 1 == 1
+            ? ''
+            : html` <div class="marker" @click=${this._toggleSelectTimeslot} idx="${i}"></div>`}
           ${slot.actions.length
-          ? actionText && (slotWidth > textWidth / 3 || slotWidth > 50) && slotWidth > 30
-            ? html`<span style="margin-left: ${leftMargin}px; margin-right: ${rightMargin}px">${actionText}</span>`
-            : slotWidth > 16
-              ? html`<ha-icon icon="${computeActionIcon(slot.actions[0], this.config.customize)}"></ha-icon>`
-              : ''
-          : ''
-        }
+            ? actionText && (slotWidth > textWidth / 3 || slotWidth > 50) && slotWidth > 30
+              ? html`<span style="margin-left: ${leftMargin}px; margin-right: ${rightMargin}px">${actionText}</span>`
+              : slotWidth > 16
+                ? html`<ha-icon icon="${computeActionIcon(slot.actions[0], this.config.customize)}"></ha-icon>`
+                : ''
+            : ''}
         </div>
-        ${i < (slots.length - 1) && slot.stop ? html`
-        <div idx="${i}" class="handle ${this.selectedSlot == (i + 1) || this.selectedSlot == i ? '' : 'hidden'} ${nextSlot && !nextSlot.stop ? 'center' : ''}">
-          <span>
-            <ha-icon-button
-              .path=${mdiUnfoldMoreVertical}
-              @mousedown=${this._handleDragStart}
-              @touchstart=${this._handleDragStart}
-            >
-            </ha-icon-button>
-          </span>
-        </div>
-        ` : ''}
+        ${i < slots.length - 1 && slot.stop
+          ? html`
+              <div
+                idx="${i}"
+                class="handle ${this.selectedSlot == i + 1 || this.selectedSlot == i ? '' : 'hidden'} ${nextSlot &&
+                !nextSlot.stop
+                  ? 'center'
+                  : ''}"
+              >
+                <span>
+                  <ha-icon-button
+                    .path=${mdiUnfoldMoreVertical}
+                    @mousedown=${this._handleDragStart}
+                    @touchstart=${this._handleDragStart}
+                  >
+                  </ha-icon-button>
+                </span>
+              </div>
+            `
+          : ''}
       `;
     });
   }
@@ -165,19 +174,17 @@ export class SchedulerTimeslotEditor extends LitElement {
       } else {
         // Slot without a stop time: visually span to the next slot's start
         const nextSlot = slots[i + 1];
-        ts_stop = nextSlot
-          ? (computeTimestamp(nextSlot.start, this.hass) || SEC_PER_DAY)
-          : SEC_PER_DAY;
+        ts_stop = nextSlot ? computeTimestamp(nextSlot.start, this.hass) || SEC_PER_DAY : SEC_PER_DAY;
       }
       return (ts_stop - ts_start) / SEC_PER_DAY;
     });
 
     const minWidth = 5;
     const minPct = minWidth / totalWidth;
-    const smallSlotCount = widthPct.filter(e => e < minPct).length;
+    const smallSlotCount = widthPct.filter((e) => e < minPct).length;
     const availableWidth = totalWidth - smallSlotCount * minWidth;
 
-    const slotWidths = widthPct.map(e => {
+    const slotWidths = widthPct.map((e) => {
       if (e < minPct) return minWidth;
       return e * availableWidth;
     });
@@ -188,7 +195,7 @@ export class SchedulerTimeslotEditor extends LitElement {
   _toggleSelectTimeslot(ev: Event) {
     let slot = ev.target as HTMLElement;
     if (slot.tagName.toLowerCase() != 'div') slot = slot.parentElement as HTMLElement;
-    const num = Number(slot.getAttribute("idx"));
+    const num = Number(slot.getAttribute('idx'));
     this.selectedSlot = this.selectedSlot !== num ? num : null;
     const myEvent = new CustomEvent('update', { detail: { selectedSlot: this.selectedSlot } });
     this.dispatchEvent(myEvent);
@@ -205,25 +212,35 @@ export class SchedulerTimeslotEditor extends LitElement {
     const trackElement = el.parentElement as HTMLElement;
     const trackBounds = trackElement.getBoundingClientRect();
 
-    const slotIdx = Number(el.getAttribute("idx"));
+    const slotIdx = Number(el.getAttribute('idx'));
     const stepSize = this.config.time_step || DEFAULT_TIME_STEP;
     const stepSec = stepSize * 60;
 
-    let ts_min = slotIdx > 0
-      ? computeTimestamp(this.schedule!.slots[slotIdx - 1].stop || this.schedule!.slots[slotIdx - 1].start, this.hass) + stepSec
-      : stepSec;
+    let ts_min =
+      slotIdx > 0
+        ? computeTimestamp(
+            this.schedule!.slots[slotIdx - 1].stop || this.schedule!.slots[slotIdx - 1].start,
+            this.hass
+          ) + stepSec
+        : stepSec;
 
-    let ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 1].stop || this.schedule!.slots[slotIdx + 1].start, this.hass) || SEC_PER_DAY) - stepSec;
+    let ts_max =
+      (computeTimestamp(this.schedule!.slots[slotIdx + 1].stop || this.schedule!.slots[slotIdx + 1].start, this.hass) ||
+        SEC_PER_DAY) - stepSec;
     if (this.schedule!.slots[slotIdx + 1].stop === undefined) {
-      ts_max = (computeTimestamp(this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start, this.hass) || SEC_PER_DAY) - stepSec;
+      ts_max =
+        (computeTimestamp(
+          this.schedule!.slots[slotIdx + 2].stop || this.schedule!.slots[slotIdx + 2].start,
+          this.hass
+        ) || SEC_PER_DAY) - stepSec;
     }
 
     const timeInputMode = parseTimeString(this.schedule!.slots[slotIdx + 1].start).mode;
 
     if ([TimeMode.Sunrise, TimeMode.Sunset].includes(timeInputMode)) {
-      let time = parseTimeString(this.schedule!.slots[slotIdx + 1].start);
-      let maxOffsetTime = computeTimestamp({ ...time, hours: 4, minutes: 0 }, this.hass);
-      let minOffsetTime = computeTimestamp({ ...time, hours: -4, minutes: 0 }, this.hass);
+      const time = parseTimeString(this.schedule!.slots[slotIdx + 1].start);
+      const maxOffsetTime = computeTimestamp({ ...time, hours: 4, minutes: 0 }, this.hass);
+      const minOffsetTime = computeTimestamp({ ...time, hours: -4, minutes: 0 }, this.hass);
       if (minOffsetTime > ts_min) ts_min = minOffsetTime;
       if (maxOffsetTime < ts_max) ts_max = maxOffsetTime;
     }
@@ -253,9 +270,10 @@ export class SchedulerTimeslotEditor extends LitElement {
       let time: Time = { mode: TimeMode.Fixed, hours: hours, minutes: minutes };
 
       if ([TimeMode.Sunrise, TimeMode.Sunset].includes(timeInputMode)) {
-        const referenceTime = timeInputMode == TimeMode.Sunrise
-          ? this.hass.states['sun.sun'].attributes['next_rising']
-          : this.hass.states['sun.sun'].attributes['next_setting'];
+        const referenceTime =
+          timeInputMode == TimeMode.Sunrise
+            ? this.hass.states['sun.sun'].attributes['next_rising']
+            : this.hass.states['sun.sun'].attributes['next_setting'];
 
         const offset = computeTimeOffset(time, referenceTime);
         time = { mode: timeInputMode, hours: offset.hours, minutes: offset.minutes };
@@ -264,10 +282,10 @@ export class SchedulerTimeslotEditor extends LitElement {
 
       const timeStr = timeToString(time);
 
-      let slots = [... this.schedule!.slots];
+      let slots = [...this.schedule!.slots];
       slots = Object.assign(slots, {
         [slotIdx]: { ...slots[slotIdx], stop: timeStr },
-        [slotIdx + 1]: { ...slots[slotIdx + 1], start: timeToString(time) }
+        [slotIdx + 1]: { ...slots[slotIdx + 1], start: timeToString(time) },
       });
       if (slots[slotIdx + 1].stop === undefined) {
         const timeStrNext = timeToString(addTimeOffset(time, { minutes: 1 }));
@@ -279,8 +297,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       this.schedule = { ...this.schedule!, slots: slots };
       const myEvent = new CustomEvent('update', { detail: { slots: slots } });
       this.dispatchEvent(myEvent);
-    }
-
+    };
 
     const dragStartHandler = (ev: Event) => {
       ev.preventDefault();
@@ -338,7 +355,7 @@ export class SchedulerTimeslotEditor extends LitElement {
       .slot {
         display: flex;
         height: 100%;
-        box-sizing: border-box; 
+        box-sizing: border-box;
         cursor: pointer;
         background: rgba(var(--rgb-primary-color), 0.7);
         color: var(--text-primary-color);

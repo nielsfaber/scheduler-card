@@ -32,11 +32,7 @@ export class GenericDialog extends LitElement {
   render() {
     if (!this._params) return html``;
     return html`
-      <ha-dialog
-        open
-        @closed=${this.closeDialog}
-        width="small"
-      >
+      <ha-dialog open @closed=${this.closeDialog} width="small">
         <ha-dialog-header slot="header">
           <ha-icon-button
             slot="navigationIcon"
@@ -44,33 +40,19 @@ export class GenericDialog extends LitElement {
             .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
             .path=${mdiClose}
           ></ha-icon-button>
-          <div slot="title">
-            ${this._params.title}
-          </div>
+          <div slot="title">${this._params.title}</div>
         </ha-dialog-header>
-        <div class="wrapper">
-          ${this._params.description}
-        </div>
+        <div class="wrapper">${this._params.description}</div>
 
         <ha-dialog-footer slot="footer">
           ${this._params.secondaryButtonLabel
-        ? html`
-            <ha-button
-              appearance="plain"
-              slot="secondaryAction"
-              @click=${this.cancelClick}
-              data-dialog="close"
-            >
-              ${this._params.secondaryButtonLabel}
-            </ha-button>
+            ? html`
+                <ha-button appearance="plain" slot="secondaryAction" @click=${this.cancelClick} data-dialog="close">
+                  ${this._params.secondaryButtonLabel}
+                </ha-button>
               `
-        : ''}
-          <ha-button
-            appearance="accent"
-            slot="primaryAction"
-            @click=${this.confirmClick}
-            data-dialog="close"
-          >
+            : ''}
+          <ha-button appearance="accent" slot="primaryAction" @click=${this.confirmClick} data-dialog="close">
             ${this._params.primaryButtonLabel}
           </ha-button>
         </ha-dialog-footer>

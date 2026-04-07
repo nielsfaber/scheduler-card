@@ -1,9 +1,9 @@
-import { Schedule } from "../../types";
+import { Schedule } from '../../types';
 
 export const removeTimeslot = (schedule: Schedule, entry: number, slotIdx: number): Schedule => {
   let slots = [...schedule.entries[entry].slots];
 
-  const cutIndex = slotIdx == (slots.length - 1) ? slotIdx - 1 : slotIdx;
+  const cutIndex = slotIdx == slots.length - 1 ? slotIdx - 1 : slotIdx;
 
   slots = [
     ...slots.slice(0, cutIndex),
@@ -17,12 +17,9 @@ export const removeTimeslot = (schedule: Schedule, entry: number, slotIdx: numbe
 
   schedule = {
     ...schedule,
-    entries: Object.assign(
-      schedule.entries,
-      {
-        [entry]: { ...schedule.entries[entry], slots: slots }
-      }
-    )
-  }
+    entries: Object.assign(schedule.entries, {
+      [entry]: { ...schedule.entries[entry], slots: slots },
+    }),
+  };
   return schedule;
-}
+};

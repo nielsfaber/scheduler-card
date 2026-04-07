@@ -202,6 +202,9 @@
               "scheme": "Time scheme mode"
             }
           },
+          "default_repeat_type": {
+            "heading": "Default behaviour after completion"
+          },
           "sort_by": {
             "heading": "Sorting options",
             "description": "Order in which the schedules appear in the card",

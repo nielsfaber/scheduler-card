@@ -1,29 +1,28 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators';
 
-
 @customElement('scheduler-settings-row')
 class SchedulerSettingsRow extends LitElement {
-
   @property({ type: Boolean }) showPrefix = false;
 
   render() {
     return html`
       ${this.showPrefix
         ? html`
-      <div class="prefix-wrap">
-        <div class="prefix"><slot name="prefix"></slot></div>
-        <div class="body">
-          <div class="heading"><slot name="heading"></slot></div>
-          <div class="secondary"><slot name="description"></slot></div>
-        </div>
-      </div>
-      `  : html`
-      <div class="body">
-        <div class="heading"><slot name="heading"></slot></div>
-        <div class="secondary"><slot name="description"></slot></div>
-      </div>
-      `}
+            <div class="prefix-wrap">
+              <div class="prefix"><slot name="prefix"></slot></div>
+              <div class="body">
+                <div class="heading"><slot name="heading"></slot></div>
+                <div class="secondary"><slot name="description"></slot></div>
+              </div>
+            </div>
+          `
+        : html`
+            <div class="body">
+              <div class="heading"><slot name="heading"></slot></div>
+              <div class="secondary"><slot name="description"></slot></div>
+            </div>
+          `}
       <div class="content"><slot></slot></div>
     `;
   }
