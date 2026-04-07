@@ -12,8 +12,9 @@ import { parseCustomVariable } from "../selectors/selector_config";
 import { defaultSelectorValue } from "../selectors/default_selector_value";
 import { isDefined } from "../../lib/is_defined";
 import { entityConfig } from "./compute_action_domains";
-import { matchPattern } from "../../lib/patterns";
 import { entityIncludedByConfig } from "./entity_included_by_config";
+import { capitalizeFirstLetter } from "../../lib/capitalize_first_letter";
+import { computeEntityDisplay } from "../format/compute_entity_display";
 
 export interface actionItem {
   key: string,
@@ -42,14 +43,17 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
   const domainName = (domain: string) => hassLocalize(`component.${domain}.title`, hass, false) || domain.replace(/_/g, " ");
 
   const serviceName = (service: string) => {
-    const serviceName = hassLocalize(`component.${domain}.services.${service}.name`, hass, false) ||
-      !!hass.services[domain] && !!hass.services[domain][service] && hass.services[domain][service].name ||
-      service.replace(/_/g, ' ');
+    let action: Action = {
+      service: `${domain}.${service}`,
+      service_data: {},
+    };
+    let serviceName = capitalizeFirstLetter(formatActionDisplay(action, hass, config.customize));
 
     if (domain == 'script') {
-      return Object.keys(config.customize || {}).includes(`${domain}.${service}`) && isDefined(config.customize![`${domain}.${service}`].name)
-        ? config.customize![`${domain}.${service}`].name!
-        : serviceName;
+      if (Object.keys(config.customize || {}).includes(`${domain}.${service}`) && isDefined(config.customize![`${domain}.${service}`].name))
+        return config.customize![`${domain}.${service}`].name!
+      else
+        return `${capitalizeFirstLetter(computeEntityDisplay(`${domain}.${service}`, hass, config.customize))}: ${serviceName}`;
     }
     return `${domainName(domain)}: ${serviceName}`;
   }

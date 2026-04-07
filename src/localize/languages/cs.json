@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Zapnout",
+      "turn_off": "Vypnout",
       "parameter_to_value": "{parameter} na {value}",
       "action_with_parameter": "{action} s {parameter}"
     },

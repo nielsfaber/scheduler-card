@@ -139,6 +139,7 @@ export class SchedulerItemRow extends LitElement {
         flex: 1 1 30%;
         transition: color 0.2s ease-in-out;
         cursor: pointer;
+        line-height: var(--ha-line-height-normal);
       }
       .info,
       .info > * {

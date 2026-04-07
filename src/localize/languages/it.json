@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Accendi",
+      "turn_off": "Spegni",
       "parameter_to_value": "{parameter} a {value}",
       "action_with_parameter": "{action} con {parameter}"
     },

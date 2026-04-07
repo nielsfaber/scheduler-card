@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "הפעלה",
+      "turn_off": "כיבוי",
       "parameter_to_value": "{parameter} ל {value}",
       "action_with_parameter": "{action} עם {parameter}"
     },

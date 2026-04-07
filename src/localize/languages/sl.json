@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Vklopi",
+      "turn_off": "Izklopi",
       "parameter_to_value": "{parameter} v {value}",
       "action_with_parameter": "{action} z {parameter}"
     },

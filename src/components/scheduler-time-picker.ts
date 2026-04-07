@@ -83,7 +83,7 @@ export class SchedulerTimePicker extends LitElement {
               <ha-icon icon="mdi:chevron-up"></ha-icon>
             </ha-button>
             ` : nothing}
-            <ha-textfield
+            <ha-input
               id="hour"
               inputmode="numeric"
               .value=${this.formatHours()}
@@ -91,18 +91,15 @@ export class SchedulerTimePicker extends LitElement {
               name="hours"
               @change=${this._hoursChanged}
               @focusin=${this._onFocus}
-              no-spinner
               .required=${this.required}
               .autoValidate=${this.autoValidate}
               maxlength="2"
               max=${this.mode == TimeMode.Fixed ? this.useAmPm ? 12 : 23 : MAX_OFFFSET_HOURS}
               min=${this.mode != TimeMode.Fixed && !this.large ? -MAX_OFFFSET_HOURS : 0}
               .disabled=${this.disabled}
-              suffix="${this.large ? '' : ':'}"
-              class="${this.large ? '' : 'hasSuffix'}"
               .validityTransform=${_validateHourInput}
             >
-            </ha-textfield>
+            </ha-input>
             ${this.large ? html`
             <ha-button
               appearance="plain"
@@ -113,7 +110,7 @@ export class SchedulerTimePicker extends LitElement {
             </ha-button>
             ` : nothing}
           </div>
-          ${this.large ? html`<div class="separator">:</div>` : nothing}
+          <div class="time-separator">:</div>
           <div class="minutes">
             ${this.large ? html`
             <ha-button
@@ -124,16 +121,14 @@ export class SchedulerTimePicker extends LitElement {
               <ha-icon icon="mdi:chevron-up"></ha-icon>
             </ha-button>
             ` : nothing}
-            <ha-textfield
+            <ha-input
               id="min"
-              type="number"
               inputmode="numeric"
               .value=${this.formatMinutes()}
               label=""
               @change=${this._minutesChanged}
               @focusin=${this._onFocus}
               name="minutes"
-              no-spinner
               .required=${this.required}
               .autoValidate=${this.autoValidate}
               maxlength="2"
@@ -141,10 +136,8 @@ export class SchedulerTimePicker extends LitElement {
               min="0"
               .disabled=${this.disabled}
               .validityTransform=${_validateMinuteInput}
-              suffix=""
-              class=""
             >
-            </ha-textfield>
+            </ha-input>
             ${this.large ? html`
             <ha-button
               appearance="plain"
@@ -460,14 +453,31 @@ export class SchedulerTimePicker extends LitElement {
     div.hours ha-icon, div.minutes ha-icon {
       --mdc-icon-size: 42px;
     }
-    div.separator {
+    .time-separator {
+      background-color: var(--ha-color-form-background);
+      color: var(--ha-color-text-secondary);
+      border-bottom: 1px solid var(--ha-color-border-neutral-loud);
+      box-sizing: border-box;
+      height: 56px;
+      width: 9px;
       display: flex;
       align-items: center;
+      align-self: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    :host([disabled]) .time-separator {
+      background-color: var(--ha-color-form-background-disabled);
+      opacity: 0.5;
+    }
+    :host([large]) .time-separator {
+      background: none;
+      border: none;
       font-size: 36px;
     }
-    ha-textfield {
+    ha-input {
       width: 40px;
-      text-align: center;
       --mdc-shape-small: 0;
       --text-field-appearance: none;
       --text-field-padding-top: 0;
@@ -476,22 +486,33 @@ export class SchedulerTimePicker extends LitElement {
       --text-field-padding-end: 4px;
       --text-field-suffix-padding-left: 2px;
       --text-field-suffix-padding-right: 0;
-      --text-field-text-align: center;
+      --ha-input-text-align: center;
+      --ha-input-padding-top: 0px;
+      --ha-input-padding-bottom: 0px;
     }
-    :host([large]) ha-textfield {
-      width: auto;
-      --mdc-typography-subtitle1-font-size: 42px;
-      --mdc-text-field-outlined-idle-border-color: var(--card-background-color);
-      --mdc-text-field-outlined-hover-border-color: var(--card-background-color);
+    ha-input::part(wa-input) {
+      text-align: center;
     }
-    ha-textfield.hasSuffix {
-      --text-field-padding: 0 0 0 4px;
+    ha-input::part(wa-hint) {
+      height: 0;
     }
-    ha-textfield:first-child {
-      --text-field-border-top-left-radius: var(--mdc-shape-medium);
+    ha-input::part(wa-base) {
+      padding: var(--ha-space-1);
     }
-    ha-textfield:last-child {
-      --text-field-border-top-right-radius: var(--mdc-shape-medium);
+    ha-input#hour::part(wa-base) {
+      border-top-right-radius: 0px;
+    }
+    ha-input#min::part(wa-base) {
+      border-top-left-radius: 0px;
+    }
+    :host([large]) ha-input#hour::part(wa-base),
+    :host([large]) ha-input#min::part(wa-base) {
+      border-top-right-radius: var(--ha-border-radius-sm);
+      border-top-left-radius: var(--ha-border-radius-sm);
+    }
+    :host([large]) ha-input {
+      width: 75px;
+      --wa-form-control-value-font-size: 42px;
     }
     div.suffix {
       display: flex;
