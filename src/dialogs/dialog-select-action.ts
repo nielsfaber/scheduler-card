@@ -105,7 +105,7 @@ export class DialogSelectAction extends LitElement {
         : ''}
           </ha-dialog-header>
 
-          <ha-textfield
+          <ha-input
             dialogInitialFocus
             .placeholder=${hassLocalize("ui.common.search", this.hass)}
             aria-label=${hassLocalize("ui.common.search", this.hass)}
@@ -126,7 +126,7 @@ export class DialogSelectAction extends LitElement {
               `}
               <slot name="suffix"></slot>
             </div>
-          </ha-textfield>
+          </ha-input>
         </div>
         
         <ha-list
@@ -304,7 +304,7 @@ export class DialogSelectAction extends LitElement {
         --dialog-content-padding: 0;
         --ha-dialog-width-md: 480px;
       }
-      ha-textfield {
+      ha-input {
         display: block;
         margin: 0 16px;
       }

@@ -44,9 +44,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   automation: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     },
     trigger: {
@@ -60,10 +62,12 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   climate: {
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {},
       supported_features: 128
     },
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {},
       supported_features: 256
     },
@@ -127,10 +131,12 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   cover: {
     close_cover: {
+      translation_key: 'services.cover.close_cover',
       supported_features: 2,
       target: {}
     },
     open_cover: {
+      translation_key: 'services.cover.open_cover',
       supported_features: 1,
       target: {}
     },
@@ -155,9 +161,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   fan: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     },
     set_percentage: {
@@ -196,9 +204,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   humidifier: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     },
     set_humidity: {
@@ -220,9 +230,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   input_boolean: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     }
   },
@@ -274,6 +286,7 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     }
   },
@@ -287,9 +300,11 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   media_player: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     },
     select_source: {
@@ -344,14 +359,17 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
   },
   switch: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       target: {}
     },
     turn_off: {
+      translation_key: 'services.generic.turn_off',
       target: {}
     }
   },
   vacuum: {
     turn_on: {
+      translation_key: 'services.generic.turn_on',
       supported_features: 1,
       target: {}
     },
@@ -411,10 +429,12 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       }
     },
     turn_off: {
+      translation_key: 'services.generic.turn_on',
       target: {},
       supported_features: 8
     },
     turn_on: {
+      translation_key: 'services.generic.turn_off',
       target: {},
       supported_features: 8
     },

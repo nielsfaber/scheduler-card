@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Slå på",
+      "turn_off": "Stäng av",
       "parameter_to_value": "{parameter} till {value}",
       "action_with_parameter": "{action} med {parameter}"
     },

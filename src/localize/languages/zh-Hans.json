@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "打开",
+      "turn_off": "关闭",
       "parameter_to_value": "{parameter} 至 {value}",
       "action_with_parameter": "{action} 使用 {parameter}"
     },

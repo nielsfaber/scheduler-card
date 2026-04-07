@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Bekapcsolás",
+      "turn_off": "Kikapcsolás",
       "parameter_to_value": "{parameter} to {value}",
       "action_with_parameter": "{action} with {parameter}"
     },

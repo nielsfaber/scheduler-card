@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Pornește",
+      "turn_off": "Oprește",
       "parameter_to_value": "{parameter} la {value}",
       "action_with_parameter": "{action} cu {parameter}"
     },

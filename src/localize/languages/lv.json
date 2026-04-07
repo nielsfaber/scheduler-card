@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Įjungti",
+      "turn_off": "Išjungti",
       "parameter_to_value": "{parameter} uz {value}",
       "action_with_parameter": "{action} ar {parameter}"
     },

@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Ligar",
+      "turn_off": "Desligar",
       "parameter_to_value": "{parameter} para {value}",
       "action_with_parameter": "{action} com {parameter}"
     },

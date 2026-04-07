@@ -1,6 +1,8 @@
 {
   "services": {
     "generic": {
+      "turn_on": "Включить",
+      "turn_off": "Выключить",
       "parameter_to_value": "{parameter} к {value}",
       "action_with_parameter": "{action} с {parameter}"
     },

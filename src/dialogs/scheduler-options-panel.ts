@@ -150,40 +150,50 @@ export class SchedulerOptionsPanel extends LitElement {
 
       <span class="header">${localize('ui.panel.options.period.header', this.hass)}:</span>
       <div class="period">
-        <ha-checkbox
-          ?checked=${typeof this.schedule.start_date === 'string'}
-          @change=${this.toggleEnableDateRange}
-        >
-        </ha-checkbox>
-        <span>${localize('ui.panel.options.period.start_date', this.hass)}</span>
-        <ha-date-input
-          .locale=${this.hass.locale}
-          value=${this.startDate}
-          .label=${hassLocalize('ui.components.date-range-picker.start_date', this.hass)}
-          @value-changed=${this._setStartDate}
-          ?disabled=${!this.schedule.start_date}
-        >
-        </ha-date-input>
-        <span>${localize('ui.panel.options.period.end_date', this.hass)}</span>
-        <ha-date-input
-          .locale=${this.hass.locale}
-          value=${this.endDate}
-          .label=${hassLocalize('ui.components.date-range-picker.end_date', this.hass)}
-          @value-changed=${this._setEndDate}
-          ?disabled=${!this.schedule.end_date}
-        >
-        </ha-date-input>
+        <div>
+          <ha-checkbox
+            ?checked=${typeof this.schedule.start_date === 'string'}
+            @change=${this.toggleEnableDateRange}
+          >
+          </ha-checkbox>
+        </div>
+        <div>
+          <span>${localize('ui.panel.options.period.start_date', this.hass)}</span>
+        </div>
+        <div class="input">
+          <ha-date-input
+            .locale=${this.hass.locale}
+            value=${this.startDate}
+            .label=${hassLocalize('ui.components.date-range-picker.start_date', this.hass)}
+            @value-changed=${this._setStartDate}
+            ?disabled=${!this.schedule.start_date}
+          >
+          </ha-date-input>
+        </div>
+        <div>
+          <span>${localize('ui.panel.options.period.end_date', this.hass)}</span>
+        </div>
+        <div class="input">
+          <ha-date-input
+            .locale=${this.hass.locale}
+            value=${this.endDate}
+            .label=${hassLocalize('ui.components.date-range-picker.end_date', this.hass)}
+            @value-changed=${this._setEndDate}
+            ?disabled=${!this.schedule.end_date}
+          >
+          </ha-date-input>
+        </div>
       </div>
 
       <span class="header">${hassLocalize('ui.common.name', this.hass)}:</span>
       <div class="period">
-        <ha-textfield
+        <ha-input
           value=${this.schedule.name || ''}
           placeholder=${this.schedule.name
         ? ''
         : hassLocalize('ui.common.name', this.hass)}
           @input=${this.updateName}
-        ></ha-textfield>
+        ></ha-input>
       </div>
 
       <span class="header">${localize('ui.panel.options.tags', this.hass)}:</span>
@@ -199,7 +209,7 @@ export class SchedulerOptionsPanel extends LitElement {
         <ha-dropdown
           @wa-after-hide=${(ev: Event) => { ev.stopPropagation(); ((ev.target as HTMLElement).querySelector("ha-button") as HTMLInputElement).blur() }}
           @click=${(ev: Event) => { ev.preventDefault(); ev.stopImmediatePropagation() }}
-          @wa-after-show=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-textfield") as HTMLInputElement).focus() }}
+          @wa-after-show=${(ev: Event) => { ((ev.target as HTMLElement).querySelector("ha-input") as HTMLInputElement).focus() }}
           placement="bottom-start"
         >
           <ha-button appearance="plain" slot="trigger">
@@ -208,13 +218,13 @@ export class SchedulerOptionsPanel extends LitElement {
           </ha-button>
 
           <div style="display: flex; align-items: center; padding: 0px 2px 0px 8px">
-            <ha-textfield
+            <ha-input
               .value=${this.customTagValue}
               .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
               @input=${(ev: Event) => { this.customTagValue = (ev.currentTarget as any).value }}
               @keydown=${(ev: KeyboardEvent) => { if (ev.key === 'Enter') this._customTagConfirmClick(ev) }}
               .placeholder=""
-            ></ha-textfield> 
+            ></ha-input> 
             <ha-button
               appearance="plain"
               @click=${this._customTagConfirmClick}
@@ -606,11 +616,20 @@ export class SchedulerOptionsPanel extends LitElement {
       }
       div.period {
         display: flex;
+        width: 100%;
         flex-direction: row;
         align-items: center;
         gap: 5px;
       }
-      ha-textfield {
+      div.period > div {
+        display: flex;
+      }
+      div.period > div.input {
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+      }
+      ha-date-input, ha-input {
         width: 100%;
       }
       .header {
