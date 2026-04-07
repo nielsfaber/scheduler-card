@@ -18,7 +18,7 @@ const serveOptions = {
   },
 };
 
-const plugins = [
+const basePlugins = [
   typescript({
     declaration: false,
   }),
@@ -40,26 +40,39 @@ const plugins = [
     ],
     compact: true,
   }),
-  ...(dev ? [serve(serveOptions)] : [terser()]),
 ];
 
-export default [
-  {
-    input: 'src/scheduler-card.ts',
-    output: {
-      dir: 'dist',
-      format: 'es',
-      inlineDynamicImports: true,
-    },
-    plugins,
-    moduleContext: (id) => {
-      const thisAsWindowForModules = [
-        'node_modules/@formatjs/intl-utils/lib/src/diff.js',
-        'node_modules/@formatjs/intl-utils/lib/src/resolve-locale.js',
+export default async () => {
+  const plugins = dev
+    ? [...basePlugins, serve(serveOptions)]
+    : [
+        ...basePlugins,
+        terser(),
+        (await import('rollup-plugin-visualizer')).visualizer({
+          filename: 'stats.html',
+          gzipSize: true,
+          brotliSize: true,
+        }),
       ];
-      if (thisAsWindowForModules.some((id_) => id.trimRight().endsWith(id_))) {
-        return 'window';
-      }
+
+  return [
+    {
+      input: 'src/scheduler-card.ts',
+      output: {
+        dir: 'dist',
+        format: 'es',
+        inlineDynamicImports: true,
+      },
+      plugins,
+      moduleContext: (id) => {
+        const thisAsWindowForModules = [
+          'node_modules/@formatjs/intl-utils/lib/src/diff.js',
+          'node_modules/@formatjs/intl-utils/lib/src/resolve-locale.js',
+        ];
+        if (thisAsWindowForModules.some((id_) => id.trimRight().endsWith(id_))) {
+          return 'window';
+        }
+      },
     },
-  },
-];
+  ];
+};
