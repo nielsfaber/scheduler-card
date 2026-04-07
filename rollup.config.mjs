@@ -38,7 +38,7 @@ const basePlugins = [
         },
       ],
     ],
-    compact: true,
+    compact: !dev,
   }),
 ];
 
@@ -62,6 +62,7 @@ export default async () => {
         dir: 'dist',
         format: 'es',
         inlineDynamicImports: true,
+        sourcemap: dev ? 'inline' : false,
       },
       plugins,
       moduleContext: (id) => {
