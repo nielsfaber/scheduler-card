@@ -22,7 +22,8 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
   ) name = String(hass.services[domain][action.service].fields[field].name);
 
   const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
-  let actionConfig = parseCustomActions(customize || {}, entityIds.length ? entityIds[0] : domain);
+  const filterKey = entityIds.length ? entityIds[0] : (action.target?.domain || domain);
+  let actionConfig = parseCustomActions(customize || {}, filterKey);
   if (actionConfig.length) {
     let res = actionConfig.map(customConfig => {
       if (customConfig.service != action.service || !Object.keys(customConfig.variables || {}).includes(field)) return null;

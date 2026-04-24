@@ -26,7 +26,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
   let entity;
   if (['script', 'notify'].includes(domain)) entity = action.service;
   else entity = action.target?.entity_id;
-  if (!entity) entity = domain;
+  if (!entity) entity = action.target?.domain || domain;
 
   const actionConfig = parseCustomActions(customize, [entity].flat().pop());
 

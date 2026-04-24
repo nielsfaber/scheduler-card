@@ -63,7 +63,8 @@ export interface Action {
   service: string;
   service_data: Record<string, any>;
   target?: {
-    entity_id?: string[] | string
+    entity_id?: string[] | string,
+    domain?: string,
   }
 }
 
