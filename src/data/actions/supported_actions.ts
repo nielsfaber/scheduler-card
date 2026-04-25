@@ -149,6 +149,14 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
         }
       }
     },
+    close_cover_tilt: {
+      supported_features: 32,
+      target: {}
+    },
+    open_cover_tilt: {
+      supported_features: 16,
+      target: {}
+    },
     set_cover_tilt_position: {
       translation_key: 'services.cover.set_cover_tilt_position',
       supported_features: 128,
