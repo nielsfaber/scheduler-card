@@ -1,6 +1,6 @@
 import { css, html, LitElement, PropertyValues } from "lit";
 import { loadHaForm } from './lib/load_ha_form';
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { SchedulerDialogParams } from "./dialogs/dialog-scheduler-editor";
 import { fetchItems } from "./data/store/fetch_items";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";

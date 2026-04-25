@@ -20,7 +20,6 @@ export enum supportedSelectors {
 }
 
 export interface BooleanSelector {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   boolean: {} | null;
 }
 

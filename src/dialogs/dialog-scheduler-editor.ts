@@ -1,6 +1,6 @@
 import { mdiArrowLeft, mdiClose, mdiCogOutline } from "@mdi/js";
 import { LitElement, PropertyValues, html } from "lit";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { CardConfig, EditorMode, Schedule, ScheduleEntry } from "../types";
 import { EditorDialogStyles } from "../card.styles";
 import { localize } from "../localize/localize";
