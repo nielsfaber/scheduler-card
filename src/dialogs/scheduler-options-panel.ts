@@ -120,8 +120,8 @@ export class SchedulerOptionsPanel extends LitElement {
             ${localize('ui.panel.options.conditions.options.logic_and', this.hass)}
           </ha-dropdown-item>
           <ha-dropdown-item value="track_changes">
-            <ha-icon 
-              icon="mdi:check" 
+            <ha-icon
+              icon="mdi:check"
               style="${this.schedule.entries[0].slots[0].conditions.track_changes ? '' : 'visibility: hidden'}"
             ></ha-icon>
             ${localize('ui.panel.options.conditions.options.track_changes', this.hass)}

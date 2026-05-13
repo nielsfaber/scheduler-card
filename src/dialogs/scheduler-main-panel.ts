@@ -1,7 +1,7 @@
 import { mdiChevronLeft, mdiChevronRight, mdiDotsVertical, mdiPencil, mdiShapeRectanglePlus, mdiTrashCanOutline } from "@mdi/js";
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from "../types";
+import { Action, CardConfig, ConditionConfig, EditorMode, Schedule, ScheduleEntry, TConditionLogicType, TWeekday, Time, Timeslot } from "../types";
 import { actionConfig } from "../data/actions/action_config";
 import { formatWeekdayDisplay } from "../data/days";
 import { defaultSelectorValue } from "../data/selectors/default_selector_value";
@@ -38,6 +38,7 @@ import '../dialogs/dialog-select-action';
 import '../components/scheduler-collapsible-section';
 import '../components/scheduler-settings-row';
 import '../components/scheduler-combo-selector';
+import '../components/scheduler-conditions-editor';
 
 @customElement('scheduler-main-panel')
 export class SchedulerMainPanel extends LitElement {
@@ -194,7 +195,37 @@ export class SchedulerMainPanel extends LitElement {
 
       ${localize('ui.panel.editor.action', this.hass)}:
       ${this._renderActionConfig()}
+      ${this._renderConditionsConfig()}
     `;
+  }
+
+  _renderConditionsConfig() {
+    if (this.selectedEntry === null || this.selectedSlot === null) return html``;
+    const slot: Timeslot = this.schedule.entries[this.selectedEntry].slots[this.selectedSlot];
+    // Only show the conditions section when this timeslot has an action;
+    // conditions on an empty (filler) timeslot have no effect.
+    if (!slot || !slot.actions.length) return html``;
+
+    const conditions: ConditionConfig = slot.conditions || {
+      type: TConditionLogicType.Or,
+      items: [],
+      track_changes: false,
+    };
+
+    return html`
+      <scheduler-conditions-editor
+        .hass=${this.hass}
+        .config=${this.config}
+        .conditions=${conditions}
+        @value-changed=${this._conditionsChanged}
+      >
+      </scheduler-conditions-editor>
+    `;
+  }
+
+  _conditionsChanged(ev: CustomEvent) {
+    const value: ConditionConfig = ev.detail.value;
+    this._updateSlot({ conditions: value });
   }
 
   _renderActionConfig() {
