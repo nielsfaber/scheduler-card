@@ -139,8 +139,8 @@ export class SchedulerCard extends LitElement {
 
   render() {
     let items: ScheduleStorageEntry[] = [...this.schedules || []];
-    let includedItems = items.filter(e => isIncludedSchedule(e, this._config));
-    let excludedItems = items.filter(e => !isIncludedSchedule(e, this._config));
+    let includedItems = items.filter(e => isIncludedSchedule(e, this._config, this.hass));
+    let excludedItems = items.filter(e => !isIncludedSchedule(e, this._config, this.hass));
 
     const headerToggleState = this.showDiscovered
       ? items.some(el => ['on', 'triggered'].includes(this.hass!.states[el.entity_id]?.state || ''))
@@ -284,7 +284,7 @@ export class SchedulerCard extends LitElement {
         if (this.schedules)
           cardSize += this.showDiscovered
             ? Object.keys(this.schedules).length * rowSize
-            : Object.values(this.schedules).filter(e => isIncludedSchedule(e, this._config)).length * rowSize;
+            : Object.values(this.schedules).filter(e => isIncludedSchedule(e, this._config, this.hass)).length * rowSize;
         clearInterval(wait);
         res(Math.round(cardSize));
       }, 50);
@@ -310,7 +310,7 @@ export class SchedulerCard extends LitElement {
       const oldSchedule = oldScheduleIdx >= 0 ? this.schedules![oldScheduleIdx] : null;
       let schedules = [...(this.schedules || [])];
 
-      if (!schedule || (this._config.discover_existing === false && !isIncludedSchedule(schedule, this._config!))) {
+      if (!schedule || (this._config.discover_existing === false && !isIncludedSchedule(schedule, this._config!, this.hass))) {
         //schedule is not in the list, remove if it was in the list
         if (oldSchedule) {
           schedules = schedules.filter(e => e.schedule_id !== ev.schedule_id);
@@ -367,7 +367,7 @@ export class SchedulerCard extends LitElement {
     if (!this.hass || !this.schedules) return;
     const checked = (ev.target as HTMLInputElement).checked;
 
-    const items = Object.values(this.schedules).filter(el => this.showDiscovered || isIncludedSchedule(el, this._config));
+    const items = Object.values(this.schedules).filter(el => this.showDiscovered || isIncludedSchedule(el, this._config, this.hass));
     items.forEach(el => {
       this.hass!.callService('switch', checked ? 'turn_on' : 'turn_off', { entity_id: el.entity_id });
     });

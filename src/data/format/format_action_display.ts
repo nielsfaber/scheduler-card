@@ -2,6 +2,7 @@ import { Action, CustomConfig } from "../../types";
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { localize } from "../../localize/localize";
 import { actionConfig } from "../actions/action_config";
+import { actionTargetEntities } from "../actions/target";
 import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
@@ -33,7 +34,7 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     Object.entries(action.service_data)
       .filter(([_, value]) => isDefined(value))
       .map(([field, value]) => {
-        const selector = selectorConfig(action.service, action.target?.entity_id, field, hass, customize);
+        const selector = selectorConfig(action.service, actionTargetEntities(hass, action), field, hass, customize);
         if (!selector) return [field, null];
         return [field, formatSelectorDisplay(value, selector, hass)];
       })

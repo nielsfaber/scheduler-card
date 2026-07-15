@@ -4,6 +4,7 @@ import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { Action, CustomConfig } from "../../types";
 import { compareActions } from "../actions/compare_actions";
+import { actionTargetEntities } from "../actions/target";
 import { parseCustomActions } from "../actions/parse_custom_actions";
 
 
@@ -21,7 +22,7 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
     hass.services[domain][action.service].fields[field]
   ) name = String(hass.services[domain][action.service].fields[field].name);
 
-  const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
+  const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : actionTargetEntities(hass, action);
   const filterKey = entityIds.length ? entityIds[0] : action.service;
   let actionConfig = parseCustomActions(customize || {}, filterKey);
   if (actionConfig.length) {

@@ -59,12 +59,34 @@ export interface ScheduleEntry {
   weekdays: TWeekday[],
 }
 
+/** HA-style target selection, mirroring the semantics of
+ * `selector: { target: {...} }` in HA's automation/script editor.
+ * Values may be a scalar or a list (HA components emit both);
+ * use normalizeTarget() before persisting or comparing. */
+export interface Target {
+  entity_id?: string[] | string;
+  device_id?: string[] | string;
+  area_id?: string[] | string;
+  floor_id?: string[] | string;
+  label_id?: string[] | string;
+}
+
+export const TARGET_KEYS = ['entity_id', 'device_id', 'area_id', 'floor_id', 'label_id'] as const;
+export type TargetKey = typeof TARGET_KEYS[number];
+
+/** include/exclude entity patterns stamped into a schedule by the card
+ * that saved it; constrains what the dynamic parts of `target` may resolve
+ * to at execution time */
+export interface TargetFilter {
+  include?: string[];
+  exclude?: string[];
+}
+
 export interface Action {
   service: string;
   service_data: Record<string, any>;
-  target?: {
-    entity_id?: string[] | string
-  }
+  target?: Target;
+  target_filter?: TargetFilter;
 }
 
 export enum TWeekday {

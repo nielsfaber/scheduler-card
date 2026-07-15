@@ -1,6 +1,7 @@
 import { deepCompare } from "../../lib/deep_compare";
 import { computeDomain } from "../../lib/entity";
-import { Action, ConditionConfig, Schedule, ScheduleStorageEntry, TConditionLogicType, TConditionMatchType, TRepeatType, TWeekday, Timeslot } from "../../types";
+import { Action, ConditionConfig, Schedule, ScheduleStorageEntry, TConditionLogicType, TConditionMatchType, TRepeatType, TWeekday, Target, TargetFilter, TARGET_KEYS, Timeslot } from "../../types";
+import { normalizeTarget } from "../actions/target";
 
 
 interface Dictionary<TValue> {
@@ -9,7 +10,12 @@ interface Dictionary<TValue> {
 
 export interface ServiceCall {
   service: string;
+  /** legacy flat single-entity target (pre-v5 storage) */
   entity_id?: string;
+  /** HA-style target object (storage v5+) */
+  target?: Target;
+  /** include/exclude patterns constraining dynamic target resolution */
+  target_filter?: TargetFilter | null;
   service_data?: Dictionary<any>;
 }
 
@@ -61,12 +67,14 @@ export interface LegacyScheduleConfig {
 
 
 const parseAction = (input: ServiceCall): Action => {
+  // v5+ storage: target object as-is; pre-v5: wrap flat entity_id
+  const target = normalizeTarget(input.target)
+    || normalizeTarget({ entity_id: input.entity_id ? [input.entity_id] : undefined });
   return <Action>{
     service: input.service,
     service_data: input.service_data,
-    target: {
-      entity_id: input.entity_id ? input.entity_id : undefined
-    }
+    target: target || {},
+    ...(input.target_filter ? { target_filter: input.target_filter } : {})
   }
 }
 
@@ -122,13 +130,30 @@ export const convertLegacySchedule = (input: LegacySchedule): ScheduleStorageEnt
 
 
 const computeUniqueActions = (actions: Action[]): Action[] => {
-  //combine entityIds of different actions
-  if (actions.length == 1) return actions;
+  //combine the targets of actions that are otherwise identical
+  //(legacy storage kept one action per targeted entity); actions with
+  //differing service/service_data remain separate list entries
+  if (actions.length <= 1) return actions;
 
-  if (actions.every(e => deepCompare({ ...e, target: undefined }, { ...actions[0], target: undefined }))) {
-    const entityIds: string[] = [...new Set(actions.map(e => e.target?.entity_id).filter(e => e !== undefined) as string[])];
-    let output: Action = { ...actions[0], target: { entity_id: entityIds.length ? entityIds : undefined } };
-    return [output];
-  }
-  return actions;
+  let groups: Action[][] = [];
+  actions.forEach(action => {
+    const group = groups.find(g =>
+      deepCompare({ ...g[0], target: undefined, target_filter: undefined }, { ...action, target: undefined, target_filter: undefined })
+    );
+    if (group) group.push(action);
+    else groups.push([action]);
+  });
+
+  return groups.map(group => {
+    if (group.length == 1) return group[0];
+    let merged: Target = {};
+    TARGET_KEYS.forEach(key => {
+      const values = [...new Set(group.map(e => [e.target?.[key] || []].flat()).flat())];
+      if (values.length) merged = { ...merged, [key]: values.sort() };
+    });
+    let output: Action = { ...group[0], target: merged };
+    const filter = group.map(e => e.target_filter).find(e => e);
+    if (filter) output = { ...output, target_filter: filter };
+    return output;
+  });
 }

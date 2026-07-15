@@ -10,6 +10,7 @@ import { computeDomain } from "../lib/entity";
 
 import './scheduler-relative-time';
 import { DEFAULT_PRIMARY_INFO_DISPLAY, DEFAULT_SECONDARY_INFO_DISPLAY } from "../const";
+import { actionTargetEntities, targetEntities } from "../data/actions/target";
 
 @customElement("scheduler-item-row")
 export class SchedulerItemRow extends LitElement {
@@ -28,11 +29,14 @@ export class SchedulerItemRow extends LitElement {
 
       let icon = computeActionIcon(nextAction, this.config.customize);
       if (this.config.display_options?.icon == 'entity') {
-        let entityId = [nextAction.target?.entity_id || []].flat().shift();
+        let entityId = actionTargetEntities(this.hass, nextAction).shift();
         if (['script', 'notify'].includes(computeDomain(nextAction.service))) entityId = nextAction.service;
         if (entityId) icon = computeEntityIcon(entityId, this.config.customize, this.hass);
       }
-      const hasRemovedEntity = !([nextAction.target?.entity_id || []].flat()).every(entity_id => Object.keys(this.hass.states).includes(entity_id));
+      // dynamic targets resolve at execution time; an empty resolution is
+      // legitimate (e.g. area currently has no matching entities), so the
+      // 'defective' marker only applies to explicitly selected entities
+      const hasRemovedEntity = !targetEntities(nextAction.target).every(entity_id => Object.keys(this.hass.states).includes(entity_id));
       if (hasRemovedEntity) icon = 'mdi:help';
 
       return html`

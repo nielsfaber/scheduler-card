@@ -3,6 +3,7 @@ import { NumberSelector } from "../../lib/selector";
 import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig, Schedule, Timeslot } from "../../types";
 import { actionConfig } from "../actions/action_config";
+import { actionTargetEntities, isEmptyTarget } from "../actions/target";
 import { isSupportedSelector } from "../selectors/is_supported_selector";
 import { selectorConfig } from "../selectors/selector_config";
 import { computeTimestamp } from "../time/compute_timestamp";
@@ -10,6 +11,7 @@ import { computeTimestamp } from "../time/compute_timestamp";
 
 export enum ValidationError {
   OverlappingTime = "overlapping_time",
+  MissingTarget = "missing_target",
   MissingTargetEntity = "missing_target_entity",
   MissingServiceParameter = "missing_service_parameter",
   MissingAction = "missing_action"
@@ -34,13 +36,14 @@ const validateTimebar = (slots: Timeslot[], hass: HomeAssistant) => {
 const validateAction = (action: Action, hass: HomeAssistant, customize?: CustomConfig) => {
   const config = actionConfig(action, customize);
   if (config?.target) {
-    if (!action.target?.entity_id) return ValidationError.MissingTargetEntity;
+    // at least one entity/device/area/floor/label must be targeted
+    if (isEmptyTarget(action.target)) return ValidationError.MissingTarget;
   }
   if (config?.fields) {
     if (!Object.entries(config.fields)
       .filter(([field]) => isSupportedSelector(action, field, hass, customize))
       .every(([field, fieldConfig]) => {
-        let selector = selectorConfig(action.service, action.target?.entity_id, field, hass!, customize);
+        let selector = selectorConfig(action.service, actionTargetEntities(hass, action), field, hass!, customize);
         const isOptional = (selector as NumberSelector).number && (selector as NumberSelector).number?.optional
           ? true
           : fieldConfig.optional;

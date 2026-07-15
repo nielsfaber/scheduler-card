@@ -1,4 +1,5 @@
 import { isDefined } from "../../lib/is_defined";
+import { normalizeTarget, targetIsDynamic } from "../actions/target";
 import { HomeAssistant } from "../../lib/types";
 import { Action, Schedule, ScheduleEntry, TConditionLogicType, TRepeatType, TWeekday, Timeslot } from "../../types";
 import { LegacyScheduleConfig, LegacyTimeslot, ServiceCall, WeekdayType } from "./convert_legacy_schedule";
@@ -33,7 +34,7 @@ export const exportSchedule = (schedule: Schedule) => {
   let output: LegacyScheduleConfig = {
     weekdays: schedule.entries[0].weekdays.map(parseWeekdays),
     timeslots: schedule.entries[0].slots.map(parseTimeslot),
-    name: schedule.name,
+    name: schedule.name ? schedule.name.trim() : schedule.name,
     start_date: schedule.start_date,
     end_date: schedule.end_date,
     repeat_type: schedule.repeat_type,
@@ -92,27 +93,28 @@ const parseAction = (input: Action): ServiceCall | ServiceCall[] => {
       .reduce((res, key) => (res[key] = service_data[key], res), {});
   }
 
-  if (!input.target) {
+  // persist the raw target selection (entities/devices/areas/floors/labels)
+  // instead of flattening to per-entity service calls; entity resolution
+  // happens at execution time in the backend (resolve_target), so schedules
+  // automatically apply to entities that join a targeted area/floor/label
+  // or device later
+  const target = normalizeTarget(input.target);
+  if (!target) {
     let output: ServiceCall = {
       service: input.service,
       service_data: parseServiceData(input.service_data)
     };
     return output;
   }
-  else if (!Array.isArray(input.target?.entity_id)) {
-    let output: ServiceCall = {
-      service: input.service,
-      service_data: parseServiceData(input.service_data),
-      entity_id: input.target?.entity_id
-    };
-    return output;
+  let output: ServiceCall = {
+    service: input.service,
+    service_data: parseServiceData(input.service_data),
+    target: target
+  };
+  // dynamic targets carry the card's include/exclude restrictions, applied
+  // by the backend when expanding areas/floors/labels/devices to entities
+  if (targetIsDynamic(target) && input.target_filter) {
+    output = { ...output, target_filter: input.target_filter };
   }
-  else {
-    let output = input?.target.entity_id.map((e): ServiceCall => ({
-      service: input.service,
-      service_data: parseServiceData(input.service_data),
-      entity_id: e
-    }));
-    return output;
-  }
+  return output;
 }

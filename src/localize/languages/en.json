@@ -88,6 +88,12 @@
         "at_midnight": "at midnight",
         "at_noon": "at noon",
         "at_sun_event": "at {sunEvent}"
+      },
+      "target": {
+        "resolved_entities": "Currently targets {number} entities",
+        "resolved_entities_single": "Currently targets {number} entity",
+        "picker_unavailable": "The target picker requires a newer version of Home Assistant. Please update Home Assistant to use area/floor/label targets.",
+        "no_target_selected": "No target selected"
       }
     },
     "dialog": {
@@ -143,8 +149,10 @@
           "overlapping_time": "Schedule has overlapping timeslots",
           "missing_target_entity": "One or more actions are missing a target entity",
           "missing_service_parameter": "One or more actions are missing a required setting",
-          "missing_action": "Schedule has no actions"
-        }
+          "missing_action": "Schedule has no actions",
+          "missing_target": "No target is selected for the action. Select at least one entity, device, area, floor or label."
+        },
+        "target": "Target"
       },
       "options": {
         "conditions": {
@@ -160,7 +168,10 @@
           "options": {
             "logic_and": "All conditions must be true",
             "logic_or": "Any condition must be true",
-            "track_changes": "Re-evaluate when conditions change"
+            "track_changes": "Re-evaluate when conditions change",
+            "logic_and_short": "Match all",
+            "logic_or_short": "Match any",
+            "track_changes_short": "tracking"
           }
         },
         "period": {

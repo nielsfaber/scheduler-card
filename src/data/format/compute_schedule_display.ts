@@ -1,4 +1,5 @@
 import { computeDomain, friendlyName } from "../../lib/entity";
+import { describeTarget, targetEntities, targetIsDynamic } from "../actions/target";
 import { HomeAssistant } from "../../lib/types";
 import { CustomConfig, DisplayItem, Schedule } from "../../types";
 import { computeTimeDisplay } from "./compute_time_display";
@@ -15,8 +16,13 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
 
     switch (item) {
       case DisplayItem.Action:
-        const action = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
-        return capitalizeFirstLetter(formatActionDisplay(action, hass, customize));
+        const slotActions = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions;
+        const action = slotActions[0];
+        let actionDisplay = capitalizeFirstLetter(formatActionDisplay(action, hass, customize));
+        if (slotActions.length > 1) {
+          actionDisplay += ' +' + localize('ui.panel.overview.additional_tasks', hass, '{number}', String(slotActions.length - 1));
+        }
+        return actionDisplay;
       case DisplayItem.Days:
         return capitalizeFirstLetter(formatWeekdayDisplay(schedule.entries[0].weekdays, 'long', hass));
       case DisplayItem.Name:
@@ -28,7 +34,11 @@ export const computeScheduleDisplay = (schedule: Schedule, config: (DisplayItem 
           : '';
       case DisplayItem.Entity:
         const nextAction = schedule.entries[0].slots[schedule.next_entries[0] || 0].actions[0];
-        let entityIds = [nextAction.target?.entity_id || []].flat();
+        if (targetIsDynamic(nextAction.target)) {
+          // show the target's own references (areas/floors/labels/devices)
+          return capitalizeFirstLetter(describeTarget(hass, nextAction.target));
+        }
+        let entityIds = targetEntities(nextAction.target);
         if (!entityIds.length && ['script', 'notify'].includes(computeDomain(nextAction.service))) entityIds = [nextAction.service];
         const entityDisplay = entityIds.map(e => computeEntityDisplay(e, hass, customize)).join(", ");
         return capitalizeFirstLetter(entityDisplay);

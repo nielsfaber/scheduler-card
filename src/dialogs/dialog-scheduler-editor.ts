@@ -172,6 +172,7 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   _updateSchedule(ev: CustomEvent) {
+    if (!ev.detail || typeof ev.detail !== 'object') return;
     let changedProps = Object.keys(ev.detail);
     if (changedProps.includes('schedule')) {
       let schedule = ev.detail.schedule;

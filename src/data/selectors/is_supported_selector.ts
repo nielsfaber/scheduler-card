@@ -3,11 +3,12 @@ import { actionConfig } from "../actions/action_config";
 import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig } from "../../types";
 import { computeDomain } from "../../lib/entity";
+import { actionTargetEntities } from "../actions/target";
 
 
 export const isSupportedSelector = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig): boolean => {
   const service = action.service;
-  const entityId = action.target?.entity_id;
+  const entityId = actionTargetEntities(hass, action);
   const config = actionConfig(action, customize);
 
   if (!config || !config.fields || !Object.keys(config.fields).includes(field)) return false;

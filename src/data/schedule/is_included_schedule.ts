@@ -1,15 +1,25 @@
 import { Schedule, CardConfig } from "../../types";
+import { HomeAssistant } from "../../lib/types";
+import { computeDomain } from "../../lib/entity";
 import { entityIncludedByConfig } from "../actions/entity_included_by_config";
+import { resolveTargetLocal, targetEntities, targetIsDynamic } from "../actions/target";
 
 
-export const isIncludedSchedule = (schedule: Schedule, config: CardConfig) => {
+export const isIncludedSchedule = (schedule: Schedule, config: CardConfig, hass?: HomeAssistant) => {
   let entityList: string[] = [];
   let res = true;
 
   schedule.entries.forEach(entry => {
     entry.slots.forEach(slot => {
       slot.actions.forEach(action => {
-        let entities = action.target?.entity_id ? [action.target.entity_id].flat() : [action.service];
+        let entities: string[];
+        if (targetIsDynamic(action.target) && hass) {
+          // expand areas/floors/labels/devices so include/exclude filters
+          // keep working for dynamically targeted schedules
+          entities = resolveTargetLocal(hass, action.target, computeDomain(action.service), action.target_filter);
+          if (!entities.length) entities = [action.service];
+        }
+        else entities = targetEntities(action.target).length ? targetEntities(action.target) : [action.service];
         entityList = [...entityList, ...entities];
       })
     })
