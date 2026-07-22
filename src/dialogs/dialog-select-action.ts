@@ -11,6 +11,10 @@ import { Action, CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
 import { actionConfig } from '../data/actions/action_config';
 import { isDefined } from '../lib/is_defined';
+import { entityIncludedByConfig } from '../data/actions/entity_included_by_config';
+import { computeEntityIcon } from '../data/format/compute_entity_icon';
+import { computeEntityDisplay } from '../data/format/compute_entity_display';
+import { computeDomain, computeEntity } from '../lib/entity';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -35,11 +39,13 @@ export class DialogSelectAction extends LitElement {
 
   @state() lockDomain = false;
   @state() showAll = false;
+  @state() selectedEntity?: string;
 
   public async showDialog(params: DialogSelectActionParams): Promise<void> {
     this._params = params;
     this.lockDomain = params.domainFilter !== undefined;
     this.showAll = false;
+    this.selectedEntity = undefined;
     await this.updateComplete;
   }
 
@@ -66,13 +72,13 @@ export class DialogSelectAction extends LitElement {
       >
         <div slot="header">
           <ha-dialog-header>
-            ${this._params.domainFilter !== undefined && !this.lockDomain
+            ${this.selectedEntity !== undefined || (this._params.domainFilter !== undefined && !this.lockDomain)
         ? html`
             <ha-icon-button
               slot="navigationIcon"
               .label=${hassLocalize('ui.common.back', this.hass)}
               .path=${mdiChevronLeft}
-              @click=${this._clearDomain}
+              @click=${this._navigateBack}
             ></ha-icon-button>
             `
         : html`
@@ -160,6 +166,15 @@ export class DialogSelectAction extends LitElement {
 
   _renderOptions() {
     if (this._params?.domainFilter) {
+      // Entity-first flow: pick the entity the schedule targets, THEN the
+      // action. Skipped when the schedule already has a fixed entity
+      // (entityFilter) or for domains whose "entities" are the services
+      // themselves (script/notify).
+      if (!this._params.entityFilter?.length && this.selectedEntity === undefined) {
+        const entities = this._computeEntitiesForDomains(this._params.domainFilter);
+        if (entities.length > 1) return this._renderEntityList(entities);
+        if (entities.length === 1) this.selectedEntity = entities[0];
+      }
       return this._renderDomainActions();
     }
 
@@ -170,10 +185,64 @@ export class DialogSelectAction extends LitElement {
     if (domains.length === 1) {
       // force single domain into domainFilter to render actions directly
       this._params = { ...this._params!, domainFilter: [domains[0].key] };
-      return this._renderDomainActions();
+      return this._renderOptions();
     }
 
     return this._renderDomainList(domains);
+  }
+
+  _computeEntitiesForDomains(domains: string[]): string[] {
+    // script/notify actions are addressed by service name, not entity
+    const entityDomains = domains.filter(d => !['script', 'notify'].includes(d));
+    let cardConfig = { ...this._params!.cardConfig };
+    if (this.showAll) cardConfig = { ...cardConfig, include: undefined, exclude: undefined };
+    return Object.keys(this.hass.states)
+      .filter(e => entityDomains.includes(computeDomain(e)))
+      .filter(e => entityIncludedByConfig(e, cardConfig));
+  }
+
+  _renderEntityList(entities: string[]) {
+    let items = entities.map(e => ({
+      key: e,
+      name: computeEntityDisplay(e, this.hass, this._params!.cardConfig.customize),
+      icon: computeEntityIcon(e, this._params!.cardConfig.customize, this.hass),
+    }));
+    items.sort((a, b) => sortByName(a.name, b.name));
+
+    if (this._filter) {
+      items = items.filter(e => {
+        const tokens = this._filter.toLowerCase().trim().split(" ");
+        return (
+          tokens.every(token => e.name.toLowerCase().includes(token)) ||
+          tokens.every(token => e.key.toLowerCase().includes(token))
+        )
+      });
+    }
+
+    if (!items.length) {
+      return html`
+        <ha-list-item disabled>
+          ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
+        </ha-list-item>
+      `;
+    }
+
+    return items.map(item => html`
+      <ha-list-item
+        graphic="icon"
+        hasMeta
+        @click=${() => this._handleEntityClick(item.key)}
+      >
+        <ha-icon slot="graphic" icon="${item.icon}"></ha-icon>
+        <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
+        <span>${item.name}</span>
+      </ha-list-item>
+    `);
+  }
+
+  _handleEntityClick(entity: string) {
+    this.selectedEntity = entity;
+    this._clearSearch();
   }
 
   _renderDomainList(domains: domainsActionItem[]) {
@@ -228,8 +297,12 @@ export class DialogSelectAction extends LitElement {
     let cardConfig = { ...this._params?.cardConfig };
     if (this.showAll) cardConfig = { ...cardConfig, include: undefined, exclude: undefined };
     let result = this._params!.domainFilter!.map(e => computeActionsForDomain(this.hass, e, cardConfig)).flat();
-    if (this._params!.entityFilter?.length) {
-      result = result.filter(item => this._params!.entityFilter?.every(entity => {
+    const entityFilter = [
+      ...(this._params!.entityFilter || []),
+      ...(this.selectedEntity !== undefined ? [this.selectedEntity] : []),
+    ];
+    if (entityFilter.length) {
+      result = result.filter(item => entityFilter.every(entity => {
         const config = actionConfig(item.action, this._params!.cardConfig.customize);
         const stateObj = this.hass.states[entity];
         if (config.supported_features && !((stateObj.attributes.supported_features || 0) & config.supported_features)) return false;
@@ -237,6 +310,27 @@ export class DialogSelectAction extends LitElement {
         else if (Object.keys(item.action.target || {}).includes('entity_id') && (item.action.target || {}).entity_id != entity) return false;
         else return true;
       }));
+    }
+
+    // When the only choices are on/off, a big two-way toggle beats a list.
+    if (!this._filter && result.length === 2) {
+      const services = result.map(e => computeEntity(e.action.service));
+      if (services.includes('turn_on') && services.includes('turn_off')) {
+        const onItem = result[services.indexOf('turn_on')];
+        const offItem = result[services.indexOf('turn_off')];
+        return html`
+          <div class="onoff-picker">
+            <button class="onoff on" @click=${() => this._handleActionClick(onItem)}>
+              <ha-icon icon="mdi:power-on"></ha-icon>
+              ${onItem.name}
+            </button>
+            <button class="onoff off" @click=${() => this._handleActionClick(offItem)}>
+              <ha-icon icon="mdi:power-off"></ha-icon>
+              ${offItem.name}
+            </button>
+          </div>
+        `;
+      }
     }
     if (this._filter) {
       result = result.filter(e => {
@@ -275,12 +369,28 @@ export class DialogSelectAction extends LitElement {
 
   _clearDomain() {
     this._params = { ...this._params!, domainFilter: undefined };
+    this.selectedEntity = undefined;
     this._clearSearch();
   }
 
+  _navigateBack() {
+    if (this.selectedEntity !== undefined) {
+      this.selectedEntity = undefined;
+      this._clearSearch();
+    } else {
+      this._clearDomain();
+    }
+  }
+
   _handleActionClick(item: actionItem) {
-    this._params!.confirm(item.action);
+    let action = item.action;
+    // Entity was chosen first: bake it into the confirmed action.
+    if (this.selectedEntity !== undefined && !['script', 'notify'].includes(computeDomain(action.service))) {
+      action = { ...action, target: { ...(action.target || {}), entity_id: this.selectedEntity } };
+    }
+    this._params!.confirm(action);
     this._params = undefined;
+    this.selectedEntity = undefined;
     this._clearSearch();
   }
 
@@ -313,6 +423,43 @@ export class DialogSelectAction extends LitElement {
       }
       ha-list-item:not([twoline]) {
         height: 56px;
+      }
+      .onoff-picker {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        padding: 24px 16px;
+      }
+      .onoff {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 96px;
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: inherit;
+        color: var(--text-primary-color);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+      .onoff ha-icon {
+        --mdc-icon-size: 32px;
+      }
+      .onoff.on {
+        background: rgba(var(--rgb-state-active-color, 67, 160, 71), 0.85);
+      }
+      .onoff.on:hover {
+        background: rgb(var(--rgb-state-active-color, 67, 160, 71));
+      }
+      .onoff.off {
+        background: rgba(211, 47, 47, 0.85);
+      }
+      .onoff.off:hover {
+        background: rgb(211, 47, 47);
       }
     `;
   }

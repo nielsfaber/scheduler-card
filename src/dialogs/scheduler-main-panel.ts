@@ -20,6 +20,7 @@ import { removeTimeslot } from "../data/schedule/remove_timeslot";
 import { formatFieldDisplay } from "../data/format/format_field_display";
 import { formatActionDisplay } from "../data/format/format_action_display";
 import { computeActionIcon } from "../data/format/compute_action_icon";
+import { invertOnOffAction, isOnAction, isOffAction } from "../data/format/is_off_action";
 import { fireEvent } from "../lib/fire_event";
 import { useAmPm } from "../lib/use_am_pm";
 import { capitalizeFirstLetter } from "../lib/capitalize_first_letter";
@@ -197,11 +198,63 @@ export class SchedulerMainPanel extends LitElement {
     `;
   }
 
+  // Inline on/off switch rendered directly on the card, so flipping a
+  // slot between on and off doesn't require the action dialog.
+  _renderOnOffToggle(current: 'on' | 'off' | null, reference: Action) {
+    const referenceOn = isOnAction(reference) ? reference : invertOnOffAction(reference)!;
+    const referenceOff = isOffAction(reference) ? reference : invertOnOffAction(reference)!;
+    // With no action set yet, suggest the opposite of the previous slot
+    const previousSlot = this.selectedSlot! > 0
+      ? this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot! - 1]
+      : undefined;
+    const suggested: 'on' | 'off' | null = current !== null
+      ? null
+      : previousSlot?.actions?.length && isOnAction(previousSlot.actions[0]) ? 'off'
+        : previousSlot?.actions?.length && isOffAction(previousSlot.actions[0]) ? 'on'
+          : null;
+
+    const pick = (state: 'on' | 'off') => {
+      if (state === current) return;
+      this._updateSlot({ actions: [state === 'on' ? referenceOn : referenceOff] });
+    };
+
+    return html`
+      <div class="onoff-inline">
+        <button
+          class="onoff-btn on ${current === 'on' ? 'active' : ''} ${suggested === 'on' ? 'suggested' : ''}"
+          @click=${() => pick('on')}
+        >
+          <ha-icon icon="mdi:power-on"></ha-icon>
+          ${localize('services.generic.turn_on', this.hass)}
+        </button>
+        <button
+          class="onoff-btn off ${current === 'off' ? 'active' : ''} ${suggested === 'off' ? 'suggested' : ''}"
+          @click=${() => pick('off')}
+        >
+          <ha-icon icon="mdi:power-off"></ha-icon>
+          ${localize('services.generic.turn_off', this.hass)}
+        </button>
+      </div>
+    `;
+  }
+
+  // Any on/off action in the entry serves as a template for the inline
+  // toggle (it carries the right domain and target).
+  _findOnOffReference(): Action | undefined {
+    for (const slot of this.schedule.entries[this.selectedEntry!].slots) {
+      if (slot.actions.length && invertOnOffAction(slot.actions[0]) !== null) return slot.actions[0];
+    }
+    return undefined;
+  }
+
   _renderActionConfig() {
     const slot: Timeslot = { ...this.schedule.entries[this.selectedEntry!].slots[this.selectedSlot!] };
     const action = slot.actions.length ? slot.actions[0] : undefined;
-    if (!action) return html`
+    if (!action) {
+      const reference = this._findOnOffReference();
+      return html`
       <div>
+        ${reference ? this._renderOnOffToggle(null, reference) : ''}
         <ha-button appearance="plain"
           @click=${this._showActionDialog}
         >
@@ -210,6 +263,7 @@ export class SchedulerMainPanel extends LitElement {
         </ha-button>
       </div>
     `;
+    }
 
     const config = actionConfig(action, this.config.customize);
     const domain = config.target?.domain || computeDomain(action.service);
@@ -232,7 +286,10 @@ export class SchedulerMainPanel extends LitElement {
     }
     heading += formatActionDisplay(action, this.hass, this.config.customize, false, true);
 
+    const isOnOff = invertOnOffAction(action) !== null;
+
     return html`
+      ${isOnOff ? this._renderOnOffToggle(isOnAction(action) ? 'on' : 'off', action) : ''}
       <scheduler-collapsible-section
         ?expanded=${true}
         ?disabled=${true}
@@ -551,6 +608,44 @@ export class SchedulerMainPanel extends LitElement {
     div.actions {
       align-self: flex-end;
     }
+  }
+  div.onoff-inline {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin: 8px 0px 12px 0px;
+  }
+  .onoff-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--primary-text-color);
+    background: none;
+    border: 1px solid var(--divider-color, rgba(127, 127, 127, 0.4));
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .onoff-btn.on.active {
+    background: rgba(var(--rgb-state-active-color, 67, 160, 71), 0.85);
+    border-color: rgb(var(--rgb-state-active-color, 67, 160, 71));
+    color: var(--text-primary-color);
+  }
+  .onoff-btn.off.active {
+    background: rgba(211, 47, 47, 0.85);
+    border-color: rgb(211, 47, 47);
+    color: var(--text-primary-color);
+  }
+  .onoff-btn.on.suggested {
+    border: 2px dashed rgb(var(--rgb-state-active-color, 67, 160, 71));
+  }
+  .onoff-btn.off.suggested {
+    border: 2px dashed rgb(211, 47, 47);
   }
   div.slot-placeholder {
     padding: 20px 0px 0px 0px;

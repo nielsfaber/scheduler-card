@@ -76,6 +76,13 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
       return listSelector({ options: computeOptionIcons(attr.options) });
     case 'light.brightness':
       return numericSelector({ min: 0, max: 100, step: 1, unit: '%', scale_factor: 2.55 });
+    case 'light.color_temp_kelvin':
+      return numericSelector({
+        min: attr.min_color_temp_kelvin || 2000,
+        max: attr.max_color_temp_kelvin || 6500,
+        step: 100,
+        unit: 'K',
+      });
     case 'media_player.source':
     case 'notify.title':
       return <StringSelector>{ text: {} };

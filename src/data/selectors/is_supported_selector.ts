@@ -36,6 +36,7 @@ export const isSupportedSelector = (action: Action, field: string, hass: HomeAss
       const stateObj = hass.states[e];
       const colorModes = stateObj.attributes.supported_color_modes || [];
       if (field == 'brightness') return colorModes.filter(e => e != 'onoff').length;
+      else if (field == 'color_temp_kelvin') return colorModes.includes('color_temp');
       else return true;
     })) return false;
   }

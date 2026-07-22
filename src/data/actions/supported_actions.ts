@@ -290,6 +290,9 @@ export const supportedActions: Record<string, Record<string, ActionConfig>> = {
       fields: {
         brightness: {
           optional: true
+        },
+        color_temp_kelvin: {
+          optional: true
         }
       }
     },

@@ -13,6 +13,12 @@
     - [Creating a time scheme](#creating-a-time-scheme)
       - [Timeslots](#timeslots)
       - [Time scheme editor](#time-scheme-editor)
+        - [Color coding](#color-coding)
+        - [Time markers](#time-markers)
+        - [Adjusting timeslot times](#adjusting-timeslot-times)
+        - [Zoom \& pan](#zoom--pan)
+        - [Creating \& removing timeslots](#creating--removing-timeslots)
+        - [Assigning an action](#assigning-an-action)
     - [Options panel](#options-panel)
       - [Condition editor](#condition-editor)
       - [Period](#period)
@@ -108,19 +114,15 @@ Click the button 'add item' in the bottom of the card, to start creating a sched
 #### Choosing an entity and action
 The card scans the entities in your HA configuration and suitable candidates should automatically show up in this view.
 
-__Entities__
-The entities that you can to control with the scheduler show up here.
-Clicking a entity automatically will show the actions that you can program for this entity.
+The picker is organised in an **entity-first** flow:
 
-Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. You can add all entities that you want to control in the [include](#include) list.
+1. __Domain__ – if more than one type of device is available, first pick the domain (lights, switches, climate, …).
+2. __Entity__ – then pick the specific entity you want to schedule. Typically an entity is a device in your house, but you can also control an `automation`, `script`, `input_boolean`, etc. You can add all entities that you want to control in the [include](#include) list. This step is skipped automatically when the schedule already targets a fixed entity, and for `script`/`notify` (whose services *are* the entities).
+3. __Action__ – finally pick the action to perform. Typically an action is to either 'turn on' or 'turn off' a device. If the only choices are on/off, they are shown as **two large On / Off buttons** instead of a list, for a single tap. Some entities have more capabilities; if you are missing an action, you can add it yourself using the [customize](#customize) configuration.
 
-__Actions__
-The actions that you can perform for the selected entity show up here.
- Typically an action is to either 'turn on' or 'turn off' a device. But some entities have more capabilities. If you are missing an action, you can add it yourself using the [customize](#customization) configuration.
+Actions can contain a variable setting (e.g. turn on a lamp at a specific brightness or color temperature, or change the setpoint for a thermostat). These can be defined in the next page.
 
-
- Actions can contain a variable setting (e.g. turn on a lamp at specific brightness, or change the setpoint for a thermostat).
-These can be defined in the next page.
+:bulb: **Tip**: for `turn_on`/`turn_off` entities you usually don't need this dialog at all — the schedule editor shows an inline On / Off toggle directly on the card (see [Assigning an action](#assigning-an-action)).
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/instructions_select_entity.png?raw=true" width="500">
 
@@ -203,23 +205,66 @@ It is *highly recommended* (but not required) to assign actions to every timeslo
 
 #### Time scheme editor
 
-The time scheme editor allows you to configure the timeslots of your schedule and visualizes the result.
+The time scheme editor allows you to configure the timeslots of your schedule and visualizes the result on an interactive bar.
 
 A time scheme starts at 00:00 and ends at 23:59, so it covers a full day. Depending on the selected days, the schedule continues with the first slot of next day after the last one ended. So usually the first and last slot should have the same action.
 
-__Draggable markers__
-The card shows a bar with multiple time markers which you can drag/slide to change the duration of the timeslots.
-The time step is currently limited to 15 mins intervals.
+##### Color coding
+Each timeslot is colored by its action, so the whole day can be read at a glance:
 
-__Selectable timeslots__
-By clicking on a timeslot, it becomes selected and will have highlighted color.
-When a timeslot is selected, you can assign an action to it.
+* **Green** – the action turns the entity **on**.
+* **Red** – the action turns the entity **off**.
+* **Gray with a thin purple border** – a timeslot that has **no action assigned** yet.
+* Any other action keeps the neutral primary color.
 
-__Divide or merging of timeslots__
-When a timeslot is selected, you can click the '+' or '-' buttons to either divide (split in two) or merge (combine with the next slot)) the selected timeslot.
+For lights, the color additionally reflects the action's settings, and it updates **live** while you drag the brightness / color-temperature sliders:
 
-:warning: **Note** Due to the limited width of the Lovelace cards in HA, it might be difficult to make a short timeslot. 
-Since there is not really a way to fix this, it's recommended to use a PC or use your phone on landscape mode when creating a time scheme.
+* **Brightness** controls the opacity — a slot dimmed to 20 % renders as a faint tint, 100 % as a solid color.
+* **Color temperature** tints the slot to the bulb's actual tone (warm orange around 2200 K, cool white around 6500 K).
+
+A slot with a custom tint keeps a thin green frame, so a very dim or near-white slot is still clearly a configured slot rather than an empty one.
+
+![colored timeslots](screenshots/editor_colors.png)
+
+##### Time markers
+Above the bar, each timeslot boundary is labelled with its start/end time on a small tick. The label takes the color of the slot that starts at that time. When two labels would overlap (short slots) they automatically stack onto extra rows and drop back down again as the slots are spread apart.
+
+##### Adjusting timeslot times
+The bar shows draggable markers between the slots which you can drag/slide to change where one slot ends and the next begins. By default dragging snaps to the configured [`time_step`](#options); when you have zoomed in far enough, it snaps to exact **minutes** instead.
+
+The start/end time of the selected timeslot can also be set precisely with the time pickers shown below the bar.
+
+##### Zoom & pan
+The bar can be zoomed to focus on a part of the day or zoomed back out to see the whole day, just like a map:
+
+* **+ / − buttons** (top right) zoom in and out with a smooth animation; the percentage between them resets to the full day when clicked.
+* **Mouse wheel** (with <kbd>Ctrl</kbd>/<kbd>⌘</kbd>) or a **trackpad pinch** zooms centered on the cursor.
+* **Touch pinch** (two fingers) zooms centered between the fingers.
+* When zoomed in, drag the **hour ruler** (mouse) or drag with **one finger** (touch) to pan sideways.
+
+The hour ruler shows every hour whenever the labels fit, and coarser steps otherwise.
+
+![zoomed-in editor](screenshots/editor_zoom.png)
+
+##### Creating & removing timeslots
+There are two ways to create a slot:
+
+* **Drag across the bar** – drag horizontally over the existing slots and a new slot is carved out spanning the range you marked (a live overlay shows the time range while you drag). The neighbouring slots are trimmed to make room. On a **touch** device, single-finger drag is reserved for panning, so carving a slot there is done with a **double-tap-and-drag**.
+* **The `+` button** – when a slot is selected, split it in two.
+
+A newly carved slot defaults to the **opposite** of its neighbour's on/off action (on next to off, off next to on), carrying over the neighbour's target entity — so the common case needs no further setup. Until an action is assigned the slot is provisional: moving the selection to another slot discards it and restores the previous layout exactly.
+
+To remove a slot, select it and press <kbd>Delete</kbd> / <kbd>Backspace</kbd>, or use the trash button. Its range is merged into the neighbouring slot. The `−` button merges the selected slot with the next one.
+
+##### Assigning an action
+Click a timeslot to select it (it gets a highlighted border). For a selected slot you can then assign its action:
+
+* For **on/off** entities, an inline **On / Off toggle** is shown directly on the card — no dialog needed. When the slot is still empty, the suggested choice (the opposite of the previous slot) is outlined with a dashed border.
+* For richer actions (brightness, color temperature, thermostat setpoint, …) use the **action** button to open the action dialog.
+
+![empty timeslot with purple border](screenshots/editor_pending.png)
+
+:bulb: **Tip**: with pinch/zoom you can now comfortably create short timeslots even on a phone — zoom into the relevant part of the day first.
 
 <img src="https://github.com/nielsfaber/scheduler-card/blob/main/screenshots/timescheme_example.png?raw=true" width="600">
 
@@ -314,6 +359,8 @@ The standard configuration consists of the following features:
 
 When including an entity, the standard configuration will automatically detect which actions are supported by it, and will make these available.
 Also it has icons for most entity types and actions.
+
+For lights, the `turn on` action automatically offers a **brightness** setting, and — for bulbs that support it — a **color temperature** (Kelvin) setting. Both are optional and, when set, are reflected in the color of the timeslot in the [time scheme editor](#color-coding).
 
 :warning: **Warning**: You can provide `standard_configuration:false` in the card configuration to disable it completely for full control. If so, you will need to configure all actions and properties via `customize`.
 
@@ -862,3 +909,21 @@ If you want to make donation as appreciation of my work, you can do so via PayPa
 
 <a href="https://www.paypal.com/donate/?business=CLL4T6Y8ACXNN&no_recurring=0&item_name=Thank+you+for+supporting+my+work+on+the+Scheduler+project%2E+it+is+much+appreciated%21&currency_code=EUR" target="_blank"><img src="https://pics.paypal.com/00/s/YzlhMzI2ZjYtZDQxMi00NzNiLThmZTktOTk3MmEyYTA2Zjc0/file.PNG" width="150" /></a>
 <a href="https://www.buymeacoffee.com/vrdx7mi" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
+
+---
+
+## תקציר בעברית <!-- omit in TOC -->
+
+כרטיס Lovelace ל-Home Assistant ליצירת תזמונים למכשירים חכמים. הכרטיס עובד מעל [רכיב ה-scheduler](https://github.com/nielsfaber/scheduler-component) (שצריך להתקין בנפרד).
+
+**עורך התזמון (Time scheme) המשופר:**
+
+* **צבע לפי פעולה** – ירוק = הדלקה, אדום = כיבוי, אפור עם מסגרת סגולה דקה = משבצת ללא פעולה.
+* **צבע לפי בהירות וטמפרטורת צבע** – עבור תאורה, שקיפות המשבצת עוקבת אחרי הבהירות והגוון עוקב אחרי טמפרטורת הצבע (כתום-חם ~2200K ועד לבן-קר ~6500K). מתעדכן חי תוך כדי הזזת הסליידר. למשבצת צבועה יש מסגרת ירוקה דקה כדי שתמיד יהיה ברור שהיא מוגדרת.
+* **תוויות שעה** מעל הבר בתחילת/סוף כל משבצת, צבועות בצבע המשבצת, עם עריכה למספר שורות כשהן צפופות.
+* **זום ופאן** חלקים (כמו במפה) – כפתורי +/‎−, גלגלת עם Ctrl/⌘, וצביטה במגע. גרירת סרגל השעות (עכבר) או אצבע אחת (מגע) מזיזה את התצוגה. בזום אפשר לגרור ברזולוציית דקות.
+* **יצירת משבצת בגרירה** – גוררים על הבר ונוצרת משבצת חדשה (במגע: הקשה כפולה + גרירה). ברירת המחדל היא הפעולה ההפוכה מהמשבצת השכנה, וניתן לשינוי. מחיקה עם מקש Delete.
+* **בחירת פעולה** – קודם בוחרים ישות ואז פעולה; לישויות הדלקה/כיבוי יש מתג הפעלה/כיבוי ישירות על הכרטיס (בלי דיאלוג).
+* **תמיכה מלאה ב-RTL**.
+
+שאר התיעוד (התקנה, קונפיגורציה, `customize`, תנאים, תגיות, תרגומים) מופיע באנגלית למעלה.
