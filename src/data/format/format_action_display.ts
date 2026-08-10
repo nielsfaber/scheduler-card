@@ -26,7 +26,7 @@ const translationKeyOverlap = (key: string, action: Action): number => {
 };
 
 export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false, eraseHtmlTags = false) => {
-  const config = actionConfig(action, customize);
+  const config = actionConfig(action, customize, hass);
 
   let actionDisplay = config.name || '';
   let attributes: Record<string, any> = Object.fromEntries(
