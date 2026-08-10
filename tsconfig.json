@@ -4,7 +4,9 @@
     "module": "esnext",
     "moduleResolution": "node",
     "lib": [
-      "es2017",
+      "es2019",
+      "es2020.intl",
+      "es2021.intl",
       "dom",
       "dom.iterable"
     ],
