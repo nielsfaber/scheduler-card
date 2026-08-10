@@ -32,7 +32,7 @@ const validateTimebar = (slots: Timeslot[], hass: HomeAssistant) => {
 }
 
 const validateAction = (action: Action, hass: HomeAssistant, customize?: CustomConfig) => {
-  const config = actionConfig(action, customize);
+  const config = actionConfig(action, customize, hass);
   if (config?.target) {
     if (!action.target?.entity_id) return ValidationError.MissingTargetEntity;
   }
