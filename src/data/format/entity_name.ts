@@ -10,6 +10,12 @@ import { EntityName } from "../../types";
  * enough and the version has to be checked.
  */
 const supportsEntityNames = (hass: HomeAssistant | undefined): boolean => {
+  // A hass can report a recent version without carrying the helper (a test
+  // harness, or a hass that has not finished initialising), and calling it
+  // then throws - so the version gate alone is not enough.
+  if (!hass || typeof (hass as { formatEntityName?: unknown }).formatEntityName !== 'function') {
+    return false;
+  }
   const [major, minor] = ((hass as any)?.config?.version ?? "").split(".", 2);
   return Number(major) > 2026 || (Number(major) === 2026 && Number(minor) >= 4);
 };
