@@ -61,7 +61,7 @@ const computeEntitiesForDomain = (domain: string, customize: CustomConfig | unde
 
     let entityList = entities.map((e): listItem => ({
       key: e,
-      name: friendlyName(e, hass.states[e]?.attributes),
+      name: friendlyName(hass, e),
       description: "",
       icon: computeEntityIcon(e, customize, hass)
     }));
