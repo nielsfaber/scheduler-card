@@ -19,10 +19,10 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
+          package-manager-cache: false
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-package-lock
 
       - name: Build
         run: npm run build
