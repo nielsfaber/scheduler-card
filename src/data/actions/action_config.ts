@@ -1,12 +1,13 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { isDefined } from "../../lib/is_defined";
+import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig } from "../../types";
 import { ActionConfig, supportedActions } from "../actions/supported_actions";
 import { compareActions } from "./compare_actions";
 import { parseCustomActions } from "./parse_custom_actions";
 
 
-export const actionConfig = (action: Action, customize?: CustomConfig): ActionConfig => {
+export const actionConfig = (action: Action, customize?: CustomConfig, hass?: HomeAssistant): ActionConfig => {
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
@@ -18,6 +19,16 @@ export const actionConfig = (action: Action, customize?: CustomConfig): ActionCo
     }
     else if (Object.keys(supportedActions[domain]).includes('{entity_id}')) {
       config = { ...config, ...supportedActions[domain]['{entity_id}'] };
+    }
+  }
+
+  if (domain == 'script' && hass?.services?.[domain]?.[domainService]?.fields) {
+    const scriptFields: ActionConfig['fields'] = {};
+    Object.keys(hass.services[domain][domainService].fields).forEach(field => {
+      scriptFields[field] = { optional: true };
+    });
+    if (Object.keys(scriptFields).length) {
+      config = { ...config, fields: { ...config.fields, ...scriptFields } };
     }
   }
 

@@ -211,10 +211,10 @@ export class SchedulerMainPanel extends LitElement {
       </div>
     `;
 
-    const config = actionConfig(action, this.config.customize);
+    const config = actionConfig(action, this.config.customize, this.hass);
     const domain = config.target?.domain || computeDomain(action.service);
 
-    const hasFixedEntity = isDefined(config?.target?.entity_id) || this.schedule.entries[this.selectedEntry!].slots.some(e => e.actions.length && isDefined(actionConfig(e.actions[0], this.config.customize)?.target?.entity_id));
+    const hasFixedEntity = isDefined(config?.target?.entity_id) || this.schedule.entries[this.selectedEntry!].slots.some(e => e.actions.length && isDefined(actionConfig(e.actions[0], this.config.customize, this.hass)?.target?.entity_id));
 
     if (config === undefined) return html``;
 

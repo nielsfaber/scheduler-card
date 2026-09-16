@@ -8,7 +8,7 @@ import { computeDomain } from "../../lib/entity";
 export const isSupportedSelector = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig): boolean => {
   const service = action.service;
   const entityId = action.target?.entity_id;
-  const config = actionConfig(action, customize);
+  const config = actionConfig(action, customize, hass);
 
   if (!config || !config.fields || !Object.keys(config.fields).includes(field)) return false;
   const fieldConfig = config.fields[field];

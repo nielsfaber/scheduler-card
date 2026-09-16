@@ -2,11 +2,41 @@ import { BooleanSelector, NumberSelector, SelectOption, SelectSelector, Selector
 import { listSelector, parseListSelectorOption } from "./list_selector";
 import { numericSelector } from "./numeric_selector";
 import { HomeAssistant } from "../../lib/types";
-import { computeDomain } from "../../lib/entity";
+import { computeDomain, computeEntity } from "../../lib/entity";
 import { CustomConfig, VariableConfig } from "../../types";
 import { parseCustomActions } from "../actions/parse_custom_actions";
 import { isDefined } from "../../lib/is_defined";
 import { serviceIcons } from "../format/service_icons";
+
+export const haSelectorToSchedulerSelector = (selector: Record<string, any> | undefined): Selector | null => {
+  if (!selector || !Object.keys(selector).length) return null;
+  const selectorType = Object.keys(selector)[0];
+  const config = selector[selectorType];
+
+  switch (selectorType) {
+    case 'number':
+      return numericSelector({
+        min: config?.min,
+        max: config?.max,
+        step: config?.step,
+        mode: config?.mode,
+        unit: config?.unit_of_measurement,
+      });
+    case 'select':
+      return listSelector({
+        options: config?.options || [],
+        translation_key: config?.translation_key,
+      });
+    case 'boolean':
+      return <BooleanSelector>{ boolean: {} };
+    case 'text':
+      return <StringSelector>{ text: { multiline: config?.multiline, type: config?.type } };
+    default:
+      // Fall back to a plain text input for selectors that scheduler-card doesn't
+      // natively render (e.g. area, device, entity, date, time, datetime, color, icon).
+      return <StringSelector>{ text: {} };
+  }
+};
 
 export const selectorConfig = (service: string, entityId: string | string[] | undefined, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
   const domain = computeDomain(service);
@@ -24,6 +54,15 @@ const selectorConfigFromEntity = (entityId: string, field: string, hass: HomeAss
   const stateObj = Object.keys(hass.states).includes(entityId) ? hass.states[entityId] : null;
   const attr = stateObj?.attributes || {};
   const domain = computeDomain(entityId);
+
+  if (domain == 'script') {
+    const serviceName = computeEntity(entityId);
+    const service = hass.services[domain]?.[serviceName];
+    const fieldConfig = service?.fields?.[field];
+    if (!fieldConfig) return null;
+    return haSelectorToSchedulerSelector(fieldConfig.selector);
+  }
+
   const searchKey = `${domain}.${field}`;
 
   const computeOptionIcons = (options?: string[]) => {

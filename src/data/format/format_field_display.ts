@@ -16,10 +16,10 @@ export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssi
   let name = hassLocalize(`component.${domain}.services.${domainService}.fields.${field}.name`, hass, false);
   if (!name &&
     hass.services[domain] &&
-    hass.services[domain][action.service] &&
-    hass.services[domain][action.service].fields &&
-    hass.services[domain][action.service].fields[field]
-  ) name = String(hass.services[domain][action.service].fields[field].name);
+    hass.services[domain][domainService] &&
+    hass.services[domain][domainService].fields &&
+    hass.services[domain][domainService].fields[field]
+  ) name = String(hass.services[domain][domainService].fields[field].name || '');
 
   const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
   const filterKey = entityIds.length ? entityIds[0] : action.service;
