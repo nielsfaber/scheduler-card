@@ -172,11 +172,18 @@ export type Time = {
   minutes: number
 };
 
+/** A `name` option: a plain string, or name parts resolved from the registry. */
+export type EntityName = string | EntityNameItem | EntityNameItem[];
+
+export type EntityNameItem =
+  | { type: 'entity' | 'device' | 'area' | 'floor' }
+  | { type: 'text'; text: string };
+
 export type CustomConfig = Record<string, CustomEntityConfig>;
 
 export interface CustomEntityConfig {
   icon?: string;
-  name?: string;
+  name?: EntityName;
   actions?: CustomActionConfig[],
   exclude_actions?: string[]
   states?: string[] | { min: number, max: number, unit?: string, step?: number };

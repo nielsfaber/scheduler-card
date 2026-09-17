@@ -50,8 +50,10 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
     let serviceName = capitalizeFirstLetter(formatActionDisplay(action, hass, config.customize));
 
     if (domain == 'script') {
+      // computeEntityDisplay already returns the customize name when one is set,
+      // and resolves it when it is a structured name rather than a string.
       if (Object.keys(config.customize || {}).includes(`${domain}.${service}`) && isDefined(config.customize![`${domain}.${service}`].name))
-        return config.customize![`${domain}.${service}`].name!
+        return computeEntityDisplay(`${domain}.${service}`, hass, config.customize)
       else
         return `${capitalizeFirstLetter(computeEntityDisplay(`${domain}.${service}`, hass, config.customize))}: ${serviceName}`;
     }

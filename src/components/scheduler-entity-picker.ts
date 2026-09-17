@@ -241,7 +241,7 @@ export class SchedulerEntityPicker extends LitElement {
 
     return <PickerComboBoxItem>{
       id: entityId,
-      primary: customEntityName || friendlyName(entityId, this.hass.states[entityId]?.attributes),
+      primary: customEntityName || friendlyName(this.hass, entityId),
       secondary: entityId,
       icon: customEntityIcon
     };
