@@ -31,6 +31,11 @@ export const computeEntityName = (
   name: EntityName | undefined
 ): string | undefined => {
   // A string name is the override, exactly as formatEntityName treats it.
+  // A configured empty name has always meant "use Home Assistant's name", but
+  // formatEntityName returns any string verbatim - including the empty one, which
+  // would blank the label. Normalise it to undefined so the formatter composes.
+  if (name === "") name = undefined;
+
   if (typeof name === "string") return name;
   if (!stateObj) return undefined;
   if (hass && supportsEntityNames(hass)) {
