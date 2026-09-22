@@ -94,8 +94,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
   let excludedActions = parseExcludedActions(config.customize || {}, domain);
   if (excludedActions.length) {
     actionList = actionList.filter(e => !excludedActions.some(a => {
-      return caseInsensitiveStringCompare(computeEntity(e.action.service), a) > 0
-        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) > 0
+      return caseInsensitiveStringCompare(computeEntity(e.action.service), a) === 0
+        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) === 0
     }));
   }
 
