@@ -129,14 +129,15 @@ export class DialogSelectAction extends LitElement {
           </ha-input>
         </div>
         
-        <ha-list
+        <ul
+          class="list"
           style=${styleMap({
         minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </ha-list>
+        </ul>
       </ha-dialog>
     `;
   }
@@ -144,7 +145,7 @@ export class DialogSelectAction extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -196,30 +197,27 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(domains).length) {
       return html`
-          <ha-list-item disabled>
+          <li class="no-match">
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </ha-list-item>
+          </li>
         `;
     }
     return html`
       ${(Object.keys(domains)).map((key) => html`
-        <ha-list-item
-          graphic="icon"
-          hasMeta
-          @click=${() => this._handleDomainClick(domains[key].key)}
-        >
-          <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
-          <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
-          <span>${domains[key].name}</span>
-        </ha-list-item>`)
+        <li>
+          <button
+            type="button"
+            class="list-item"
+            @click=${() => this._handleDomainClick(domains[key].key)}
+          >
+            <ha-icon aria-hidden="true" icon="${domains[key].icon}"></ha-icon>
+            <span class="text">${domains[key].name}</span>
+            <ha-icon aria-hidden="true" icon="mdi:chevron-right"></ha-icon>
+          </button>
+        </li>`)
       }
         ${fillers.map(_e => html`
-        <ha-list-item
-          graphic="icon"
-          hasMeta
-          noninteractive
-        >
-        </ha-list-item>
+        <li class="placeholder" aria-hidden="true"></li>
         `)}
       `;
   }
@@ -250,21 +248,25 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(result).length) {
       return html`
-          <ha-list-item disabled>
+          <li class="no-match">
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </ha-list-item>
+          </li>
         `;
     }
     return (Object.keys(result)).map((key) => html`
-        <ha-list-item
-          graphic="icon"
-          @click=${() => this._handleActionClick(result[key])}
-          twoline
-        >
-          <ha-icon slot="graphic" icon="${result[key].icon}"></ha-icon>
-          <span>${result[key].name}</span>
-          <span slot="secondary">${result[key].description}</span>
-        </ha-list-item>
+        <li>
+          <button
+            type="button"
+            class="list-item action"
+            @click=${() => this._handleActionClick(result[key])}
+          >
+            <ha-icon aria-hidden="true" icon="${result[key].icon}"></ha-icon>
+            <span class="text">
+              <span>${result[key].name}</span>
+              <span class="secondary">${result[key].description}</span>
+            </span>
+          </button>
+        </li>
     `);
   }
 
@@ -308,11 +310,66 @@ export class DialogSelectAction extends LitElement {
         display: block;
         margin: 0 16px;
       }
-      ha-list {
+      .list {
+        box-sizing: border-box;
         min-height: 300px;
+        margin: 0;
+        padding: 8px 0;
+        list-style: none;
+        overflow-y: auto;
       }
-      ha-list-item:not([twoline]) {
+      .list-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 56px;
+        padding: 12px 16px;
+        border: 0;
+        background: transparent;
+        color: var(--primary-text-color);
+        font: inherit;
+        text-align: start;
+        cursor: pointer;
+      }
+      .list-item.action {
+        min-height: 72px;
+      }
+      .list-item:hover,
+      .list-item:focus-visible {
+        background: var(--secondary-background-color);
+      }
+      .list-item:focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: -2px;
+      }
+      .list-item ha-icon {
+        flex: 0 0 24px;
+        color: var(--secondary-text-color);
+      }
+      .text {
+        flex: 1;
+        min-width: 0;
+        font-size: 16px;
+        line-height: 20px;
+      }
+      .text > span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .secondary {
+        color: var(--secondary-text-color);
+        font-size: 14px;
+      }
+      .placeholder {
         height: 56px;
+      }
+      .no-match {
+        padding: 16px;
+        color: var(--secondary-text-color);
       }
     `;
   }
