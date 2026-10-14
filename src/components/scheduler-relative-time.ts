@@ -8,12 +8,18 @@ import { selectUnit } from '@formatjs/intl-utils';
 import { computeDayDisplay } from '../data/format/compute_days_display';
 import { convertTo12Hour, useAmPm } from '../lib/use_am_pm';
 import { hassLocalize } from '../localize/hassLocalize';
+import { getDateParts, resolveTimeZone } from '../data/time/time_zone';
 
 const secondsPerMinute = 60;
 const secondsPerHour = 3600;
 const hoursPerDay = 24;
 
-const formatTime = (dateObj: Date, locale: FrontendLocaleData, formatOption?: TimeFormat.am_pm | TimeFormat.twenty_four) => {
+const formatTime = (
+  dateObj: Date,
+  locale: FrontendLocaleData,
+  timeZone?: string,
+  formatOption?: TimeFormat.am_pm | TimeFormat.twenty_four
+) => {
   const supportLocaleString = () => {
     try {
       new Date().toLocaleTimeString('i');
@@ -23,13 +29,14 @@ const formatTime = (dateObj: Date, locale: FrontendLocaleData, formatOption?: Ti
     return false;
   };
 
+  const time = getDateParts(dateObj, timeZone);
   if (formatOption === TimeFormat.am_pm || (!formatOption && locale.time_format === TimeFormat.am_pm)) {
-    const amPm = convertTo12Hour(dateObj.getHours()).am_pm;
-    const hours12 = convertTo12Hour(dateObj.getHours()).hours;
-    return `${hours12}:${String(dateObj.getMinutes()).padStart(2, '0')} ${amPm}`;
+    const amPm = convertTo12Hour(time.hours).am_pm;
+    const hours12 = convertTo12Hour(time.hours).hours;
+    return `${hours12}:${String(time.minutes).padStart(2, '0')} ${amPm}`;
   }
   if (formatOption === TimeFormat.twenty_four || (!formatOption && locale.time_format === TimeFormat.twenty_four)) {
-    return `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+    return `${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}`;
   }
 
   if (supportLocaleString()) {
@@ -37,11 +44,12 @@ const formatTime = (dateObj: Date, locale: FrontendLocaleData, formatOption?: Ti
       hour: 'numeric',
       minute: '2-digit',
       hour12: useAmPm(locale),
+      timeZone,
     });
   }
   return useAmPm(locale)
-    ? formatTime(dateObj, locale, TimeFormat.am_pm)
-    : formatTime(dateObj, locale, TimeFormat.twenty_four);
+    ? formatTime(dateObj, locale, timeZone, TimeFormat.am_pm)
+    : formatTime(dateObj, locale, timeZone, TimeFormat.twenty_four);
 }
 
 @customElement('scheduler-relative-time')
@@ -68,6 +76,7 @@ export class SchedulerRelativeTime extends LitElement {
   relativeTime(dateObj: Date): string {
     if (!this._hass) return '';
     const now = new Date();
+    const timeZone = resolveTimeZone(this._hass);
     let delta = (now.getTime() - dateObj.getTime()) / 1000;
     const tense = delta >= 0 ? 'past' : 'future';
     delta = Math.abs(delta);
@@ -75,14 +84,17 @@ export class SchedulerRelativeTime extends LitElement {
 
     if (tense == 'future' && roundedDelta > 0) {
       if (delta / secondsPerHour >= 6) {
-        const startOfToday = now.setHours(0, 0, 0, 0);
-        const daysFromNow = Math.floor(
-          (dateObj.valueOf() - startOfToday.valueOf()) / (hoursPerDay * secondsPerHour * 1000)
+        //compare calendar days in the display time zone
+        const today = getDateParts(now, timeZone);
+        const date = getDateParts(dateObj, timeZone);
+        const daysFromNow = Math.round(
+          (Date.UTC(date.year, date.month - 1, date.day) - Date.UTC(today.year, today.month - 1, today.day)) /
+            (hoursPerDay * secondsPerHour * 1000)
         );
         let day = '';
         if (daysFromNow > 14) {
           //October 12
-          day = formatDate(dateObj, this._hass.locale);
+          day = formatDate(dateObj, this._hass.locale, timeZone);
         } else if (daysFromNow > 7) {
           //Next Friday
           day = localize('ui.components.date.next_week_day', this._hass, '{weekday}', computeDayDisplay(dateObj, 'long', this._hass));
@@ -94,11 +106,16 @@ export class SchedulerRelativeTime extends LitElement {
           day = computeDayDisplay(dateObj, 'long', this._hass);
         }
 
-        let time = localize('ui.components.time.absolute', this._hass, '{time}', formatTime(dateObj, this._hass.locale));
+        let time = localize(
+          'ui.components.time.absolute',
+          this._hass,
+          '{time}',
+          formatTime(dateObj, this._hass.locale, timeZone)
+        );
 
-        if (dateObj.getHours() == 12 && dateObj.getMinutes() == 0) {
+        if (date.hours == 12 && date.minutes == 0) {
           time = localize('ui.components.time.at_noon', this._hass);
-        } else if (dateObj.getHours() == 0 && dateObj.getMinutes() == 0) {
+        } else if (date.hours == 0 && date.minutes == 0) {
           time = localize('ui.components.time.at_midnight', this._hass);
         }
         return String(day + ' ' + time).trim();
