@@ -1,5 +1,6 @@
 import { computeDomain, computeEntity } from "../../lib/entity";
 import { isDefined } from "../../lib/is_defined";
+import { isTemplate } from "../../lib/is_template";
 import { HomeAssistant } from "../../lib/types";
 import { Action, CustomConfig } from "../../types";
 import { ActionConfig, supportedActions } from "../actions/supported_actions";
@@ -56,7 +57,9 @@ export const actionConfig = (action: Action, customize?: CustomConfig, hass?: Ho
         target: customConfig.target || config.target,
       };
     }).filter(isDefined);
-    if (res.length && !compareActions(config, action)) return res[0];
+    //built-in fields cannot display templates, so a matching custom action takes precedence
+    const hasTemplate = Object.values(action.service_data || {}).some(isTemplate);
+    if (res.length && (hasTemplate || !compareActions(config, action))) return res[0];
   }
 
   return config;

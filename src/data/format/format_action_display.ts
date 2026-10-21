@@ -6,6 +6,7 @@ import { formatSelectorDisplay } from "../selectors/format_selector_display";
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { isDefined } from "../../lib/is_defined";
+import { isTemplate } from "../../lib/is_template";
 import { selectorConfig } from "../selectors/selector_config";
 
 const subStringPattern = /\[([^\]]+)\]/;
@@ -42,6 +43,7 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
 
   if (formatShort) {
     // only for timeslot editor
+    if (actionDisplay && Object.values(action.service_data).some(isTemplate)) return actionDisplay;
     if (Object.keys(attributes).length > 1) {
       const sortAttributes = (fieldA: string, fieldB: string) => {
         const configA = !!config.fields && config.fields[fieldA] || {};
