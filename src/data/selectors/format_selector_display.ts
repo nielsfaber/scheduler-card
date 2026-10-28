@@ -2,6 +2,7 @@ import { BooleanSelector, NumberSelector, SelectOption, Selector, SelectSelector
 import { HomeAssistant } from "../../lib/types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { roundFloat } from "../../lib/round_float";
+import { isTemplate } from "../../lib/is_template";
 
 
 export const formatSelectorDisplay = (value: any, selector: Selector | null, hass: HomeAssistant) => {
@@ -17,6 +18,7 @@ export const formatSelectorDisplay = (value: any, selector: Selector | null, has
 
   if (Object.keys(selector).includes('number') && (selector as NumberSelector).number) {
     const config = (selector as NumberSelector).number;
+    if (isTemplate(value)) return value;
     value = Number(value);
     if (typeof config?.scale_factor === 'number') value = value / config.scale_factor;
     if (typeof config?.step === 'number') value = Math.round(value / config.step) * config.step;
