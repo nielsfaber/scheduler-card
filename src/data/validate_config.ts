@@ -88,7 +88,7 @@ export const validateConfig = (config: any) => {
     errors.push(`'tags' must be a string or list of strings`);
   }
 
-  if (hasKey(config, 'exclude_tags') && !isTypeString(config.tags) && !isTypeListOfStrings(config.tags)) {
+  if (hasKey(config, 'exclude_tags') && !isTypeString(config.exclude_tags) && !isTypeListOfStrings(config.exclude_tags)) {
     errors.push(`'exclude_tags' must be a string or list of strings`);
   }
   if (errors.length) {
