@@ -11,6 +11,7 @@ import { Action, CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
 import { actionConfig } from '../data/actions/action_config';
 import { isDefined } from '../lib/is_defined';
+import '../components/scheduler-list-item';
 
 export type DialogSelectActionParams = {
   cancel: () => void;
@@ -129,14 +130,14 @@ export class DialogSelectAction extends LitElement {
           </ha-input>
         </div>
         
-        <ha-list
+        <div class="list" role="list"
           style=${styleMap({
         minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </ha-list>
+        </div>
       </ha-dialog>
     `;
   }
@@ -144,7 +145,7 @@ export class DialogSelectAction extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -196,14 +197,14 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(domains).length) {
       return html`
-          <ha-list-item disabled>
+          <scheduler-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </ha-list-item>
+          </scheduler-list-item>
         `;
     }
     return html`
       ${(Object.keys(domains)).map((key) => html`
-        <ha-list-item
+        <scheduler-list-item
           graphic="icon"
           hasMeta
           @click=${() => this._handleDomainClick(domains[key].key)}
@@ -211,15 +212,15 @@ export class DialogSelectAction extends LitElement {
           <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
           <ha-icon slot="meta" icon="mdi:chevron-right"></ha-icon>
           <span>${domains[key].name}</span>
-        </ha-list-item>`)
+        </scheduler-list-item>`)
       }
         ${fillers.map(_e => html`
-        <ha-list-item
+        <scheduler-list-item
           graphic="icon"
           hasMeta
           noninteractive
         >
-        </ha-list-item>
+        </scheduler-list-item>
         `)}
       `;
   }
@@ -250,13 +251,13 @@ export class DialogSelectAction extends LitElement {
 
     if (!Object.keys(result).length) {
       return html`
-          <ha-list-item disabled>
+          <scheduler-list-item disabled>
             ${hassLocalize('ui.components.combo-box.no_match', this.hass)}
-          </ha-list-item>
+          </scheduler-list-item>
         `;
     }
     return (Object.keys(result)).map((key) => html`
-        <ha-list-item
+        <scheduler-list-item
           graphic="icon"
           @click=${() => this._handleActionClick(result[key])}
           twoline
@@ -264,7 +265,7 @@ export class DialogSelectAction extends LitElement {
           <ha-icon slot="graphic" icon="${result[key].icon}"></ha-icon>
           <span>${result[key].name}</span>
           <span slot="secondary">${result[key].description}</span>
-        </ha-list-item>
+        </scheduler-list-item>
     `);
   }
 
@@ -308,10 +309,12 @@ export class DialogSelectAction extends LitElement {
         display: block;
         margin: 0 16px;
       }
-      ha-list {
+      .list {
+        box-sizing: border-box;
         min-height: 300px;
+        padding: 8px 0px;
       }
-      ha-list-item:not([twoline]) {
+      scheduler-list-item:not([twoline]) {
         height: 56px;
       }
     `;

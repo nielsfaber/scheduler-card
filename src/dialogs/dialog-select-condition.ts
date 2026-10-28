@@ -9,6 +9,7 @@ import { styleMap } from 'lit/directives/style-map';
 import { CardConfig } from '../types';
 import { hassLocalize } from '../localize/hassLocalize';
 import { isDefined } from '../lib/is_defined';
+import '../components/scheduler-list-item';
 
 export type DialogSelectConditionParams = {
   cancel: () => void;
@@ -111,14 +112,14 @@ export class DialogSelectCondition extends LitElement {
           </ha-input>
         </div>
 
-        <ha-list
+        <div class="list" role="list"
           style=${styleMap({
         minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </ha-list>
+        </div>
       </ha-dialog>
     `;
   }
@@ -126,7 +127,7 @@ export class DialogSelectCondition extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -165,13 +166,13 @@ export class DialogSelectCondition extends LitElement {
     }
 
     return (Object.keys(domains)).map((key) => html`
-        <ha-list-item
+        <scheduler-list-item
           graphic="icon"
           @click=${() => this._handleDomainClick(domains[key].key)}
         >
           <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
           <span>${domains[key].name}</span>
-        </ha-list-item>
+        </scheduler-list-item>
     `);
   }
 
@@ -202,10 +203,12 @@ export class DialogSelectCondition extends LitElement {
         display: block;
         margin: 0 16px;
       }
-      ha-list {
+      .list {
+        box-sizing: border-box;
         min-height: 300px;
+        padding: 8px 0px;
       }
-      ha-list-item:not([twoline]) {
+      scheduler-list-item:not([twoline]) {
         height: 56px;
       }
     `;
