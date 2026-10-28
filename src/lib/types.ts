@@ -56,10 +56,16 @@ export enum TimeFormat {
   twenty_four = "24",
 }
 
+export enum TimeZone {
+  local = "local",
+  server = "server",
+}
+
 export interface FrontendLocaleData {
   language: string;
   number_format: NumberFormat;
   time_format: TimeFormat;
+  time_zone?: TimeZone;
 }
 
 export interface Resources {

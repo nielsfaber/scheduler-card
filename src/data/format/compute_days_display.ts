@@ -1,6 +1,7 @@
 import { HomeAssistant } from "../../lib/types";
 import { localize } from "../../localize/localize";
 import { TWeekday } from "../../types";
+import { resolveTimeZone } from "../time/time_zone";
 
 const supportLocaleString = () => {
   try {
@@ -22,7 +23,7 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
     weekday = TWeekday.Friday;
 
     if (supportLocaleString()) {
-      return input.toLocaleDateString(hass.locale.language, { weekday: formatType });
+      return input.toLocaleDateString(hass.locale.language, { weekday: formatType, timeZone: resolveTimeZone(hass) });
     }
     else {
       let day = input.getDay();
