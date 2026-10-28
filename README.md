@@ -385,10 +385,35 @@ With the `customize` configuration you can specify configuration for specific HA
 | --------------- | ----------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | entity          | key         | **Required**          | Entity id (or filter).<br> Filter works the same as `include` so you can also use it for multiple entities.                                                                                                       |
 | actions         | list        | none                  | See [actions](#actions)                                                                                                                                                                                           |
-| name            | string      | (take from HA config) | Displayed name for entity                                                                                                                                                                                         |
+| name            | string or list | (take from HA config) | Displayed name for entity. Accepts a [structured name](#structured-names) on Home Assistant 2026.4 and later.                                                                                                                                                                                         |
 | icon            | string      | (take from HA config) | Displayed icon for entity                                                                                                                                                                                         |
 | states          | list or map | none                  | Possible states of this entities, for using it in a condition.<br> See [conditions](#conditions) for more info.                                                                                                   |
 | exclude_actions | list        | none                  | Hide actions from the card.<br>Enter a list with names of actions to hide as they displayed in the card (including translation).<br>E.g. '*turn on at 40%*' would hide the created action from the example below. |
+#### Structured names
+
+*Requires Home Assistant 2026.4 or later. On earlier versions a structured `name` falls back to the entity'"'"'s friendly name.*
+
+Home Assistant composes an entity'"'"'s display name out of its registry context
+(entity, device, area, floor) rather than one `friendly_name` string. From 2026.4
+the card uses that composed name by default, so entity names in the schedule list
+match what the built-in cards show.
+
+To pick the parts yourself, set `name` to a list:
+
+```yaml
+customize:
+  climate.living_room_thermostat:
+    name:
+      - type: area
+      - type: entity
+```
+
+Available part types are `entity`, `device`, `area`, `floor`, and
+`text` (a literal, written as `{type: text, text: Thermostat}`). Parts that resolve
+to nothing are dropped. A plain string `name` keeps working exactly as before.
+
+See the [Home Assistant developer documentation](https://developers.home-assistant.io/docs/frontend/data#hassformatentitynamestateobj-name-options) for details.
+
 #### Actions
 An action defines **what** needs to be done when a schedule timer expires.
 
