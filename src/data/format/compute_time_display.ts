@@ -14,10 +14,9 @@ const formatRelativeTimeString = (input: Time, hass: HomeAssistant) => {
       : hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.sunset', hass);
   if (hass.language != 'de') eventString = eventString.toLowerCase();
 
-  // Return the bare event name: the caller wraps it in 'at {time}' / 'from {startTime} to {endTime}',
-  // so adding 'at' here rendered "At at sunset" and "From at sunrise to ...".
   const offset = input.hours * 3600 + input.minutes * 60;
-  if (Math.abs(offset) <= 60) return eventString;
+  if (Math.abs(offset) <= 60)
+    return localize('ui.components.time.at_sun_event', hass, '{sunEvent}', eventString);
 
   let signString = offset < 0
     ? hassLocalize('ui.panel.config.automation.editor.conditions.type.sun.before', hass)
@@ -49,8 +48,8 @@ export const computeTimeDisplay = (startTime: string, stopTime: string | undefin
   else {
     const ts_start = parseTimeString(startTime);
     const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
+      ? localize('ui.components.time.absolute', hass, '{time}', timeToString(ts_start, { am_pm: amPmFormat }))
       : formatRelativeTimeString(ts_start, hass);
-    return capitalizeFirstLetter(localize('ui.components.time.absolute', hass, '{time}', startTimeString));
+    return capitalizeFirstLetter(startTimeString);
   }
 }
