@@ -13,6 +13,7 @@ import { hassLocalize } from '../localize/hassLocalize';
 import { CardConfig, CustomConfig } from '../types';
 import { fetchItems } from '../data/store/fetch_items';
 import { computeEntityDisplay } from '../data/format/compute_entity_display';
+import '../components/scheduler-list-item';
 
 export type DialogSelectEntitiesParams = {
   cancel: () => void;
@@ -138,7 +139,7 @@ export class DialogSelectEntities extends LitElement {
   async willUpdate() {
     if (!this._width || !this._height) {
       const boundingRect =
-        this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+        this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
       this._width = boundingRect?.width;
       this._height = boundingRect?.height;
     }
@@ -190,14 +191,14 @@ export class DialogSelectEntities extends LitElement {
           </ha-input>
         </div>
         
-        <ha-list
+        <div class="list" role="list"
           style=${styleMap({
         minWidth: `${this._width}px`,
         height: this._height ? `${Math.min(468, this._height)}px` : "auto",
       })}
         >
           ${this._renderOptions()}
-        </ha-list>
+        </div>
       </ha-dialog>
     `;
   }
@@ -205,7 +206,7 @@ export class DialogSelectEntities extends LitElement {
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
     const boundingRect =
-      this.shadowRoot!.querySelector("ha-list")?.getBoundingClientRect();
+      this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -226,7 +227,7 @@ export class DialogSelectEntities extends LitElement {
 
   _toggleSelectEntity(ev: Event) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'SCHEDULER-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const checkbox = listItem.querySelector("ha-checkbox") as HTMLInputElement;
     const key = listItem.getAttribute("key") as string;
     if (this._params!.entities.includes(key)) {
@@ -245,7 +246,7 @@ export class DialogSelectEntities extends LitElement {
 
   _toggleSelectDomain(ev: Event, isSelected: boolean) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'SCHEDULER-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const key = listItem.getAttribute("key") as string;
     const entitiesInDomain = this.options?.find(e => e.key == key)!.entities.map(e => e.key);
     if (isSelected) {
@@ -265,10 +266,10 @@ export class DialogSelectEntities extends LitElement {
   }
 
   closeGroupByKey(key: string) {
-    const menu = this.shadowRoot!.querySelector("ha-list") as HTMLElement;
+    const menu = this.shadowRoot!.querySelector(".list") as HTMLElement;
     menu.childNodes.forEach(e => {
       if (e.nodeType != Node.ELEMENT_NODE) return;
-      if ((e as HTMLElement).tagName != 'HA-LIST-ITEM') return;
+      if ((e as HTMLElement).tagName != 'SCHEDULER-LIST-ITEM') return;
       if ((e as HTMLElement).getAttribute("key") == key) {
         const listItem = e as HTMLElement;
         const container = listItem.nextElementSibling as HTMLElement;
@@ -282,7 +283,7 @@ export class DialogSelectEntities extends LitElement {
 
   async _toggleExpandGroup(ev: Event) {
     let listItem = ev.target as HTMLElement;
-    while (listItem.tagName != 'HA-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
+    while (listItem.tagName != 'SCHEDULER-LIST-ITEM') listItem = listItem.parentElement as HTMLElement;
     const button = listItem.querySelector("ha-icon-button") as HTMLElement;
     const key = listItem.getAttribute("key") as string;
     if (!this.expandedGroups.includes(key)) {
@@ -329,9 +330,9 @@ export class DialogSelectEntities extends LitElement {
 
     if (!filteredOptions.length) {
       return html`
-        <ha-list-item disabled>
+        <scheduler-list-item disabled>
           ${hassLocalize('ui.components.entity.entity-picker.no_match', this.hass)}
-        </ha-list-item>
+        </scheduler-list-item>
       `;
     }
 
@@ -348,7 +349,7 @@ export class DialogSelectEntities extends LitElement {
       const isSelectedDomain = this._params?.domains.includes(domain) || filteredOptions[key].entities.every(e => this._params?.entities.includes(e.key));
 
       return html`
-        <ha-list-item
+        <scheduler-list-item
           graphic="icon"
           twoline
           hasMeta
@@ -371,12 +372,12 @@ export class DialogSelectEntities extends LitElement {
           </div>
           <span>${filteredOptions[key].name}</span>
           <span slot="secondary">${localize('ui.panel.card_editor.fields.entities.included_number', this.hass, ['{number}', '{total}'], [numIncludedEntities, entities.length])}</span>
-        </ha-list-item>
+        </scheduler-list-item>
         ${this.expandedGroups.includes(domain) || filterApplied ? html`
         <div class="group ${filterApplied ? 'open' : ''}">
           <li role="divider"></li>
         ${entities.map(e => html`
-          <ha-list-item
+          <scheduler-list-item
             graphic="icon"
             twoline
             hasMeta
@@ -395,7 +396,7 @@ export class DialogSelectEntities extends LitElement {
 
             <span>${e.name}</span>
             <span slot="secondary">${e.key}</span>
-          </ha-list-item>
+          </scheduler-list-item>
         `)}
           <li role="divider"></li>
         </div>
@@ -414,24 +415,23 @@ export class DialogSelectEntities extends LitElement {
         display: block;
         margin: 0 16px;
       }
-      ha-list {
+      .list {
+        box-sizing: border-box;
         min-height: 300px;
+        padding: 8px 0px;
       }
-      ha-list-item {
-        --mdc-ripple-hover-opacity: 0.04;
-        --mdc-ripple-focus-opacity: 0.04;
-        --mdc-ripple-press-opacity: 0.12;
-        --mdc-list-item-meta-size: 180px;
+      scheduler-list-item {
+        --scheduler-list-item-meta-size: 180px;
       }
-      ha-list-item.nested {
-        --mdc-list-item-meta-size: 48px;
-        --mdc-list-side-padding: 32px;
+      scheduler-list-item.nested {
+        --scheduler-list-item-meta-size: 48px;
+        --scheduler-list-side-padding: 32px;
       }
-      ha-list-item.nested ha-icon {
+      scheduler-list-item.nested ha-icon {
         display: flex;
         justify-content: flex-end;
       }
-      ha-list-item ha-checkbox, ha-list-item ha-icon-button, ha-list-item ha-button {
+      scheduler-list-item ha-checkbox, scheduler-list-item ha-icon-button, scheduler-list-item ha-button {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -445,10 +445,10 @@ export class DialogSelectEntities extends LitElement {
       div.group.open {
         height: auto;
       }
-      ha-list-item .chevron {
+      scheduler-list-item .chevron {
         transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
       }
-      ha-list-item .chevron.expanded {
+      scheduler-list-item .chevron.expanded {
         transform: rotate(180deg);
       }
       div.group li {
