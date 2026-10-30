@@ -48,8 +48,8 @@ export const computeTimeDisplay = (startTime: string, stopTime: string | undefin
   else {
     const ts_start = parseTimeString(startTime);
     const startTimeString = ts_start.mode == TimeMode.Fixed
-      ? timeToString(ts_start, { am_pm: amPmFormat })
+      ? localize('ui.components.time.absolute', hass, '{time}', timeToString(ts_start, { am_pm: amPmFormat }))
       : formatRelativeTimeString(ts_start, hass);
-    return capitalizeFirstLetter(localize('ui.components.time.absolute', hass, '{time}', startTimeString));
+    return capitalizeFirstLetter(startTimeString);
   }
 }
