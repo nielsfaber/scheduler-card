@@ -50,7 +50,7 @@ const formatTime = (
   return useAmPm(locale)
     ? formatTime(dateObj, locale, timeZone, TimeFormat.am_pm)
     : formatTime(dateObj, locale, timeZone, TimeFormat.twenty_four);
-}
+};
 
 @customElement('scheduler-relative-time')
 export class SchedulerRelativeTime extends LitElement {
@@ -97,7 +97,12 @@ export class SchedulerRelativeTime extends LitElement {
           day = formatDate(dateObj, this._hass.locale, timeZone);
         } else if (daysFromNow > 7) {
           //Next Friday
-          day = localize('ui.components.date.next_week_day', this._hass, '{weekday}', computeDayDisplay(dateObj, 'long', this._hass));
+          day = localize(
+            'ui.components.date.next_week_day',
+            this._hass,
+            '{weekday}',
+            computeDayDisplay(dateObj, 'long', this._hass)
+          );
         } else if (daysFromNow == 1) {
           //Tomorrow
           day = localize('ui.components.date.tomorrow', this._hass);
@@ -124,10 +129,7 @@ export class SchedulerRelativeTime extends LitElement {
         const mins = Math.round(delta / secondsPerMinute - 60);
         const join = hassLocalize('ui.common.and', this._hass);
 
-        const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(
-          1,
-          'hour'
-        );
+        const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(1, 'hour');
         const text2 = Intl.NumberFormat(this._hass.locale.language, {
           style: 'unit',
           unit: 'minute',
@@ -140,10 +142,7 @@ export class SchedulerRelativeTime extends LitElement {
         const seconds = Math.round(delta - 60);
         const join = hassLocalize('ui.common.and', this._hass);
 
-        const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(
-          1,
-          'minute'
-        );
+        const text1 = new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(1, 'minute');
         const text2 = Intl.NumberFormat(this._hass.locale.language, {
           style: 'unit',
           unit: 'second',
@@ -156,10 +155,7 @@ export class SchedulerRelativeTime extends LitElement {
 
     // in 5 minutes/hours/seconds (or now)
     const diff = selectUnit(dateObj);
-    return new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(
-      diff.value,
-      diff.unit
-    );
+    return new Intl.RelativeTimeFormat(this._hass.language, { numeric: 'auto' }).format(diff.value, diff.unit);
   }
 
   render() {
@@ -171,8 +167,6 @@ export class SchedulerRelativeTime extends LitElement {
     if (Math.abs(secondsRemaining) <= 150) updateInterval = Math.max(Math.ceil(Math.abs(secondsRemaining)) / 10, 2);
     if (this.updateInterval != updateInterval) this.startRefreshTimer(updateInterval);
 
-    return html`
-      ${capitalizeFirstLetter(this.relativeTime(this.datetime))}
-    `;
+    return html` ${capitalizeFirstLetter(this.relativeTime(this.datetime))} `;
   }
 }

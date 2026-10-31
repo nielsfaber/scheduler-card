@@ -1,35 +1,36 @@
-import { computeDomain, computeEntity } from "../../lib/entity";
-import { isDefined } from "../../lib/is_defined";
-import { HomeAssistant } from "../../lib/types";
-import { hassLocalize } from "../../localize/hassLocalize";
-import { Action, CustomConfig } from "../../types";
-import { compareActions } from "../actions/compare_actions";
-import { parseCustomActions } from "../actions/parse_custom_actions";
-
-
-
+import { computeDomain, computeEntity } from '../../lib/entity';
+import { isDefined } from '../../lib/is_defined';
+import { HomeAssistant } from '../../lib/types';
+import { hassLocalize } from '../../localize/hassLocalize';
+import { Action, CustomConfig } from '../../types';
+import { compareActions } from '../actions/compare_actions';
+import { parseCustomActions } from '../actions/parse_custom_actions';
 
 export const formatFieldDisplay = (action: Action, field: string, hass: HomeAssistant, customize?: CustomConfig) => {
   const domain = computeDomain(action.service);
   const domainService = computeEntity(action.service);
 
   let name = hassLocalize(`component.${domain}.services.${domainService}.fields.${field}.name`, hass, false);
-  if (!name &&
+  if (
+    !name &&
     hass.services[domain] &&
     hass.services[domain][domainService] &&
     hass.services[domain][domainService].fields &&
     hass.services[domain][domainService].fields[field]
-  ) name = String(hass.services[domain][domainService].fields[field].name || '');
+  )
+    name = String(hass.services[domain][domainService].fields[field].name || '');
 
   const entityIds = ['script', 'notify'].includes(domain) ? [action.service] : [action.target?.entity_id || []].flat();
   const filterKey = entityIds.length ? entityIds[0] : action.service;
   let actionConfig = parseCustomActions(customize || {}, filterKey);
   if (actionConfig.length) {
-    let res = actionConfig.map(customConfig => {
-      if (customConfig.service != action.service || !Object.keys(customConfig.variables || {}).includes(field)) return null;
-      let variableConfig = (customConfig.variables || {})[field];
-      return variableConfig.name;
-    })
+    let res = actionConfig
+      .map((customConfig) => {
+        if (customConfig.service != action.service || !Object.keys(customConfig.variables || {}).includes(field))
+          return null;
+        let variableConfig = (customConfig.variables || {})[field];
+        return variableConfig.name;
+      })
       .filter(isDefined);
     if (res.length) return res[0];
   }

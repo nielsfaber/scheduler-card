@@ -1,9 +1,4 @@
-
-
-export const caseInsensitiveStringCompare = (
-  a: string,
-  b: string
-) => {
+export const caseInsensitiveStringCompare = (a: string, b: string) => {
   const stringCompare = (a: string, b: string) => {
     if (a < b) {
       return -1;

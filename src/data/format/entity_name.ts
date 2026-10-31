@@ -1,6 +1,6 @@
-import { HassEntity } from "home-assistant-js-websocket";
-import { HomeAssistant } from "../../lib/types";
-import { EntityName } from "../../types";
+import { HassEntity } from 'home-assistant-js-websocket';
+import { HomeAssistant } from '../../lib/types';
+import { EntityName } from '../../types';
 
 /**
  * hass.formatEntityName only accepts a card's `name` option (a user string, a
@@ -16,7 +16,7 @@ const supportsEntityNames = (hass: HomeAssistant | undefined): boolean => {
   if (!hass || typeof (hass as { formatEntityName?: unknown }).formatEntityName !== 'function') {
     return false;
   }
-  const [major, minor] = ((hass as any)?.config?.version ?? "").split(".", 2);
+  const [major, minor] = ((hass as any)?.config?.version ?? '').split('.', 2);
   return Number(major) > 2026 || (Number(major) === 2026 && Number(minor) >= 4);
 };
 
@@ -34,9 +34,9 @@ export const computeEntityName = (
   // A configured empty name has always meant "use Home Assistant's name", but
   // formatEntityName returns any string verbatim - including the empty one, which
   // would blank the label. Normalise it to undefined so the formatter composes.
-  if (name === "") name = undefined;
+  if (name === '') name = undefined;
 
-  if (typeof name === "string") return name;
+  if (typeof name === 'string') return name;
   if (!stateObj) return undefined;
   if (hass && supportsEntityNames(hass)) {
     return (hass as any).formatEntityName(stateObj, name) || undefined;

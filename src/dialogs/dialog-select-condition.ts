@@ -15,7 +15,7 @@ export type DialogSelectConditionParams = {
   cancel: () => void;
   confirm: (res: string) => void;
   domain?: string;
-  cardConfig: CardConfig
+  cardConfig: CardConfig;
 };
 
 @customElement('dialog-select-condition')
@@ -24,8 +24,8 @@ export class DialogSelectCondition extends LitElement {
 
   @state() private _params?: DialogSelectConditionParams;
 
-  @state() private _search = "";
-  @state() private _filter = "";
+  @state() private _search = '';
+  @state() private _filter = '';
   timer: number = 0;
 
   @state() private _width?: number;
@@ -47,17 +47,13 @@ export class DialogSelectCondition extends LitElement {
   }
 
   async willUpdate() {
-    (this.hass as any).loadBackendTranslation("title");
+    (this.hass as any).loadBackendTranslation('title');
   }
 
   render() {
     if (!this._params) return html``;
     return html`
-      <ha-dialog
-        open
-        @closed=${this.closeDialog}
-        @wa-after-show=${this._opened}
-      >
+      <ha-dialog open @closed=${this.closeDialog} @wa-after-show=${this._opened}>
         <div slot="header">
           <ha-dialog-header>
             <ha-icon-button
@@ -66,57 +62,64 @@ export class DialogSelectCondition extends LitElement {
               .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
               .path=${mdiClose}
             ></ha-icon-button>
-            <div slot="title">
-              ${localize('ui.panel.options.conditions.add_condition', this.hass)}
-            </div>
-            ${!isDefined(this._params.domain) ? html`
-            <ha-dropdown
-              placement="bottom-end"
-              slot="actionItems"
-              @wa-after-hide=${(ev: Event) => { ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur() }}
-            >
-              <ha-icon-button slot="trigger" .label=${this.hass.localize('ui.common.menu')} .path=${mdiDotsVertical}>
-              </ha-icon-button>
-              <ha-dropdown-item @click=${this._toggleShowAll}>
-                <ha-icon
-                  icon="mdi:check"
-                  style="${this.showAll ? '' : 'visibility: hidden'}"
-                ></ha-icon>
-                ${localize('ui.dialog.action_picker.show_all', this.hass)}
-              </ha-dropdown-item>
-            </ha-dropdown>`
-        : ''}
+            <div slot="title">${localize('ui.panel.options.conditions.add_condition', this.hass)}</div>
+            ${
+              !isDefined(this._params.domain)
+                ? html` <ha-dropdown
+                    placement="bottom-end"
+                    slot="actionItems"
+                    @wa-after-hide=${(ev: Event) => {
+                      ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur();
+                    }}
+                  >
+                    <ha-icon-button
+                      slot="trigger"
+                      .label=${this.hass.localize('ui.common.menu')}
+                      .path=${mdiDotsVertical}
+                    >
+                    </ha-icon-button>
+                    <ha-dropdown-item @click=${this._toggleShowAll}>
+                      <ha-icon icon="mdi:check" style="${this.showAll ? '' : 'visibility: hidden'}"></ha-icon>
+                      ${localize('ui.dialog.action_picker.show_all', this.hass)}
+                    </ha-dropdown-item>
+                  </ha-dropdown>`
+                : ''
+            }
           </ha-dialog-header>
 
           <ha-input
             dialogInitialFocus
-            .placeholder=${hassLocalize("ui.common.search", this.hass)}
-            aria-label=${hassLocalize("ui.common.search", this.hass)}
+            .placeholder=${hassLocalize('ui.common.search', this.hass)}
+            aria-label=${hassLocalize('ui.common.search', this.hass)}
             @input=${this._handleSearchChange}
             .value=${this._search}
             icon
             .iconTrailing=${this._search}
           >
             <div class="trailing" slot="trailingIcon">
-              ${this._search &&
-      html`
-                <ha-icon-button
-                  @click=${this._clearSearch}
-                  .label=${hassLocalize("ui.common.clear", this.hass)}
-                  .path=${mdiClose}
-                  class="clear-button"
-                ></ha-icon-button>
-              `}
+              ${
+                this._search &&
+                html`
+                  <ha-icon-button
+                    @click=${this._clearSearch}
+                    .label=${hassLocalize('ui.common.clear', this.hass)}
+                    .path=${mdiClose}
+                    class="clear-button"
+                  ></ha-icon-button>
+                `
+              }
               <slot name="suffix"></slot>
             </div>
           </ha-input>
         </div>
 
-        <div class="list" role="list"
+        <div
+          class="list"
+          role="list"
           style=${styleMap({
-        minWidth: `${this._width}px`,
-        height: this._height ? `${Math.min(468, this._height)}px` : "auto",
-      })}
+            minWidth: `${this._width}px`,
+            height: this._height ? `${Math.min(468, this._height)}px` : 'auto',
+          })}
         >
           ${this._renderOptions()}
         </div>
@@ -126,8 +129,7 @@ export class DialogSelectCondition extends LitElement {
 
   protected _opened(): void {
     // Store the width and height so that when we search, box doesn't jump
-    const boundingRect =
-      this.shadowRoot!.querySelector(".list")?.getBoundingClientRect();
+    const boundingRect = this.shadowRoot!.querySelector('.list')?.getBoundingClientRect();
     this._width = boundingRect?.width;
     this._height = boundingRect?.height;
   }
@@ -142,8 +144,8 @@ export class DialogSelectCondition extends LitElement {
   }
 
   _clearSearch() {
-    this._search = "";
-    this._filter = "";
+    this._search = '';
+    this._filter = '';
   }
 
   _renderOptions() {
@@ -156,24 +158,23 @@ export class DialogSelectCondition extends LitElement {
     domains.sort((a, b) => sortByName(a.name, b.name));
 
     if (this._filter) {
-      domains = domains.filter(e => {
-        const tokens = this._filter.toLowerCase().trim().split(" ");
+      domains = domains.filter((e) => {
+        const tokens = this._filter.toLowerCase().trim().split(' ');
         return (
-          tokens.every(token => e.name.toLowerCase().includes(token)) ||
-          tokens.every(token => e.key.toLowerCase().includes(token))
-        )
-      })
+          tokens.every((token) => e.name.toLowerCase().includes(token)) ||
+          tokens.every((token) => e.key.toLowerCase().includes(token))
+        );
+      });
     }
 
-    return (Object.keys(domains)).map((key) => html`
-        <scheduler-list-item
-          graphic="icon"
-          @click=${() => this._handleDomainClick(domains[key].key)}
-        >
+    return Object.keys(domains).map(
+      (key) => html`
+        <scheduler-list-item graphic="icon" @click=${() => this._handleDomainClick(domains[key].key)}>
           <ha-icon slot="graphic" icon="${domains[key].icon}"></ha-icon>
           <span>${domains[key].name}</span>
         </scheduler-list-item>
-    `);
+      `
+    );
   }
 
   _handleDomainClick(key: string) {
@@ -183,7 +184,6 @@ export class DialogSelectCondition extends LitElement {
     this._params = undefined;
     this._clearSearch();
   }
-
 
   _toggleShowAll() {
     if (this.showAll) {

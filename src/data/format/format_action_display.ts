@@ -1,20 +1,19 @@
-import { Action, CustomConfig } from "../../types";
-import { computeDomain, computeEntity } from "../../lib/entity";
-import { localize } from "../../localize/localize";
-import { actionConfig } from "../actions/action_config";
-import { formatSelectorDisplay } from "../selectors/format_selector_display";
-import { HomeAssistant } from "../../lib/types";
-import { hassLocalize } from "../../localize/hassLocalize";
-import { isDefined } from "../../lib/is_defined";
-import { isTemplate } from "../../lib/is_template";
-import { selectorConfig } from "../selectors/selector_config";
+import { Action, CustomConfig } from '../../types';
+import { computeDomain, computeEntity } from '../../lib/entity';
+import { localize } from '../../localize/localize';
+import { actionConfig } from '../actions/action_config';
+import { formatSelectorDisplay } from '../selectors/format_selector_display';
+import { HomeAssistant } from '../../lib/types';
+import { hassLocalize } from '../../localize/hassLocalize';
+import { isDefined } from '../../lib/is_defined';
+import { isTemplate } from '../../lib/is_template';
+import { selectorConfig } from '../selectors/selector_config';
 
 const subStringPattern = /\[([^\]]+)\]/;
 const wildCardPattern = /\{([^\}]+)\}/;
 const MAX_RECURSION_DEPTH = 100;
 
 const translationKeyOverlap = (key: string, action: Action): number => {
-
   const serviceName = computeEntity(action.service);
   if (key.indexOf(serviceName) != -1) key = key.substring(key.indexOf(serviceName) + serviceName.length + 1);
 
@@ -26,7 +25,13 @@ const translationKeyOverlap = (key: string, action: Action): number => {
   }, 0);
 };
 
-export const formatActionDisplay = (action: Action, hass: HomeAssistant, customize?: CustomConfig, formatShort = false, eraseHtmlTags = false) => {
+export const formatActionDisplay = (
+  action: Action,
+  hass: HomeAssistant,
+  customize?: CustomConfig,
+  formatShort = false,
+  eraseHtmlTags = false
+) => {
   const config = actionConfig(action, customize, hass);
 
   let actionDisplay = config.name || '';
@@ -46,24 +51,21 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     if (actionDisplay && Object.values(action.service_data).some(isTemplate)) return actionDisplay;
     if (Object.keys(attributes).length > 1) {
       const sortAttributes = (fieldA: string, fieldB: string) => {
-        const configA = !!config.fields && config.fields[fieldA] || {};
-        const configB = !!config.fields && config.fields[fieldB] || {};
+        const configA = (!!config.fields && config.fields[fieldA]) || {};
+        const configB = (!!config.fields && config.fields[fieldB]) || {};
         if (configA?.optional && !configB.optional) return 1;
         if (configB?.optional && !configA.optional) return -1;
         return fieldA < fieldB ? -1 : fieldA > fieldB ? 1 : 0;
-      }
-      attributes = Object.fromEntries(
-        Object.entries(attributes).sort(([a,], [b,]) => sortAttributes(a, b))
-      )
+      };
+      attributes = Object.fromEntries(Object.entries(attributes).sort(([a], [b]) => sortAttributes(a, b)));
       return Object.values(attributes).join(', ');
-    }
-    else if (Object.keys(attributes).length) {
+    } else if (Object.keys(attributes).length) {
       return Object.values(attributes)[0];
     }
   }
 
   if (config?.translation_key && !actionDisplay) {
-    let translationKey: string = "";
+    let translationKey: string = '';
     if (Array.isArray(config.translation_key)) {
       let translations = config.translation_key;
       translations.sort((a, b) => {
@@ -75,13 +77,18 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
       translationKey = translations[0];
     } else translationKey = config.translation_key;
 
-    actionDisplay = localize(translationKey, hass, Object.keys(attributes).map(e => `{${e}}`), Object.values(attributes));
-  }
-  else {
+    actionDisplay = localize(
+      translationKey,
+      hass,
+      Object.keys(attributes).map((e) => `{${e}}`),
+      Object.values(attributes)
+    );
+  } else {
     const domain = computeDomain(action.service);
     const service = computeEntity(action.service);
     if (!actionDisplay) actionDisplay = hassLocalize(`component.${domain}.services.${service}.name`, hass, false);
-    if (!actionDisplay && Object.keys(hass.services[domain] || {}).includes(service)) actionDisplay = hass.services[domain][service].name || '';
+    if (!actionDisplay && Object.keys(hass.services[domain] || {}).includes(service))
+      actionDisplay = hass.services[domain][service].name || '';
     if (!actionDisplay) actionDisplay = service.replace(/_/g, ' ');
   }
 
@@ -90,10 +97,16 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
   while ((matchedSubString = subStringPattern.exec(actionDisplay)) && it < MAX_RECURSION_DEPTH) {
     it++;
     let matchedWildCard = matchedSubString[1].match(wildCardPattern);
-    if (matchedWildCard && Object.keys(action.service_data || {}).includes(matchedWildCard[1]) && Object.keys(attributes).includes(matchedWildCard[1])) {
-      actionDisplay = actionDisplay.replace(matchedSubString[0], matchedSubString[1].replace(matchedWildCard[0], attributes[matchedWildCard[1]]));
-    }
-    else {
+    if (
+      matchedWildCard &&
+      Object.keys(action.service_data || {}).includes(matchedWildCard[1]) &&
+      Object.keys(attributes).includes(matchedWildCard[1])
+    ) {
+      actionDisplay = actionDisplay.replace(
+        matchedSubString[0],
+        matchedSubString[1].replace(matchedWildCard[0], attributes[matchedWildCard[1]])
+      );
+    } else {
       actionDisplay = actionDisplay.replace(matchedSubString[0], '');
     }
   }
@@ -104,8 +117,7 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     it++;
     if (Object.keys(attributes).includes(matchedWildCard[1])) {
       actionDisplay = actionDisplay.replace(matchedWildCard[0], attributes[matchedWildCard[1]]);
-    }
-    else {
+    } else {
       actionDisplay = actionDisplay.replace(matchedWildCard[0], '');
     }
   }
@@ -115,4 +127,4 @@ export const formatActionDisplay = (action: Action, hass: HomeAssistant, customi
     actionDisplay = htmlContent.body.textContent || '';
   }
   return actionDisplay;
-}
+};

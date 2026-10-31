@@ -1,12 +1,10 @@
-import { css } from "lit";
-
+import { css } from 'lit';
 
 export const EditorDialogStyles = css`
   ha-dialog {
     --justify-action-buttons: space-between;
-    --dialog-container-padding: var(--safe-area-inset-top, 0)
-      var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
-      var(--safe-area-inset-left, 0);
+    --dialog-container-padding: var(--safe-area-inset-top, 0) var(--safe-area-inset-right, 0)
+      var(--safe-area-inset-bottom, 0) var(--safe-area-inset-left, 0);
     --dialog-surface-padding: 0px;
     --dialog-content-padding: 0px;
   }
@@ -14,9 +12,8 @@ export const EditorDialogStyles = css`
   @media all and (max-width: 450px), all and (max-height: 500px) {
     ha-dialog {
       --dialog-container-padding: 0px;
-      --dialog-surface-padding: var(--safe-area-inset-top, 0)
-        var(--safe-area-inset-right, 0) var(--safe-area-inset-bottom, 0)
-        var(--safe-area-inset-left, 0);
+      --dialog-surface-padding: var(--safe-area-inset-top, 0) var(--safe-area-inset-right, 0)
+        var(--safe-area-inset-bottom, 0) var(--safe-area-inset-left, 0);
       --vertical-align-dialog: flex-end;
       --ha-dialog-border-radius: var(--ha-border-radius-square);
     }
@@ -84,8 +81,4 @@ export const styles = css`
     align-content: center;
     flex-wrap: wrap;
   }
-
-
 `;
-
-

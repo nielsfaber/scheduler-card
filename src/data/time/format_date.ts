@@ -1,8 +1,19 @@
 import { FrontendLocaleData } from '../../lib/types';
 import { getDateParts } from './time_zone';
 
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 export function formatDate(dateObj: Date, locale: FrontendLocaleData, timeZone?: string) {
@@ -26,7 +37,7 @@ export function formatDate(dateObj: Date, locale: FrontendLocaleData, timeZone?:
       case 'day':
         return dateObj.getDate();
     }
-  }
+  };
 
   if (isCurrentYear) {
     if (supportLocaleDateString()) {
@@ -44,7 +55,8 @@ export function formatDate(dateObj: Date, locale: FrontendLocaleData, timeZone?:
         day: 'numeric',
         timeZone,
       }).format(dateObj);
-    } else return `${formatDateLegacy(dateObj, 'month')} ${formatDateLegacy(dateObj, 'day')}, ${formatDateLegacy(dateObj, 'year')}`;
+    } else
+      return `${formatDateLegacy(dateObj, 'month')} ${formatDateLegacy(dateObj, 'day')}, ${formatDateLegacy(dateObj, 'year')}`;
   }
 }
 

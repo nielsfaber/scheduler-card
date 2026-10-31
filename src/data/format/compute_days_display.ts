@@ -1,7 +1,7 @@
-import { HomeAssistant } from "../../lib/types";
-import { localize } from "../../localize/localize";
-import { TWeekday } from "../../types";
-import { resolveTimeZone } from "../time/time_zone";
+import { HomeAssistant } from '../../lib/types';
+import { localize } from '../../localize/localize';
+import { TWeekday } from '../../types';
+import { resolveTimeZone } from '../time/time_zone';
 
 const supportLocaleString = () => {
   try {
@@ -18,22 +18,18 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
   let weekday: TWeekday;
 
   if (input instanceof Date) {
-
     let day = input.getDay();
     weekday = TWeekday.Friday;
 
     if (supportLocaleString()) {
       return input.toLocaleDateString(hass.locale.language, { weekday: formatType, timeZone: resolveTimeZone(hass) });
-    }
-    else {
+    } else {
       let day = input.getDay();
       weekday = TWeekday.Friday;
     }
-  }
-  else {
+  } else {
     weekday = input;
   }
-
 
   switch (weekday) {
     case TWeekday.Daily:
@@ -50,11 +46,11 @@ export const computeDayDisplay = (input: TWeekday | Date, formatType: 'short' | 
     case TWeekday.Saturday:
     case TWeekday.Sunday:
       let date = new Date(2017, 1, 26);
-      let dayNumber = weekdayList.findIndex(e => e == weekday);
+      let dayNumber = weekdayList.findIndex((e) => e == weekday);
       if (!supportLocaleString()) return weekdayList[dayNumber];
       date.setDate(date.getDate() + dayNumber);
       return date.toLocaleDateString(hass.locale.language, { weekday: formatType });
     default:
       return '';
   }
-}
+};
