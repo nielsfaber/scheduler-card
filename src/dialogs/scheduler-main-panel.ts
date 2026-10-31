@@ -67,7 +67,7 @@ export class SchedulerMainPanel extends LitElement {
   render() {
     return html`
       ${this.schedule.entries.map(
-        (entry, num) => html`
+      (entry, num) => html`
           <div class="editor-header">
             <div class="weekdays">
               <span>
@@ -81,19 +81,17 @@ export class SchedulerMainPanel extends LitElement {
             </div>
             <div class="weekdays-actions">
               <ha-button appearance="plain" size="small" @click=${this.toggleViewMode}>
-                ${
-                  this.viewMode == EditorMode.Scheme
-                    ? localize('ui.panel.editor.toggle_single_mode', this.hass)
-                    : localize('ui.panel.editor.toggle_scheme_mode', this.hass)
-                }
+                ${this.viewMode == EditorMode.Scheme
+          ? localize('ui.panel.editor.toggle_single_mode', this.hass)
+          : localize('ui.panel.editor.toggle_scheme_mode', this.hass)
+        }
                 <ha-icon slot="end" icon="mdi:swap-horizontal"></ha-icon>
               </ha-button>
             </div>
           </div>
 
-          ${
-            this.viewMode == EditorMode.Scheme
-              ? html`
+          ${this.viewMode == EditorMode.Scheme
+          ? html`
                   <div class="editor-header">
                     <div class="weekdays">${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:</div>
                     ${this.renderActionButtons()}
@@ -108,7 +106,7 @@ export class SchedulerMainPanel extends LitElement {
                   >
                   </scheduler-timeslot-editor>
                 `
-              : html`
+          : html`
                   ${this.hass.localize('ui.dialogs.helper_settings.input_datetime.time')}:
                   <scheduler-time-picker
                     .hass=${this.hass}
@@ -120,9 +118,9 @@ export class SchedulerMainPanel extends LitElement {
                   >
                   </scheduler-time-picker>
                 `
-          }
+        }
         `
-      )}
+    )}
       ${this.renderSlot()}
     `;
   }
@@ -148,18 +146,18 @@ export class SchedulerMainPanel extends LitElement {
         <ha-icon-button
           .path=${mdiChevronLeft}
           @click=${(ev: Event) => {
-            this._updateSelectedSlot(this.selectedSlot! - 1);
-            (ev.target as HTMLElement).blur();
-          }}
+        this._updateSelectedSlot(this.selectedSlot! - 1);
+        (ev.target as HTMLElement).blur();
+      }}
           ?disabled=${this.selectedSlot === null || this.selectedSlot < 1}
         >
         </ha-icon-button>
         <ha-icon-button
           .path=${mdiChevronRight}
           @click=${(ev: Event) => {
-            this._updateSelectedSlot(this.selectedSlot! + 1);
-            (ev.target as HTMLElement).blur();
-          }}
+        this._updateSelectedSlot(this.selectedSlot! + 1);
+        (ev.target as HTMLElement).blur();
+      }}
           ?disabled=${this.selectedSlot === null || this.selectedSlot > this.schedule.entries[this.selectedEntry].slots.length - 2}
         >
         </ha-icon-button>
@@ -187,9 +185,8 @@ export class SchedulerMainPanel extends LitElement {
     if (!endTime) endTime = slot.start;
 
     return html`
-      ${
-        this.viewMode == EditorMode.Scheme
-          ? html` <div class="two-column">
+      ${this.viewMode == EditorMode.Scheme
+        ? html` <div class="two-column">
               <div class="column">
                 <scheduler-time-picker
                   .hass=${this.hass}
@@ -213,7 +210,7 @@ export class SchedulerMainPanel extends LitElement {
                 </scheduler-time-picker>
               </div>
             </div>`
-          : ''
+        : ''
       }
       ${localize('ui.panel.editor.action', this.hass)}: ${this._renderActionConfig()}
     `;
@@ -271,8 +268,8 @@ export class SchedulerMainPanel extends LitElement {
           slot="contextMenu"
           @wa-select=${this._actionItemOptionsClick}
           @wa-after-hide=${(ev: Event) => {
-            ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur();
-          }}
+        ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur();
+      }}
           placement="bottom-end"
         >
           <ha-icon-button slot="trigger" .path=${mdiDotsVertical}> </ha-icon-button>
@@ -287,9 +284,8 @@ export class SchedulerMainPanel extends LitElement {
         </ha-dropdown>
 
         <div slot="content">
-          ${
-            config.target
-              ? html`
+          ${config.target
+        ? html`
                   <scheduler-settings-row>
                     <span slot="heading">${hassLocalize('ui.components.entity.entity-picker.entity', this.hass)}</span>
                     <scheduler-entity-picker
@@ -305,25 +301,24 @@ export class SchedulerMainPanel extends LitElement {
                     </scheduler-entity-picker>
                   </scheduler-settings-row>
                 `
-              : ''
-          }
+        : ''
+      }
           ${fields.map((field) => {
-            const selector = selectorConfig(
-              action.service,
-              action.target?.entity_id,
-              field,
-              this.hass!,
-              this.config.customize
-            );
-            if (selector === null) return '';
-            const optional: boolean | undefined =
-              config.fields![field].optional || ((selector as NumberSelector).number || {}).optional;
-            const checked = optional ? Object.keys(action.service_data).includes(field) : true;
-            return html`
+        const selector = selectorConfig(
+          action.service,
+          action.target?.entity_id,
+          field,
+          this.hass!,
+          this.config.customize
+        );
+        if (selector === null) return '';
+        const optional: boolean | undefined =
+          config.fields![field].optional || ((selector as NumberSelector).number || {}).optional;
+        const checked = optional ? Object.keys(action.service_data).includes(field) : true;
+        return html`
               <scheduler-settings-row ?showPrefix=${optional}>
-                ${
-                  optional
-                    ? html`
+                ${optional
+            ? html`
                         <ha-checkbox
                           slot="prefix"
                           ?checked=${checked}
@@ -331,8 +326,8 @@ export class SchedulerMainPanel extends LitElement {
                         >
                         </ha-checkbox>
                       `
-                    : ''
-                }
+            : ''
+          }
                 <span slot="heading"> ${formatFieldDisplay(action, field, this.hass, this.config.customize)} </span>
                 <scheduler-combo-selector
                   .hass=${this.hass}
@@ -344,7 +339,7 @@ export class SchedulerMainPanel extends LitElement {
                 </scheduler-combo-selector>
               </scheduler-settings-row>
             `;
-          })}
+      })}
         </div>
       </scheduler-collapsible-section>
     `;
@@ -357,18 +352,18 @@ export class SchedulerMainPanel extends LitElement {
     const action: Action =
       value !== undefined
         ? {
-            ...slot.actions[0],
-            service_data: {
-              ...slot.actions[0].service_data,
-              [field]: value,
-            },
-          }
+          ...slot.actions[0],
+          service_data: {
+            ...slot.actions[0].service_data,
+            [field]: value,
+          },
+        }
         : {
-            ...slot.actions[0],
-            service_data: Object.fromEntries(
-              Object.entries(slot.actions[0].service_data).filter(([key]) => key != field)
-            ),
-          };
+          ...slot.actions[0],
+          service_data: Object.fromEntries(
+            Object.entries(slot.actions[0].service_data).filter(([key]) => key != field)
+          ),
+        };
     this._updateSlot({ actions: [action] });
   }
 
@@ -605,8 +600,8 @@ export class SchedulerMainPanel extends LitElement {
       scheduler-collapsible-section .header span {
         flex: 1;
       }
-      ha-list-item.warning,
-      ha-list-item.warning ha-icon {
+      scheduler-list-item.warning,
+      scheduler-list-item.warning ha-icon {
         color: var(--error-color);
       }
     `;

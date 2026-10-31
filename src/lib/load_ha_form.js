@@ -3,8 +3,7 @@ export const loadHaForm = async () => {
   if (
     customElements.get("ha-checkbox") &&
     customElements.get("ha-slider") &&
-    customElements.get("ha-generic-picker") &&
-    customElements.get("ha-list-item")
+    customElements.get("ha-generic-picker")
   ) return;
 
   await customElements.whenDefined("partial-panel-resolver");
@@ -21,10 +20,4 @@ export const loadHaForm = async () => {
   await customElements.whenDefined("ha-panel-config");
   const cpr = document.createElement("ha-panel-config");
   await cpr.routerOptions.routes.automation.load();
-
-  // Since HA 2026.10 the automation editor no longer pulls in ha-list-item;
-  // the person page still imports it.
-  if (!customElements.get("ha-list-item")) {
-    await cpr.routerOptions.routes.person.load();
-  }
 }
