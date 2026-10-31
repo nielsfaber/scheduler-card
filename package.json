@@ -1,6 +1,6 @@
 {
   "name": "scheduler-card",
-  "version": "4.0.19",
+  "version": "4.0.20",
   "description": "Scheduler card for Lovelace",
   "main": "dist/scheduler-card.js",
   "scripts": {
