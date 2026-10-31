@@ -613,7 +613,7 @@ export class SchedulerOptionsPanel extends LitElement {
   }
 
   setRepeatType(ev: Event) {
-    const value = (ev.target as HTMLElement).getAttribute('value') as TRepeatType;
+    const value = (ev.currentTarget as HTMLElement).getAttribute('value') as TRepeatType;
     this.schedule = { ...this.schedule, repeat_type: value };
   }
 
