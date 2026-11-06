@@ -1,0 +1,115 @@
+[
+  {
+    "schedule_id": "19f010",
+    "weekdays": [
+      "mon",
+      "tue",
+      "wed"
+    ],
+    "start_date": null,
+    "end_date": null,
+    "timeslots": [
+      {
+        "start": "sunrise-00:30",
+        "stop": "08:00",
+        "conditions": [
+          {
+            "entity_id": "binary_sensor.movement_backyard",
+            "attribute": "state",
+            "value": "on",
+            "match_type": "is"
+          }
+        ],
+        "condition_type": "and",
+        "track_conditions": true,
+        "actions": [
+          {
+            "service": "light.turn_on",
+            "entity_id": "light.bed_light",
+            "service_data": {
+              "brightness": 120
+            }
+          },
+          {
+            "service": "light.turn_on",
+            "entity_id": "light.ceiling_lights",
+            "service_data": {
+              "brightness": 120
+            }
+          }
+        ]
+      },
+      {
+        "start": "sunset+01:15",
+        "stop": "23:00",
+        "conditions": [],
+        "condition_type": null,
+        "track_conditions": false,
+        "actions": [
+          {
+            "service": "light.turn_off",
+            "entity_id": "light.bed_light",
+            "service_data": {}
+          },
+          {
+            "service": "climate.set_temperature",
+            "entity_id": "climate.hvac",
+            "service_data": {
+              "temperature": 19
+            }
+          }
+        ]
+      }
+    ],
+    "repeat_type": "repeat",
+    "name": "Fixture scheme",
+    "enabled": true,
+    "next_entries": [
+      1,
+      0
+    ],
+    "timestamps": [
+      "2026-11-09T22:03:00+00:00",
+      "2026-11-09T10:30:00+00:00"
+    ],
+    "entity_id": "switch.schedule_fixture_scheme",
+    "tags": [
+      "fixture"
+    ]
+  },
+  {
+    "schedule_id": "03d78a",
+    "weekdays": [
+      "weekend"
+    ],
+    "start_date": "2027-03-01",
+    "end_date": "2027-03-31",
+    "timeslots": [
+      {
+        "start": "07:30",
+        "stop": null,
+        "conditions": [],
+        "condition_type": null,
+        "track_conditions": false,
+        "actions": [
+          {
+            "service": "switch.turn_on",
+            "entity_id": "switch.decorative_lights",
+            "service_data": {}
+          }
+        ]
+      }
+    ],
+    "repeat_type": "single",
+    "name": "Fixture weekend once",
+    "enabled": true,
+    "next_entries": [
+      0
+    ],
+    "timestamps": [
+      "2027-03-06T07:30:00+00:00"
+    ],
+    "entity_id": "switch.schedule_fixture_weekend_once",
+    "tags": []
+  }
+]
