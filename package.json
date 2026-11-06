@@ -8,7 +8,8 @@
     "rollup": "rollup -c",
     "lint": "eslint src/**/*.ts --fix",
     "format": "prettier --write '**/*.ts'",
-    "start": "rollup -c --watch"
+    "start": "rollup -c --watch",
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "parcel": "^2.8.3",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
-    "rollup-plugin-visualizer": "^5.12.0"
+    "rollup-plugin-visualizer": "^5.12.0",
+    "vitest": "^5.1.0"
   }
 }
