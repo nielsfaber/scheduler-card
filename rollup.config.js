@@ -11,6 +11,7 @@ const plugins = [
   alias({
     entries: [
       { find: 'lit/decorators', replacement: 'lit/decorators.js' },
+      { find: 'lit/directives/keyed', replacement: 'lit/directives/keyed.js' },
       { find: 'lit/directives/style-map', replacement: 'lit/directives/style-map.js' },
       { find: 'lit/directives/unsafe-html', replacement: 'lit/directives/unsafe-html.js' },
     ]

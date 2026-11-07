@@ -8,6 +8,7 @@ import {
 } from '@mdi/js';
 import { CSSResultGroup, LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators';
+import { keyed } from 'lit/directives/keyed';
 import { Action, CardConfig, EditorMode, Schedule, ScheduleEntry, TWeekday, Time, Timeslot } from '../types';
 import { actionConfig } from '../data/actions/action_config';
 import { formatWeekdayDisplay } from '../data/days';
@@ -257,7 +258,9 @@ export class SchedulerMainPanel extends LitElement {
     }
     heading += formatActionDisplay(action, this.hass, this.config.customize, false, true);
 
-    return html`
+    return keyed(
+      `${this.selectedEntry}-${this.selectedSlot}`,
+      html`
       <scheduler-collapsible-section ?expanded=${true} ?disabled=${true}>
         <div slot="header" class="header">
           <ha-icon slot="icon" icon="${computeActionIcon(action, this.config.customize)}"></ha-icon>
@@ -342,7 +345,8 @@ export class SchedulerMainPanel extends LitElement {
       })}
         </div>
       </scheduler-collapsible-section>
-    `;
+    `
+    );
   }
 
   _selectField(field: string, ev: CustomEvent) {
