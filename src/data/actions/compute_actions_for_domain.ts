@@ -6,7 +6,7 @@ import { Action } from "../../types";
 import { hassLocalize } from "../../localize/hassLocalize";
 import { parseCustomActions, parseExcludedActions } from "./parse_custom_actions";
 import { formatActionDisplay } from "../format/format_action_display";
-import { caseInsensitiveStringCompare } from "../../lib/string_compare";
+import { matchesExcludedAction } from "./matches_excluded_action";
 import { serviceIcons } from "../format/service_icons";
 import { parseCustomVariable } from "../selectors/selector_config";
 import { defaultSelectorValue } from "../selectors/default_selector_value";
@@ -94,8 +94,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
   let excludedActions = parseExcludedActions(config.customize || {}, domain);
   if (excludedActions.length) {
     actionList = actionList.filter(e => !excludedActions.some(a => {
-      return caseInsensitiveStringCompare(computeEntity(e.action.service), a) === 0
-        || caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) === 0
+      return matchesExcludedAction(computeEntity(e.action.service), a)
+        || matchesExcludedAction(formatActionDisplay(e.action, hass, config.customize), a)
     }));
   }
 
