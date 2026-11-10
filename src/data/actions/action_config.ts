@@ -21,6 +21,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig, hass?: Ho
     }
   }
 
+  const baseConfig = config;
   if (domain == 'script' && hass?.services?.[domain]?.[domainService]?.fields) {
     const scriptFields: ActionConfig['fields'] = {};
     Object.keys(hass.services[domain][domainService].fields).forEach((field) => {
@@ -59,7 +60,7 @@ export const actionConfig = (action: Action, customize?: CustomConfig, hass?: Ho
       .filter(isDefined);
     //built-in fields cannot display templates, so a matching custom action takes precedence
     const hasTemplate = Object.values(action.service_data || {}).some(isTemplate);
-    if (res.length && (hasTemplate || !compareActions(config, action))) return res[0];
+    if (res.length && (hasTemplate || !compareActions(baseConfig, action))) return res[0];
   }
 
   return config;
