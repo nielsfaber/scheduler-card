@@ -128,7 +128,12 @@
         "backend_error": "Kunne ikke koble til tidsplankomponenten. Den må installeres som en integrasjon før dette kortet kan benyttes.",
         "excluded_items": "{number} ekskludert {if number is 1} element {else} elementer",
         "hide_excluded": "skjul ekskluderte elementer",
-        "additional_tasks": "{number} flere {if number is 1} oppgaver {else} oppgaver"
+        "additional_tasks": "{number} flere {if number is 1} oppgaver {else} oppgaver",
+        "status": {
+          "active": "Aktiv",
+          "idle": "Inaktiv",
+          "disabled": "Deaktivert"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Status (aktiv/inaktiv/deaktivert)",
+              "relative_time_or_idle": "...eller inaktiv tilstand"
             }
           },
           "show_header_toggle": {

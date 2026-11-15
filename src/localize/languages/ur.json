@@ -128,7 +128,12 @@
         "backend_error": "شیڈولر کمپوننٹ سے کنکشن نہیں ہو سکا۔ اسے کارڈ استعمال کرنے سے پہلے انٹیگریشن کے طور پر انسٹال کرنا ضروری ہے۔",
         "excluded_items": "{number} خارج شدہ {if number is 1} آئٹم {else} آئٹمز",
         "hide_excluded": "خارج شدہ آئٹمز چھپائیں",
-        "additional_tasks": "{number} مزید {if number is 1} کام {else} کام"
+        "additional_tasks": "{number} مزید {if number is 1} کام {else} کام",
+        "status": {
+          "active": "فعال",
+          "idle": "غیر فعال",
+          "disabled": "غیر فعال کیا گیا"
+        }
       },
       "editor": {
         "repeated_days": "دہرائے گئے دن",
@@ -226,7 +231,9 @@
               "relative_time": "اگلے عمل تک باقی وقت",
               "time": "اگلے عمل کا وقت",
               "days": "ہفتے کے دہرائے گئے دن",
-              "additional_tasks": "اضافی کاموں کی تعداد"
+              "additional_tasks": "اضافی کاموں کی تعداد",
+              "status": "حالت (فعال/غیر فعال/غیر فعال کیا گیا)",
+              "relative_time_or_idle": "...یا غیر فعال حالت"
             }
           },
           "show_header_toggle": {

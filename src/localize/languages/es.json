@@ -128,7 +128,12 @@
         "backend_error": "Fallo de conexión con el componente planificador (Scheduler component). Debe ser instalado como integración antes de poder usar este panel.",
         "excluded_items": "{number} {if number is 1} elemento excluido {else} elementos excluidos",
         "hide_excluded": "ocultar elementos excluidos",
-        "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales"
+        "additional_tasks": "{number} {if number is 1} tarea adicional {else} tareas adicionales",
+        "status": {
+          "active": "Activo",
+          "idle": "Inactivo",
+          "disabled": "Desactivado"
+        }
       },
       "editor": {
         "repeated_days": "Días repetidos",
@@ -226,7 +231,9 @@
               "relative_time": "Tiempo restante hasta la siguiente acción",
               "time": "Tiempo configurado para la siguiente acción",
               "days": "Días repetidos de la semana",
-              "additional_tasks": "Número de tareas adicionales"
+              "additional_tasks": "Número de tareas adicionales",
+              "status": "Estado (activo/inactivo/desactivado)",
+              "relative_time_or_idle": "...o estado inactivo"
             }
           },
           "show_header_toggle": {

@@ -128,7 +128,12 @@
         "backend_error": "Não consegui ligar ao componente de agendamento. Essa integração tem que ser instalada antes da utilização deste cartão.",
         "excluded_items": "{number}{if number is 1} item excluído {else} itens excluídos",
         "hide_excluded": "ocultar itens excluídos",
-        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas"
+        "additional_tasks": "Mais {number} {if number is 1} tarefa {else} tarefas",
+        "status": {
+          "active": "Ativo",
+          "idle": "Inativo",
+          "disabled": "Desativado"
+        }
       },
       "editor": {
         "repeated_days": "Repetições semanais",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Estado (ativo/inativo/desativado)",
+              "relative_time_or_idle": "...ou estado inativo"
             }
           },
           "show_header_toggle": {

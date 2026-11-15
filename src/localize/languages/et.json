@@ -128,7 +128,12 @@
         "backend_error": "Ajastaja sidumine puudub. Sidumine tuleb luua enne selle kaardi kasutamist.",
         "excluded_items": "välja on jäetud {number}  {if number is 1} ajastus {else} ajastust",
         "hide_excluded": "peida välja jäetud ajastused",
-        "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust"
+        "additional_tasks": "veel {number} {if number is 1} ajastus {else} ajastust",
+        "status": {
+          "active": "Aktiivne",
+          "idle": "Ootel",
+          "disabled": "Keelatud"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Olek (aktiivne/ootel/keelatud)",
+              "relative_time_or_idle": "...või ooteolek"
             }
           },
           "show_header_toggle": {

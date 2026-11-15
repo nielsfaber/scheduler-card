@@ -128,7 +128,12 @@
         "backend_error": "Kunde inte ansluta till schemaläggarkomponenten. Den måste installeras som integration innan det här kortet kan användas.",
         "excluded_items": "{number} utesluten {if number is 1} artikel {else} artiklar",
         "hide_excluded": "dölj uteslutna objekt",
-        "additional_tasks": "{number} mer {if number is 1} uppgift {else} uppgifter"
+        "additional_tasks": "{number} mer {if number is 1} uppgift {else} uppgifter",
+        "status": {
+          "active": "Aktiv",
+          "idle": "Inaktiv",
+          "disabled": "Inaktiverad"
+        }
       },
       "editor": {
         "repeated_days": "Upprepade dagar",
@@ -226,7 +231,9 @@
               "relative_time": "Tid kvar till nästa åtgärd",
               "time": "Konfigurerad tid för nästa åtgärd",
               "days": "Upprepade dagar i veckan",
-              "additional_tasks": "Antal ytterligare uppgifter"
+              "additional_tasks": "Antal ytterligare uppgifter",
+              "status": "Status (aktiv/inaktiv/inaktiverad)",
+              "relative_time_or_idle": "...eller inaktivt tillstånd"
             }
           },
           "show_header_toggle": {

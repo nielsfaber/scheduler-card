@@ -604,6 +604,8 @@ The following properties are available:
 | `days`             | Configured days for the schedule.                                                                                                                  |
 | `additional-tasks` | The amount of remaining tasks/actions (other than the displayed one).<br>Only for time schemes, otherwise this property is skipped.                |
 | `tags`             | Show tags assigned to schedule. See [tags](#tags).                                                                                                 |
+| `status`           | `Active` if the conditions of the next timeslot are met, `Idle` if not, `Disabled` if the schedule is disabled.<sup>1</sup>                        |
+| `relative-time-or-idle` | Same as `relative-time` if the conditions of the next timeslot are met, otherwise `Idle`.<sup>1</sup>                                         |
 
 <sup>1</sup> For *time schemes*, the displayed value corresponds to the closest timeslot.
 

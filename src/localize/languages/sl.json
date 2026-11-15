@@ -128,7 +128,12 @@
         "backend_error": "Ni povezave s komponento urnika. Komponenta mora biti nameščena kot integracija, preden lahko uporabite to kartico.",
         "excluded_items": "{number}{if number is 1} izločen predmet {else} izločenih predmetov",
         "hide_excluded": "skrij izločene predmete",
-        "additional_tasks": "še {number}{if number is 1} opravilo {else} opravil"
+        "additional_tasks": "še {number}{if number is 1} opravilo {else} opravil",
+        "status": {
+          "active": "Aktivno",
+          "idle": "Mirovanje",
+          "disabled": "Onemogočeno"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Preostali čas do naslednje akcije",
               "time": "Nastavljen čas za naslednjo akcijo",
               "days": "Katere dni/kdaj se sproži akcija",
-              "additional_tasks": "Število dodatnih opravil"
+              "additional_tasks": "Število dodatnih opravil",
+              "status": "Stanje (aktivno/mirovanje/onemogočeno)",
+              "relative_time_or_idle": "...ali stanje mirovanja"
             }
           },
           "show_header_toggle": {

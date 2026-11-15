@@ -128,7 +128,12 @@
         "backend_error": "计划任务组件关联失败。使用本卡片前，需先安装计划任务组件（Scheduler component）集成.",
         "excluded_items": "其他{number}项{if number is 1}任务{else}任务",
         "hide_excluded": "隐藏其他任务",
-        "additional_tasks": "另有{number}项{if number is 1}任务{else}任务"
+        "additional_tasks": "另有{number}项{if number is 1}任务{else}任务",
+        "status": {
+          "active": "活动",
+          "idle": "空闲",
+          "disabled": "已禁用"
+        }
       },
       "editor": {
         "repeated_days": "重复周期",
@@ -226,7 +231,9 @@
               "relative_time": "下次执行的剩余时间",
               "time": "下次执行的设定时间",
               "days": "重复周期（星期）",
-              "additional_tasks": "额外任务数量"
+              "additional_tasks": "额外任务数量",
+              "status": "状态(活动/空闲/已禁用)",
+              "relative_time_or_idle": "...或空闲状态"
             }
           },
           "show_header_toggle": {

@@ -128,7 +128,12 @@
         "backend_error": "Nevar izveidot savienojumu ar plānotāja komponenti. Pirms šīs kartes izmantošanas tā ir jāinstalē kā integrācija.",
         "excluded_items": "{number} izslēgtas {if number is 1} vienība {else} vienības",
         "hide_excluded": "paslēpt izslēgtās vienības",
-        "additional_tasks": "{number} papildu {if number is 1} uzdevums {else} uzdevumi"
+        "additional_tasks": "{number} papildu {if number is 1} uzdevums {else} uzdevumi",
+        "status": {
+          "active": "Aktīvs",
+          "idle": "Dīkstāvē",
+          "disabled": "Atspējots"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Atlikušais laiks līdz nākamajai darbībai",
               "time": "Konfigurētais laiks nākamajai darbībai",
               "days": "Atkārtotas nedēļas dienas",
-              "additional_tasks": "Papildu uzdevumu skaits"
+              "additional_tasks": "Papildu uzdevumu skaits",
+              "status": "Statuss (aktīvs/dīkstāvē/atspējots)",
+              "relative_time_or_idle": "...vai dīkstāves stāvoklis"
             }
           },
           "show_header_toggle": {

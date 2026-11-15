@@ -128,7 +128,12 @@
         "backend_error": "No s'ha pogut connectar amb el component scheduler. Cal instal·lar-lo com a integració abans de fer servir aquesta targeta.",
         "excluded_items": "{number} {if number is 1} element exclòs {else} elements exclosos",
         "hide_excluded": "amaga els elements exclosos",
-        "additional_tasks": "{number} {if number is 1} tasca més {else} tasques més"
+        "additional_tasks": "{number} {if number is 1} tasca més {else} tasques més",
+        "status": {
+          "active": "Actiu",
+          "idle": "Inactiu",
+          "disabled": "Desactivat"
+        }
       },
       "editor": {
         "repeated_days": "Dies repetits",
@@ -226,7 +231,9 @@
               "relative_time": "Temps restant fins a la següent acció",
               "time": "Hora configurada per a la següent acció",
               "days": "Dies repetits de la setmana",
-              "additional_tasks": "Nombre de tasques addicionals"
+              "additional_tasks": "Nombre de tasques addicionals",
+              "status": "Estat (actiu/inactiu/desactivat)",
+              "relative_time_or_idle": "...o estat inactiu"
             }
           },
           "show_header_toggle": {

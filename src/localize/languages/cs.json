@@ -128,7 +128,12 @@
         "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{number} vyloučeno {if number is 1} položka {else} položek",
         "hide_excluded": "skrýt vyloučené položky",
-        "additional_tasks": "{number} a více {if number is 1} úkol {else} úkolů"
+        "additional_tasks": "{number} a více {if number is 1} úkol {else} úkolů",
+        "status": {
+          "active": "Aktivní",
+          "idle": "Nečinný",
+          "disabled": "Zakázáno"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Stav (aktivní/nečinný/zakázáno)",
+              "relative_time_or_idle": "...nebo nečinný stav"
             }
           },
           "show_header_toggle": {

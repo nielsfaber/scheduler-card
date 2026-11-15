@@ -128,7 +128,12 @@
         "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{number} excluded {if number is 1} item {else} items",
         "hide_excluded": "hide excluded items",
-        "additional_tasks": "{number} more {if number is 1} task {else} tasks"
+        "additional_tasks": "{number} more {if number is 1} task {else} tasks",
+        "status": {
+          "active": "Active",
+          "idle": "Idle",
+          "disabled": "Disabled"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Status (active/idle/disabled)",
+              "relative_time_or_idle": "...or idle status"
             }
           },
           "show_header_toggle": {

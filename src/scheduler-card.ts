@@ -127,9 +127,22 @@ export class SchedulerCard extends LitElement {
 
     //only reload card if a schedule entity has changed
     if (oldHass && changedProps.size == 1 && this.schedules) {
-      return Object.values(this.schedules).some(
-        (e) => JSON.stringify(oldHass.states[e.entity_id!]) !== JSON.stringify(this.hass!.states[e.entity_id!])
-      );
+      const usesConditionInfo = [
+        this._config?.display_options?.primary_info || [],
+        this._config?.display_options?.secondary_info || [],
+      ]
+        .flat(2)
+        .some((e) => ['status', 'relative-time-or-idle'].includes(String(e)));
+      return Object.values(this.schedules).some((e) => {
+        if (JSON.stringify(oldHass.states[e.entity_id!]) !== JSON.stringify(this.hass!.states[e.entity_id!]))
+          return true;
+        if (!usesConditionInfo) return false;
+        return e.entries.some((entry) =>
+          entry.slots.some((slot) =>
+            (slot.conditions?.items || []).some((c) => oldHass.states[c.entity_id] !== this.hass!.states[c.entity_id])
+          )
+        );
+      });
     }
 
     return true;

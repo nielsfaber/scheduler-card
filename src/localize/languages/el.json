@@ -128,7 +128,12 @@
         "backend_error": "Δεν είναι δυνατή η σύνδεη με το scheduler component. Πρέπει να εγκατασταθεί σαν integration πριν την χρήση αυτής της κάρτας.",
         "excluded_items": "{number} {if number is 1} εξαιρούμενο αντικείμενο {else} εξαιρούμενα αντικείμενα",
         "hide_excluded": "απόκρυψη εξαιρούμενων αντικειμένων",
-        "additional_tasks": "{number} επιπλέον {if number is 1} εργασία {else} εργασίες"
+        "additional_tasks": "{number} επιπλέον {if number is 1} εργασία {else} εργασίες",
+        "status": {
+          "active": "Ενεργό",
+          "idle": "Αδρανές",
+          "disabled": "Απενεργοποιημένο"
+        }
       },
       "editor": {
         "repeated_days": "Επαναλαμβανόμενες ημέρες",
@@ -226,7 +231,9 @@
               "relative_time": "Υπολειπόμενος χρόνος μέχρι την επόμενη ενέργεια",
               "time": "Προγραμματισμένη ώρα για την επόμενη ενέργεια",
               "days": "Επαναλαμβανόμενες ημέρες της εβδομάδας",
-              "additional_tasks": "Αριθμός πρόσθετων εργασιών"
+              "additional_tasks": "Αριθμός πρόσθετων εργασιών",
+              "status": "Κατάσταση (ενεργό/αδρανές/απενεργοποιημένο)",
+              "relative_time_or_idle": "...ή αδρανής κατάσταση"
             }
           },
           "show_header_toggle": {

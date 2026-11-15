@@ -128,7 +128,12 @@
         "backend_error": "Ei voitu yhdistää scheduler komponenttiin. Kortin käyttäminen vaatii scheduler integraation asentamisen.",
         "excluded_items": "{number} {if number is 1} poissuljettu kohde {else} poissuljettua kohdetta",
         "hide_excluded": "piilota poissuljetut kohteet",
-        "additional_tasks": "{number} {if number is 1} tehtävä {else} tehtävää"
+        "additional_tasks": "{number} {if number is 1} tehtävä {else} tehtävää",
+        "status": {
+          "active": "Aktiivinen",
+          "idle": "Lepotilassa",
+          "disabled": "Ei käytössä"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Aikaa jäljellä seuraavaan toimintoon",
               "time": "Seuraavalle toiminnolle määritetty aika",
               "days": "Toistuvat viikonpäivät",
-              "additional_tasks": "Lisätoimintojen määrä"
+              "additional_tasks": "Lisätoimintojen määrä",
+              "status": "Tila (aktiivinen/lepotilassa/ei käytössä)",
+              "relative_time_or_idle": "...tai lepotila"
             }
           },
           "show_header_toggle": {

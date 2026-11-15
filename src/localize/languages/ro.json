@@ -128,7 +128,12 @@
         "backend_error": "Could not connect with the scheduler component. It needs to be installed as integration before this card can be used.",
         "excluded_items": "{if number is 1}un element exclus {else}{number} elemente excluse",
         "hide_excluded": "ascunde elementele excluse",
-        "additional_tasks": "{if number is 1}o sarcină suplimentară {else}{number} sarcini suplimentare"
+        "additional_tasks": "{if number is 1}o sarcină suplimentară {else}{number} sarcini suplimentare",
+        "status": {
+          "active": "Activ",
+          "idle": "Inactiv",
+          "disabled": "Dezactivat"
+        }
       },
       "editor": {
         "repeated_days": "Repeated days",
@@ -226,7 +231,9 @@
               "relative_time": "Time remaining until next action",
               "time": "Configured time for next action",
               "days": "Repeated days of the week",
-              "additional_tasks": "Number of additional tasks"
+              "additional_tasks": "Number of additional tasks",
+              "status": "Stare (activ/inactiv/dezactivat)",
+              "relative_time_or_idle": "...sau stare inactivă"
             }
           },
           "show_header_toggle": {
