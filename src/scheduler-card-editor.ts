@@ -60,14 +60,6 @@ export class SchedulerCardEditor extends LitElement {
       },
     };
 
-    const tagSelector = <SelectSelector>{
-      select: {
-        options: this.tagOptions,
-        multiple: true,
-        custom_value: true,
-      },
-    };
-
     return html`
       <div class="card-config">
         <ha-button @click=${this._showIncludedEntitiesDialog} outlined>
@@ -301,51 +293,13 @@ export class SchedulerCardEditor extends LitElement {
 
         <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
-          <div style="display: flex; flex: 1; flex-direction: column">
-            <scheduler-combo-selector
-              .hass=${this.hass}
-              .config=${tagSelector}
-              .value=${[this._config.tags || []].flat()}
-              @value-changed=${(ev: CustomEvent) => {
-                this._updateConfig({ tags: ev.detail.value });
-              }}
-            >
-            </scheduler-combo-selector>
+          ${this._renderTagPicker('tags')}
+        </scheduler-settings-row>
 
-            <ha-dropdown
-              @wa-after-hide=${(ev: Event) => {
-                ev.stopPropagation();
-                ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
-              }}
-              @click=${(ev: Event) => {
-                ev.preventDefault();
-                ev.stopImmediatePropagation();
-              }}
-              @wa-after-show=${(ev: Event) => {
-                ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
-              }}
-              placement="bottom-start"
-            >
-              <ha-button appearance="plain" slot="trigger">
-                <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-                ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-              </ha-button>
-
-              <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
-                <ha-input
-                  .value=${this.customTagValue}
-                  .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-                  @input=${(ev: Event) => {
-                    this.customTagValue = (ev.currentTarget as any).value;
-                  }}
-                  .placeholder=""
-                ></ha-input>
-                <ha-button appearance="plain" @click=${this._customTagConfirmClick}>
-                  ${hassLocalize('ui.common.ok', this.hass)}
-                </ha-button>
-              </div>
-            </ha-dropdown>
-          </div>
+        <scheduler-settings-row>
+          <span slot="heading">${localize('ui.panel.card_editor.fields.editor_tags.heading', this.hass)}</span>
+          <span slot="description">${localize('ui.panel.card_editor.fields.editor_tags.description', this.hass)}</span>
+          ${this._renderTagPicker('editor_tags')}
         </scheduler-settings-row>
       </div>
     `;
@@ -433,20 +387,87 @@ export class SchedulerCardEditor extends LitElement {
     });
   }
 
-  _customTagConfirmClick(ev: Event) {
+  _renderTagPicker(key: 'tags' | 'editor_tags') {
+    const tagSelector = <SelectSelector>{
+      select: {
+        options: this.tagOptions,
+        multiple: true,
+        custom_value: true,
+      },
+    };
+
+    return html`
+      <div style="display: flex; flex: 1; flex-direction: column">
+        <scheduler-combo-selector
+          .hass=${this.hass}
+          .config=${tagSelector}
+          .value=${[this._config[key] || []].flat()}
+          @value-changed=${(ev: CustomEvent) => this._setTags(key, ev.detail.value)}
+        >
+        </scheduler-combo-selector>
+
+        <ha-dropdown
+          @wa-after-hide=${(ev: Event) => {
+            ev.stopPropagation();
+            ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
+          }}
+          @click=${(ev: Event) => {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+          }}
+          @wa-after-show=${(ev: Event) => {
+            ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
+          }}
+          placement="bottom-start"
+        >
+          <ha-button appearance="plain" slot="trigger">
+            <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+            ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+          </ha-button>
+
+          <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
+            <ha-input
+              .value=${this.customTagValue}
+              .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+              @input=${(ev: Event) => {
+                this.customTagValue = (ev.currentTarget as any).value;
+              }}
+              .placeholder=""
+            ></ha-input>
+            <ha-button appearance="plain" @click=${(ev: Event) => this._customTagConfirmClick(ev, key)}>
+              ${hassLocalize('ui.common.ok', this.hass)}
+            </ha-button>
+          </div>
+        </ha-dropdown>
+      </div>
+    `;
+  }
+
+  _customTagConfirmClick(ev: Event, key: 'tags' | 'editor_tags') {
     let target = ev.target as HTMLElement;
     target = target.parentElement as HTMLElement;
     target = target.parentElement as HTMLElement;
     const triggerBtn = target.querySelector('ha-button');
     (triggerBtn as any).click();
 
-    let value = String(this.customTagValue).trim();
+    const value = String(this.customTagValue).trim();
     if (value.length) {
-      let tags = [this._config.tags || []].flat();
+      let tags = [this._config[key] || []].flat();
       tags = [...new Set([...tags, value])];
-      this._updateConfig({ tags: tags });
+      this._setTags(key, tags);
     }
     this.customTagValue = '';
+  }
+
+  _setTags(key: 'tags' | 'editor_tags', tags: string[]) {
+    if (key == 'editor_tags' && !tags.length) {
+      // an empty list in the editor means no restriction, rather than no selectable tags
+      const { editor_tags: _editorTags, ...config } = this._config;
+      this._config = config;
+      fireEvent(this, 'config-changed', { config: this._config });
+      return;
+    }
+    this._updateConfig({ [key]: tags });
   }
 
   private _updateConfig(changes: Partial<CardConfig>) {

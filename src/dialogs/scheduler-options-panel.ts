@@ -65,6 +65,12 @@ export class SchedulerOptionsPanel extends LitElement {
     this.startDate = this.schedule?.start_date || formatIsoDate(new Date());
     this.endDate = this.schedule?.end_date || formatIsoDate(new Date());
 
+    if (this.tagsRestricted) {
+      // only the tags defined by the card config can be selected, tags already assigned to the schedule stay visible
+      this.tags = [this.config.editor_tags!].flat().filter((e) => !['none', 'disabled', 'enabled'].includes(e));
+      return;
+    }
+
     const tagEntries = await fetchTags(this.hass!);
     const storedTags = tagEntries.map((e) => e.name);
     const configTags = [this.config.tags || []].flat();
@@ -74,6 +80,10 @@ export class SchedulerOptionsPanel extends LitElement {
         ...configTags.filter((e) => !storedTags.includes(e) && !['none', 'disabled', 'enabled'].includes(e)),
       ]),
     ];
+  }
+
+  get tagsRestricted() {
+    return this.config.editor_tags !== undefined;
   }
 
   shouldUpdate(changedProps: PropertyValues): boolean {
@@ -206,42 +216,48 @@ export class SchedulerOptionsPanel extends LitElement {
         >
         </scheduler-combo-selector>
 
-        <ha-dropdown
-          @wa-after-hide=${(ev: Event) => {
-            ev.stopPropagation();
-            ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
-          }}
-          @click=${(ev: Event) => {
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
-          }}
-          @wa-after-show=${(ev: Event) => {
-            ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
-          }}
-          placement="bottom-start"
-        >
-          <ha-button appearance="plain" slot="trigger">
-            <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-            ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-          </ha-button>
+        ${
+          this.tagsRestricted
+            ? ''
+            : html`
+                <ha-dropdown
+                  @wa-after-hide=${(ev: Event) => {
+                    ev.stopPropagation();
+                    ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
+                  }}
+                  @click=${(ev: Event) => {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+                  }}
+                  @wa-after-show=${(ev: Event) => {
+                    ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
+                  }}
+                  placement="bottom-start"
+                >
+                  <ha-button appearance="plain" slot="trigger">
+                    <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+                    ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+                  </ha-button>
 
-          <div style="display: flex; align-items: center; padding: 0px 2px 0px 8px">
-            <ha-input
-              .value=${this.customTagValue}
-              .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-              @input=${(ev: Event) => {
-                this.customTagValue = (ev.currentTarget as any).value;
-              }}
-              @keydown=${(ev: KeyboardEvent) => {
-                if (ev.key === 'Enter') this._customTagConfirmClick(ev);
-              }}
-              .placeholder=""
-            ></ha-input>
-            <ha-button appearance="plain" @click=${this._customTagConfirmClick}>
-              ${hassLocalize('ui.common.ok', this.hass)}
-            </ha-button>
-          </div>
-        </ha-dropdown>
+                  <div style="display: flex; align-items: center; padding: 0px 2px 0px 8px">
+                    <ha-input
+                      .value=${this.customTagValue}
+                      .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+                      @input=${(ev: Event) => {
+                        this.customTagValue = (ev.currentTarget as any).value;
+                      }}
+                      @keydown=${(ev: KeyboardEvent) => {
+                        if (ev.key === 'Enter') this._customTagConfirmClick(ev);
+                      }}
+                      .placeholder=""
+                    ></ha-input>
+                    <ha-button appearance="plain" @click=${this._customTagConfirmClick}>
+                      ${hassLocalize('ui.common.ok', this.hass)}
+                    </ha-button>
+                  </div>
+                </ha-dropdown>
+              `
+        }
       </div>
 
       <span class="header">${localize('ui.panel.options.repeat_type', this.hass)}:</span>

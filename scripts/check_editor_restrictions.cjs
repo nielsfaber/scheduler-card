@@ -38,8 +38,16 @@ for (const key of restrictionKeys) {
   assert.throws(() => validateConfig({ [key]: 'true' }), new RegExp(`'${key}' must be a boolean`));
 }
 
+// editor_tags accepts a tag or a list of tags
+assert.deepEqual(validateConfig({ editor_tags: 'heating' }), { editor_tags: 'heating' });
+assert.deepEqual(validateConfig({ editor_tags: ['heating', 'vacuum'] }), { editor_tags: ['heating', 'vacuum'] });
+assert.throws(() => validateConfig({ editor_tags: true }), /'editor_tags' must be a string or list of strings/);
+
 // every card editor label resolves in every language (directly or through the English fallback)
-const labelKeys = ['show_add_button', ...restrictionKeys].map((e) => `ui.panel.card_editor.fields.${e}.heading`);
+const labelKeys = [
+  ...['show_add_button', ...restrictionKeys, 'editor_tags'].map((e) => `ui.panel.card_editor.fields.${e}.heading`),
+  'ui.panel.card_editor.fields.editor_tags.description',
+];
 const languagesDir = path.join(__dirname, '../src/localize/languages');
 const languages = readdirSync(languagesDir).map((e) => path.basename(e, '.json'));
 

@@ -256,6 +256,10 @@
             "heading": "Tagi",
             "description": "Używaj tagów do podziału harmonogramów pomiędzy wieloma kartami"
           },
+          "editor_tags": {
+            "heading": "Tagi do wyboru",
+            "description": "Ogranicza tagi, które można przypisać w edytorze harmonogramu. Pozostaw puste, aby zezwolić na wszystkie tagi."
+          },
           "entities": {
             "button_label": "Konfiguruj zawarte encje",
             "heading": "Zawarte encje",

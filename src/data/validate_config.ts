@@ -102,6 +102,9 @@ export const validateConfig = (config: any) => {
   ) {
     errors.push(`'exclude_tags' must be a string or list of strings`);
   }
+  if (hasKey(config, 'editor_tags') && !isTypeString(config.editor_tags) && !isTypeListOfStrings(config.editor_tags)) {
+    errors.push(`'editor_tags' must be a string or list of strings`);
+  }
   if (errors.length) {
     throw new Error(
       `Invalid configuration provided (${errors.length} error${errors.length > 1 ? 's' : ''}): ${errors.join(', ')}.`
