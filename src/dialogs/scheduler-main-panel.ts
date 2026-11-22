@@ -52,6 +52,7 @@ export class SchedulerMainPanel extends LitElement {
   @property({ attribute: false }) public config!: CardConfig;
   @property({ attribute: false }) public viewMode!: EditorMode;
   @property({ attribute: false }) public selectedSlot: number | null = null;
+  @property({ type: Boolean }) public isNew = false;
   @property({ type: Boolean }) large = false;
 
   @state() schedule!: Schedule;
@@ -62,6 +63,11 @@ export class SchedulerMainPanel extends LitElement {
       this.dispatchEvent(new CustomEvent('change', { detail: { schedule: this.schedule } }));
     }
     return true;
+  }
+
+  // Actions of existing schedules are read-only when lock_actions is set; new schedules still need an action.
+  get actionsLocked() {
+    return this.config.lock_actions === true && !this.isNew;
   }
 
   render() {
@@ -80,14 +86,20 @@ export class SchedulerMainPanel extends LitElement {
               ></ha-icon-button>
             </div>
             <div class="weekdays-actions">
-              <ha-button appearance="plain" size="small" @click=${this.toggleViewMode}>
-                ${
-                  this.viewMode == EditorMode.Scheme
-                    ? localize('ui.panel.editor.toggle_single_mode', this.hass)
-                    : localize('ui.panel.editor.toggle_scheme_mode', this.hass)
-                }
-                <ha-icon slot="end" icon="mdi:swap-horizontal"></ha-icon>
-              </ha-button>
+              ${
+                this.config.show_editor_mode_button === false
+                  ? ''
+                  : html`
+                      <ha-button appearance="plain" size="small" @click=${this.toggleViewMode}>
+                        ${
+                          this.viewMode == EditorMode.Scheme
+                            ? localize('ui.panel.editor.toggle_single_mode', this.hass)
+                            : localize('ui.panel.editor.toggle_scheme_mode', this.hass)
+                        }
+                        <ha-icon slot="end" icon="mdi:swap-horizontal"></ha-icon>
+                      </ha-button>
+                    `
+              }
             </div>
           </div>
 
@@ -143,6 +155,11 @@ export class SchedulerMainPanel extends LitElement {
 
     const delta = tsB - tsA;
 
+    // removing a timeslot merges it with its neighbour and discards the actions of the removed slot
+    const slots = this.schedule.entries[this.selectedEntry].slots;
+    const removedSlot = slots[this.selectedSlot == slots.length - 1 ? this.selectedSlot - 1 : this.selectedSlot];
+    const removeDiscardsAction = this.actionsLocked && (removedSlot?.actions.length ?? 0) > 0;
+
     return html`
       <div class="actions">
         <ha-icon-button
@@ -168,7 +185,7 @@ export class SchedulerMainPanel extends LitElement {
         <ha-icon-button
           .path=${mdiTrashCanOutline}
           @click=${this._removeTimeslot}
-          ?disabled=${this.schedule.entries[this.selectedEntry].slots.length <= 2}
+          ?disabled=${slots.length <= 2 || removeDiscardsAction}
         >
         </ha-icon-button>
       </div>
@@ -225,10 +242,16 @@ export class SchedulerMainPanel extends LitElement {
     if (!action)
       return html`
         <div>
-          <ha-button appearance="plain" @click=${this._showActionDialog}>
-            <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-            ${localize('ui.panel.editor.add_action', this.hass)}
-          </ha-button>
+          ${
+            this.actionsLocked
+              ? ''
+              : html`
+                  <ha-button appearance="plain" @click=${this._showActionDialog}>
+                    <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+                    ${localize('ui.panel.editor.add_action', this.hass)}
+                  </ha-button>
+                `
+          }
         </div>
       `;
 
@@ -267,24 +290,30 @@ export class SchedulerMainPanel extends LitElement {
           <span>${capitalizeFirstLetter(heading)}</span>
         </div>
 
-        <ha-dropdown
-          slot="contextMenu"
-          @wa-select=${this._actionItemOptionsClick}
-          @wa-after-hide=${(ev: Event) => {
-            ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur();
-          }}
-          placement="bottom-end"
-        >
-          <ha-icon-button slot="trigger" .path=${mdiDotsVertical}> </ha-icon-button>
-          <ha-dropdown-item value="change_type">
-            <ha-icon icon="mdi:pencil"></ha-icon>
-            ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
-          </ha-dropdown-item>
-          <ha-dropdown-item variant="danger" value="delete">
-            <ha-icon icon="mdi:delete"></ha-icon>
-            ${hassLocalize('ui.common.delete', this.hass)}
-          </ha-dropdown-item>
-        </ha-dropdown>
+        ${
+          this.actionsLocked
+            ? ''
+            : html`
+                <ha-dropdown
+                  slot="contextMenu"
+                  @wa-select=${this._actionItemOptionsClick}
+                  @wa-after-hide=${(ev: Event) => {
+                    ((ev.target as HTMLElement).firstElementChild as HTMLElement).blur();
+                  }}
+                  placement="bottom-end"
+                >
+                  <ha-icon-button slot="trigger" .path=${mdiDotsVertical}> </ha-icon-button>
+                  <ha-dropdown-item value="change_type">
+                    <ha-icon icon="mdi:pencil"></ha-icon>
+                    ${hassLocalize('ui.panel.lovelace.editor.card.conditional.change_type', this.hass)}
+                  </ha-dropdown-item>
+                  <ha-dropdown-item variant="danger" value="delete">
+                    <ha-icon icon="mdi:delete"></ha-icon>
+                    ${hassLocalize('ui.common.delete', this.hass)}
+                  </ha-dropdown-item>
+                </ha-dropdown>
+              `
+        }
 
         <div slot="content">
           ${
@@ -300,7 +329,7 @@ export class SchedulerMainPanel extends LitElement {
                       @value-changed=${this._selectEntity}
                       .value=${[action.target?.entity_id || []].flat()}
                       ?multiple=${true}
-                      ?disabled=${hasFixedEntity}
+                      ?disabled=${hasFixedEntity || this.actionsLocked}
                     >
                     </scheduler-entity-picker>
                   </scheduler-settings-row>
@@ -327,6 +356,7 @@ export class SchedulerMainPanel extends LitElement {
                         <ha-checkbox
                           slot="prefix"
                           ?checked=${checked}
+                          ?disabled=${this.actionsLocked}
                           @change=${(ev: Event) => this._toggleOptionalField(ev, field, selector)}
                         >
                         </ha-checkbox>
@@ -337,7 +367,7 @@ export class SchedulerMainPanel extends LitElement {
                 <scheduler-combo-selector
                   .hass=${this.hass}
                   .config=${selector}
-                  ?disabled=${!checked}
+                  ?disabled=${!checked || this.actionsLocked}
                   .value=${Object.keys(action.service_data).includes(field) ? action.service_data[field] : undefined}
                   @value-changed=${(ev: CustomEvent) => this._selectField(field, ev)}
                 >

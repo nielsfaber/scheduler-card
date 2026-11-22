@@ -202,6 +202,21 @@
               "scheme": "Tryb schematu czasu"
             }
           },
+          "show_add_button": {
+            "heading": "Pokaż przycisk dodawania"
+          },
+          "show_delete_button": {
+            "heading": "Pokaż przycisk usuwania"
+          },
+          "show_options_tab": {
+            "heading": "Pokaż zakładkę Opcje"
+          },
+          "show_editor_mode_button": {
+            "heading": "Pokaż przycisk trybu edytora"
+          },
+          "lock_actions": {
+            "heading": "Zablokuj akcje"
+          },
           "sort_by": {
             "heading": "Opcje sortowania",
             "description": "Kolejność, w jakiej harmonogramy pojawiają się na karcie",
