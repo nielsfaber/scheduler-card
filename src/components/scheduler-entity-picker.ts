@@ -49,14 +49,19 @@ export class SchedulerEntityPicker extends LitElement {
 
   protected async firstUpdated() {
     this.scheduleEntities = Object.entries(await fetchItems(this.hass!)).map(([, val]) => val.entity_id);
-    if (this.domain && this.config && !entityIncludedByConfig(this.domain, this.config)) {
-      this.config = {
-        ...this.config,
-        include: [...(this.config.include || []), this.domain],
-        exclude: [...(this.config.exclude || []).filter((e) => !e.startsWith(this.domain!))],
-      };
-    }
     this._autoSelectIfSingleEntity();
+  }
+
+  // The domain of the picker is always allowed, even if the card config does not include it.
+  // This is derived on every use instead of overwriting `config`, because the parent sets
+  // `config` again on each render, which would undo the extension.
+  private get _effectiveConfig() {
+    if (!this.domain || !this.config || entityIncludedByConfig(this.domain, this.config)) return this.config;
+    return {
+      ...this.config,
+      include: [...(this.config.include || []), this.domain],
+      exclude: [...(this.config.exclude || []).filter((e) => !e.startsWith(this.domain!))],
+    };
   }
 
   protected updated(changedProps: PropertyValues) {
@@ -249,12 +254,13 @@ export class SchedulerEntityPicker extends LitElement {
       entityIds = entityIds.filter((e) => !this.value?.includes(e));
     }
 
-    if (this.config) {
+    const config = this._effectiveConfig;
+    if (config) {
       entityIds = entityIds.filter((entityId) => {
         return (
-          ((this.config!.include || DEFAULT_INCLUDED_DOMAINS).some((e) => matchPattern(e, entityId)) ||
-            Object.keys(this.config!.customize || {}).some((e) => matchPattern(e, entityId))) &&
-          !(this.config!.exclude || []).some((e) => matchPattern(e, entityId))
+          ((config.include || DEFAULT_INCLUDED_DOMAINS).some((e) => matchPattern(e, entityId)) ||
+            Object.keys(config.customize || {}).some((e) => matchPattern(e, entityId))) &&
+          !(config.exclude || []).some((e) => matchPattern(e, entityId))
         );
       });
     }
