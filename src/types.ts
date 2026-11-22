@@ -17,6 +17,10 @@ export interface CardConfig {
   tags?: string[] | string;
   exclude_tags?: string[] | string;
   show_add_button?: boolean;
+  show_delete_button?: boolean;
+  show_options_tab?: boolean;
+  show_editor_mode_button?: boolean;
+  lock_actions?: boolean;
 }
 
 export enum EditorMode {

@@ -88,7 +88,7 @@ export class SchedulerCardEditor extends LitElement {
           ></ha-input>
         </scheduler-settings-row>
 
-        <div class="two-columns" style="margin: 10px 0px 15px 0px">
+        <div class="two-columns switches" style="margin: 10px 0px 15px 0px">
           <div class="column">
             <ha-switch
               ?checked=${this._config.discover_existing !== false}
@@ -114,6 +114,51 @@ export class SchedulerCardEditor extends LitElement {
                 this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
               }}
               >${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_add_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_add_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_add_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_delete_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_delete_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_delete_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_options_tab !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_options_tab: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_options_tab.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_editor_mode_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_editor_mode_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_editor_mode_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.lock_actions === true}
+              @change=${(ev: Event) => {
+                this._updateConfig({ lock_actions: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.lock_actions.heading', this.hass)}</ha-switch
             >
           </div>
         </div>
@@ -453,6 +498,12 @@ export class SchedulerCardEditor extends LitElement {
     div.two-columns .column > * {
       display: flex;
       flex-direction: column;
+    }
+    div.two-columns.switches {
+      flex-wrap: wrap;
+    }
+    div.two-columns.switches .column {
+      flex: 0 0 calc(100% / 3);
     }
     div.two-columns .column > ha-switch,
     div.two-columns .column > ha-checkbox {
