@@ -90,34 +90,31 @@ export class SchedulerCardEditor extends LitElement {
 
         <div class="two-columns" style="margin: 10px 0px 15px 0px">
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.discover_existing.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.discover_existing !== false}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ discover_existing: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.discover_existing !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ discover_existing: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.discover_existing.heading', this.hass)}</ha-switch
+            >
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.show_header_toggle.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.show_header_toggle}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ show_header_toggle: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.show_header_toggle}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_header_toggle: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_header_toggle.heading', this.hass)}</ha-switch
+            >
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.show_toggle_switches !== false}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.show_toggle_switches !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}</ha-switch
+            >
           </div>
         </div>
 
@@ -226,50 +223,34 @@ export class SchedulerCardEditor extends LitElement {
 
         <div class="two-columns">
           <div class="column">
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.relative_time', this.hass)}"
+            <ha-checkbox
+              value="relative-time"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('relative-time')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.relative_time', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="relative-time"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('relative-time')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
 
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.time', this.hass)}"
+            <ha-checkbox
+              value="time"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('time')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.time', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="time"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('time')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
           </div>
           <div class="column">
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.days', this.hass)}"
+            <ha-checkbox
+              value="days"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('days')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.days', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="days"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('days')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
 
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks', this.hass)}"
+            <ha-checkbox
+              value="additional-tasks"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('additional-tasks')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="additional-tasks"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('additional-tasks')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
           </div>
         </div>
 
@@ -472,6 +453,11 @@ export class SchedulerCardEditor extends LitElement {
     div.two-columns .column > * {
       display: flex;
       flex-direction: column;
+    }
+    div.two-columns .column > ha-switch,
+    div.two-columns .column > ha-checkbox {
+      min-height: 48px;
+      justify-content: center;
     }
     scheduler-combo-selector {
       min-width: 240px;
