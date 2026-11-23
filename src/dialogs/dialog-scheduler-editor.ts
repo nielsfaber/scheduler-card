@@ -178,7 +178,7 @@ export class DialogSchedulerEditor extends LitElement {
                 </ha-button>`
               : ''
           }
-          <ha-button appearance="plain" @click=${this._handleSaveClick}>
+          <ha-button class="save" appearance="plain" @click=${this._handleSaveClick}>
             ${hassLocalize('ui.common.save', this.hass)}
           </ha-button>
         </div>
