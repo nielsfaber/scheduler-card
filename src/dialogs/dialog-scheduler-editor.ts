@@ -178,6 +178,8 @@ export class DialogSchedulerEditor extends LitElement {
   }
 
   _updateSchedule(ev: CustomEvent) {
+    // native change events of inputs in the panels bubble up here as well, these have no detail
+    if (!ev.detail) return;
     const changedProps = Object.keys(ev.detail);
     if (changedProps.includes('schedule')) {
       const schedule = ev.detail.schedule;
