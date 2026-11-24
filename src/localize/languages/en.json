@@ -202,6 +202,21 @@
               "scheme": "Time scheme mode"
             }
           },
+          "show_add_button": {
+            "heading": "Show add button"
+          },
+          "show_delete_button": {
+            "heading": "Show delete button"
+          },
+          "show_options_tab": {
+            "heading": "Show Options tab"
+          },
+          "show_editor_mode_button": {
+            "heading": "Show editor mode button"
+          },
+          "lock_actions": {
+            "heading": "Lock actions"
+          },
           "sort_by": {
             "heading": "Sorting options",
             "description": "Order in which the schedules appear in the card",
@@ -240,6 +255,9 @@
           "tags": {
             "heading": "Tags",
             "description": "Use tags to divide schedules between multiple cards"
+          },
+          "editor_tags": {
+            "heading": "Editor tags"
           },
           "entities": {
             "button_label": "Configure included entities",

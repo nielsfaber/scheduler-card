@@ -60,14 +60,6 @@ export class SchedulerCardEditor extends LitElement {
       },
     };
 
-    const tagSelector = <SelectSelector>{
-      select: {
-        options: this.tagOptions,
-        multiple: true,
-        custom_value: true,
-      },
-    };
-
     return html`
       <div class="card-config">
         <ha-button @click=${this._showIncludedEntitiesDialog} outlined>
@@ -88,36 +80,78 @@ export class SchedulerCardEditor extends LitElement {
           ></ha-input>
         </scheduler-settings-row>
 
-        <div class="two-columns" style="margin: 10px 0px 15px 0px">
+        <div class="two-columns switches" style="margin: 10px 0px 15px 0px">
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.discover_existing.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.discover_existing !== false}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ discover_existing: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.discover_existing !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ discover_existing: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.discover_existing.heading', this.hass)}</ha-switch
+            >
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.show_header_toggle.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.show_header_toggle}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ show_header_toggle: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.show_header_toggle}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_header_toggle: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_header_toggle.heading', this.hass)}</ha-switch
+            >
           </div>
           <div class="column">
-            <ha-formfield label="${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}">
-              <ha-switch
-                ?checked=${this._config.show_toggle_switches !== false}
-                @change=${(ev: Event) => {
-                  this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
-                }}
-              ></ha-switch>
-            </ha-formfield>
+            <ha-switch
+              ?checked=${this._config.show_toggle_switches !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_toggle_switches: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_toggle_switches.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_add_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_add_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_add_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_delete_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_delete_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_delete_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_options_tab !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_options_tab: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_options_tab.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.show_editor_mode_button !== false}
+              @change=${(ev: Event) => {
+                this._updateConfig({ show_editor_mode_button: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.show_editor_mode_button.heading', this.hass)}</ha-switch
+            >
+          </div>
+          <div class="column">
+            <ha-switch
+              ?checked=${this._config.lock_actions === true}
+              @change=${(ev: Event) => {
+                this._updateConfig({ lock_actions: (ev.target as HTMLInputElement).checked });
+              }}
+              >${localize('ui.panel.card_editor.fields.lock_actions.heading', this.hass)}</ha-switch
+            >
           </div>
         </div>
 
@@ -226,100 +260,45 @@ export class SchedulerCardEditor extends LitElement {
 
         <div class="two-columns">
           <div class="column">
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.relative_time', this.hass)}"
+            <ha-checkbox
+              value="relative-time"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('relative-time')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.relative_time', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="relative-time"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('relative-time')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
 
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.time', this.hass)}"
+            <ha-checkbox
+              value="time"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('time')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.time', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="time"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('time')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
           </div>
           <div class="column">
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.days', this.hass)}"
+            <ha-checkbox
+              value="days"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('days')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.days', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="days"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('days')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
 
-            <ha-formfield
-              label="${localize('ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks', this.hass)}"
+            <ha-checkbox
+              value="additional-tasks"
+              @change=${this._setDisplayOptionsSecondary}
+              ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('additional-tasks')}
+              >${localize('ui.panel.card_editor.fields.display_format_secondary.options.additional_tasks', this.hass)}</ha-checkbox
             >
-              <ha-checkbox
-                value="additional-tasks"
-                @change=${this._setDisplayOptionsSecondary}
-                ?checked=${[this._config.display_options?.secondary_info || DEFAULT_SECONDARY_INFO_DISPLAY].flat().includes('additional-tasks')}
-              >
-              </ha-checkbox>
-            </ha-formfield>
           </div>
         </div>
 
         <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.tags.heading', this.hass)}</span>
-          <div style="display: flex; flex: 1; flex-direction: column">
-            <scheduler-combo-selector
-              .hass=${this.hass}
-              .config=${tagSelector}
-              .value=${[this._config.tags || []].flat()}
-              @value-changed=${(ev: CustomEvent) => {
-                this._updateConfig({ tags: ev.detail.value });
-              }}
-            >
-            </scheduler-combo-selector>
+          ${this._renderTagPicker('tags')}
+        </scheduler-settings-row>
 
-            <ha-dropdown
-              @wa-after-hide=${(ev: Event) => {
-                ev.stopPropagation();
-                ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
-              }}
-              @click=${(ev: Event) => {
-                ev.preventDefault();
-                ev.stopImmediatePropagation();
-              }}
-              @wa-after-show=${(ev: Event) => {
-                ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
-              }}
-              placement="bottom-start"
-            >
-              <ha-button appearance="plain" slot="trigger">
-                <ha-icon slot="start" icon="mdi:plus"></ha-icon>
-                ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-              </ha-button>
-
-              <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
-                <ha-input
-                  .value=${this.customTagValue}
-                  .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
-                  @input=${(ev: Event) => {
-                    this.customTagValue = (ev.currentTarget as any).value;
-                  }}
-                  .placeholder=""
-                ></ha-input>
-                <ha-button appearance="plain" @click=${this._customTagConfirmClick}>
-                  ${hassLocalize('ui.common.ok', this.hass)}
-                </ha-button>
-              </div>
-            </ha-dropdown>
-          </div>
+        <scheduler-settings-row>
+          <span slot="heading">${localize('ui.panel.card_editor.fields.editor_tags.heading', this.hass)}</span>
+          ${this._renderTagPicker('editor_tags')}
         </scheduler-settings-row>
       </div>
     `;
@@ -407,20 +386,87 @@ export class SchedulerCardEditor extends LitElement {
     });
   }
 
-  _customTagConfirmClick(ev: Event) {
+  _renderTagPicker(key: 'tags' | 'editor_tags') {
+    const tagSelector = <SelectSelector>{
+      select: {
+        options: this.tagOptions,
+        multiple: true,
+        custom_value: true,
+      },
+    };
+
+    return html`
+      <div style="display: flex; flex: 1; flex-direction: column">
+        <scheduler-combo-selector
+          .hass=${this.hass}
+          .config=${tagSelector}
+          .value=${[this._config[key] || []].flat()}
+          @value-changed=${(ev: CustomEvent) => this._setTags(key, ev.detail.value)}
+        >
+        </scheduler-combo-selector>
+
+        <ha-dropdown
+          @wa-after-hide=${(ev: Event) => {
+            ev.stopPropagation();
+            ((ev.target as HTMLElement).querySelector('ha-button') as HTMLInputElement).blur();
+          }}
+          @click=${(ev: Event) => {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+          }}
+          @wa-after-show=${(ev: Event) => {
+            ((ev.target as HTMLElement).querySelector('ha-input') as HTMLInputElement).focus();
+          }}
+          placement="bottom-start"
+        >
+          <ha-button appearance="plain" slot="trigger">
+            <ha-icon slot="start" icon="mdi:plus"></ha-icon>
+            ${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+          </ha-button>
+
+          <div style="display: flex; align-items: center; padding: 0x 2px 0px 8px">
+            <ha-input
+              .value=${this.customTagValue}
+              .label=${hassLocalize('ui.panel.config.tag.add_tag', this.hass)}
+              @input=${(ev: Event) => {
+                this.customTagValue = (ev.currentTarget as any).value;
+              }}
+              .placeholder=""
+            ></ha-input>
+            <ha-button appearance="plain" @click=${(ev: Event) => this._customTagConfirmClick(ev, key)}>
+              ${hassLocalize('ui.common.ok', this.hass)}
+            </ha-button>
+          </div>
+        </ha-dropdown>
+      </div>
+    `;
+  }
+
+  _customTagConfirmClick(ev: Event, key: 'tags' | 'editor_tags') {
     let target = ev.target as HTMLElement;
     target = target.parentElement as HTMLElement;
     target = target.parentElement as HTMLElement;
     const triggerBtn = target.querySelector('ha-button');
     (triggerBtn as any).click();
 
-    let value = String(this.customTagValue).trim();
+    const value = String(this.customTagValue).trim();
     if (value.length) {
-      let tags = [this._config.tags || []].flat();
+      let tags = [this._config[key] || []].flat();
       tags = [...new Set([...tags, value])];
-      this._updateConfig({ tags: tags });
+      this._setTags(key, tags);
     }
     this.customTagValue = '';
+  }
+
+  _setTags(key: 'tags' | 'editor_tags', tags: string[]) {
+    if (key == 'editor_tags' && !tags.length) {
+      // an empty list in the editor means no restriction, rather than no selectable tags
+      const { editor_tags: _editorTags, ...config } = this._config;
+      this._config = config;
+      fireEvent(this, 'config-changed', { config: this._config });
+      return;
+    }
+    this._updateConfig({ [key]: tags });
   }
 
   private _updateConfig(changes: Partial<CardConfig>) {
@@ -472,6 +518,17 @@ export class SchedulerCardEditor extends LitElement {
     div.two-columns .column > * {
       display: flex;
       flex-direction: column;
+    }
+    div.two-columns.switches {
+      flex-wrap: wrap;
+    }
+    div.two-columns.switches .column {
+      flex: 0 0 calc(100% / 3);
+    }
+    div.two-columns .column > ha-switch,
+    div.two-columns .column > ha-checkbox {
+      min-height: 48px;
+      justify-content: center;
     }
     scheduler-combo-selector {
       min-width: 240px;

@@ -41,6 +41,12 @@ export const validateConfig = (config: any) => {
     errors.push(`'show_add_button' must be a boolean`);
   }
 
+  for (const key of ['show_delete_button', 'show_options_tab', 'show_editor_mode_button', 'lock_actions']) {
+    if (hasKey(config, key) && !isTypeBoolean(config[key])) {
+      errors.push(`'${key}' must be a boolean`);
+    }
+  }
+
   if (hasKey(config, 'show_toggle_switches') && !isTypeBoolean(config.show_toggle_switches)) {
     errors.push(`'show_toggle_switches' must be a boolean`);
   }
@@ -95,6 +101,9 @@ export const validateConfig = (config: any) => {
     !isTypeListOfStrings(config.exclude_tags)
   ) {
     errors.push(`'exclude_tags' must be a string or list of strings`);
+  }
+  if (hasKey(config, 'editor_tags') && !isTypeString(config.editor_tags) && !isTypeListOfStrings(config.editor_tags)) {
+    errors.push(`'editor_tags' must be a string or list of strings`);
   }
   if (errors.length) {
     throw new Error(
