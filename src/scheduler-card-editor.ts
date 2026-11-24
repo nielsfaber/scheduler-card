@@ -298,7 +298,6 @@ export class SchedulerCardEditor extends LitElement {
 
         <scheduler-settings-row>
           <span slot="heading">${localize('ui.panel.card_editor.fields.editor_tags.heading', this.hass)}</span>
-          <span slot="description">${localize('ui.panel.card_editor.fields.editor_tags.description', this.hass)}</span>
           ${this._renderTagPicker('editor_tags')}
         </scheduler-settings-row>
       </div>

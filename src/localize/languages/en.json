@@ -257,8 +257,7 @@
             "description": "Use tags to divide schedules between multiple cards"
           },
           "editor_tags": {
-            "heading": "Selectable tags",
-            "description": "Limit the tags that can be assigned in the schedule editor. Leave empty to allow all tags."
+            "heading": "Editor tags"
           },
           "entities": {
             "button_label": "Configure included entities",
