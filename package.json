@@ -1,6 +1,6 @@
 {
   "name": "scheduler-card",
-  "version": "4.0.19",
+  "version": "4.0.20",
   "description": "Scheduler card for Lovelace",
   "main": "dist/scheduler-card.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "url": "git+https://github.com/nielsfaber/scheduler-card.git"
   },
   "author": "nielsfaber",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/nielsfaber/scheduler-card/issues"
   },

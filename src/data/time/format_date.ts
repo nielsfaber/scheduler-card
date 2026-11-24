@@ -1,11 +1,23 @@
 import { FrontendLocaleData } from '../../lib/types';
+import { getDateParts } from './time_zone';
 
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
-export function formatDate(dateObj: Date, locale: FrontendLocaleData) {
-  const isCurrentYear = dateObj.getFullYear() == new Date().getFullYear();
+export function formatDate(dateObj: Date, locale: FrontendLocaleData, timeZone?: string) {
+  const isCurrentYear = getDateParts(dateObj, timeZone).year == getDateParts(new Date(), timeZone).year;
 
   const supportLocaleDateString = () => {
     try {
@@ -25,13 +37,14 @@ export function formatDate(dateObj: Date, locale: FrontendLocaleData) {
       case 'day':
         return dateObj.getDate();
     }
-  }
+  };
 
   if (isCurrentYear) {
     if (supportLocaleDateString()) {
       return new Intl.DateTimeFormat(locale.language, {
         month: 'long',
         day: 'numeric',
+        timeZone,
       }).format(dateObj);
     } else return `${formatDateLegacy(dateObj, 'month')} ${formatDateLegacy(dateObj, 'day')}`;
   } else {
@@ -40,8 +53,10 @@ export function formatDate(dateObj: Date, locale: FrontendLocaleData) {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        timeZone,
       }).format(dateObj);
-    } else return `${formatDateLegacy(dateObj, 'month')} ${formatDateLegacy(dateObj, 'day')}, ${formatDateLegacy(dateObj, 'year')}`;
+    } else
+      return `${formatDateLegacy(dateObj, 'month')} ${formatDateLegacy(dateObj, 'day')}, ${formatDateLegacy(dateObj, 'year')}`;
   }
 }
 

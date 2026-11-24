@@ -1,6 +1,3 @@
-
-
-
 const domainIcons: Record<string, string> = {
   alarm_control_panel: 'mdi:alarm-light-outline',
   air_quality: 'mdi:air-filter',
@@ -69,7 +66,5 @@ const domainIcons: Record<string, string> = {
 };
 
 export const domainIcon = (domain: string): string => {
-  return Object.keys(domainIcons).includes(domain)
-    ? domainIcons[domain]
-    : 'mdi:help';
-}
+  return Object.keys(domainIcons).includes(domain) ? domainIcons[domain] : 'mdi:help';
+};
