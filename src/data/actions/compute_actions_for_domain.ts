@@ -103,8 +103,8 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
       (e) =>
         !excludedActions.some((a) => {
           return (
-            caseInsensitiveStringCompare(computeEntity(e.action.service), a) > 0 ||
-            caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) > 0
+            caseInsensitiveStringCompare(computeEntity(e.action.service), a) == 0 ||
+            caseInsensitiveStringCompare(formatActionDisplay(e.action, hass, config.customize), a) == 0
           );
         })
     );
