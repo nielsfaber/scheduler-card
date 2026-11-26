@@ -128,7 +128,12 @@ export const computeActionsForDomain = (hass: HomeAssistant, domain: string, con
 
     actionList.push({
       key: key,
-      name: `${domainName(domain)}: ${sanitizeTagsAndWildcards(action.name || serviceName(computeEntity(action.service)))}`,
+      // A named script action is shown by its own name, like a customized script
+      // name above; the "Script:" domain prefix adds nothing there.
+      name:
+        domain == 'script' && action.name
+          ? sanitizeTagsAndWildcards(action.name)
+          : `${domainName(domain)}: ${sanitizeTagsAndWildcards(action.name || serviceName(computeEntity(action.service)))}`,
       description: sanitizeTagsAndWildcards(action.name || ''),
       icon: action.icon || domainIcon(domain),
       action: <Action>{
