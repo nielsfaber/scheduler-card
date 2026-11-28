@@ -31,7 +31,7 @@ export class SchedulerComboSelector extends LitElement {
   @property({ attribute: false }) config!: Selector;
 
   @property() public value?: string | number | string[];
-  @property({ type: Boolean }) public disabled: boolean = false;
+  @property({ type: Boolean, reflect: true }) public disabled: boolean = false;
 
   protected render(): TemplateResult {
     if ((this.config as SelectSelector).select) {
@@ -287,6 +287,9 @@ export class SchedulerComboSelector extends LitElement {
     :host {
       display: flex;
       width: 100%;
+    }
+    :host([disabled]) div.slider-wrapper {
+      opacity: 0.5;
     }
     div.slider-wrapper {
       display: flex;

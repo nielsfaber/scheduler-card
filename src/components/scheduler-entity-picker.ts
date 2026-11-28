@@ -156,14 +156,14 @@ export class SchedulerEntityPicker extends LitElement {
         <scheduler-chip-set
           .hass=${this.hass}
           .items=${items}
-          removable
+          ?removable=${!this.disabled}
           @value-changed=${this._removeClick}
           ?disabled=${this.disabled}
         >
         </scheduler-chip-set>
         <div class="column-right">
           ${
-            items.length
+            items.length && !this.disabled
               ? html`
                   <ha-icon-button
                     @click=${(ev: InputEvent) => {

@@ -32,6 +32,9 @@ export const EditorDialogStyles = css`
     background-color: var(--mdc-theme-surface, #fff);
     border-top: 1px solid var(--divider-color);
   }
+  .buttons .save {
+    margin-left: auto;
+  }
   .content {
     padding: 0px 24px 16px 24px;
   }

@@ -101,14 +101,18 @@ export class DialogSchedulerEditor extends LitElement {
                     .label=${hassLocalize('ui.dialogs.more_info_control.dismiss', this.hass)}
                     .path=${mdiClose}
                   ></ha-icon-button>
-                  <ha-icon-button
-                    slot="actionItems"
-                    .label=""
-                    .path=${mdiCogOutline}
-                    @click=${() => {
-                      this._panel = 'options';
-                    }}
-                  ></ha-icon-button>
+                  ${
+                    this._params.cardConfig.show_options_tab !== false
+                      ? html`<ha-icon-button
+                          slot="actionItems"
+                          .label=""
+                          .path=${mdiCogOutline}
+                          @click=${() => {
+                            this._panel = 'options';
+                          }}
+                        ></ha-icon-button>`
+                      : ''
+                  }
                 `
               : html`
                   <ha-icon-button
@@ -141,6 +145,7 @@ export class DialogSchedulerEditor extends LitElement {
                     .config=${this._params.cardConfig}
                     .schedule=${this.schedule}
                     .large=${this.large}
+                    .isNew=${!this._params.editItem}
                     @change=${this._updateSchedule}
                     @setViewMode=${this._setViewMode}
                     .viewMode=${this._viewMode}
@@ -161,15 +166,19 @@ export class DialogSchedulerEditor extends LitElement {
         </div>
 
         <div class="buttons" slot="footer">
-          <ha-button
-            appearance="plain"
-            @click=${this._handleDeleteClick}
-            variant="danger"
-            ?disabled=${!this.schedule.entity_id}
-          >
-            ${hassLocalize('ui.common.delete', this.hass)}
-          </ha-button>
-          <ha-button appearance="plain" @click=${this._handleSaveClick}>
+          ${
+            this._params.cardConfig.show_delete_button !== false
+              ? html`<ha-button
+                  appearance="plain"
+                  @click=${this._handleDeleteClick}
+                  variant="danger"
+                  ?disabled=${!this.schedule.entity_id}
+                >
+                  ${hassLocalize('ui.common.delete', this.hass)}
+                </ha-button>`
+              : ''
+          }
+          <ha-button class="save" appearance="plain" @click=${this._handleSaveClick}>
             ${hassLocalize('ui.common.save', this.hass)}
           </ha-button>
         </div>
